@@ -1,0 +1,2525 @@
+﻿<div ng-controller="DriverSchedulerController">
+  <div class="headerBar displayFlex alignItemCenter innerHeader">
+    <div class="nav-sidebar align-left">
+      <div class="backtopage" ng-click="$root.goBack()">
+        <img src="./images/back-arrow.png" />
+      </div>
+    </div>
+    <!--nav-sidebar-->
+    <div class="header-text"><span translate>Schedule details</span></div>
+    <div class="headerRight alignright">
+      <div class="notifyIcon"><i class="fa fa-bell-o"></i></div>
+    </div>
+  </div>
+
+  <div class="excludeHeader" ng-init="LoadScheduleInfo()">
+    <div class="alert alert-warning text-center" role="alert" ng-if="!ShowLoader && ScheduleDetails.length == 0">
+      <b>{{AlertText}}</b>
+    </div>
+    <div class="position-fixed end-0 me-2 bottom-0">
+      <div class="m3-button-container mb-3" ng-click="syncClick()">
+        <div class="m3-button-inner">
+          <div class="m3-button"><span style="outline: none;">{{SyncButtonName}}</span></div>
+        </div>
+      </div>
+      <!-- <div class="m3-button-container mb-3" ng-click="ClearCacheClick()">
+        <div class="m3-button-inner">
+          <div class="m3-button"><span style="outline: none;">Clear Cache</span></div>
+        </div>
+      </div> -->
+    </div>
+    <!-- <div class=" position-fixed   bottom-0 start-0 ms-3 mb-3" style="z-index: 1001; ">
+      <div class="go-online-button m3-button-container mb-3" style="display: none;" ng-click="OfflineClick()">
+        <div class="m3-button-inner">
+          <div class="m3-button"><span style="outline: none;">Stay_Offline</span></div>
+        </div>
+      </div>
+      <div class="go-online-button m3-button-container" style="display: none;">
+        <div class="m3-button-inner">
+          <div class="m3-button"><span style="outline: none;">GoOnline</span></div>
+        </div>
+      </div>
+    </div> -->
+    <!-- <div  ng-if="!ScheduleDetails.length == 0"  class="mt-2 w-100 pt-5 pb-4 ps-2 fw-bold">
+
+            <h2 style="grid-area: heading;">School Pickup & Drop Services</h2>
+            <span class="css-7vfpyx e1wnkr790" style="
+            font-weight: inherit;
+            color: rgb(118, 118, 118);
+            font-size: 1rem;
+            line-height: 1.5;">You haven't posted a job before, so you'll need to create an employer account.</span>
+        </div> -->
+    <!-- <img ng-if="!ScheduleDetails.length == 0" src = "./images/book-an-appointment.svg" alt="John Doe" class="p-2 w-100 h-auto" style="border-radius: 1rem!important;"/> -->
+    <div
+      ng-if="ScheduleDetails.length > 0"
+      class="Vehicle-accordion-item p-3 m-3 mb-3"
+    >
+      <label>
+        <input
+          type="checkbox"
+          class="filled-in"
+          id="InorOutChecked"
+          value="InorOutChecked"
+          name="InorOutChecked"
+          ng-model="IsAutoInOrOut"
+          ng-change="AutoMarkInOutCheckBoxChange(IsAutoInOrOut)"
+        />
+        <span>Auto In/Out</span>
+      </label>
+    </div>
+    <div
+      class="accordion accordion-flush"
+      id="accordionExample"
+      ng-repeat="shedule in ScheduleDetails track by $index"
+      ng-init="current = $parent.start; $parent.start=$parent.start+1;"
+    >
+      <div class="accordion-item m-3 Vehicle-accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+          <button
+            class="accordion-button accordion-button-main collapsed p-3"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapse{{current.toString()}}"
+            aria-expanded="true"
+            aria-controls="collapse{{current.toString()}}"
+          >
+            <!-- Media object -->
+            <div class="d-flex text-reset">
+              <!-- Image -->
+              <img
+                src="./images/geo-fill.svg"
+                alt="calendar"
+                class="me-3 rounded-circle primary-backgroud"
+                style="width: 30px; height: 30px"
+              />
+              <!-- Body -->
+              <div class="">
+                <a class="fw-bold mb-2 text-reset d-block"
+                  >Vehicle Reg. no : {{shedule.VehicleRegistrationNumber}}</a
+                >
+                <!-- <a
+                  class="badge rounded-pill mx-2 ms-0"
+                  target="_blank"
+                  style="
+                    background-color: hsl(217, 88.8%, 92.8%);
+                    color: hsl(217, 88.8%, 30.8%);
+                  "
+                >
+                  {{shedule.VehicleRegistrationNumber}}
+                </a> -->
+                <a
+                  class="badge rounded-pill"
+                  target="_blank"
+                  style="
+                    background-color: hsl(247, 55.7%, 93%);
+                    color: hsl(247, 55.7%, 38%);
+                  "
+                >
+                  {{shedule.VehicleType}}
+                </a>
+                <a
+                class="badge rounded-pill"
+                target="_blank"
+                style="
+                  background-color: hsl(217, 88.8%, 92.8%);
+                    color: hsl(217, 88.8%, 30.8%);
+                "
+              >
+              {{CurrentDateString}}
+              </a>
+                <br>
+              </div>
+            </div>
+            <!-- Media object -->
+          </button>
+          <!-- <button class="accordion-button accordion-button-main collapsed" type="button"
+                        >
+         
+                    </button> -->
+        </h2>
+        <div
+          id="collapse{{current.toString()}}"
+          class="accordion-collapse collapse"
+          aria-labelledby="headingOne"
+          data-bs-parent="#accordionExample"
+        >
+          <div class="accordion-body">
+            <div class="vehicleToggleContainer displayFlex flexColumn">
+              <div class=" ">
+                <div class="gridNestedContainer">
+                  <div>
+                    <div
+                      class="alert alert-warning text-center mx-3"
+                      role="alert"
+                      ng-if="!ShowLoader && shedule.RoutesDetails.length == 0"
+                    >
+                      <b>No routes found for this vehicle!</b>
+                    </div>
+                  </div>
+                  <div
+                    class="accordion accordion-flush"
+                    id="accordionExample2"
+                    ng-repeat="route in shedule.RoutesDetails track by $index"
+                    ng-init="current2 = $parent.start; $parent.start=$parent.start+1;"
+                  >
+                    <div class="accordion-item m-2 route-accordion-item">
+                      <h2 class="accordion-header" id="headingOne">
+                        <button
+                          class="accordion-button collapsed"
+                          type="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#collapseRoute{{current.toString() + current2.toString() }}"
+                          aria-expanded="true"
+                          aria-controls="collapseRoute{{current.toString() + current2.toString() }}"
+                        >
+                          <div
+                            class="fullwidth row displayFlex justify-spacebetween alignCenter textleft routeToggleHeader m-2"
+                            data-toggle="toggledata_a"
+                          >
+                            <span class="flexOne">
+                              <label>Route Code :</label>
+                              <span>{{route.RouteCode}}</span>
+                            </span>
+                          </div>
+                        </button>
+                      </h2>
+                      <div
+                        id="collapseRoute{{current.toString() + current2.toString()}}"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="headingOne"
+                        data-bs-parent="#accordionExample2"
+                      >
+                        <div class="accordion-body accordion-body-bordered m-2">
+                          <ul
+                            class="nav nav-tabs custom-tab"
+                            id="myTab"
+                            role="tablist"
+                          >
+                            <li class="nav-item" role="presentation">
+                              <button
+                                class="nav-link active"
+                                id="Pick_up-tab{{current.toString() + current2.toString()}}"
+                                data-bs-toggle="tab"
+                                data-bs-target="#Pick_up{{current.toString() + current2.toString()}}"
+                                type="button"
+                                role="tab"
+                                aria-controls="Pick_up{{current.toString() + current2.toString()}}"
+                                aria-selected="true"
+                                ng-click="RouteStopTypeChange('Pickup')"
+                              >
+                                Pickup
+                              </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                              <button
+                                class="nav-link"
+                                id="_Drop-tab{{current.toString() + current2.toString()}}"
+                                data-bs-toggle="tab"
+                                data-bs-target="#_Drop{{current.toString() + current2.toString()}}"
+                                type="button"
+                                role="tab"
+                                aria-controls="_Drop{{current.toString() + current2.toString()}}"
+                                aria-selected="false"
+                                ng-click="RouteStopTypeChange('Drop')"
+                              >
+                                Drop
+                              </button>
+                            </li>
+                          </ul>
+                          
+                          <form class="m-3">
+                            <p>
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  class="filled-in ng-valid ng-dirty ng-valid-parse ng-touched ng-not-empty"
+                                  ng-click="GetDetails('Student', $event)"
+                                  ng-model="IsStudentDetails"
+                                  ng-checked="IsStudentDetails"
+                                />
+                                <span> Student details</span>
+                              </label>
+                            <!-- </p>
+                            <p> -->&nbsp;&nbsp;
+                              <label>
+                                <input
+                                  type="checkbox"
+                                  class="filled-in ng-valid ng-dirty ng-valid-parse ng-touched ng-not-empty"
+                                  ng-click="GetDetails('Staff', $event)"
+                                  ng-model="IsStaffDetails"
+                                  ng-checked="IsStaffDetails"
+                                />
+                                <span>Staff details</span>
+                              </label>
+                            </p>
+                          </form>
+
+                          <div
+                            class="tab-content tab-body-bordered m-2"
+                            id="myTabContent"
+                          >
+                            <div
+                              class="tab-pane fade show active"
+                              id="Pick_up{{current.toString() + current2.toString()}}"
+                              role="tabpanel"
+                              aria-labelledby="Pick_up-tab{{current.toString() + current2.toString()}}"
+                            >
+                              <ul
+                                class="nav nav-tabs custom-tab"
+                                id="myTab"
+                                role="tablist"
+                              >
+                                <li class="nav-item" role="presentation">
+                                  <button
+                                    class="nav-link active"
+                                    id="Pickup_in-tab{{current.toString() + current2.toString()}}"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#Pickup_in{{current.toString() + current2.toString()}}"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="Pickup_in{{current.toString() + current2.toString()}}"
+                                    aria-selected="true"
+                                    ng-click="RouteStopTypeChange('PickupIn')"
+                                  >
+                                    Pickup in
+                                  </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                  <button
+                                    class="nav-link"
+                                    id="Pickup_Out-tab{{current.toString() + current2.toString()}}"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#Pickup_Out{{current.toString() + current2.toString()}}"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="Pickup_Out{{current.toString() + current2.toString()}}"
+                                    aria-selected="false"
+                                    ng-click="GetScheduledDatasByRoute('IsPickup', shedule, route)"
+                                  >
+                                    Pickup out
+                                  </button>
+                                </li>
+                              </ul>
+                              <div class="center py-2" ng-if="SheduleType == 'PickupIn'">
+                                <button type="button" class="btn btn-primary btn-sm mb-2 me-2">Total : {{PickupInTotalCount}}</button>
+                                <button type="button" class="btn btn-success btn-sm mb-2 me-2">In : {{PickupInCount}}</button>
+                                <button type="button" class="btn btn-success btn-sm  mb-2 me-2">Not in : {{PickupNotInCount}}</button>
+                              </div>
+                              <div class="center py-2" ng-if="SheduleType == 'PickupOut'">
+                                <button type="button" class="btn btn-primary btn-sm mb-2 me-2">Total : {{PickupOutTotalCount}}</button>
+                                <button type="button" class="btn btn-success btn-sm mb-2 me-2">In : {{PickupNotOutCount}}</button>
+                                <button type="button" class="btn btn-success btn-sm mb-2 me-2">Out : {{PickupOutCount}}</button>
+                              </div>
+                              <div class="row mt-3">
+                                <div class="col-md-5 mx-auto px-2">
+                                  <div class="input-group flex-nowrap">
+                                    <!-- <input
+                                      class="form-control border-end-0 border px-3 rounded-start mb-0"
+                                      type="search"
+                                      placeholder="Search"
+                                      name="SearchText"
+                                      id="search-input-pickup"
+                                      ng-value="SearchText"
+                                      ng-keyup="$event.keyCode == 13 && FillSearchText(SearchText, route, shedule, 'Pickup')"
+                                    /> -->
+                                    <input
+                                      class="form-control border-end-0 border px-3 rounded-start mb-0"
+                                      type="search"
+                                      placeholder="Search"
+                                      id="search-input-pickup"
+                                      ng-keyup="$event.keyCode == 13 && FillSearchText(route, shedule, 'Pickup')"
+                                    />
+                                    <button
+                                      ng-click="ScanBarcode(route, shedule,'Pickup');"
+                                      style="z-index: 1"
+                                      class="rounded-end barcode-btn btn-outline-secondary border-start-0 border-bottom-0 border ms-n5"
+                                      type="button"
+                                    >
+                                      <img
+                                        src="./images/upc-scan.svg"
+                                        alt="My Happy SVG"
+                                      />
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="text-center" ng-if="LoadingSpinner == true">
+                                <div class="spinner-border" role="status">
+                                  <span class="sr-only">Loading...</span>
+                                </div>
+                              </div>
+
+                              <!-- <div ng-if="isAlertMsg == true" style="padding: 5px;
+                              background-color: #f44336;
+                              color: white;" ng-bind="SearchDataAlreadyExistMsg">
+                              </div> -->
+
+                              <!-- Pickup In Searched Data List Start -->
+                              <div
+                                ng-if="FilterScheduleStudentPickInDetails.length > 0 && IsStudentDetails == true"
+                                style="width: 100%"
+                              >
+                                <div colspan="4">
+                                  <div
+                                    class="tab-content"
+                                    id="pills-tabContent"
+                                  >
+                                    <div
+                                      class="tab-pane fade show active p-2"
+                                      id="pills-In{{current.toString() + current2.toString() + current3.toString()}}"
+                                      role="tabpanel"
+                                      aria-labelledby="pills-In-tab"
+                                    >
+                                      <div
+                                        ng-repeat="student in FilterScheduleStudentPickInDetails"
+                                        ng-if="student.IsPickupStop == true"
+                                        ng-init="currenttoggleid = $parent.start; $parent.start=$parent.start+1;"
+                                        class="card-dashed mb-3"
+                                      >
+                                        <div
+                                          id="profile-header"
+                                          class="header-wrapper fileOnlyHeader-23hdD"
+                                        >
+                                          <div class="header-wrapper-inner">
+                                            <div class="resume-header-wrapper">
+                                              <div
+                                                class="resume-header grid-container"
+                                              >
+                                                <div class="grid-row centered">
+                                                  <div
+                                                    class="grid-col-md-8 grid-fill-height is-file-only-width overflow-auto"
+                                                  >
+                                                    <div
+                                                      class="header-text shadow-border"
+                                                    >
+                                                      <div
+                                                        class="avatar-outer fs-mask"
+                                                      >
+                                                        <div
+                                                          class="avatar-container avatar-css horizontal position-relative overflow-hidden"
+                                                          ng-class="{'student-in': student.IsStudentIn===true , 'student-out': student.IsStudentIn===false}">
+
+                                                        >
+                                                          <img
+                                                            ng-src="{{GetStudentImage(student.StudentID,student.StudentProfile)}}"
+                                                            on-error-src="./images/profile_img.png"
+                                                            style="
+                                                              background-size: cover;
+                                                              background-repeat: no-repeat;
+                                                              top: 0;
+                                                            "
+                                                            class="position-absolute w-100"
+                                                          />
+                                                        </div>
+                                                      </div>
+                                                      <div
+                                                        class="header-text-inner"
+                                                      >
+                                                        <div
+                                                          class="fullname heading3 fs-mask"
+                                                        >
+                                                          {{student.StudentName}}
+                                                        </div>
+                                                        <div
+                                                          class="location fs-mask"
+                                                        >
+                                                          <img
+                                                            class="icon-3-7xg css-1xqhio eac13zx0"
+                                                            src="./images/location.svg"
+                                                          />
+
+                                                          <span
+                                                            ng-bind="student.StopName"
+                                                            class="text-capitalize"
+                                                          ></span>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <table class="table a-keyvalue">
+                                          <tbody>
+                                            <tr>
+                                              <th>
+                                                <p>Admn no</p>
+                                              </th>
+                                              <td>
+                                                <p>
+                                                  {{student.AdmissionNumber}}
+                                                </p>
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <th>
+                                                <p>Class / Section</p>
+                                              </th>
+                                              <td>
+                                                <p>
+                                                  {{student.ClassName}} /
+                                                  {{student.SectionName}}
+                                                </p>
+                                              </td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+
+                                        <div
+                                          class="form-check p-3 d-flex justify-content-between"
+                                        >
+                                          <label
+                                            class="screen-reader-only"
+                                            for="choice"
+                                            >&nbsp; In or not?</label
+                                          >
+                                          <div>
+                                            <input
+                                              type="checkbox"
+                                              id="togBtnPickInStud{{currenttoggleid}}"
+                                              data-switch="success"
+                                              ng-model="student.IsStudentIn"
+                                              ng-click="ChangeFilterPickupDataStatus(student, 'Student', student.IsStudentIn)"
+                                            />
+                                            <label
+                                              for="togBtnPickInStud{{currenttoggleid}}"
+                                              data-on-label="In"
+                                              data-off-label="Not In"
+                                            ></label>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div
+                                ng-if="FilterScheduleStaffPickInDetails.length > 0 && IsStaffDetails == true"
+                                style="width: 100%"
+                              >
+                                <div colspan="4">
+                                  <div
+                                    class="tab-content"
+                                    id="pills-tabContent"
+                                  >
+                                    <div
+                                      class="tab-pane fade show active p-2"
+                                      id="pills-In{{current.toString() + current2.toString() + current3.toString()}}"
+                                      role="tabpanel"
+                                      aria-labelledby="pills-In-tab"
+                                    >
+                                      <div
+                                        ng-repeat="staff in FilterScheduleStaffPickInDetails track by $index"
+                                        ng-if="staff.IsPickupStop == true"
+                                        class="card-dashed mb-3"
+                                      >
+                                        <table class="table a-keyvalue">
+                                          <tbody>
+                                            <tr>
+                                              <th>
+                                                <p>Emp code</p>
+                                              </th>
+                                              <td>
+                                                <p>{{staff.EmployeeCode}}</p>
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <th>
+                                                <p>Name</p>
+                                              </th>
+                                              <td>
+                                                <p>{{staff.StaffName}}</p>
+                                              </td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+
+                                        <div
+                                          class="form-check p-3 d-flex justify-content-between"
+                                        >
+                                          <label
+                                            class="screen-reader-only"
+                                            for="choice"
+                                            >&nbsp; In or not?</label
+                                          >
+                                          <div>
+                                            <input
+                                              type="checkbox"
+                                              id="togBtnPickInStaff{{$index}}"
+                                              data-switch="success"
+                                              ng-model="staff.IsStaffIn"
+                                              ng-click="ChangeFilterPickupDataStatus(staff, 'Employee', staff.IsStaffIn)"
+                                            />
+                                            <label
+                                              for="togBtnPickInStaff{{$index}}"
+                                              data-on-label="In"
+                                              data-off-label="Not In"
+                                            ></label>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- Pickup in Searched Data List End -->
+
+                              <div class="tab-content" id="myTabContent">
+                                <div
+                                  class="tab-pane fade show active"
+                                  id="Pickup_in{{current.toString() + current2.toString()}}"
+                                  role="tabpanel"
+                                  aria-labelledby="Pickup_in-tab{{current.toString() + current2.toString()}}"
+                                >
+                                  <div class="gridDataWrap driver-schedule">
+                                    <div
+                                      class="alert alert-warning text-center"
+                                      role="alert"
+                                      ng-if="!ShowLoader && route.Stops.length == 0"
+                                    >
+                                      <b>No stop details found!</b>
+                                    </div>
+                                    <div
+                                      class="accordion accordion-flush mt-4 timeline"
+                                      id="accordionFlushExample"
+                                    >
+                                      <div
+                                        class="accordion-item mx-2 timeline__row border-0"
+                                        ng-repeat="stop in route.Stops"
+                                        ng-init="current3 = $parent.start; $parent.start=$parent.start+1;"
+                                      >
+                                        <div class="timeline__row_icon m-0">
+                                          <div class="timeline-icon success">
+                                            <img
+                                              src="./images/truck-front-fill.svg"
+                                              alt="truck SVG"
+                                            />
+                                          </div>
+                                        </div>
+                                        <div class="timeline__row_content">
+                                          <h2
+                                            class="accordion-header"
+                                            id="flush-headingOne_Stop_Name{{current.toString() + current2.toString() + current3.toString()}}"
+                                          >
+                                            <button
+                                              class="accordion-button p-1 mb-2 collapsed"
+                                              type="button"
+                                              data-bs-toggle="collapse"
+                                              data-bs-target="#flush-collapseOne_Stop_Name{{current.toString() + current2.toString() + current3.toString()}}"
+                                              aria-expanded="false"
+                                              aria-controls="flush-collapseOne_Stop_Name{{current.toString() + current2.toString() + current3.toString()}}"
+                                            >
+                                              <div
+                                                class="fullwidth row displayFlex justify-spacebetween alignCenter textleft stopToggleHeader mb-0"
+                                              >
+                                                <span class="flexOne">
+                                                  <label class="greyColor"
+                                                    >Stop Name:</label
+                                                  >
+                                                  <span
+                                                    class="badgeData font-bold"
+                                                    ng-bind="stop.StopName"
+                                                  ></span>
+                                                </span>
+                                              </div>
+                                            </button>
+                                          </h2>
+                                          <div
+                                            id="flush-collapseOne_Stop_Name{{current.toString() + current2.toString() + current3.toString()}}"
+                                            class="accordion-collapse collapse"
+                                            aria-labelledby="flush-headingOne_Stop_Name{{current.toString() + current2.toString() + current3.toString()}}"
+                                            data-bs-parent="#accordionFlushExample"
+                                          >
+                                            <div class="accordion-body">
+                                              <div
+                                                class="stopToggleContainer stopNestedData p-0"
+                                              >
+                                                <div
+                                                  class=""
+                                                  style="width: 100%"
+                                                >
+                                                  <div
+                                                    class="pagesections noOverflow"
+                                                  >
+                                                    <div
+                                                      colspan="4"
+                                                      class="badge rounded-pill float-none bg-light text-muted mt-3"
+                                                    >
+                                                      <b
+                                                        >Total count (staff,
+                                                        students) :</b
+                                                      >
+                                                      <span
+                                                        ng-bind="GetStopCount(stop)"
+                                                        class="ng-binding"
+                                                      ></span>
+                                                    </div>
+                                                    <div
+                                                      class="tab-content"
+                                                      id="pills-tabContent"
+                                                    >
+                                                      <div
+                                                        class="tab-pane fade show active"
+                                                        id="pills-home{{current.toString() + current2.toString() + current3.toString()}}"
+                                                        role="tabpanel"
+                                                        aria-labelledby="pills-home-tab"
+                                                      >
+                                                        <div>
+                                                          <div
+                                                            class="alert alert-warning text-center"
+                                                            role="alert"
+                                                            ng-if="!ShowLoader && stop.StopsStudentDetails.length == 0 && IsStudentDetails == true"
+                                                          >
+                                                            <b
+                                                              >No student
+                                                              details found!</b
+                                                            >
+                                                          </div>
+                                                        </div>
+
+                                                        <div
+                                                          ng-if="stop.StopsStudentDetails.length > 0 && IsStudentDetails == true"
+                                                          style="width: 100%"
+                                                        >
+                                                          <div colspan="4">
+                                                            <div
+                                                              class="tab-content"
+                                                              id="pills-tabContent"
+                                                            >
+                                                              <div
+                                                                class="tab-pane fade show active"
+                                                                id="pills-In{{current.toString() + current2.toString() + current3.toString()}}"
+                                                                role="tabpanel"
+                                                                aria-labelledby="pills-In-tab"
+                                                              >
+                                                                <div
+                                                                  ng-repeat="student in stop.StopsStudentDetails"
+                                                                  ng-init="currenttoggleid = $parent.start; $parent.start=$parent.start+1;"
+                                                                  class="card-dashed mb-3"
+                                                                  ng-if="student.IsPickupStop == true"
+                                                                >
+                                                                  <div
+                                                                    id="profile-header"
+                                                                    class="header-wrapper fileOnlyHeader-23hdD"
+                                                                  >
+                                                                    <div
+                                                                      class="header-wrapper-inner"
+                                                                    >
+                                                                      <div
+                                                                        class="resume-header-wrapper"
+                                                                      >
+                                                                        <div
+                                                                          class="resume-header grid-container"
+                                                                        >
+                                                                          <div
+                                                                            class="grid-row centered"
+                                                                          >
+                                                                            <div
+                                                                              class="grid-col-md-8 grid-fill-height is-file-only-width overflow-auto"
+                                                                            >
+                                                                              <div
+                                                                                class="header-text shadow-border"
+                                                                              >
+                                                                                <div
+                                                                                  class="avatar-outer fs-mask"
+                                                                                >
+                                                                                  <div
+                                                                                    class="avatar-container avatar-css horizontal position-relative overflow-hidden"
+                                                                                    ng-class="{'student-in': student.IsStudentIn===true , 'student-out': student.IsStudentIn===false}"
+                                                                                  >
+                                                                                    <img
+                                                                                   ng-src="{{GetStudentImage(student.StudentID,student.StudentProfile)}}"
+                                                                                    on-error-src="./images/profile_img.png"
+                                                                                      style="
+                                                                                        background-size: cover;
+                                                                                        background-repeat: no-repeat;
+                                                                                        top: 0;
+                                                                                      "
+                                                                                      class="position-absolute w-100"
+                                                                                    />
+
+                                                                                    <!-- <div class="first-letter">A</div>
+                                                                                                                                                                    <div>N</div> -->
+                                                                                  </div>
+                                                                                </div>
+                                                                                <div
+                                                                                  class="header-text-inner"
+                                                                                >
+                                                                                  <div
+                                                                                    class="fullname heading3 fs-mask"
+                                                                                  >
+                                                                                    {{student.StudentName}}
+                                                                                  </div>
+                                                                                  <div
+                                                                                    class="location fs-mask"
+                                                                                  >
+                                                                                    <img
+                                                                                      class="icon-3-7xg css-1xqhio eac13zx0"
+                                                                                      src="./images/location.svg"
+                                                                                      alt="My Happy SVG"
+                                                                                    />
+
+                                                                                    <span
+                                                                                      ng-bind="stop.StopName"
+                                                                                      class="text-capitalize"
+                                                                                    ></span>
+                                                                                  </div>
+                                                                                </div>
+                                                                              </div>
+                                                                            </div>
+                                                                          </div>
+                                                                        </div>
+                                                                      </div>
+                                                                    </div>
+                                                                  </div>
+                                                                  <table
+                                                                    class="table a-keyvalue"
+                                                                  >
+                                                                    <tbody>
+                                                                      <tr>
+                                                                        <th>
+                                                                          <p>
+                                                                            Admn
+                                                                            no
+                                                                          </p>
+                                                                        </th>
+                                                                        <td>
+                                                                          <p>
+                                                                            {{student.AdmissionNumber}}
+                                                                          </p>
+                                                                        </td>
+                                                                      </tr>
+                                                                      <tr>
+                                                                        <th>
+                                                                          <p>
+                                                                            Class
+                                                                            /
+                                                                            Section
+                                                                          </p>
+                                                                        </th>
+                                                                        <td>
+                                                                          <p>
+                                                                            {{student.ClassName}}
+                                                                            /
+                                                                            {{student.SectionName}}
+                                                                          </p>
+                                                                        </td>
+                                                                      </tr>
+                                                                    </tbody>
+                                                                  </table>
+
+                                                                  <div
+                                                                    class="form-check p-3 d-flex justify-content-between"
+                                                                  >
+                                                                    <label
+                                                                      class="screen-reader-only"
+                                                                      for="choice"
+                                                                      >&nbsp; In
+                                                                      or
+                                                                      not?</label
+                                                                    >
+                                                                    <div
+                                                                      class=""
+                                                                    >
+                                                                      <input
+                                                                        type="checkbox"
+                                                                        id="togBtnPickInStud{{currenttoggleid}}"
+                                                                        data-switch="success"
+                                                                        ng-model="student.IsStudentIn"
+                                                                        ng-click="ChangeStatus('IsPickup', shedule, route, stop, student, 'Student', student.IsStudentIn)"
+                                                                      />
+                                                                      <label
+                                                                        for="togBtnPickInStud{{currenttoggleid}}"
+                                                                        data-on-label="In"
+                                                                        data-off-label="Not In"
+                                                                      ></label>
+                                                                    </div>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+
+                                                            <div
+                                                              colspan="4"
+                                                              class="badge rounded-pill float-none bg-light text-muted mt-3"
+                                                            >
+                                                              <label
+                                                                >Total pickup
+                                                                students
+                                                                :</label
+                                                              >
+                                                              <span
+                                                                ng-bind="GetDetailCount(stop,'StudentPickupStop')"
+                                                                class="ng-binding"
+                                                              ></span>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+
+                                                        <div
+                                                          class="alert alert-warning text-center my-3"
+                                                          role="alert"
+                                                          ng-if="!ShowLoader && stop.StopsStaffDetails.length == 0 && IsStaffDetails == true"
+                                                        >
+                                                          <b
+                                                            >No staff details
+                                                            found!</b
+                                                          >
+                                                        </div>
+
+                                                        <div
+                                                          ng-if="stop.StopsStaffDetails.length > 0 && IsStaffDetails == true"
+                                                          style="width: 100%"
+                                                        >
+                                                          <div colspan="4">
+                                                            <div
+                                                              class="tab-content"
+                                                              id="pills-tabContent"
+                                                            >
+                                                              <div
+                                                                class="tab-pane fade show active"
+                                                                id="pills-Pickup-In-staff{{current.toString() + current2.toString() + current3.toString()}}"
+                                                                role="tabpanel"
+                                                                aria-labelledby="pills-Pickup-In-tab-staff"
+                                                              >
+                                                                <div
+                                                                  ng-repeat="staff in stop.StopsStaffDetails track by $index"
+                                                                  class="card-dashed mb-3"
+                                                                  ng-if="staff.IsPickupStop == true"                                                                  
+                                                                >
+                                                                  <div
+                                                                    class=""
+                                                                  >
+                                                                  <table class="table a-keyvalue">
+                                                                    <tbody>
+                                                                      <tr>
+                                                                        <th>
+                                                                          <p>Emp code</p>
+                                                                        </th>
+                                                                        <td>
+                                                                          <p>
+                                                                            {{staff.EmployeeCode}}
+                                                                          </p>
+                                                                        </td>
+                                                                      </tr>
+                                                                      <tr>
+                                                                        <th>
+                                                                          <p>Name</p>
+                                                                        </th>
+                                                                        <td>
+                                                                          <p>
+                                                                            {{staff.StaffName}}
+                                                                          </p>
+                                                                        </td>
+                                                                      </tr>
+                                                                    </tbody>
+                                                                  </table>
+                                                  
+                                                                
+                                                                  </div>
+                                                                  <div
+                                                                    class="form-check p-3 border-top d-flex justify-content-between"
+                                                                  >
+                                                                    <label
+                                                                      class="screen-reader-only"
+                                                                      for="choice"
+                                                                      >&nbsp; In
+                                                                      or
+                                                                      not?</label
+                                                                    >
+                                                                    <input
+                                                                      type="checkbox"
+                                                                      id="togBtnPickInStaff_{{stop}}_{{$index}}"
+                                                                      data-switch="success"
+                                                                      ng-model="staff.IsStaffIn"
+                                                                      ng-click="ChangeStatus('IsPickup', shedule, route, stop, staff, 'Employee', staff.IsStaffIn)"
+                                                                    />
+                                                                    <label
+                                                                      for="togBtnPickInStaff_{{stop}}_{{$index}}"
+                                                                      data-on-label="In"
+                                                                      data-off-label="Not In"
+                                                                    ></label>
+                                                                  </div>
+                                                                </div>
+                                                              </div>
+                                                            </div>
+
+                                                            <div
+                                                              colspan="4"
+                                                              class="badge rounded-pill float-none bg-light text-muted mt-3"
+                                                            >
+                                                              <label
+                                                                >Total pickup
+                                                                staff :</label
+                                                              >
+                                                              <span
+                                                                ng-bind="GetDetailCount(stop,'StaffPickupStop', 'IsStaff')"
+                                                                class="ng-binding"
+                                                              >
+                                                              </span>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div
+                                  class="tab-pane fade"
+                                  id="Pickup_Out{{current.toString() + current2.toString()}}"
+                                  role="tabpanel"
+                                  aria-labelledby="Pickup_Out-tab{{current.toString() + current2.toString()}}"
+                                >
+                                  <!-- Pickup Out Searched Data List Start -->
+                                  <div
+                                    ng-if="FilterScheduleStudentPickOutDetails.length > 0 && IsStudentDetails == true"
+                                    style="width: 100%"
+                                  >
+                                    <div colspan="4">
+                                      <div
+                                        class="tab-content"
+                                        id="pills-tabContent"
+                                      >
+                                        <div
+                                          class="tab-pane fade show active p-2"
+                                          id="pills-home{{current.toString() + current2.toString() + current3.toString()}}"
+                                          role="tabpanel"
+                                          aria-labelledby="pills-home-tab"
+                                        >
+                                          <div
+                                            ng-repeat="student in FilterScheduleStudentPickOutDetails"
+                                            ng-if="student.IsPickupStop == true"
+                                            ng-init="currenttoggleid = $parent.start; $parent.start=$parent.start+1;"
+                                            class="card-dashed mb-3"
+                                          >
+                                            <div
+                                              id="profile-header"
+                                              class="header-wrapper fileOnlyHeader-23hdD"
+                                            >
+                                              <div class="header-wrapper-inner">
+                                                <div
+                                                  class="resume-header-wrapper"
+                                                >
+                                                  <div
+                                                    class="resume-header grid-container"
+                                                  >
+                                                    <div
+                                                      class="grid-row centered"
+                                                    >
+                                                      <div
+                                                        class="grid-col-md-8 grid-fill-height is-file-only-width overflow-auto"
+                                                      >
+                                                        <div
+                                                          class="header-text shadow-border"
+                                                        >
+                                                          <div
+                                                            class="avatar-outer fs-mask"
+                                                          >
+                                                            <div
+                                                              class="avatar-container avatar-css horizontal position-relative overflow-hidden"
+                                                              ng-class="{'student-in': student.IsStudentIn===true , 'student-out': student.IsStudentIn===false}"
+                                                            >
+                                                              <img
+                                                              ng-src="{{GetStudentImage(student.StudentID,student.StudentProfile)}}"
+                                                              on-error-src="./images/profile_img.png"
+                                                                style="
+                                                                  background-size: cover;
+                                                                  background-repeat: no-repeat;
+                                                                  top: 0;
+                                                                "
+                                                                class="position-absolute w-100"
+                                                              />
+                                                            </div>
+                                                          </div>
+                                                          <div
+                                                            class="header-text-inner"
+                                                          >
+                                                            <div
+                                                              class="fullname heading3 fs-mask"
+                                                            >
+                                                              {{student.StudentName}}
+                                                            </div>
+                                                            <div
+                                                              class="location fs-mask"
+                                                            >
+                                                              <img
+                                                                class="icon-3-7xg css-1xqhio eac13zx0"
+                                                                src="./images/location.svg"
+                                                              />
+
+                                                              <span
+                                                                ng-bind="student.StopName"
+                                                                class="text-capitalize"
+                                                              ></span>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <table class="table a-keyvalue">
+                                              <tbody>
+                                                <tr>
+                                                  <th>
+                                                    <p>Admn no</p>
+                                                  </th>
+                                                  <td>
+                                                    <p>
+                                                      {{student.AdmissionNumber}}
+                                                    </p>
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  <th>
+                                                    <p>Class / Section</p>
+                                                  </th>
+                                                  <td>
+                                                    <p>
+                                                      {{student.ClassName}} /
+                                                      {{student.SectionName}}
+                                                    </p>
+                                                  </td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
+
+                                            <div
+                                              class="form-check p-3 d-flex justify-content-between"
+                                            >
+                                              <label
+                                                class="screen-reader-only"
+                                                for="choice"
+                                                >&nbsp; In or not?</label
+                                              >
+                                              <div>
+                                                <input
+                                                  type="checkbox"
+                                                  id="togBtnPickOutStud{{currenttoggleid}}"
+                                                  data-switch="success"
+                                                  ng-model="student.IsStudentIn"
+                                                  ng-click="ChangeFilterPickupDataStatus(student, 'Student', student.IsStudentIn)"
+                                                />
+                                                <label
+                                                  for="togBtnPickOutStud{{currenttoggleid}}"
+                                                  data-on-label="In"
+                                                  data-off-label="Out"
+                                                ></label>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div
+                                    ng-if="FilterScheduleStaffPickOutDetails.length > 0 && IsStaffDetails == true"
+                                    style="width: 100%"
+                                  >
+                                    <div colspan="4">
+                                      <div
+                                        class="tab-content"
+                                        id="pills-tabContent"
+                                      >
+                                        <div
+                                          class="tab-pane fade show active"
+                                          id="pills-home{{current.toString() + current2.toString() + current3.toString()}}"
+                                          role="tabpanel"
+                                          aria-labelledby="pills-home-tab"
+                                        >
+                                          <div
+                                            ng-repeat="staff in FilterScheduleStaffPickOutDetails"
+                                            ng-if="staff.IsPickupStop == true"
+                                            ng-init="currenttoggleid = $parent.start; $parent.start=$parent.start+1;"
+                                            class="card-dashed mb-3"
+                                          >
+                                            <table class="table a-keyvalue">
+                                              <tbody>
+                                                <tr>
+                                                  <th>
+                                                    <p>Emp code</p>
+                                                  </th>
+                                                  <td>
+                                                    <p>
+                                                      {{staff.EmployeeCode}}
+                                                    </p>
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  <th>
+                                                    <p>Name</p>
+                                                  </th>
+                                                  <td>
+                                                    <p>{{staff.StaffName}}</p>
+                                                  </td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
+
+                                            <div
+                                              class="form-check p-3 d-flex justify-content-between"
+                                            >
+                                              <label
+                                                class="screen-reader-only"
+                                                for="choice"
+                                                >&nbsp; In or not?</label
+                                              >
+                                              <div>
+                                                <input
+                                                  type="checkbox"
+                                                  id="togBtnPickOutStaff{{currenttoggleid}}"
+                                                  data-switch="success"
+                                                  ng-model="staff.IsStaffIn"
+                                                  ng-click="ChangeFilterPickupDataStatus(staff, 'Employee', staff.IsStaffIn)"
+                                                />
+                                                <label
+                                                  for="togBtnPickOutStaff{{currenttoggleid}}"
+                                                  data-on-label="In"
+                                                  data-off-label="Out"
+                                                ></label>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <!-- Pickup Out Searched Data List End -->
+
+                                  <div ng-if="IsStudentDetails == true">
+                                    <div
+                                      class="card-dashed m-3 mt-0"
+                                      ng-repeat="shedule in StudentPickupSheduledList"
+                                      ng-init="currenttoggleid2 = $parent.start; $parent.start=$parent.start+1;"
+                                    >
+                                      <div
+                                        id="profile-header"
+                                        class="header-wrapper fileOnlyHeader-23hdD"
+                                      >
+                                        <div class="header-wrapper-inner">
+                                          <div class="resume-header-wrapper">
+                                            <div
+                                              class="resume-header grid-container"
+                                            >
+                                              <div class="grid-row centered">
+                                                <div
+                                                  class="grid-col-md-8 grid-fill-height is-file-only-width overflow-auto"
+                                                >
+                                                  <div
+                                                    class="header-text shadow-border"
+                                                  >
+                                                    <div
+                                                      class="avatar-outer fs-mask"
+                                                    >
+                                                      <div
+                                                        class="avatar-container avatar-css horizontal position-relative overflow-hidden"
+                                                        ng-class="{'student-in': shedule.StudentRouteStopMap.IsStudentIn===true , 'student-out': shedule.StudentRouteStopMap.IsStudentIn===false}"
+                                                      >
+                                                        <img
+                                                       
+                                                        ng-src="{{GetStudentImage(shedule.StudentRouteStopMap.StudentID,shedule.StudentRouteStopMap.StudentProfile)}}"
+                                                        on-error-src="./images/profile_img.png"
+                                                          style="
+                                                            background-size: cover;
+                                                            background-repeat: no-repeat;
+                                                            top: 0;
+                                                          "
+                                                          class="position-absolute w-100"
+                                                        />
+
+                                                        <!-- <div class="first-letter">A</div>
+                                                                                                                <div>N</div> -->
+                                                      </div>
+                                                    </div>
+                                                    <div
+                                                      class="header-text-inner"
+                                                    >
+                                                      <div
+                                                        class="fullname heading3 fs-mask"
+                                                      >
+                                                        {{shedule.StudentRouteStopMap.StudentName}}
+                                                      </div>
+                                                      <div
+                                                        class="location fs-mask"
+                                                      >
+                                                        <img
+                                                          class="icon-3-7xg css-1xqhio eac13zx0"
+                                                          src="./images/mortarboard-fill.svg"
+                                                          alt="My Happy SVG"
+                                                        />
+
+                                                        <span
+                                                          class="text-capitalize"
+                                                          >{{shedule.StudentRouteStopMap.StopName}}</span
+                                                        >
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <table class="table a-keyvalue">
+                                        <tbody>
+                                          <tr>
+                                            <th>
+                                              <p>Admn no</p>
+                                            </th>
+                                            <td>
+                                              <p>
+                                                {{shedule.StudentRouteStopMap.AdmissionNumber}}
+                                              </p>
+                                            </td>
+                                          </tr>
+
+                                          <tr>
+                                            <th>
+                                              <p>Class</p>
+                                            </th>
+                                            <td>
+                                              <p>
+                                                {{shedule.StudentRouteStopMap.ClassName}}
+                                              </p>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <th>
+                                              <p>Section</p>
+                                            </th>
+                                            <td>
+                                              <p>
+                                                {{shedule.StudentRouteStopMap.SectionName}}
+                                              </p>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+
+                                      <div
+                                        class="form-check p-3 border-top d-flex justify-content-between"
+                                      >
+                                        <label
+                                          class="screen-reader-only"
+                                          for="choice"
+                                          >&nbsp; In or not?</label
+                                        >
+                                        <input
+                                          type="checkbox"
+                                          id="togBtnPickOutStud{{currenttoggleid2}}"
+                                          data-switch="success"
+                                          ng-model="shedule.StudentRouteStopMap.IsStudentIn"
+                                          ng-click="AddNewSheduleData(shedule, 'Student', shedule.StudentRouteStopMap.IsStudentIn)"
+                                        />
+                                        <label
+                                          for="togBtnPickOutStud{{currenttoggleid2}}"
+                                          data-on-label="In"
+                                          data-off-label="Out"
+                                        ></label>
+                                      </div>
+                                    </div>
+                                    <div
+                                      colspan="4"
+                                      class="px-3 py-2"
+                                      style="
+                                        border-top: 1px solid #d3d0d0;
+                                        margin-top: 10px;
+                                        padding: 4px;
+                                      "
+                                    >
+                                      <label>Total drop students :</label>
+                                      <span class="ng-binding"
+                                        >{{StudentPickoutSheduleCount}}</span
+                                      >
+                                    </div>
+                                  </div>
+
+                                  <div ng-if="IsStaffDetails == true">
+                                    <div
+                                      ng-repeat="shedule in StaffPickupSheduledList"
+                                      ng-init="currenttoggleid3 = $parent.start; $parent.start=$parent.start+1;"
+                                      class="card-dashed m-2"
+                                    >
+                                      <div
+                                     
+                                      >
+                                      <table class="table a-keyvalue">
+                                        <tbody>
+                                          <tr>
+                                            <th>
+                                              <p>Emp code</p>
+                                            </th>
+                                            <td>
+                                              <p>
+                                                {{shedule.StaffRouteStopMap.EmployeeCode}}
+                                              </p>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <th>
+                                              <p>Name</p>
+                                            </th>
+                                            <td>
+                                              <p>
+                                                {{shedule.StaffRouteStopMap.StaffName}}
+                                              </p>
+                                            </td>
+                                          </tr>
+                                        </tbody>
+                                      </table>
+                      
+                                 
+                                        <div class="form-check p-2 mt-2">
+                                          <label
+                                            class="screen-reader-only"
+                                            for="choice"
+                                            >&nbsp; In or not?</label
+                                          >
+                                          <input
+                                            type="checkbox"
+                                            id="togBtnPickOutStaff{{currenttoggleid3}}"
+                                            data-switch="success"
+                                            ng-model="shedule.StaffRouteStopMap.IsStaffIn"
+                                            ng-click="AddNewSheduleData(shedule, 'Staff', shedule.StaffRouteStopMap.IsStaffIn)"
+                                          />
+                                          <label
+                                            for="togBtnPickOutStaff{{currenttoggleid3}}"
+                                            data-on-label="In"
+                                            data-off-label="Out" class="pull right"
+                                          ></label>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      colspan="4"
+                                      class="px-3 py-2"
+                                      style="
+                                        border-top: 1px solid #d3d0d0;
+                                        margin-top: 10px;
+                                        padding: 4px;
+                                      "
+                                    >
+                                      <label>Total drop staffs :</label>
+                                      <span class="ng-binding"
+                                        >{{StaffPickoutSheduleCount}}</span
+                                      >
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              class="tab-pane fade"
+                              id="_Drop{{current.toString() + current2.toString()}}"
+                              role="tabpanel"
+                              aria-labelledby="_Drop-tab{{current.toString() + current2.toString()}}"
+                            >
+                              <ul
+                                class="nav nav-tabs custom-tab"
+                                id="myTab"
+                                role="tablist"
+                              >
+                                <li class="nav-item" role="presentation">
+                                  <button
+                                    class="nav-link active"
+                                    id="Drop_in-tab{{current.toString() + current2.toString()}}"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#Drop_in{{current.toString() + current2.toString()}}"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="Drop_in{{current.toString() + current2.toString()}}"
+                                    aria-selected="true"
+                                    ng-click="RouteStopTypeChange('DropIn')"
+                                  >
+                                    Drop in
+                                  </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                  <button
+                                    class="nav-link"
+                                    id="Drop_out-tab{{current.toString() + current2.toString()}}"
+                                    data-bs-toggle="tab"
+                                    data-bs-target="#Drop_out{{current.toString() + current2.toString()}}"
+                                    type="button"
+                                    role="tab"
+                                    aria-controls="Drop_out{{current.toString() + current2.toString()}}"
+                                    aria-selected="false"
+                                    ng-click="GetScheduledDatasByRoute('IsDrop', shedule, route)"
+                                  >
+                                    Drop out
+                                  </button>
+                                </li>
+                              </ul>
+                              <div class="center py-2" ng-if="SheduleType == 'DropIn'">
+                                <button type="button" class="btn btn-primary btn-sm">Total : {{DropTotalCount}}</button>
+                                <button type="button" class="btn btn-success btn-sm">In : {{DropInCount}}</button>
+                                <button type="button" class="btn btn-success btn-sm">Not in : {{DropNotInCount}}</button>
+                              </div>
+                              <div class="center py-2" ng-if="SheduleType == 'DropOut'">
+                                <button type="button" class="btn btn-primary btn-sm">Total : {{DropOutTotalCount}}</button>
+                                <button type="button" class="btn btn-success btn-sm">In : {{DropNotOutCount}}</button>
+                                <button type="button" class="btn btn-success btn-sm">Out : {{DropOutCount}} </button>
+                              </div>
+                              <div class="row mt-3">
+                                <div class="col-md-5 mx-auto px-2">
+                                  <div class="input-group flex-nowrap">
+                                    <input
+                                      class="form-control border-end-0 border px-3 rounded-start mb-0"
+                                      type="search"
+                                      placeholder="Search"
+                                      id="search-input-drop"
+                                      ng-keyup="$event.keyCode == 13 && FillSearchText(route, shedule, 'Drop')"
+                                    />
+                                    <button
+                                      ng-click="ScanBarcode(route, shedule,'Drop')"
+                                      style="z-index: 1"
+                                      class="rounded-end barcode-btn btn-outline-secondary border-start-0 border-bottom-0 border ms-n5"
+                                      type="button"
+                                    >
+                                      <img
+                                        src="./images/upc-scan.svg"
+                                        alt="My Happy SVG"
+                                      />
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="text-center" ng-if="LoadingSpinner == true">
+                                <div class="spinner-border" role="status">
+                                  <span class="sr-only">Loading...</span>
+                                </div>
+                              </div>
+                              <div class="tab-content px-2" id="myTabContent">
+                                <div
+                                  class="tab-pane fade show active"
+                                  id="Drop_in{{current.toString() + current2.toString()}}"
+                                  role="tabpanel"
+                                  aria-labelledby="Drop_in-tab{{current.toString() + current2.toString()}}"
+                                >
+                                  <!-- Drop In Searched Data List Start -->
+                                  <div
+                                    ng-if="FilterScheduleStudentDropInDetails.length > 0 && IsStudentDetails == true"
+                                    style="width: 100%"
+                                  >
+                                    <div colspan="4">
+                                      <div
+                                        class="tab-content"
+                                        id="pills-tabContent"
+                                      >
+                                        <div
+                                          class="tab-pane fade show active"
+                                          id="pills-home{{current.toString() + current2.toString() + current3.toString()}}"
+                                          role="tabpanel"
+                                          aria-labelledby="pills-home-tab"
+                                        >
+                                          <div
+                                            ng-repeat="student in FilterScheduleStudentDropInDetails"
+                                            ng-if="student.IsDropStop == true"
+                                            ng-init="currenttoggleid = $parent.start; $parent.start=$parent.start+1;"
+                                            class="card-dashed mb-3"
+                                          >
+                                            <div
+                                              id="profile-header"
+                                              class="header-wrapper fileOnlyHeader-23hdD"
+                                            >
+                                              <div class="header-wrapper-inner">
+                                                <div
+                                                  class="resume-header-wrapper"
+                                                >
+                                                  <div
+                                                    class="resume-header grid-container"
+                                                  >
+                                                    <div
+                                                      class="grid-row centered"
+                                                    >
+                                                      <div
+                                                        class="grid-col-md-8 grid-fill-height is-file-only-width overflow-auto"
+                                                      >
+                                                        <div
+                                                          class="header-text shadow-border"
+                                                        >
+                                                          <div
+                                                            class="avatar-outer fs-mask"
+                                                          >
+                                                            <div
+                                                              class="avatar-container avatar-css horizontal position-relative overflow-hidden"
+                                                              ng-class="{'student-in': student.IsStudentIn===true , 'student-out': student.IsStudentIn===false}"
+                                                            >
+                                                              <img
+                                                              ng-src="{{GetStudentImage(student.StudentID,student.StudentProfile)}}"
+                                                              on-error-src="./images/profile_img.png"
+                                                                style="
+                                                                  background-size: cover;
+                                                                  background-repeat: no-repeat;
+                                                                  top: 0;
+                                                                "
+                                                                class="position-absolute w-100"
+                                                              />
+                                                            </div>
+                                                          </div>
+                                                          <div
+                                                            class="header-text-inner"
+                                                          >
+                                                            <div
+                                                              class="fullname heading3 fs-mask"
+                                                            >
+                                                              {{student.StudentName}}
+                                                            </div>
+                                                            <div
+                                                              class="location fs-mask"
+                                                            >
+                                                              <img
+                                                                class="icon-3-7xg css-1xqhio eac13zx0"
+                                                                src="./images/location.svg"
+                                                              />
+
+                                                              <span
+                                                                ng-bind="student.StopName"
+                                                                class="text-capitalize"
+                                                              ></span>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <table class="table a-keyvalue">
+                                              <tbody>
+                                                <tr>
+                                                  <th>
+                                                    <p>Admn no</p>
+                                                  </th>
+                                                  <td>
+                                                    <p>
+                                                      {{student.AdmissionNumber}}
+                                                    </p>
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  <th>
+                                                    <p>Class / Section</p>
+                                                  </th>
+                                                  <td>
+                                                    <p>
+                                                      {{student.ClassName}} /
+                                                      {{student.SectionName}}
+                                                    </p>
+                                                  </td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
+
+                                            <div
+                                              class="form-check p-3 d-flex justify-content-between"
+                                            >
+                                              <label
+                                                class="screen-reader-only"
+                                                for="choice"
+                                                >&nbsp; In or not?</label
+                                              >
+                                              <div>
+                                                <input
+                                                  type="checkbox"
+                                                  id="togBtnDropInStud{{currenttoggleid}}"
+                                                  data-switch="success"
+                                                  ng-model="student.IsStudentIn"
+                                                  ng-click="ChangeFilterDropDataStatus(student, 'Student', student.IsStudentIn)"
+                                                />
+                                                <label
+                                                  for="togBtnDropInStud{{currenttoggleid}}"
+                                                  data-on-label="In"
+                                                  data-off-label="Not In"
+                                                ></label>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div
+                                    ng-if="FilterScheduleStaffDropInDetails.length > 0 && IsStaffDetails == true"
+                                    style="width: 100%"
+                                  >
+                                    <div colspan="4">
+                                      <div
+                                        class="tab-content"
+                                        id="pills-tabContent"
+                                      >
+                                        <div
+                                          class="tab-pane fade show active"
+                                          id="pills-home{{current.toString() + current2.toString() + current3.toString()}}"
+                                          role="tabpanel"
+                                          aria-labelledby="pills-home-tab"
+                                        >
+                                          <div
+                                            ng-repeat="staff in FilterScheduleStaffDropInDetails"
+                                            ng-if="staff.IsDropStop == true"
+                                            ng-init="currenttoggleid = $parent.start; $parent.start=$parent.start+1;"
+                                            class="card-dashed mb-3"
+                                          >
+                                            <table class="table a-keyvalue">
+                                              <tbody>
+                                                <tr>
+                                                  <th>
+                                                    <p>Emp code</p>
+                                                  </th>
+                                                  <td>
+                                                    <p>
+                                                      {{staff.EmployeeCode}}
+                                                    </p>
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  <th>
+                                                    <p>Name</p>
+                                                  </th>
+                                                  <td>
+                                                    <p>{{staff.StaffName}}</p>
+                                                  </td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
+
+                                            <div
+                                              class="form-check p-3 d-flex justify-content-between"
+                                            >
+                                              <label
+                                                class="screen-reader-only"
+                                                for="choice"
+                                                >&nbsp; In or not?</label
+                                              >
+                                              <div>
+                                                <input
+                                                  type="checkbox"
+                                                  id="togBtnDropInStaff{{currenttoggleid}}"
+                                                  data-switch="success"
+                                                  ng-model="staff.IsStaffIn"
+                                                  ng-click="ChangeFilterDropDataStatus(staff, 'Employee', staff.IsStaffIn)"
+                                                />
+                                                <label
+                                                  for="togBtnDropInStaff{{currenttoggleid}}"
+                                                  data-on-label="In"
+                                                  data-off-label="Not In"
+                                                ></label>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <!-- Drop In Searched Data List End -->
+
+                                  <div ng-if="IsStudentDetails == true">
+                                    <div ng-repeat="stop in route.Stops">
+                                      <div
+                                        ng-repeat="student in stop.StopsStudentDetails"
+                                        class="card-dashed mb-4"
+                                        ng-if="student.IsDropStop == true"
+                                      >
+                                        <div
+                                          id="profile-header"
+                                          class="header-wrapper fileOnlyHeader-23hdD"
+                                        >
+                                          <div class="header-wrapper-inner">
+                                            <div class="resume-header-wrapper">
+                                              <div
+                                                class="resume-header grid-container"
+                                              >
+                                                <div class="grid-row centered">
+                                                  <div
+                                                    class="grid-col-md-8 grid-fill-height is-file-only-width overflow-auto"
+                                                  >
+                                                    <div
+                                                      class="header-text shadow-border"
+                                                    >
+                                                      <div
+                                                        class="avatar-outer fs-mask"
+                                                      >
+                                                        <div
+                                                          class="avatar-container avatar-css horizontal position-relative overflow-hidden"
+                                                          ng-class="{'student-in': student.IsStudentIn===true , 'student-out': student.IsStudentIn===false}"
+                                                        >
+                                                          <img
+                                                          ng-src="{{GetStudentImage(student.StudentID,student.StudentProfile)}}"
+                                                          on-error-src="./images/profile_img.png"
+                                                            style="
+                                                              background-size: cover;
+                                                              background-repeat: no-repeat;
+                                                              top: 0;
+                                                            "
+                                                            class="position-absolute w-100"
+                                                          />
+
+                                                          <!-- <div class="first-letter">A</div>
+                                                                                                                    <div>N</div> -->
+                                                        </div>
+                                                      </div>
+                                                      <div
+                                                        class="header-text-inner"
+                                                      >
+                                                        <div
+                                                          class="fullname heading3 fs-mask"
+                                                        >
+                                                          {{student.StudentName}}
+                                                        </div>
+                                                        <div
+                                                          class="location fs-mask"
+                                                        >
+                                                          <img
+                                                            class="icon-3-7xg css-1xqhio eac13zx0"
+                                                            src="./images/mortarboard-fill.svg"
+                                                            alt="My Happy SVG"
+                                                          />
+
+                                                          <span
+                                                            class="text-capitalize"
+                                                            >{{stop.StopName}}</span
+                                                          >
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <table class="table a-keyvalue">
+                                          <tbody>
+                                            <tr>
+                                              <th>
+                                                <p>Admn no</p>
+                                              </th>
+                                              <td>
+                                                <p>
+                                                  {{student.AdmissionNumber}}
+                                                </p>
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <th>
+                                                <p>Class / Section</p>
+                                              </th>
+                                              <td>
+                                                <p>
+                                                  {{student.ClassName}} /
+                                                  {{student.SectionName}}
+                                                </p>
+                                              </td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+
+                                        <div
+                                          class="form-check p-3 border-top d-flex justify-content-between"
+                                        >
+                                          <label
+                                            class="screen-reader-only"
+                                            for="choice"
+                                            >&nbsp; In or not?</label
+                                          >
+                                          <input
+                                            type="checkbox"
+                                            id="togBtnDropInStud{{student.AdmissionNumber}}"
+                                            data-switch="success"
+                                            ng-model="student.IsStudentIn"
+                                            ng-click="ChangeStatus('IsDrop', shedule, route, stop, student, 'Student', student.IsStudentIn)"
+                                          />
+                                          <label
+                                            for="togBtnDropInStud{{student.AdmissionNumber}}"
+                                            data-on-label="In"
+                                            data-off-label="Not in"
+                                          ></label>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      ng-if="route.Stops.length !== 0"
+                                      colspan="4"
+                                      class="px-3 py-2"
+                                      style="
+                                        border-top: 1px solid #d3d0d0;
+                                        margin-top: 10px;
+                                        padding: 4px;
+                                      "
+                                    >
+                                      <label>Total drop students :</label>
+                                      <span
+                                        ng-bind="GetDetailCountByRoute(route,'StudentDropStop')"
+                                        class="ng-binding"
+                                      ></span>
+                                    </div>
+                                  </div>
+
+                                  <div ng-if="IsStaffDetails == true">
+                                    <div ng-repeat="stop in route.Stops">
+                                      <div
+                                        ng-repeat="staff in stop.StopsStaffDetails"
+                                        ng-init="currenttoggleid5 = $parent.start; $parent.start=$parent.start+1;"
+                                        class="card-dashed mb-3"
+                                        ng-if="staff.IsDropStop == true"
+                                      >
+                                        <div>
+                                          <table class="table a-keyvalue">
+                                            <tbody>
+                                              <tr>
+                                                <th>
+                                                  <p>Emp code</p>
+                                                </th>
+                                                <td>
+                                                  <p>
+                                                    {{staff.EmployeeCode}}
+                                                  </p>
+                                                </td>
+                                              </tr>
+                                              <tr>
+                                                <th>
+                                                  <p>Name</p>
+                                                </th>
+                                                <td>
+                                                  <p>
+                                                    {{staff.StaffName}}
+                                                  </p>
+                                                </td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                
+                                      
+                                          <div class="form-check p-2 mt-2">
+                                            <label
+                                              class="screen-reader-only"
+                                              for="choice"
+                                              >&nbsp; In or not?</label
+                                            >
+                                            <input
+                                              type="checkbox"
+                                              id="togBtnDropInStaff{{staff.EmployeeCode}}"
+                                              data-switch="success"
+                                              ng-model="staff.IsStaffIn"
+                                              ng-click="ChangeStatus('IsDrop', shedule, route, stop, staff, 'Employee', staff.IsStaffIn)"
+                                            />
+                                            <label
+                                              for="togBtnDropInStaff{{staff.EmployeeCode}}"
+                                              data-on-label="In"
+                                              data-off-label="Not in"  class="pull right"
+                                            ></label>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      ng-if="route.Stops.length !== 0"
+                                      colspan="4"
+                                      class="px-3 py-2"
+                                      style="
+                                        border-top: 1px solid #d3d0d0;
+                                        margin-top: 10px;
+                                        padding: 4px;
+                                      "
+                                    >
+                                      <label>Total drop staffs :</label>
+                                      <span
+                                        ng-bind="GetDetailCountByRoute(route,'StaffDropStop')"
+                                        class="ng-binding"
+                                      ></span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div
+                                  class="tab-pane fade"
+                                  id="Drop_out{{current.toString() + current2.toString()}}"
+                                  role="tabpanel"
+                                  aria-labelledby="Drop_out-tab{{current.toString() + current2.toString()}}"
+                                >
+                                  <!-- Drop Out Searched Data List Start -->
+                                  <div
+                                    ng-if="FilterScheduleStudentDropOutDetails.length > 0 && IsStudentDetails == true"
+                                    style="width: 100%"
+                                  >
+                                    <div colspan="4">
+                                      <div
+                                        class="tab-content"
+                                        id="pills-tabContent"
+                                      >
+                                        <div
+                                          class="tab-pane fade show active"
+                                          id="pills-home{{current.toString() + current2.toString() + current3.toString()}}"
+                                          role="tabpanel"
+                                          aria-labelledby="pills-home-tab"
+                                        >
+                                          <div
+                                            ng-repeat="student in FilterScheduleStudentDropOutDetails"
+                                            ng-if="student.IsDropStop == true"
+                                            ng-init="currenttoggleid = $parent.start; $parent.start=$parent.start+1;"
+                                            class="card-dashed mb-3"
+                                          >
+                                            <div
+                                              id="profile-header"
+                                              class="header-wrapper fileOnlyHeader-23hdD"
+                                            >
+                                              <div class="header-wrapper-inner">
+                                                <div
+                                                  class="resume-header-wrapper"
+                                                >
+                                                  <div
+                                                    class="resume-header grid-container"
+                                                  >
+                                                    <div
+                                                      class="grid-row centered"
+                                                    >
+                                                      <div
+                                                        class="grid-col-md-8 grid-fill-height is-file-only-width overflow-auto"
+                                                      >
+                                                        <div
+                                                          class="header-text shadow-border"
+                                                        >
+                                                          <div
+                                                            class="avatar-outer fs-mask"
+                                                          >
+                                                            <div
+                                                              class="avatar-container avatar-css horizontal position-relative overflow-hidden"
+                                                              ng-class="{'student-in': student.IsStudentIn===true , 'student-out': student.IsStudentIn===false}"
+                                                            >
+                                                              <img
+                                                              ng-src="{{GetStudentImage(student.StudentID,student.StudentProfile)}}"
+                                                              on-error-src="./images/profile_img.png"
+                                                                style="
+                                                                  background-size: cover;
+                                                                  background-repeat: no-repeat;
+                                                                  top: 0;
+                                                                "
+                                                                class="position-absolute w-100"
+                                                              />
+                                                            </div>
+                                                          </div>
+                                                          <div
+                                                            class="header-text-inner"
+                                                          >
+                                                            <div
+                                                              class="fullname heading3 fs-mask"
+                                                            >
+                                                              {{student.StudentName}}
+                                                            </div>
+                                                            <div
+                                                              class="location fs-mask"
+                                                            >
+                                                              <img
+                                                                class="icon-3-7xg css-1xqhio eac13zx0"
+                                                                src="./images/location.svg"
+                                                              />
+
+                                                              <span
+                                                                ng-bind="student.StopName"
+                                                                class="text-capitalize"
+                                                              ></span>
+                                                            </div>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                            <table class="table a-keyvalue">
+                                              <tbody>
+                                                <tr>
+                                                  <th>
+                                                    <p>Admn no</p>
+                                                  </th>
+                                                  <td>
+                                                    <p>
+                                                      {{student.AdmissionNumber}}
+                                                    </p>
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  <th>
+                                                    <p>Class / Section</p>
+                                                  </th>
+                                                  <td>
+                                                    <p>
+                                                      {{student.ClassName}} /
+                                                      {{student.SectionName}}
+                                                    </p>
+                                                  </td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
+
+                                            <div
+                                              class="form-check p-3 d-flex justify-content-between"
+                                            >
+                                              <label
+                                                class="screen-reader-only"
+                                                for="choice"
+                                                >&nbsp; In or not?</label
+                                              >
+                                              <div>
+                                                <input
+                                                  type="checkbox"
+                                                  id="togBtnDropOutStud{{currenttoggleid}}"
+                                                  data-switch="success"
+                                                  ng-model="student.IsStudentIn"
+                                                  ng-click="ChangeFilterDropDataStatus(student, 'Student', student.IsStudentIn)"
+                                                />
+                                                <label
+                                                  for="togBtnDropOutStud{{currenttoggleid}}"
+                                                  data-on-label="In"
+                                                  data-off-label="Out"
+                                                ></label>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div
+                                    ng-if="FilterScheduleStaffDropOutDetails.length > 0 && IsStaffDetails == true"
+                                    style="width: 100%"
+                                  >
+                                    <div colspan="4">
+                                      <div
+                                        class="tab-content"
+                                        id="pills-tabContent"
+                                      >
+                                        <div
+                                          class="tab-pane fade show active"
+                                          id="pills-home{{current.toString() + current2.toString() + current3.toString()}}"
+                                          role="tabpanel"
+                                          aria-labelledby="pills-home-tab"
+                                        >
+                                          <div
+                                            ng-repeat="staff in FilterScheduleStaffDropOutDetails"
+                                            ng-if="staff.IsDropStop == true"
+                                            ng-init="currenttoggleid = $parent.start; $parent.start=$parent.start+1;"
+                                            class="card-dashed mb-3"
+                                          >
+                                            <table class="table a-keyvalue">
+                                              <tbody>
+                                                <tr>
+                                                  <th>
+                                                    <p>Emp code</p>
+                                                  </th>
+                                                  <td>
+                                                    <p>
+                                                      {{staff.EmployeeCode}}
+                                                    </p>
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  <th>
+                                                    <p>Name</p>
+                                                  </th>
+                                                  <td>
+                                                    <p>{{staff.StaffName}}</p>
+                                                  </td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
+
+                                            <div
+                                              class="form-check p-3 d-flex justify-content-between"
+                                            >
+                                              <label
+                                                class="screen-reader-only"
+                                                for="choice"
+                                                >&nbsp; In or not?</label
+                                              >
+                                              <div>
+                                                <input
+                                                  type="checkbox"
+                                                  id="togBtnDropOutStaff{{currenttoggleid}}"
+                                                  data-switch="success"
+                                                  ng-model="staff.IsStaffIn"
+                                                  ng-click="ChangeFilterDropDataStatus(staff, 'Employee', staff.IsStaffIn)"
+                                                />
+                                                <label
+                                                  for="togBtnDropOutStaff{{currenttoggleid}}"
+                                                  data-on-label="In"
+                                                  data-off-label="Out"
+                                                ></label>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <!-- Drop Out Searched Data List End -->
+
+                                  <div>
+                                    <div ng-if="StudentStaffDropOutStopWiseDetails != null">
+                                      <div
+                                        class="alert alert-warning text-center"
+                                        role="alert"
+                                        ng-if="!ShowLoader && StudentStaffDropOutStopWiseDetails.Stops.length == 0"
+                                      >
+                                        <b>No stop details found!</b>
+                                      </div>
+                                      <div
+                                        class="accordion accordion-flush mt-4 timeline"
+                                        id="accordionFlushExample"
+                                      >
+                                        <div
+                                          class="accordion-item mx-2 timeline__row border-0"
+                                          ng-repeat="stop in StudentStaffDropOutStopWiseDetails.Stops"
+                                          ng-init="current5 = $parent.start; $parent.start=$parent.start+1;"
+                                        >
+                                          <div class="timeline__row_icon m-0">
+                                            <div class="timeline-icon success">
+                                              <img
+                                                src="./images/truck-front-fill.svg"
+                                                alt="truck SVG"
+                                              />
+                                            </div>
+                                          </div>
+                                          <div class="timeline__row_content">
+                                            <h2
+                                              class="accordion-header"
+                                              id="flush-headingOne_Stop_Name{{current.toString() + current2.toString() + current3.toString()+current5.toString()}}"
+                                            >
+                                              <button
+                                                class="accordion-button collapsed p-1 mb-3"
+                                                type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#flush-collapseOne_Stop_Name{{current.toString() + current2.toString() + current3.toString() +current5.toString()}}"
+                                                aria-expanded="false"
+                                                aria-controls="flush-collapseOne_Stop_Name{{current.toString() + current2.toString() + current3.toString()+current5.toString()}}"
+                                              >
+                                                <div
+                                                  class="fullwidth row displayFlex justify-spacebetween alignCenter textleft stopToggleHeader mb-0"
+                                                >
+                                                  <span class="flexOne">
+                                                    <label class="greyColor"
+                                                      >Stop Name:</label
+                                                    >
+                                                    <span
+                                                      class="badgeData font-bold"
+                                                      ng-bind="stop.StopName"
+                                                    ></span>
+                                                  </span>
+                                                </div>
+                                              </button>
+                                            </h2>
+
+                                            <div
+                                              id="flush-collapseOne_Stop_Name{{current.toString() + current2.toString() + current3.toString()+current5.toString()}}"
+                                              class="accordion-collapse collapse"
+                                              aria-labelledby="flush-headingOne_Stop_Name{{current.toString() + current2.toString() + current3.toString()+current5.toString()}}"
+                                              data-bs-parent="#accordionFlushExample"
+                                            >
+                                              <div class="accordion-body">
+                                                <div
+                                                  class="stopToggleContainer stopNestedData p-0"
+                                                >
+                                                  <div
+                                                    class=""
+                                                    style="width: 100%"
+                                                  >
+                                                    <div
+                                                      class="pagesections noOverflow"
+                                                    >
+                                                      <div
+                                                        class="tab-content"
+                                                        id="pills-tabContent"
+                                                      >
+                                                        <div
+                                                          class="tab-pane fade show active"
+                                                          id="pills-home{{current.toString() + current2.toString() + current3.toString()+current5.toString()}}"
+                                                          role="tabpanel"
+                                                          aria-labelledby="pills-home-tab"
+                                                        >
+                                                          <div>
+                                                            <div
+                                                              class="alert alert-warning text-center"
+                                                              role="alert"
+                                                              ng-if="!ShowLoader && stop.StopsStudentDetails.length == 0 && stop.StopsStaffDetails.length == 0"
+                                                            >
+                                                              <b
+                                                                >No
+                                                                details
+                                                                found!</b
+                                                              >
+                                                            </div>
+                                                          </div>
+                                                          <div
+                                ng-if="stop.StopsStudentDetails.length > 0 && IsStudentDetails == true"
+                                style="width: 100%"
+                              >
+                                <div colspan="4">
+                                  <div
+                                    class="tab-content"
+                                    id="pills-tabContent"
+                                  >
+                                    <div
+                                      class="tab-pane fade show active"
+                                      id="pills-In{{current.toString() + current2.toString() + current3.toString()}}"
+                                      role="tabpanel"
+                                      aria-labelledby="pills-In-tab"
+                                    >
+                                      <div
+                                        ng-repeat="student in stop.StopsStudentDetails"
+                                        ng-if="student.IsDropStop == true"
+                                        class="card-dashed mb-3"
+                                      >
+                                        <div
+                                          id="profile-header"
+                                          class="header-wrapper fileOnlyHeader-23hdD"
+                                        >
+                                          <div class="header-wrapper-inner">
+                                            <div class="resume-header-wrapper">
+                                              <div
+                                                class="resume-header grid-container"
+                                              >
+                                                <div class="grid-row centered">
+                                                  <div
+                                                    class="grid-col-md-8 grid-fill-height is-file-only-width overflow-auto"
+                                                  >
+                                                    <div
+                                                      class="header-text shadow-border"
+                                                    >
+                                                      <div
+                                                        class="avatar-outer fs-mask"
+                                                      >
+                                                        <div
+                                                          class="avatar-container avatar-css horizontal position-relative overflow-hidden"
+                                                          ng-class="{'student-in': student.IsStudentIn===true , 'student-out': student.IsStudentIn===false}"
+                                                        >
+                                                          <img
+                                                          ng-src="{{GetStudentImage(student.StudentID,student.StudentProfile)}}"
+                                                          on-error-src="./images/profile_img.png"
+                                                            style="
+                                                              background-size: cover;
+                                                              background-repeat: no-repeat;
+                                                              top: 0;
+                                                            "
+                                                            class="position-absolute w-100"
+                                                          />
+                                                        </div>
+                                                      </div>
+                                                      <div
+                                                        class="header-text-inner"
+                                                      >
+                                                        <div
+                                                          class="fullname heading3 fs-mask"
+                                                        >
+                                                          {{student.StudentName}}
+                                                        </div>
+                                                        <div
+                                                          class="location fs-mask"
+                                                        >
+                                                          <img
+                                                            class="icon-3-7xg css-1xqhio eac13zx0"
+                                                            src="./images/location.svg"
+                                                          />
+
+                                                          <span
+                                                            ng-bind="stop.StopName"
+                                                            class="text-capitalize"
+                                                          ></span>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <table class="table a-keyvalue">
+                                          <tbody>
+                                            <tr>
+                                              <th>
+                                                <p>Admn no</p>
+                                              </th>
+                                              <td>
+                                                <p>
+                                                  {{student.AdmissionNumber}}
+                                                </p>
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <th>
+                                                <p>Class / Section</p>
+                                              </th>
+                                              <td>
+                                                <p>
+                                                  {{student.ClassName}} /
+                                                  {{student.SectionName}}
+                                                </p>
+                                              </td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+
+                                        <div
+                                          class="form-check p-3 d-flex justify-content-between"
+                                        >
+                                          <label
+                                            class="screen-reader-only"
+                                            for="choice"
+                                            >&nbsp; In or not?</label
+                                          >
+                                          <div>
+                                            <input
+                                                                          type="checkbox"
+                                                                          id="togBtnDropOutStud{{student.AdmissionNumber}}"
+                                                                          data-switch="success"
+                                                                          ng-model="student.IsStudentIn"
+                                                                          ng-click="AddNewDropSheduleData(student, route, stop, shedule, 'Student', student.IsStudentIn)"
+                                                                        />
+                                                                        <label
+                                                                          for="togBtnDropOutStud{{student.AdmissionNumber}}"
+                                                                          data-on-label="In"
+                                                                          data-off-label="Out" class="pull right"
+                                                                        ></label>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                                                          <div
+                                                                    ng-repeat="staff in stop.StopsStaffDetails"
+                                                                    class="card-dashed mb-3"
+                                                                    ng-if="stop.StopsStaffDetails.length > 0 && IsStaffDetails == true "
+                                                                  >
+                                                                    <div>
+                                                                      <table class="table a-keyvalue">
+                                                                        <tbody>
+                                                                          <tr>
+                                                                            <th>
+                                                                              <p>Emp code</p>
+                                                                            </th>
+                                                                            <td>
+                                                                              <p>
+                                                                                {{staff.EmployeeCode}}
+                                                                              </p>
+                                                                            </td>
+                                                                          </tr>
+                                                                          <tr>
+                                                                            <th>
+                                                                              <p>Name</p>
+                                                                            </th>
+                                                                            <td>
+                                                                              <p>
+                                                                                {{staff.StaffName}}
+                                                                              </p>
+                                                                            </td>
+                                                                          </tr>
+                                                                        </tbody>
+                                                                      </table>
+                                                                      
+                                                                
+
+                                                                      <div class="form-check p-2 mt-2">
+                                                                        <label
+                                                                          class="screen-reader-only"
+                                                                          for="choice"
+                                                                          >&nbsp; In or not?</label
+                                                                        >
+                                                                        <input
+                                                                        type="checkbox"
+                                                                        id="togBtnDropOutStaff{{staff.EmployeeCode}}"
+                                                                        data-switch="success"
+                                                                        ng-model="staff.IsStaffIn"
+                                                                        ng-click="AddNewDropSheduleData(staff, route, stop, shedule, 'Staff', staff.IsStaffIn)"
+                                                                        />
+                                                                        <label
+                                                                        for="togBtnDropOutStaff{{staff.EmployeeCode}}"
+                                                                        data-on-label="In"
+                                                                        data-off-label="Out" class="pull right"
+                                                                        ></label>
+                                                                      </div>                                                                  
+                                                                    </div>
+                                                                  </div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+
+  .student-in{
+    border: 3px solid #198754 !important;
+  }
+  .student-out{
+    border: 3px solid #6c757d !important;
+  }
+
+
+
+  .loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3498db;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+  }
+  
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  </style>

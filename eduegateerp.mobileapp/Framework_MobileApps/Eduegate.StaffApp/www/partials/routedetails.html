@@ -1,0 +1,76 @@
+﻿<div ng-controller="RouteDetailsController">
+    <div class="headerBar displayFlex alignItemCenter innerHeader">
+        <div class="nav-sidebar align-left">
+            <div class="backtopage" ng-click="$root.goBack()">
+                <img src="./images/back-arrow.png" />
+            </div>
+        </div>
+        <!--nav-sidebar-->
+        <div class="header-text"><span translate>Vehicle Route Details</span></div>
+        <div class="headerRight alignright">
+            <div class="notifyIcon"><i class="fa fa-bell-o"></i></div>
+        </div>
+    </div>
+    <div class="excludeHeader" ng-init="LoadVehicleInfo()">
+
+        <div class="alert alert-warning text-center" role="alert" ng-if="!ShowLoader && VehiclesDetails.length == 0">
+            <b>Sorry, something went wrong. Please try again later!</b>
+        </div>
+
+        <div class="dataWrap setBorder boxShadow marginBtm10" ng-repeat="gridModel in VehiclesDetails track by $index">
+            <div class="vehicleToggleContainer displayFlex flexColumn whiteBg">
+                
+                <div class="vehicleToggleHeader displayFlex flexColumn pad10">
+                    <div class="mainTitle fullwidth relativePos displayFlex">
+                        <span class="flexOne" translate>Vehicle Reg. No : <strong>{{gridModel.VehicleRegistrationNumber}}</strong></span>
+                        <span class="headerBtn flexAuto" ng-click="toggleGrid($event, gridModel, 'Vehicle');"><i
+                                class="fa fa-eye" aria-hidden="true"></i> View All</span>
+                    </div>
+                    <div class="gridDataWrap">
+                        <label>Vehicle Type:</label>
+                        <span>{{gridModel.VehicleType}}</span>
+                    </div>
+                </div>
+
+                <div class="vehicleToggleContent pad10 noPaddingTop">
+
+                    <div class="gridNestedContainer routeToggleHeader">
+                        <div class="gridNestedData" ng-repeat="route in RoutesDetails track by $index">
+                            <div class="gridDataWrap" style="border-bottom: 1px solid #ece2e2; padding-bottom: .5rem;">
+                                <label>Route Code:</label>
+                                <span class="">{{route.RouteCode}}</span>
+                            </div>
+                            <div class="gridDataWrap" style="border-bottom: 1px solid #ece2e2; padding-bottom: .5rem; padding-top: 7px;">
+                                <label>Route Description:</label>
+                                <span class="">{{route.RouteDescription}}</span>
+                            </div>
+                            <div class="fullwidth relativePos displayFlex">
+                                <span class="flexOne" style="padding-top: 8px;"><strong style="font-weight: revert;">Stop Details</strong></span>
+                                <span class="headerBtn flexAuto" ng-click="toggleGrid($event, route, 'Route');"><i
+                                        class="fa fa-eye" aria-hidden="true"></i> View All</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="routeToggleContent pad10 noPaddingTop">
+
+                        <div class="gridNestedContainer">
+                            <div class="gridNestedData" ng-repeat="stop in RouteStopsDetails track by $index">
+                                <div class="gridDataWrap"
+                                    style="border-bottom: 1px solid #ece2e2; padding-bottom: .5rem;">
+                                    <span class=""><label>Stop Name : </label></span>
+                                    <span class="">{{stop.StopName}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

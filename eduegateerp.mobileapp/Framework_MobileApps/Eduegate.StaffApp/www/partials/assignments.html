@@ -1,0 +1,113 @@
+﻿<div ng-controller="AssignmentController">
+    <div class="headerBar displayFlex alignItemCenter innerHeader">
+        <div class="nav-sidebar align-left">
+            <div class="backtopage" ng-click="$root.goBack()">
+                <img src="./images/back-arrow.png" />
+            </div>
+        </div>
+        <!--nav-sidebar-->
+        <div class="header-text"><span translate>Assignment details</span></div>
+        <div class="headerRight alignright">
+            <div class="notifyIcon"><i class="fa fa-bell-o"></i></div>
+        </div>
+    </div>
+    <div class="excludeHeader" ng-init="FillAssignments()">
+
+        <div class="containerWrap">
+
+            <div class="dataWrap setBorder boxShadow marginBtm10" ng-repeat="assignment in AssignmentList">
+                <!--ng-repeat="assignment in AssignmentList"-->
+                <div class="toggleContainer displayFlex flexColumn whiteBg">
+                    <div class="toggleHeader displayFlex flexColumn pad10">
+                        <div class="mainTitle fullwidth relativePos displayFlex">
+                            <span class="flexOne" translate>{{assignment.Subject.Value}}</span>
+                            <span class="headerBtn flexAuto" ng-click="toggleGrid($event);"><i class="fa fa-eye"
+                                    aria-hidden="true"></i> View All</span>
+                        </div>
+                        <div class="gridDataWrap" style="border-bottom: 1px solid #ece2e2; padding-bottom: .5rem;">
+                            <label>Class:</label>
+                            <span>{{assignment.Class.Value}} ({{assignment.Section.Value}})</span>
+                        </div>
+                        <div class="gridDataWrap" style="border-bottom: 1px solid #ece2e2; padding-bottom: .5rem;">
+                            <label>Title:</label>
+                            <span>{{assignment.Title}}</span>
+                        </div>
+                        <div class="gridDataWrap" style="border-bottom: 1px solid #ece2e2; padding-bottom: .5rem;">
+                            <label>Description:</label>
+                            <span>{{assignment.Description}}</span>
+                        </div>
+                    </div>
+                    <!--toggleHeader-->
+                    <div class="toggleContent pad10 noPaddingTop">
+                        <div class="gridDataWrap">
+                            <label>Start Date:</label>
+                            <span>{{assignment.StartDate | ctime | date : 'dd-MM-yyyy'}}</span>
+                        </div>
+                        <div class="gridDataWrap">
+                            <label>Freeze Date:</label>
+                            <span>{{assignment.FreezeDate | ctime | date : 'dd-MM-yyyy'}}</span>
+                        </div>
+                        <div class="gridDataWrap">
+                            <label>Date of Submission:</label>
+                            <span>{{assignment.DateOfSubmission | ctime | date : 'dd-MM-yyyy'}}</span>
+                        </div>
+                        <div class="gridDataWrap">
+                            <label>Assignment Type:</label>
+                            <span>{{assignment.AssignmentType.Value}}</span>
+                        </div>
+                        <div class="gridDataWrap">
+                            <label>Assignment Status:</label>
+                            <span>{{assignment.AssignmentStatus.Value}}</span>
+                        </div>
+                        <!-- <div class="gridNestedContainer">ng-if -->
+                        <div class="gridDataWrap">
+                            <div class="subTitle"><b>Attachments</b></div>
+                        </div>
+
+                        <div class="gridDataWrap">
+                            <div ng-repeat="attachment in assignment.AssignmentAttachmentMaps track by $index">
+                                <div ng-if="attachment.AttachmentReferenceID != null">
+                                    <i class="fa fa-2x fa-download" aria-hidden="true"
+                                        ng-click="DownloadURL(attachment.AttachmentReferenceID)">
+                                    </i>
+                                    <span ng-bind="attachment.AttachmentName" class="ng-binding"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!--toggleContent-->
+                </div>
+                <!--toggleContainer-->
+
+            </div>
+            <!--dataWrap-->
+
+            <div class="alert alert-warning text-center" role="alert" ng-if="!ShowLoader && AssignmentList.length == 0">
+                <b>Assignments not found,Please try again later.</b>
+            </div>
+
+        </div>
+        <!--containerWrap-->
+    </div>
+    <!--about us-->
+</div>
+
+<style>
+    .mainTitle {
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .toggleHeader.active {
+        padding-bottom: 0;
+        font-weight: bold;
+    }
+    .gridDataWrap {
+    padding: 5px;
+    }
+    .text-center {
+    text-align: center!important;
+    font-weight: 500;
+    }
+</style>

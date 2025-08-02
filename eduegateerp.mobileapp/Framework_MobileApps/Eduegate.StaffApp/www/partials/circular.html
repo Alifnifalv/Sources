@@ -1,0 +1,95 @@
+<div ng-controller="CircularController">
+    <div class="headerBar displayFlex alignItemCenter innerHeader">
+        <div class="nav-sidebar align-left">
+            <div class="backtopage" ng-click="$root.goBack()">
+                <img src="./images/back-arrow.png" />
+            </div>
+        </div>
+        <!--nav-sidebar-->
+        <div class="header-text"><span translate>Circular</span></div>
+        <div class="headerRight alignright">
+            <div class="notifyIcon"><i class="fa fa-bell-o"></i></div>
+        </div>
+    </div>
+
+    <div class="excludeHeader">
+
+        <div class="pageContainer" ng-init="init()">
+            <div class="containerWrap">
+                    <div class="dataWrap setBorder boxShadow marginBtm10" ng-repeat="circular in CircularList">
+                        <div class="toggleContainer displayFlex flexColumn whiteBg">
+                            <div class="toggleHeader displayFlex flexColumn pad10">
+                                <div class="mainTitle fullwidth relativePos displayFlex" style="width: 100%;">
+                                    <div class="profile-round-img">
+                                    </div>
+                                    <div class="circular-name"><span class="flexOne">{{circular.ShortTitle}}</span></div>
+                                </div>
+                                <div class="gridDataWrap">
+                                    <label>Circular No :</label>
+                                    <span>{{circular.CircularCode}}</span>
+                                </div>
+                                <div class="gridDataWrap">
+                                    <label>Title :</label>
+                                    <span>{{circular.Title}}</span>
+                                    <span ng-bind-html="circular.Message"></span>
+                                </div>
+                                <div class="gridDataWrap">
+                                    <label>Class :</label>
+                                    <span>{{circular.Class}}</span>
+                                </div>
+                                <div class="gridDataWrap">
+                                    <label>Section :</label>
+                                    <span>{{circular.Section}}</span>
+                                </div>
+                                <div class="gridDataWrap">
+                                    <label>Circular date :</label>
+                                    <span>{{circular.CircularDate}}</span>
+                                </div>
+                                <div class="gridDataWrap">
+                                    <label>Expiry date :</label>
+                                    <span>{{circular.ExpiryDate}}</span>
+                                </div>
+                                <div class="gridDataWrap">
+                                    <label>School :</label>
+                                    <span>{{circular.School}}</span>
+                                </div>
+                                <div class="gridDataWrap" ng-if="circular.CircularAttachmentMaps.length > 0">
+                                    <div class="subTitle"><b>Attachments</b></div>
+                                </div>
+                                <div class="gridDataWrap">
+                                    <div ng-repeat="gridModel in circular.CircularAttachmentMaps track by $index">
+                                        <div ng-if="gridModel.AttachmentReferenceID != null">
+                                            <span ng-click="DownloadURL(gridModel.AttachmentReferenceID)">
+                                                <i class="fa fa-2x fa-download" aria-hidden="true"></i>
+                                                <span ng-bind="gridModel.AttachmentDescription"
+                                                    class="ng-binding"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!--toggleContainer-->
+
+                </div>
+                <!--dataWrap-->
+                <div class="alert alert-warning text-center" role="alert"
+                    ng-if="!ShowLoader && CircularList.length == 0">
+                    <b>Circular not found, please try again later.</b>
+                </div>
+    </div>
+</div>
+<!--containerWrap-->
+</div>
+<!--about us-->
+<style>
+    .platform-ios .excludeHeader {
+        top: 50px;
+    }
+    .text-center {
+    text-align: center!important;
+    font-weight: 500;
+    }
+</style>

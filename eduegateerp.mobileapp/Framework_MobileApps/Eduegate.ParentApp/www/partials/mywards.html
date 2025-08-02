@@ -1,0 +1,468 @@
+﻿<div class="app-page flex-column flex-column-fluid" ng-controller="MyWardsController">
+    <div class="app-header d-flex d-lg-none">
+        <!--begin::Header container-->
+        <div class="app-container container-xxl d-flex align-items-center justify-content-between ios-pt-12">
+            <!--begin::Logo-->
+            <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0 me-lg-15">
+                <a ng-click="$root.goBack()" class=" p-5 ms-n5">
+                    <img alt="Logo" src="./clients/{{$root.ClientSettings.Client}}/images/back-arrow.svg" class="h-25px">
+                </a>
+            </div>
+            <!--end::Logo-->
+            <!--begin::Header mobile toggle-->
+            <div class="d-flex align-items-center d-lg-none ms-2" title="Show sidebar menu">
+                
+            </div>
+            <!--end::Header mobile toggle-->
+        </div>
+        <!--end::Header container-->
+    </div>
+
+    <div ng-if="MyWards.length > 0">
+
+        <div class="app-toolbar app-toolbar py-3 py-lg-0">
+            <!--begin::Toolbar container-->
+            <div class="app-container container-xxl d-flex flex-stack">
+                <!--begin::Page title-->
+                <div class="page-title d-flex flex-column justify-content-center me-3">
+                    <!--begin::Title-->
+                    <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">My
+                        Ward Dashboard</h1>
+
+                </div>
+                <!--end::Actions-->
+            </div>
+
+            <!--end::Toolbar container-->
+        </div>
+        <div class="app-toolbar d-flex bg-white theme-dark-bg-body app-container container-xxl h-60px position-sticky top-0 top-30px">
+            <div class="d-flex w-100 overflow-scroll">
+                <ul class="nav nav-stretch nav-line-tabs fw-bold fs-6 p-0 p-lg-10 flex-nowrap flex-grow-1">
+                    <!--begin:Nav item-->
+                    <li class="nav-item mx-lg-1" ng-repeat="ward in MyWards">
+                        <a class="nav-link py-3 py-lg-6 text-active-primary text-nowrap d-flex flex-column position-relative justify-content-center border-bottom-0"
+                            ng-click="SelectWard(ward)"> <span> {{ward.FirstName}} {{ward.MiddleName}} {{ward.LastName}}
+                            </span>
+                            <div ng-show="SelectedWard.StudentIID == ward.StudentIID "
+                                class="nav-slider position-absolute bottom-0 start-0 end-0" aria-hidden="true">
+                                <div class="nav-slider-inner"></div>
+                            </div>
+
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        <div class="app-container container-xxl pt-5">
+            <div class="row g-5 g-xl-10 mb-xl-10">
+                <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-md-5 mb-xl-10">
+                    <!--begin::Card widget 6-->
+                    <div class="card mb-xxl-8">
+                        <div class="card-body">
+                            <!--begin::Details-->
+                            <div class="d-flex flex-wrap flex-sm-nowrap justify-content- flex-column">
+                                <!--begin: Pic-->
+                                <div class="mb-5 d-flex justify-content-center ">
+                                    <a class="symbol symbol-200px symbol-lg-160px symbol-fixed position-relative ph-item bg-secondary overflow-hidden"
+                                        data-fancybox
+                                        href="{{ParentUrlService}}/Content/ReadImageContentsByID?contentID={{SelectedWard.StudentProfile}}">
+
+                                        <img style="    object-fit: cover;     object-position: right top;" class="z-index-3"
+                                        id="onetime"
+                                            ng-src="{{ParentUrlService}}/Content/ReadImageContentsByID?contentID={{SelectedWard.StudentProfile}}"
+                                            on-error-src="./clients/{{$root.ClientSettings.Client}}/images/profile_img.png" alt="image" loading="lazy" >
+                                    </a>
+                                </div>
+                                <!--end::Pic-->
+                                <!--begin::Info-->
+                                <div class="flex-grow-1">
+                                    <!--begin::Title-->
+                                    <div class="d-flex justify-content-center align-items- flex-wrap mb-2 flex-column">
+                                        <!--begin::User-->
+                                        <div class="d-flex flex-column">
+                                            <div class="d-flex align-items-center justify-content-center mb-2">
+                                                <a class="text-gray-900 text-hover-primary fs-2 fw-bold me-1 ">
+                                                    {{SelectedWard.FirstName}}
+                                                    {{SelectedWard.MiddleName}} {{SelectedWard.LastName}}
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <!--end::User-->
+                                  
+                                    </div>
+                                </div>
+                                <!--end::Info-->
+                            </div>
+                        </div>
+                        <div class="card-footer d-flex flex-end ">  
+                            <!--begin::Link-->
+                            <a class="btn btn-sm btn-primary flex-shrink-0 me-2"  ui-sref="mycirculars">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="me-2" height="1em" viewBox="0 0 384 512" fill="#ffffff"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M0 64C0 28.7 28.7 0 64 0H224V128c0 17.7 14.3 32 32 32H384V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V64zm384 64H256V0L384 128z"/></svg>
+                                  
+                                Circular       </a>
+                            <!--end::Link-->
+                    
+                            <!--begin::Link-->
+                            <a class="btn btn-sm btn-light flex-shrink-0" ng-click="StudentProfileViewClick()">
+                                <svg xmlns="http://www.w3.org/2000/svg"  height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464H398.7c-8.9-63.3-63.3-112-129-112H178.3c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3z"/></svg>
+                              
+                                View Profile       </a>
+                            <!--end::Link-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-4">
+                    <!--begin::Card-->
+                    <div class="">
+                        <!--end::Title-->
+                        <!--begin::Stats-->
+                        <div class="d-flex flex-wrap flex-stack">
+                            <div class="row g-3 mb-0">
+                                <!--begin:Item-->
+                                <div class="col-6  ">
+
+                                    <a ng-click="TimeTableViewClick()"
+                                        class="card d-flex flex-column h-100 p-3 bg-hover-light ">
+                                        <!--begin::Svg Icon | path: icons/duotune/finance/fin009.svg-->
+                                        <span class="svg-icon svg-icon-3tx svg-icon-primary w-50">
+                                            <img src="./images/timetables.svg" />
+
+                                        </span>
+                                        <div class="separator border-1 my-3 "></div>
+
+                                        <!--end::Svg Icon-->
+                                        <span class="fs-5 fw-bold text-gray-800 mb-0">Time Table</span>
+                                    </a>
+                                </div>
+                                <!--end:Item-->
+                                <!--begin:Item-->
+                                <div class="col-6 ">
+                                    <a ng-click="TopicViewClick()"
+                                        class="card d-flex flex-column h-100 p-3 bg-hover-light">
+                                        <!--begin::Svg Icon | path: icons/duotune/communication/com010.svg-->
+                                        <span class="svg-icon svg-icon-3tx svg-icon-primary w-50">
+                                            <img src="./images/topics.svg" class="w-100"/>
+                                            
+                                        </span>
+                                        <div class="separator border-1 my-3"></div>
+
+                                        <!--end::Svg Icon-->
+                                        <span class="fs-5 fw-bold text-gray-800 mb-0">Topic</span>
+                                    </a>
+                                </div>
+                                <!--end:Item-->
+                                <!--begin:Item-->
+                                <div class="col-6 ">
+                                    <a ng-click="AssignmentViewClick()"
+                                        class="card d-flex flex-column  h-100 p-3 bg-hover-light">
+                                        <!--begin::Svg Icon | path: icons/duotune/abstract/abs042.svg-->
+                                        <span class="svg-icon svg-icon-3tx svg-icon-primary w-50">
+                                            <img src="./images/assignmentpen.svg" />
+                                        </span>
+                                        <div class="separator border-1 my-3 "></div>
+                                        <!--end::Svg Icon-->
+                                        <span class="fs-5 fw-bold text-gray-800 mb-0">Assignments</span>
+                                    </a>
+                                </div>
+                                <!--end:Item-->
+                                <!--begin:Item-->
+                                <div class="col-6 ">
+                                    <a ng-click="LessonPlanViewClick()"
+                                        class="card d-flex flex-column  h-100 p-3 bg-hover-light">
+                                        <!--begin::Svg Icon | path: icons/duotune/finance/fin006.svg-->
+                                        <span class="svg-icon svg-icon-3tx svg-icon-primary w-50">
+                                            <img src="./images/topic.svg" />
+
+                                        </span>
+                                        <div class="separator border-1 my-3 "></div>
+
+                                        <!--end::Svg Icon-->
+                                        <span class="fs-5 fw-bold text-gray-800 mb-0">Lesson </span>
+                                    </a>
+                                </div>
+                                <!--end:Item-->
+                                <div class="col-6 ">
+                                    <a ng-click="ClassTeacherViewClick()"
+                                        class="card  d-flex flex-column  h-100 p-3 bg-hover-light ">
+                                        <!--begin::Svg Icon | path: icons/duotune/finance/fin006.svg-->
+                                        <span class="svg-icon svg-icon-3tx svg-icon-primary w-50">
+                                            <img src="./images/teaching.svg"     />
+
+                                            
+                                        </span>
+                                        <div class="separator border-1 my-3"></div>
+
+                                        <!--end::Svg Icon-->
+                                        <span class="fs-5 fw-bold text-gray-800 mb-0">Class Teachers</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end::Stats-->
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-4">
+                    <!--begin::Card-->
+                    <div class="card h-100">
+                        <!--begin::Card header-->
+                        <div class="card-header flex-nowrap">
+                            <!--begin::Card title-->
+                            <div class="card-title m-0">
+                                <!--begin::Icon-->
+                                <div class="symbol symbol-45px w-45px bg-light me-5">
+                                    <img src="./clients/{{$root.ClientSettings.Client}}/images/wallet2.svg" alt="image" class="p-3">
+                                </div>
+                                <!--end::Icon-->
+                                <!--begin::Title-->
+                                <a class="fs-4 fw-bolder text-hover-primary text-gray-900 m-0">Attendance</a>
+                                <!--end::Title-->
+                            </div>
+                            <div class="card-toolbar">
+                                <a ng-click="StudentAttendanceClick()" class="btn btn-sm btn-light">
+                                    <img src="./images/eye.svg"  class="h-15px me-2"/>
+                                    
+                                    View details</a>
+                            </div>
+                        </div>
+                        <!--end::Card header-->
+                        <!--begin::Card body-->
+                        <div class="card-body d-flex flex-column">
+                            <!--begin::Heading-->
+                            <!--<script>
+                                   var ctx = document.getElementById("myChart");
+        var calendar = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: ['Present', 'abscent'],
+            datasets: [{
+              label: '# of Votes',
+              data: [12, 19, 3, 5, 2, 3],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+                              </script>
+                                <script type="text/javascript">
+                                    google.charts.load("current", {packages:["corechart"]});
+                                    google.charts.setOnLoadCallback(drawChart);
+                                    function drawChart() {
+                                      var data = google.visualization.arrayToDataTable([
+                                        ['Task', 'Hours per Day'],
+                                        ['Work',     11],
+                                        ['Eat',      2],
+                                        ['Commute',  2],
+                                        ['Watch TV', 2],
+                                        ['Sleep',    7]
+                                      ]);
+                              
+                                      var options = {
+                                        title: 'My Daily Activities',
+                                        pieHole: 0.4,
+                                      };
+                              
+                                      var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
+                                      chart.draw(data, options);
+                                    }
+                                  </script>
+                            <div class="d-flex flex-center me-5 pt-2">
+                                <div id="donutchart" style="width: 900px; height: 500px;"></div>
+                            </div>
+                            <div class="d-flex flex-center me-5 pt-2">
+                                <canvas id="myChart"></canvas>
+                            </div>-->
+
+                            <div class="d-flex justify-content-between flex-column pt-3">
+                                <!--begin::Title-->
+                                <div class="fs-4 fw-bold text-gray-900  mb-5">
+                                    Attendance
+                                    <br>for Month <span>
+                                        {{SelectedDateMonth}}
+                                        {{SelectedDateYear}}
+                                    </span>
+                                </div>
+                                <!--end::Title-->
+                                <!--begin::Chart-->
+                                <!--end::Chart-->
+                                <!--begin::Labels-->
+                                <div class="">
+                                    <!--begin::Label-->
+                                    <div class="d-flex align-items-center mb-2">
+                                        <!--begin::Bullet-->
+                                        <div class="bullet bullet-dot w-8px h-7px bg-success me-2"></div>
+                                        <!--end::Bullet-->
+                                        <!--begin::Label-->
+                                        <div class="fs-6 fw-bold text-muted">
+                                            Present ({{AttendenceSummaryData.StudentPresentCount}})</div>
+                                        <!--end::Label-->
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <!--begin::Bullet-->
+                                        <div class="bullet bullet-dot w-8px h-7px bg-danger me-2"></div>
+                                        <!--end::Bullet-->
+                                        <!--begin::Label-->
+                                        <div class="fs-6 fw-bold text-muted">
+                                            Absent ({{AttendenceSummaryData.StudentAbsentCount}})</div>
+                                        <!--end::Label-->
+                                    </div>
+                                    <!--end::Label-->
+                                </div>
+                                <!--end::Labels-->
+                            </div>
+                        </div>
+                        <!--end::Card body-->
+                    </div>
+                    <!--end::Card-->
+                </div>
+                <div class="col-sm-6 col-xl-4">
+                    <!--begin::Card-->
+                    <div class="card h-100">
+                        <!--begin::Card header-->
+                        <div class="card-header flex-nowrap">
+                            <!--begin::Card title-->
+                            <div class="card-title m-0">
+                                <!--begin::Icon-->
+                                <div class="symbol symbol-45px w-45px bg-light me-5">
+                                    <img src="./clients/{{$root.ClientSettings.Client}}/images/wallet2.svg" alt="image" class="p-3">
+                                </div>
+                                <!--end::Icon-->
+                                <!--begin::Title-->
+                                <a class="fs-4 fw-bolder text-hover-primary text-gray-900 m-0">Fees Due Amount</a>
+                                <!--end::Title-->
+                            </div>
+                        </div>
+                        <!--end::Card header-->
+                        <!--begin::Card body-->
+                        <div class="card-body d-flex ">
+                            <!--begin::Heading-->
+                            <span class="fw-bold dark-text     me-1 align-self-start badge badge-danger rounded-0 " style="background-color: rgb(105, 28, 177);">QAR</span>
+
+                            <div class="fw-bold ">{{FeeDueAmount | currency : ' '}}</div>
+                            <!--end::Heading-->
+                          
+                        </div>
+                        <div class="card-footer d-flex flex-end ">  
+                           
+                            <a ng-click="StudentFeeDueViewClick()"
+                            class="btn btn-sm btn-primary  text-white">
+                        View Details</a>
+                        </div>
+                        <!--end::Card body-->
+                    </div>
+                    <!--end::Card-->
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-6 col-xxl-3 mb-md-5 mb-xl-10">
+                    <!--begin::Card widget 4-->
+                    <div class="card  mb-5 mb-xl-10">
+                        <!--begin::Header-->
+                        <div class="card-header">
+                            <!--begin::Title-->
+                            <div class="card-title d-flex flex-column">
+                                <!--begin::Info-->
+                                <div class="d-flex align-items-center">
+                                    <!--begin::Currency-->
+                                    <!--end::Currency-->
+                                    <!--begin::Amount-->
+                                    <span class="fs-2hx fw-bold text-dark me-2 lh-1 ls-n2">Leaves</span>
+                                </div>
+                                <!--end::Info-->
+                                <!--begin::Subtitle-->
+                                <span class="text-gray-400 pt-1 fw-bold fs-6">Leave request status</span>
+                                <!--end::Subtitle-->
+                            </div>
+                            <div class="card-toolbar">
+                                <a ng-Click="LeaveClick()" class="btn btn-sm btn-light">
+                                    <img src="./images/eye.svg"  class="h-15px me-2"/>
+                                    View details</a>
+                            </div>
+                            <!--end::Title-->
+                        </div>
+                        <!--end::Header-->
+                        <!--begin::Card body-->
+                        <div class="card-body d-flex align-items-center">
+
+                            <!--begin::Labels-->
+                            <div class="d-flex flex-column content-justify-center w-100">
+                                <!--begin::Label-->
+                                <div class="d-flex fs-6 fw-bold align-items-center">
+                                    <!--begin::Bullet-->
+                                    <div class="bullet w-8px h-6px rounded-2 bg-danger me-3"></div>
+                                    <!--end::Bullet-->
+                                    <!--begin::Label-->
+                                    <div class="text-gray-500 flex-grow-1 me-4">Pending</div>
+                                    <!--end::Label-->
+                                    <!--begin::Stats-->
+                                    <div class="fw-bolder text-gray-700 text-xxl-end">
+                                        {{LeaveSummaryData.ApplicationSubmittedCount}}</div>
+                                    <!--end::Stats-->
+                                </div>
+                                <!--end::Label-->
+                                <!--begin::Label-->
+                                <div class="d-flex fs-6 fw-bold align-items-center my-3">
+                                    <!--begin::Bullet-->
+                                    <div class="bullet w-8px h-6px rounded-2 bg-primary me-3"></div>
+                                    <!--end::Bullet-->
+                                    <!--begin::Label-->
+                                    <div class="text-gray-500 flex-grow-1 me-4">Approved</div>
+                                    <!--end::Label-->
+                                    <!--begin::Stats-->
+                                    <div class="fw-bolder text-gray-700 text-xxl-end">
+                                        {{LeaveSummaryData.ApplicationApprovedCount}}</div>
+                                    <!--end::Stats-->
+                                </div>
+                                <!--end::Label-->
+                                <!--begin::Label-->
+                                <div class="d-flex fs-6 fw-bold align-items-center">
+                                    <!--begin::Bullet-->
+                                    <div class="bullet w-8px h-6px rounded-2 me-3" style="background-color: #E4E6EF">
+                                    </div>
+                                    <!--end::Bullet-->
+                                    <!--begin::Label-->
+                                    <div class="text-gray-500 flex-grow-1 me-4">Rejected</div>
+                                    <div class="fw-bolder text-gray-700 text-xxl-end">
+                                        {{LeaveSummaryData.ApplicationRejectedCount}}</div>
+                                    <!--end::Stats-->
+                                </div>
+                                <!--end::Label-->
+                            </div>
+                            <!--end::Labels-->
+                        </div>
+                        <!--end::Card body-->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!--tabScrollItemList-->
+    </div>
+
+    <div class="myWardsDetails">
+        <div class="app-header d-flex d-lg-none shadow-sm">
+            <!--begin::Header container-->
+            <div class="app-container container-xxl d-flex align-items-center justify-content-between ios-pt-12">
+                <!--begin::Logo-->
+                <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0 me-lg-15 ">
+                    <a ng-click="hideWardDetails()">
+                        <img alt="Logo" src="./clients/{{$root.ClientSettings.Client}}/images/back-arrow.svg" class="h-25px">
+                    </a>
+                </div>
+                <!--end::Logo-->
+                <!--begin::Header mobile toggle-->
+                <div class="d-flex align-items-center d-lg-none ms-2" title="Show sidebar menu">
+                   
+                </div>
+                <!--end::Header mobile toggle-->
+            </div>
+            <!--end::Header container-->
+        </div>
+    </div>
+    <!--myWardsDetails-->
+
+</div>

@@ -1,0 +1,127 @@
+﻿<div ng-controller="LessonPlanController">
+    <div class="headerBar displayFlex alignItemCenter innerHeader">
+        <div class="nav-sidebar align-left">
+            <div class="backtopage" ng-click="$root.goBack()">
+                <img src="./images/back-arrow.png" />
+            </div>
+        </div>
+        <!--nav-sidebar-->
+        <div class="header-text"><span translate>Lesson plan details</span></div>
+        <div class="headerRight alignright">
+            <div class="notifyIcon"><i class="fa fa-bell-o"></i></div>
+        </div>
+    </div>
+    <div class="excludeHeader" ng-init="init()">
+        <div class="containerWrap">
+
+            <div class="dataWrap setBorder boxShadow marginBtm10" ng-repeat="lesson in LessonPlans">
+                <!--ng-repeat="assignment in AssignmentList"-->
+                <div class="toggleContainer displayFlex flexColumn whiteBg">
+                    <div class="toggleHeader displayFlex flexColumn pad10">
+                        <div class="mainTitle fullwidth relativePos displayFlex">
+                            <span class="flexOne" translate><label>Subject : </label>{{lesson.Subject.Value}}</span>
+                            <span class="headerBtn flexAuto" ng-click="toggleGrid($event);"><i class="fa fa-eye"
+                                    aria-hidden="true"></i> View All</span>
+                        </div>
+                        <div class="gridDataWrap" style="border-bottom: 1px solid #ece2e2; padding-bottom: .5rem;">
+                            <label>Title:</label>
+                            <span>{{lesson.Title}}</span>
+                        </div>
+                        <div class="gridDataWrap" style="border-bottom: 1px solid #ece2e2; padding-bottom: .5rem;">
+                            <label>Class</label>
+                            <div>
+                                <span ng-if="lesson.LessonPlanClassSectionMaps.length == 0">NA</span>
+                                <span ng-repeat="clsMap in lesson.LessonPlanClassSectionMaps">
+                                    <span ng-if="clsMap.ClassID != null">{{clsMap.Class.Value}}
+                                        ({{clsMap.Section.Value}})<br></span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="gridDataWrap">
+                            <label>Created date:</label>
+                            <span>{{lesson.CreatedDate | ctime | date : 'dd-MM-yyyy'}}</span>
+                        </div>
+                        <div class="gridDataWrap">
+                            <label>Status:</label>
+                            <span>{{lesson.LessonPlanStatus.Value}}</span>
+                        </div>
+                    </div>
+                    <!--toggleHeader-->
+                    <div class="toggleContent pad10 noPaddingTop">
+                        <div class="gridDataWrap">
+                            <label>Start date:</label>
+                            <span>{{lesson.Date1 | ctime | date : 'dd-MM-yyyy'}}</span>
+                        </div>
+                        <div class="gridDataWrap">
+                            <label>End date:</label>
+                            <span>{{lesson.Date2 | ctime | date : 'dd-MM-yyyy'}}</span>
+                        </div>
+                        <div class="gridDataWrap">
+                            <label>Maximum extended date:</label>
+                            <span>{{lesson.Date3 | ctime | date : 'dd-MM-yyyy'}}</span>
+                        </div>
+                        <div class="gridDataWrap">
+                            <label>Activity:</label>
+                            <span>{{lesson.Activity}}</span>
+                        </div>
+                        <div class="gridDataWrap">
+                            <label>Learning experiences:</label>
+                            <span>{{lesson.LearningExperiences}}</span>
+                        </div>
+                        <div class="gridDataWrap">
+                            <label>Home works:</label>
+                            <span>{{lesson.HomeWorks}}</span>
+                        </div>
+                        <div class="gridDataWrap">
+                            <label>Number of periods:</label>
+                            <span>{{lesson.NumberOfPeriods}}</span>
+                        </div>
+                        <div class="gridDataWrap">
+                            <label>Total hours:</label>
+                            <span>{{lesson.TotalHours}}</span>
+                        </div>
+                        <div class="gridDataWrap" ng-if="lesson.LessonPlanAttachmentMap.length > 0">
+                            <div class="subTitle"><b>Attachments</b></div>
+                        </div>
+
+                        <div class="gridDataWrap" ng-if="lesson.LessonPlanAttachmentMap.length > 0">
+                            <div ng-repeat="attachment in lesson.LessonPlanAttachmentMap track by $index">
+                                <div ng-if="attachment.AttachmentReferenceID != null">
+                                    <i class="fa fa-2x fa-download" aria-hidden="true"
+                                        ng-click="DownloadURL(attachment.AttachmentReferenceID)">
+                                    </i>
+                                    <span ng-bind="attachment.AttachmentName" class="ng-binding"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!--toggleContent-->
+                </div>
+                <!--toggleContainer-->
+            </div>
+            <div class="alert alert-warning text-center" role="alert" ng-if="!ShowLoader && LessonPlans.length == 0">
+                <b>Lesson plan details not found.</b>
+            </div>
+        </div>
+    </div>
+    <!--about us-->
+</div>
+<style>
+    .mainTitle {
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .toggleHeader.active {
+        padding-bottom: 0;
+        font-weight: bold;
+    }
+    .gridDataWrap {
+    padding: 5px;
+    }
+    .text-center {
+    text-align: center!important;
+    font-weight: 500;
+    }
+</style>

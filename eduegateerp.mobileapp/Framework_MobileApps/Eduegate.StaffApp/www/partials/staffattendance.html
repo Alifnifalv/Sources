@@ -1,0 +1,163 @@
+﻿<div ng-controller="AttendanceController" ng-init="init()">
+    <div class="headerBar displayFlex alignItemCenter innerHeader">
+        <div class="nav-sidebar align-left">
+            <div class="backtopage" ng-click="$root.goBack()">
+                <img src="./images/back-arrow.png"/>
+            </div>
+        </div><!--nav-sidebar-->
+        <div class="header-text"><span translate>Attendance</span></div>
+        <div class="headerRight alignright">
+            <div class="notifyIcon"><i class="fa fa-bell-o"></i></div>
+        </div> 
+    </div>
+    <div class="pageContainer">
+        <div class="pageContainerInner"
+             style="margin-top: 70px;">
+            <div class="row">
+                <div style="width: 50%;float: left;">
+                    <label>Month</label>
+                    <select id="attendanceMonth" ng-change="GetStaffAttendence()"
+                        ng-model="SelectedDate.SelectedMonth">
+                        <option value="0">Jan</option>
+                        <option value="1">Feb</option>
+                        <option value="2">Mar</option>
+                        <option value="3">Apr</option>
+                        <option value="4">May</option>
+                        <option value="5">Jun</option>
+                        <option value="6">Jul</option>
+                        <option value="7">Aug</option>
+                        <option value="8">Sep</option>
+                        <option value="9">Oct</option>
+                        <option value="10">Nov</option>
+                        <option value="11">Dec</option>
+                    </select>
+                </div>
+                <div style="width: 50%;float: right;">
+                    <label>Year</label>
+                    <select id="attendanceYear" ng-change="GetStaffAttendence()" ng-model="SelectedDate.SelectedYear">
+                        <option ng-repeat="year in Years" value="{{year}}">{{year}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <span class="daycalender_week" ng-repeat="week in WKDays track by $index">
+                    <label style="color: darkblue"><b>{{week.name}}</b></label>
+                </span>
+                <span class="daycalender" ng-repeat="day in [].constructor(WeekStartDay) track by $index"></span>
+                <span class="daycalender" ng-repeat="monthDay in MonthDays">
+                    <label>{{monthDay.Day}}</label>
+                    <div style="text-align: center;">
+                        <b class="inner" aria-hidden="true">
+                            <span style="color: black;"
+                                ng-class="{'Pressent_P': monthDay.StatusData==='P', 'Pressent_A': monthDay.StatusData==='A', 'Pressent_UM': monthDay.StatusData==='UM', 'Pressent_H': monthDay.StatusData==='H', 'Pressent_AE': monthDay.StatusData==='AE', 'Pressent_L': monthDay.StatusData==='L', 'Pressent_NA': monthDay.StatusData==='NA', 'Pressent_T': monthDay.StatusData==='T', 'Pressent_TE': monthDay.StatusData==='TE', 'Pressent_W': monthDay.StatusData==='W'}">
+                                {{monthDay.StatusData}}
+                            </span>
+                        </b>
+                    </div>
+                </span>
+            </div>
+
+            <div class="row">
+                <div
+                    style="width: 50%;background-color: #81c784;color: #212121;text-align: center;padding: 1rem 0rem;float: left;  border-radius: 10px;">
+                    P (Present)</div>
+                <div
+                    style="width: 50%;background-color: #ef5350;color: #212121;text-align: center;padding: 1rem 0rem;float: right; border-radius: 10px;">
+                    A (Absent)</div>
+                <div
+                    style="width: 50%;background-color: #e57373;color: #212121;text-align: center;padding: 1rem 0rem;float: left;  border-radius: 10px;">
+                    AE (Absent excused)</div>
+                <div
+                    style="width: 50%;background-color: #f8bbd0;color: #212121;text-align: center;padding: 1rem 0rem;float: right; border-radius: 10px;">
+                    H (Holiday)</div>
+                <div
+                    style="width: 50%;background-color: #ce93d8;color: #212121;text-align: center;padding: 1rem 0rem;float: left;  border-radius: 10px;">
+                    L (Late)</div>
+                <div
+                    style="width: 50%;background-color: #b2ebf2;color: #212121;text-align: center;padding: 1rem 0rem;float: right; border-radius: 10px;">
+                    T (Tardy)</div>
+                <div
+                    style="width: 50%;background-color: #b2dfdb;color: #212121;text-align: center;padding: 1rem 0rem;float: left;  border-radius: 10px;">
+                    TE (Tardy excused)</div>
+                <div
+                    style="width: 50%;background-color: #90a4ae;color: #212121;text-align: center;padding: 1rem 0rem;float: right; border-radius: 10px;">
+                    UM (Unmarked)</div>
+                <div
+                    style="width: 50%;background-color: #c5cae9;color: #212121;text-align: center;padding: 1rem 0rem;float: left;  border-radius: 10px;">
+                    W (Weekend)</div>
+                <div
+                    style="width: 50%;background-color: #e0e0e0;color: #212121;text-align: center;padding: 1rem 0rem;float: right; border-radius: 10px;">
+                    NA (Not applicable)</div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .Pressent_A {
+        color: #ef5350 !important;
+        font-weight: bold;
+    }
+
+    .Pressent_AE {
+        color: #e57373 !important;
+        font-weight: bold;
+    }
+
+    .Pressent_H {
+        color: #f8bbd0 !important;
+        font-weight: bold;
+    }
+
+    .Pressent_L {
+        color: #ce93d8 !important;
+        font-weight: bold;
+    }
+
+    .Pressent_NA {
+        color: #e0e0e0 !important;
+        font-weight: bold;
+    }
+
+    .Pressent_P {
+        color: #81c784 !important;
+        font-weight: bold;
+    }
+
+    .Pressent_T {
+        color: #b2ebf2 !important;
+        font-weight: bold;
+    }
+
+    .Pressent_TE {
+        color: #b2dfdb !important;
+        font-weight: bold;
+    }
+
+    .Pressent_UM {
+        color: #90a4ae !important;
+        font-weight: bold;
+    }
+
+    .Pressent_W {
+        color: #c5cae9 !important;
+        font-weight: bold;
+    }
+
+    * {
+        padding: 1px;
+    }
+
+    .platform-ios .excludeHeader {
+        top: 96px;
+    }
+
+    .platform-ios .headerBar.innerHeader {
+        background: #fff;
+        box-shadow: none;
+        font-size: 16px;
+        border-bottom: none;
+        padding-top: 96px;
+        padding-bottom: 20px;
+    }
+</style>

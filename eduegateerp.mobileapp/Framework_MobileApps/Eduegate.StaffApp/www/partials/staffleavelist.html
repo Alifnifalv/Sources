@@ -1,0 +1,62 @@
+﻿<div ng-controller="StaffLeaveController">
+    <div class="headerBar displayFlex alignItemCenter innerHeader">
+        <div class="nav-sidebar align-left">
+            <div class="backtopage" ng-click="$root.goBack()">
+                <img src="./images/back-arrow.png" />
+            </div>
+        </div>
+        <!--nav-sidebar-->
+        <div class="header-text"><span translate>Leave list</span></div>
+        <div class="headerRight alignright">
+            <div class="notifyIcon"><i class="fa fa-bell-o"></i></div>
+        </div>
+    </div>
+    <div class="excludeHeader" ng-init="init();">
+        <!-- <div class="card-content" style="text-align: right;">
+            <div>
+                <i class="fa fa-plus"></i>
+                <a ng-click="NewLeaveApplicationClick()">New Leave Request</a>
+            </div>
+        </div> -->
+        <div class="containerWrap">
+            <div class="alert alert-warning text-center" role="alert" ng-if="!ShowLoader && Leaves.length == 0">
+                <b>No leave request details found.</b>
+            </div>
+            <div class="displayFlex setBorder flexColumn pad10 boxShadow marginBtm10 whiteBg"
+                ng-repeat="leave in Leaves">
+                <!-- ng-repeat="leave in Leaves" -->
+                <div class="mainTitle fullwidth changeColor relativePos displayFlex">
+                    <span class="flexOne" translate>Application no : {{leave.LeaveApplicationIID}}</span>
+                    <span class="headerBtn flexAuto"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                        Edit</span>
+                    <span class="headerBtn flexAuto"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</span>
+                </div>
+                <div class="gridDataWrap">
+                    <label>Reason:</label>
+                    <span>{{leave.OtherReason}}</span>
+                </div>
+                <div class="gridDataWrap">
+                    <label>From date:</label>
+                    <span>{{leave.FromDateString}}</span>
+                </div>
+                <div class="gridDataWrap">
+                    <label>To date:</label>
+                    <span>{{leave.ToDateString}}</span>
+                </div>
+                <div class="gridDataWrap">
+                    <label>Applied date:</label>
+                    <span>{{leave.AppliedDateString}}</span>
+                </div>
+                <div class="gridDataWrap">
+                    <label>Status</label>
+                    <span ng-if="leave.LeaveStatusID == 1" class="badge badge-primary" style="    color: #fff; background-color: #17a2b8;">Requested</span>
+                    <span ng-if="leave.LeaveStatusID == 2" class="badge badge-success" style="    color: #fff;
+                    background-color: #28a745;">Approved</span>
+                    <span ng-if="leave.LeaveStatusID == 3" class="badge badge-danger" style="    color: #fff;
+                    background-color: #dc3545;">Rejected</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,94 @@
+﻿<div ng-controller="StaffTimeTableController">
+    <div class="headerBar displayFlex alignItemCenter innerHeader">
+        <div class="nav-sidebar align-left">
+            <div class="backtopage" ng-click="$root.goBack()">
+                <img src="./images/back-arrow.png" />
+            </div>
+        </div>
+        <!--nav-sidebar-->
+        <div class="header-text"><span translate>Time Table</span></div>
+        <div class="headerRight alignright">
+            <div class="notifyIcon"><i class="fa fa-bell-o"></i></div>
+        </div>
+    </div>
+    
+    <div class="excludeHeader">
+        <div class="bg-header mb-5">
+            <div class="bg-header-bg" jsname="P3Vluc">
+                <div class="bg-header-img" role="presentation"
+                    style="--travel-primitives-themeable-image-default: url(../images/trips_4.svg);">
+                </div>
+            </div>
+            <div class="bg-header-title" role="heading" aria-level="1">Time Table</div>
+        </div>
+
+        <div class="card-header mt-6" ng-repeat="day in DayList" ng-init="current = $parent.start; $parent.start=$parent.start+1;">
+<div class="card-title flex-column">
+  <div class="text-uppercase three_char">{{day.Value.slice(0, 3)}}</div>
+</div>
+<div class="card-toolbar w-100 ms-3">
+    <div class="accordion accordion-flush" id="accordionFlushTimeTable">
+        <div class="accordion-item bg-transparent">
+          <h2 class="accordion-header" id="flush-heading{{current}}">
+            <button class="accordion-button accordion-button-timetable collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse-timetable{{current}}" aria-expanded="false" aria-controls="flush-collapse{{current}}">
+              School Time Table - {{day.Value}}
+            </button>
+          </h2>
+          <div id="flush-collapse-timetable{{current}}" class="accordion-collapse collapse" aria-labelledby="flush-heading{{current}}" data-bs-parent="#accordionFlushTimeTable"  >
+            <div class="accordion-body collapsed" >
+                <div class="schedulerTable" id="TimeTableAllacate_Tab_01"  ng-repeat="clsTime in ClassTime" 
+                ng-init="current2 = $parent.start; $parent.start=$parent.start+1;"
+                >
+                    <div class="d-flex flex-column align-items-start px-3 py-2 mb-2 my-2 bg-white rounded-3"  id="title{{current2}}" 
+                    
+                    class="WeekDay"
+                        data-time-id="{{clsTime.Key}}">
+                        <span class="fw-bold fs-7 text-darkgrey"
+                        ng-bind="GetTimeTableSlot(clsTime,day.Key)"></span>
+                        <span class="fw-normal d-block fs-8 opacity-75 text-grey">{{clsTime.Value}}</span>
+         
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    
+
+      </div>
+</div>
+        </div>
+        <!-- <div class="containerWrap">
+
+      
+                    <div class="toggleHeader displayFlex flexColumn pad10">
+                        <span ng-repeat="day in DayList" class="Week">
+                            <button class="accordion" ng-click="DayClick($event)">{{day.Value}}</button>
+                            <div class="accordion-item">
+                                <div class="schedulerTable" id="TimeTableAllacate_Tab_01">
+                                    <div class="gridDataWrap" ng-repeat="clsTime in ClassTime" class="WeekDay"
+                                        data-time-id="{{clsTime.Key}}">
+                                        <span class="badge-danger1">{{clsTime.Value}}</span>
+                                        <span class="badge badge-danger ng-binding"
+                                            ng-bind="GetTimeTableSlot(clsTime,day.Key)"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+    
+
+            <div class="alert alert-warning text-center" role="alert"
+                ng-if="!ShowLoader && TimeTableMapping.length == 0">
+                <b>Timetable details not found,Please try again later.</b>
+            </div>
+        </div> -->
+    </div>
+</div>
+
+<script>
+    var colors = ['#ff0000', '#00ff00', '#0000ff'];
+var random_color = colors[Math.floor(Math.random() * colors.length)];
+document.getElementById('title{{current2}}').style.backgroundColor = random_color;
+</script>
+
+

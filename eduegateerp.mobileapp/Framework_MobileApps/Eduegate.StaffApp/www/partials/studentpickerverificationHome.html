@@ -1,0 +1,181 @@
+﻿<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<div ng-controller="PickerVerificationHomeController" ng-init="init()">
+    <div class="headerBar displayFlex alignItemCenter innerHeader">
+        <div class="nav-sidebar align-left">
+            <div class="backtopage" ng-click="$root.goBack()">
+                <img src="./images/back-arrow.png" />
+            </div>
+        </div>
+        <div class="header-text"><span translate>Student Picker Verification</span></div>
+        <div class="headerRight alignright">
+            <div class="notifyIcon"><i class="fa fa-bell-o"></i></div>
+        </div>
+    </div>
+    <div class="excludeHeader">
+        <div class="dataWrap setBorder boxShadow marginBtm10">
+            <div class="displayFlex flexColumn whiteBg">
+                <div class="app-toolbar py-3 py-lg-0">
+                    <div class="app-container container-xxl">
+                        <div class=" d-flex justify-content-end" >
+                            <button type="button" class="waves-effect waves-light btn" ng-click="ScanQRCode()">
+                                <img src="./images/upc-scan.svg" class="h-15px me-3" alt="My Happy SVG" />
+                                Scan QR</button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="row">
+                <div class="col-6">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <span>Number Of Active Inspections</span>
+
+                    </div>
+                    <div class="card-body">
+                       <div class="fs-2hx fw-bold text-dark me-2 lh-1 ls-n2">2</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+
+                <div class="card h-100">
+                    <div class="card-header">
+                        <span>Active Inspection color</span>
+
+                    </div>
+                        <span>
+                            <img id="blinking-image" src="https://static.thenounproject.com/png/2002633-200.png"
+                                alt="Blinking image" class="right w-50 animation-blink blink"
+                                ng-style="{'background-color': InspectionColor}">
+                        </span>
+                </div>
+            </div>
+            
+        </div>
+                    <div class="card p-2 mx-3" ng-if="StudentPickLogs.length > 0">
+                        <spam>Proceed : {{ProceedCount}}</span>
+                        <span>Cancelled : {{CancelCount}}</span>
+                        <!-- <span>Cancelled : {{StudentPickLogs.length}}</span>  -->
+                    </div>
+                    <div class="text-center" ng-hide="StudentPickLogs.length > 0"><i
+                            class="bi bi-file-earmark-excel"></i>&nbsp;&nbsp;No History found</div>
+
+                    <div class="row m-0">
+                        <div class="col">
+                            <div class="card " ng-repeat="list in StudentPickLogs">
+                                <div class="card-header align-items-center pt-7">
+                                    <h4 class="card-label fw-bold text-gray-800 m-0">Scanned</h4>
+                                    <div class="card-toolbar">
+                                        <div class="align center whiteBg ">
+                                            <span ng-show="list.LogStatus" id="boot-icon" class="bi bi-check"
+                                                style="font-size: 2rem; color: rgb(0, 128, 55);"></span>
+                                            <span ng-show="!list.LogStatus" id="boot-icon" class="bi bi-x"
+                                                style="font-size: 2rem; color: rgb(255, 0, 0);"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="m-0">
+                                <div class="card-content">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <div class="symbol symbol-40px me-3">
+                                            <a class="position-relative" data-fancybox
+                                                href="{{ParentUrlService}}/Content/ReadImageContentsByID?contentID={{list.StudentProfile}}">
+                                                <img ng-src="{{ParentUrlService}}/Content/ReadImageContentsByID?contentID={{list.StudentProfile}}"
+                                                    on-error-src="./images/profile_img.png" alt="Avatar" class="avatar"
+                                                    style="  object-fit: cover; object-position: left top;  " />
+
+                                            </a>
+                                        </div>
+                                        <div class="d-flex justify-content-start flex-column">
+                                            <span class="fs-8 fw-bolder text-success text-uppercase">Student</span>
+                                            <a class="fs-6 text-gray-800 fw-bold d-block text-hover-primary">{{list.Student.Value}}</a>
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                    <div class="d-flex align-items-center">
+                                        <div class="symbol symbol-40px me-3">
+                                            <a data-fancybox
+                                                href="{{ParentUrlService}}/Content/ReadImageContentsByID?contentID={{list.PickerProfile}}">
+                                                <img ng-src="{{ParentUrlService}}/Content/ReadImageContentsByID?contentID={{list.PickerProfile}}"
+                                                    on-error-src="./images/profile_img.png" alt="Avatar"
+                                                    class="avatar" />
+                                            </a>
+                                        </div>
+
+                                        <div class="d-flex justify-content-start flex-column">
+                                            <span class="fs-8 fw-bolder text-info text-uppercase">Picked By</span>
+                                            <a class="fs-6 text-gray-800 fw-bold d-block text-hover-primary">{{list.PickByFullName}}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr class="m-0">
+
+                                <div class="card-action justify-content-end">
+                                    <span>Pickup Date : </span>
+                                    <a>{{list.PickDate|ctime | date : 'dd-MM-yyyy'}}</a>
+                                  </div>
+                            </div>
+                        </div>
+                    </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .card .card-body {
+            padding: 1rem 1rem
+        }
+
+        .setBorder {
+            border: 1px solid #d8d8d8;
+            border-radius: 28px;
+        }
+
+        .text-center {
+            text-align: center !important;
+            font-weight: 500;
+        }
+
+        #StudentPickLogs {
+            font-family: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #StudentPickLogs td,
+        #StudentPickLogs th {
+            border: 1px solid #ddd;
+            padding: 4px;
+            font-size: 12px;
+        }
+
+        #StudentPickLogs tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        #StudentPickLogs tr:hover {
+            background-color: #ddd;
+        }
+
+        #StudentPickLogs th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #04AA6D;
+            color: white;
+        }
+
+        .img {
+            border-radius: 50%;
+        }
+
+        .avatar {
+            vertical-align: middle;
+            width: 50px;
+            height: 50px;
+        }
+
+    </style>

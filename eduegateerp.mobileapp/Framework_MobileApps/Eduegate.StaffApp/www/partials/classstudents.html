@@ -1,0 +1,298 @@
+﻿<div ng-controller="ClassStudentController">
+    <div class="headerBar displayFlex alignItemCenter innerHeader">
+        <div class="nav-sidebar align-left">
+            <div class="backtopage" ng-click="$root.goBack()">
+                <img src="./images/back-arrow.png" />
+            </div>
+        </div>
+        <!--nav-sidebar-->
+        <div class="header-text"><span translate>Class students</span></div>
+        <div class="headerRight alignright">
+            <div class="notifyIcon"><i class="fa fa-bell-o"></i></div>
+        </div>
+    </div>
+
+    <div class="excludeHeader">
+        <div class="excludeHeaderInner fullheight noPadding displayFlex flexColumn" ng-init="Init()">
+
+            <!-- Warning message start -->
+            <div class="col-md-6 col-xxl-4">
+                <div class="alert alert-danger d-flex align-items-center p-5 mb-10" role="alert"
+                    ng-if="!ShowPreLoader && StudentDetails.length == 0">
+                    <span class="svg-icon svg-icon-2hx svg-icon-danger me-4"><svg width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="currentColor" />
+                            <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)"
+                                fill="currentColor" />
+                            <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)"
+                                fill="currentColor" />
+                        </svg>
+                    </span>
+                    <div class="d-flex flex-column">
+                        <h3 class="mb-1 text-danger">Not found!</h3>
+                        <span>No student details found.</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Warning message end -->
+
+            <div class="containerWrapStudentDet p-2 m-2">
+                <div class="Vehicle-accordion-item  mb-3 rounded d-flex  bg-body flex-column justfiy-content-start align-items-start text-start w-100  mb-2"
+                    ng-repeat="student in StudentDetails"
+                    ng-init="current = $parent.start; $parent.start=$parent.start+1;">
+                    <div class="accordion accordion-flush" id="accordionFlushExample">
+                        <div class="accordion-item bg-transparent">
+                            <h2 class="accordion-header p-3" id="flush-heading{{current}}">
+                                <button class="accordion-button collapsed p-0 accordion-button-timetable" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#flush-collapse{{current}}"
+                                    aria-expanded="false" aria-controls="flush-collapse{{current}}">
+
+                                    <div id="profile-header" class=" w-100 header-wrapper fileOnlyHeader-23hdD">
+                                        <div class="header-wrapper-inner py-0">
+                                            <div class="resume-header-wrapper">
+                                                <div class="resume-header grid-container">
+                                                    <div class="grid-row centered">
+                                                        <div
+                                                            class="grid-col-md-8 grid-fill-height is-file-only-width overflow-auto">
+                                                            <div class="header-text shadow-border">
+                                                                <div class="avatar-outer fs-mask">
+                                                                    <div
+                                                                        class="avatar-container avatar-css horizontal position-relative overflow-hidden">
+                                                                        <img ng-src="{{ParentUrlService}}/Content/ReadImageContentsByID?contentID={{student.StudentProfile}}"
+                                                                            on-error-src="./images/profile_img.png"
+                                                                            style="background-size:cover;background-repeat:no-repeat;top:0;"
+                                                                            class="position-absolute w-100" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="header-text-inner">
+                                                                    <div class="fullname heading3 fs-mask">
+                                                                        {{student.StudentFullName}}</div>
+                                                                    <div class="location fs-mask">
+
+                                                                        <img class="icon-3-7xg css-1xqhio eac13zx0"
+                                                                            src="./images/number.svg" />
+
+                                                                        <span
+                                                                            class="text-capitalize">{{student.AdmissionNumber}}</span>
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                </button>
+                            </h2>
+                            <div id="flush-collapse{{current}}" class="accordion-collapse collapse"
+                                aria-labelledby="flush-heading{{current}}" data-bs-parent="#accordionFlushExample">
+                                <div class="accordion-body">
+                                    <div>
+                                        <div class="gridDataWrap" ng-if="!StudentMoreDetails && StudentFullDetails"
+                                            style="text-align: center;">
+                                        </div>
+                                        <div>
+                                            <table class="table a-keyvalue">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>
+                                                            <p>Gender</p>
+                                                        </th>
+                                                        <td>
+                                                            <p>{{student.GenderName}}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <p>Date of birth</p>
+                                                        </th>
+                                                        <td>
+                                                            <p>{{student.DateOfBirth | ctime | date : 'dd-MM-yyyy'}}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <p>Age</p>
+                                                        </th>
+                                                        <td>
+                                                            <p ng-if="student.StudentAge != null">{{student.StudentAge}}</p>
+                                                            <p ng-if="student.StudentAge == null">NA</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <p>Blood group</p>
+                                                        </th>
+                                                        <td>
+                                                            <p>{{student.BloodGroupName}}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <p>Email</p>
+                                                        </th>
+                                                        <td>
+                                                            <p>{{student.EmailID}}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <p>Mobile number</p>
+                                                        </th>
+                                                        <td>
+                                                            <p>{{student.MobileNumber}}</p>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                            <div class="gridDataWrap" style="text-align: center;"
+                                                ng-if="!StudentFullDetails">
+                                                <label ng-Click="ViewStudentFullDetails()" style="color: red;">View full
+                                                    details</label>
+                                            </div>
+
+                                            <div class="gridDataWrap" ng-if="!StudentMoreDetails && StudentFullDetails"
+                                                style="text-align: center;">
+                                                <a><label ng-Click="ViewStudentLessDetails()" style="color: red;">View
+                                                        less</label></a>
+                                            </div>
+                                        </div>
+                                        <div ng-if="StudentFullDetails && !StudentMoreDetails">
+                                            <table class="table a-keyvalue">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>
+                                                            <p>Class</p>
+                                                        </th>
+                                                        <td>
+                                                            <p>{{student.ClassName}}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <p>Section</p>
+                                                        </th>
+                                                        <td>
+                                                            <p>{{student.SectionName}}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <p>Admission date</p>
+                                                        </th>
+                                                        <td>
+                                                            <p>{{student.AdmissionDate | ctime | date : 'dd-MM-yyyy'}}
+                                                            </p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <p>Father name
+                                                            </p>
+                                                        </th>
+                                                        <td>
+                                                            <p>
+                                                                <span ng-bind="student.Guardian.FatherFirstName"></span>
+                                                                <span
+                                                                    ng-bind="student.Guardian.FatherMiddleName"></span>
+                                                                <span ng-bind="student.Guardian.FatherLastName">
+                                                            </p>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <th>
+                                                            <p>Father mobile no</p>
+                                                        </th>
+                                                        <td>
+                                                            <p>{{student.Guardian.GuardianPhone}}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <p>Father email</p>
+                                                        </th>
+                                                        <td>
+                                                            <p>{{student.Guardian.GaurdianEmail}}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <p>Mother name
+                                                            </p>
+                                                        </th>
+                                                        <td>
+                                                            <p>
+                                                                <span ng-bind="student.Guardian.MotherFirstName"></span>
+                                                                <span
+                                                                    ng-bind="student.Guardian.MotherMiddleName"></span>
+                                                                <span ng-bind="student.Guardian.MotherLastName">
+                                                            </p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <p>Mother mobile no</p>
+                                                        </th>
+                                                        <td>
+                                                            <p>{{student.Guardian.MotherPhone}}</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>
+                                                            <p>Mother email</p>
+                                                        </th>
+                                                        <td>
+                                                            <p>{{student.Guardian.MotherEmailID}}</p>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div class=" p-3">
+
+                                                <div class="gridDataWrap" ng-if="student.StudentSiblings.length > 0">
+                                                    <div class="subTitle"><b>Siblings</b></div>
+                                                </div>
+                                                <div class="gridDataWrap">
+                                                    <span
+                                                        ng-repeat="sibling in student.StudentSiblings">{{sibling.Value}}<br />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--containerWrap-->
+</div>
+
+<style>
+    .boxShadow {
+        border-radius: 30px;
+    }
+
+    .setBorder {
+        border: 1px solid #b9adad;
+    }
+
+    body {
+        font-size: 15px;
+        text-align: center;
+    }
+
+    .marginBtm10 {
+        margin-bottom: 13px;
+    }
+</style>

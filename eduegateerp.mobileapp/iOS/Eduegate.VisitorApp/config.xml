@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget defaultlocale="en-US" id="com.podarpearl.visitorapp" version="1.0.10">
+  <!-- Basic Project Information -->
+  <name>Pearl Visitor</name>
+  <description>Pearl Visitor Mobile App</description>
+  <!-- <name>Eduegate Visitor</name> -->
+  <!-- <description>Eduegate Visitor Mobile App</description> -->
+  <author email="info@pearlschool.org" href="https://pearlschool.org/">PearlSchool</author>
+  <vs:template-name>BlankJS</vs:template-name>
+  <vs:toolsetVersion>6.3.1</vs:toolsetVersion>
+
+  <!-- Content and Navigation -->
+  <content src="index.html" />
+  <access origin="*" />
+  <allow-navigation href="*" />
+
+  <!-- Platform-Independent Preferences -->
+  <preference name="loadUrlTimeoutValue" value="700000" />
+  <preference name="AllowBackForwardNavigationGestures" value="true" />
+  <preference name="TopActivityIndicator" value="white" />
+  <preference name="GapBetweenPages" value="0" />
+  <preference name="SplashScreen" value="screen" />
+  <preference name="Orientation" value="portrait" />
+  <preference name="SplashMaintainAspectRatio" value="true" />
+  <preference name="KeyboardShrinksView" value="true" />
+
+  <!-- Global Allow Intents -->
+  <allow-intent href="http://*/*" />
+  <allow-intent href="https://*/*" />
+  <allow-intent href="tel:*" />
+  <allow-intent href="sms:*" />
+  <allow-intent href="mailto:*" />
+  <allow-intent href="geo:*" />
+  <allow-intent href="*" />
+
+  <!-- ***************************** -->
+  <!--        Android Section      -->
+  <!-- ***************************** -->
+  <platform name="android">
+    <!-- Android-Specific Allow Intents -->
+    <allow-intent href="market:*" />
+
+    <!-- Android Features / Plugins -->
+    <feature name="SocialSharing">
+      <param name="android-package" value="nl.xservices.plugins.SocialSharing" />
+    </feature>
+    <feature name="Camera">
+      <param name="android-package" value="org.apache.cordova.CameraLauncher" />
+    </feature>
+
+    <!-- Android Preferences -->
+    <preference name="android-usesCleartextTraffic" value="true" />
+    <preference name="AndroidInsecureFileModeEnabled" value="true" />
+    <preference name="AndroidPersistentFileLocation" value="Compatibility" />
+    <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,root" />
+    <preference name="AndroidBlacklistSecureSocketProtocols" value="SSLv3,TLSv1" />
+    <preference name="android-targetSdkVersion" value="34" />
+
+    <!-- Android Plugins -->
+    <plugin name="cordova-plugin-wkwebview-engine" spec="^1.2.1" />
+    <plugin name="cordova-plugin-firebase-ml-kit-barcode-scanner" spec="^1.0.0" />
+    <plugin name="cordova-plugin-wkwebviewxhrfix" spec="https://github.com/TheMattRay/cordova-plugin-wkwebviewxhrfix" />
+
+    <!-- Android Manifest & Edit-Config -->
+    <config-file parent="/manifest" target="AndroidManifest.xml" 
+                 xmlns:android="http://schemas.android.com/apk/res/android" 
+                 xmlns:tools="http://schemas.android.com/tools">
+      <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+      <uses-permission android:name="android.permission.CAMERA" />
+      <uses-feature android:name="android.hardware.camera" android:required="true" />
+      <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+      <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+      <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    </config-file>
+
+    <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" 
+                 xmlns:android="http://schemas.android.com/apk/res/android">
+      <application android:usesCleartextTraffic="true" />
+      <application android:allowBackup="false" />
+    </edit-config>
+
+    <!-- Android Icons -->
+    <icon density="ldpi" src="res/icons/android/icon-36-ldpi.png" />
+    <icon density="mdpi" src="res/icons/android/icon-48-mdpi.png" />
+    <icon density="hdpi" src="res/icons/android/icon-72-hdpi.png" />
+    <icon density="xhdpi" src="res/icons/android/icon-96-xhdpi.png" />
+    <icon density="xhdpi" src="res/icons/android/icon-144-xxhdpi.png" />
+    <icon density="xhdpi" src="res/icons/android/icon-192-xxxhdpi.png" />
+
+    <!-- Android Splash Preference -->
+    <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/screens/android/screen-xxxhdpi-portrait.png" />
+  </platform>
+
+  <!-- ***************************** -->
+  <!--           iOS Section       -->
+  <!-- ***************************** -->
+  <platform name="ios">
+    <!-- iOS Allow Intents -->
+    <allow-intent href="itms:*" />
+    <allow-intent href="itms-apps:*" />
+
+    <!-- iOS Features / Plugins -->
+    <feature name="CDVWKWebViewEngine">
+      <param name="ios-package" value="CDVWKWebViewEngine" />
+    </feature>
+    <feature name="SocialSharing">
+      <param name="ios-package" value="SocialSharing" />
+    </feature>
+
+    <plugin name="cordova-plugin-barcodescanner" spec="^0.7.4" />
+    <plugin name="@ahovakimyan/cordova-plugin-wkwebviewxhrfix" spec="https://github.com/AraHovakimyan/cordova-plugin-wkwebviewxhrfix" />
+    
+    <!-- iOS Preferences -->
+    <preference name="WKWebViewOnly" value="true" />
+    <preference name="CordovaWebViewEngine" value="CDVWKWebViewEngine" />
+    <preference name="Suppresses3DTouchGesture" value="true" />
+    <preference name="deployment-target" value="13.0" />
+    <preference name="SwiftVersion" value="4.0" />
+    <preference name="usesCleartextTraffic" value="true" />
+    <preference name="SuppressesLongPressGesture" value="true" />
+
+    <!-- iOS Edit-Configs (Info.plist) -->
+    <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
+      <string>Need camera access to take visitor's photo for registration or scan student barcode for pickup verification</string>
+    </edit-config>
+    <edit-config file="*-Info.plist" mode="merge" target="NSLocationAlwaysUsageDescription">
+      <string>Need location to locate the visitor</string>
+    </edit-config>
+    <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
+      <string>need photo library access to get pictures from the gallery</string>
+    </edit-config>
+    <edit-config file="*-Info.plist" mode="merge" target="NSLocationWhenInUseUsageDescription">
+      <string>need location access to find things nearby</string>
+    </edit-config>
+    <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryAddUsageDescription">
+      <string>need photo library access to save pictures there</string>
+    </edit-config>
+
+    <privacy-manifest>
+        <key>NSPrivacyTracking</key>
+        <false/>
+        <key>NSPrivacyCollectedDataTypes</key>
+        <array/>
+        <key>NSPrivacyAccessedAPITypes</key>
+        <array>
+            <dict>
+                <key>NSPrivacyAccessedAPIType</key>
+                <string>NSPrivacyAccessedAPICategoryDiskSpace</string>
+                <key>NSPrivacyAccessedAPITypeReasons</key>
+                <array>
+                    <string>E174.1</string>
+                </array>
+            </dict>
+            <dict>
+                <key>NSPrivacyAccessedAPIType</key>
+                <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+                <key>NSPrivacyAccessedAPITypeReasons</key>
+                <array>
+                    <string>0A2A.1</string>
+                </array>
+            </dict>
+            <dict>
+                <key>NSPrivacyAccessedAPIType</key>
+                <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+                <key>NSPrivacyAccessedAPITypeReasons</key>
+                <array>
+                    <string>C56D.1</string>
+                </array>
+            </dict>
+        </array>
+        <key>NSPrivacyTrackingDomains</key>
+        <array/>
+    </privacy-manifest>
+
+    <!-- iOS Icons -->
+    <icon height="20" src="res/icons/ios/icon-20.png" width="20" />
+    <icon height="87" src="res/icons/ios/icon-29-3x.png" width="87" />
+    <icon height="180" src="res/icons/ios/icon-60-3x.png" width="180" />
+    <icon height="167" src="res/icons/ios/icon-83.5-2x.png" width="167" />
+    <icon height="60" src="res/icons/ios/icon-60.png" width="60" />
+    <icon height="120" src="res/icons/ios/icon-60-2x.png" width="120" />
+    <icon height="76" src="res/icons/ios/icon-76.png" width="76" />
+    <icon height="152" src="res/icons/ios/icon-76-2x.png" width="152" />
+    <icon height="40" src="res/icons/ios/icon-40.png" width="40" />
+    <icon height="80" src="res/icons/ios/icon-40-2x.png" width="80" />
+    <icon height="57" src="res/icons/ios/icon-57.png" width="57" />
+    <icon height="114" src="res/icons/ios/icon-57-2x.png" width="114" />
+    <icon height="72" src="res/icons/ios/icon-72.png" width="72" />
+    <icon height="144" src="res/icons/ios/icon-72-2x.png" width="144" />
+    <icon height="29" src="res/icons/ios/icon-small.png" width="29" />
+    <icon height="58" src="res/icons/ios/icon-small-2x.png" width="58" />
+    <icon height="50" src="res/icons/ios/icon-50.png" width="50" />
+    <icon height="100" src="res/icons/ios/icon-50-2x.png" width="100" />
+    <icon height="1024" src="res/icons/ios/icon-1024.png" width="1024" />
+
+    <!-- iOS Splash Screens -->
+    <splash height="480" src="res/screens/ios/screen-iphone-portrait.png" width="320" />
+    <splash height="960" src="res/screens/ios/screen-iphone-portrait-2x.png" width="640" />
+    <splash height="1024" src="res/screens/ios/screen-ipad-portrait.png" width="768" />
+    <splash height="2048" src="res/screens/ios/screen-ipad-portrait-2x.png" width="1536" />
+    <splash height="768" src="res/screens/ios/screen-ipad-landscape.png" width="1024" />
+    <splash height="1536" src="res/screens/ios/screen-ipad-landscape-2x.png" width="2048" />
+    <splash height="1136" src="res/screens/ios/screen-iphone-568h-2x.png" width="640" />
+    <splash height="1334" src="res/screens/ios/screen-iphone-portrait-667h.png" width="750" />
+    <splash height="2208" src="res/screens/ios/screen-iphone-portrait-736h.png" width="1242" />
+    <splash height="1242" src="res/screens/ios/screen-iphone-landscape-736h.png" width="2208" />
+    <splash height="2436" src="res/screens/ios/Default-2436h.png" width="1125" />
+    <splash height="1125" src="res/screens/ios/Default-Landscape-2436h.png" width="2436" />
+    <splash src="res/screens/ios/Default@2x~universal~anyany.png" />
+    <splash src="res/screens/ios/Default@2x~universal~comany.png" />
+    <splash src="res/screens/ios/Default@2x~universal~comcom.png" />
+    <splash src="res/screens/ios/Default@3x~universal~anyany.png" />
+    <splash src="res/screens/ios/Default@3x~universal~anycom.png" />
+    <splash src="res/screens/ios/Default@3x~universal~comany.png" />
+
+  </platform>
+
+  <!-- ***************************** -->
+  <!--         Windows Section     -->
+  <!-- ***************************** -->
+  <platform name="windows">
+    <!-- Windows Icons -->
+    <icon height="150" src="res/icons/windows/Square150x150Logo.scale-100.png" width="150" />
+    <icon height="360" src="res/icons/windows/Square150x150Logo.scale-240.png" width="360" />
+    <icon height="30" src="res/icons/windows/Square30x30Logo.scale-100.png" width="30" />
+    <icon height="310" src="res/icons/windows/Square310x310Logo.scale-100.png" width="310" />
+    <icon height="44" src="res/icons/windows/Square44x44Logo.scale-100.png" width="44" />
+    <icon height="106" src="res/icons/windows/Square44x44Logo.scale-240.png" width="106" />
+    <icon height="70" src="res/icons/windows/Square70x70Logo.scale-100.png" width="70" />
+    <icon height="71" src="res/icons/windows/Square71x71Logo.scale-100.png" width="71" />
+    <icon height="170" src="res/icons/windows/Square71x71Logo.scale-240.png" width="170" />
+    <icon height="50" src="res/icons/windows/StoreLogo.scale-100.png" width="50" />
+    <icon height="120" src="res/icons/windows/StoreLogo.scale-240.png" width="120" />
+    <icon height="150" src="res/icons/windows/Wide310x150Logo.scale-100.png" width="310" />
+    <icon height="360" src="res/icons/windows/Wide310x150Logo.scale-240.png" width="744" />
+  </platform>
+</widget>

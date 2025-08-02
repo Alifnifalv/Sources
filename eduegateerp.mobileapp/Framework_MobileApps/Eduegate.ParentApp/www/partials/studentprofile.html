@@ -1,0 +1,249 @@
+﻿<div ng-controller="StudentProfileController">
+    <div class="app-header d-flex d-lg-none">
+        <!--begin::Header container-->
+        <div class="app-container container-xxl d-flex align-items-center justify-content-between ios-pt-12"
+            id="kt_app_header_container">
+            <!--begin::Logo-->
+            <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0 me-lg-15">
+                <a ng-click="$root.goBack()" class=" p-5 ms-n5">
+                    <img alt="Logo" src="./clients/{{$root.ClientSettings.Client}}/images/back-arrow.svg" class="h-25px">
+                </a>
+            </div>
+            <!--end::Logo-->
+            <!--begin::Header mobile toggle-->
+            <div class="d-flex align-items-center d-lg-none ms-2" title="Show sidebar menu">
+                
+            </div>
+            <!--end::Header mobile toggle-->
+        </div>
+        <!--end::Header container-->
+    </div>
+
+    <div class="app-toolbar py-3 py-lg-0">
+        <div class="app-container container-xxl d-flex flex-stack">
+            <div class="page-title d-flex flex-column justify-content-center me-3">
+                <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">Student profile
+                </h1>
+            </div>
+            <div class="d-flex align-items-center gap-2 gap-lg-3">
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="pageContainer" ng-init="LoadStudentInfo()">
+        <div class="app-content flex-column-fluid">
+            <!--begin::Content container-->
+            <div  class="app-container container-xxl">
+                <div class="card mb-5 mb-xl-10 mt-5">
+                    <div class="card-body p-9">
+                        <div class="d-flex flex-column text-center mb-9 px-9 profileImg studentProfile">
+                            <!--begin::Photo-->
+                            <div class="symbol  symbol-150px mb-4">
+                                <img style="    object-fit: cover;     object-position: right top;" class="h-auto" ng-src="{{ParentUrlService}}/Content/ReadImageContentsByID?contentID={{StudentDetail.StudentProfile}}" on-error-src="./clients/{{$root.ClientSettings.Client}}/images/profile_img.png"/>
+                                <i ng-if="!StudentDetail.StudentProfile" class="fa fa-3x fa-user" aria-hidden="true"></i>
+
+                            </div>
+                            <!--end::Photo-->
+                            <!--begin::Info-->
+                            <div class="text-center">
+                                <!--begin::Name-->
+                                <a class="text-gray-800 fw-bold text-hover-primary fs-4">
+                                    {{StudentDetail.FirstName}} {{StudentDetail.MiddleName}} {{StudentDetail.LastName}}
+                                </a>
+                            </div>
+                            <!--end::Info-->
+                        </div>
+                        <!--begin::Row-->
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Admission number</label>
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800">{{StudentDetail.AdmissionNumber}}</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Row-->
+                        <!--begin::Input group-->
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Email</label>
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8 fv-row">
+                                <span class="fw-bold text-gray-800 fs-6">{{StudentDetail.EmailID}}</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Input group-->
+                        <!--begin::Input group-->
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Mobile number
+                            <!-- <i class="fas fa-exclamation-circle ms-1 fs-7" data-bs-toggle="tooltip" aria-label="Phone number must be active" data-bs-original-title="Phone number must be active" data-kt-initialized="1"></i></label> -->
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8 d-flex align-items-center">
+                                <span class="fw-bold fs-6 text-gray-800 me-2">{{StudentDetail.MobileNumber}}</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Input group-->
+
+                        <div class="row mb-7">
+                            <label class="col-lg-4 fw-bold text-muted">Date of birth</label>   
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800">{{StudentDetail.DateOfBirth | ctime | date : 'dd-MM-yyyy'}}</span>
+                            </div>
+                        </div>
+
+                        <!--begin::Input group-->
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Gender</label>
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800 me-2">{{StudentDetail.GenderName}}</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Input group-->
+                        <!--begin::Input group-->
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Blood group</label>   
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800">{{StudentDetail.BloodGroupName}}</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Class</label>   
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800">{{StudentDetail.ClassName}}</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Section</label>   
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800">{{StudentDetail.SectionName}}</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Admission date</label>   
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800">{{StudentDetail.AdmissionDate | ctime | date : 'dd-MM-yyyy'}}</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Father name</label>   
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800" ng-bind="StudentDetail.Guardian.FatherFirstName"></span>
+                    <span class="fw-bold fs-6 text-gray-800" ng-bind="StudentDetail.Guardian.FatherMiddleName"></span>
+                    <span class="fw-bold fs-6 text-gray-800" ng-bind="StudentDetail.Guardian.FatherLastName"></span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Father mobile no</label>   
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800">{{StudentDetail.Guardian.GuardianPhone}}</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Father email</label>   
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800">{{StudentDetail.Guardian.GaurdianEmail}}</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Input group-->
+                        <!--begin::Input group-->
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Mother name</label>
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800" ng-bind="StudentDetail.Guardian.MotherFirstName"></span>
+                    <span class="fw-bold fs-6 text-gray-800" ng-bind="StudentDetail.Guardian.MotherMiddleName"></span>
+                    <span class="fw-bold fs-6 text-gray-800" ng-bind="StudentDetail.Guardian.MotherLastName"></span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Mother mobile no</label>   
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800">{{StudentDetail.Guardian.MotherPhone}}</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <div class="row mb-7">
+                            <!--begin::Label-->
+                            <label class="col-lg-4 fw-bold text-muted">Mother email</label>   
+                            <!--end::Label-->
+                            <!--begin::Col-->
+                            <div class="col-lg-8">
+                                <span class="fw-bold fs-6 text-gray-800">{{StudentDetail.Guardian.MotherEmailID}}</span>
+                            </div>
+                            <!--end::Col-->
+                        </div>
+                        <!--end::Input group-->
+                        <div class="gridDataWrap" ng-if="StudentDetail.StudentSiblings.length > 0">
+                            <div class="subTitle"><b>Siblings</b></div>
+                        </div>
+                        <div class="gridDataWrap">
+                            <span ng-repeat="sibling in StudentDetail.StudentSiblings">{{sibling.Value}}<br/></span>
+                        </div>
+                    </div>
+                    <!--end::Card body-->
+                </div>
+            </div>
+            <!--end::Content container-->
+        </div>
+        
+        
+    </div>
+</div><!--about us-->
+<style>
+
+
+.studentProfile .profileImg {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 0 10px;
+}
+</style>
+

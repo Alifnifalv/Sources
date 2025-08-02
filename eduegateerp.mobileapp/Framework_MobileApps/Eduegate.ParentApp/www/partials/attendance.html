@@ -1,0 +1,203 @@
+﻿<div class="app-page flex-column flex-column-fluid" ng-controller="AttendanceController" ng-init="init()">
+
+    <div class="app-content flex-column-fluid bg-white theme-dark-bg-body">
+        <div class="app-header d-flex d-lg-none shodow-sm">
+            <!--begin::Header container-->
+            <div class="app-container container-xxl d-flex align-items-center justify-content-between ios-pt-12"
+                id="kt_app_header_container">
+                <!--begin::Logo-->
+                <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0 me-lg-15">
+                    <a ng-click="$root.goBack()" class=" p-5 ms-n5">
+                        <img alt="Logo" src="./clients/{{$root.ClientSettings.Client}}/images/back-arrow.svg" class="h-25px">
+                    </a>
+                </div>
+                <!--end::Logo-->
+                <!--begin::Header mobile toggle-->
+                <div class="d-flex align-items-center d-lg-none ms-2" title="Show sidebar menu">
+                    
+                </div>
+                <!--end::Header mobile toggle-->
+            </div>
+            <!--end::Header container-->
+        </div>
+        <div class="app-toolbar py-3 py-lg-0">
+            <div class="app-container container-xxl d-flex flex-stack">
+                <div class="page-title d-flex flex-column justify-content-center me-3">
+                    <h1 class="page-heading d-flex text-dark fw-bold fs-3 flex-column justify-content-center my-0">
+                        Attendance
+                    </h1>
+                </div>
+                <div class="d-flex align-items-center gap-2 gap-lg-3">
+                    
+                </div>
+            </div>
+        </div>
+        <div class="app-container container-xxl pt-5">
+            <div class="row">
+                <div class="input-field col s12">
+                    <select class="form-select form-select-solid" data-control="select2" data-placeholder="Month"
+                        id="attendanceMonth" ng-change="getStudentAttendance()" ng-model="SelectedDate.SelectedMonth">
+                        <option value="0">Jan</option>
+                        <option value="1">Feb</option>
+                        <option value="2">Mar</option>
+                        <option value="3">Apr</option>
+                        <option value="4">May</option>
+                        <option value="5">Jun</option>
+                        <option value="6">Jul</option>
+                        <option value="7">Aug</option>
+                        <option value="8">Sep</option>
+                        <option value="9">Oct</option>
+                        <option value="10">Nov</option>
+                        <option value="11">Dec</option>
+                    </select>
+                </div>
+                <div style="width: 50%;float: right;">
+                    <select class="form-select form-select-solid" data-control="select2" data-placeholder="Year"
+                        id="attendanceYear" ng-change="getStudentAttendance()" ng-model="SelectedDate.SelectedYear">
+                        <option ng-repeat="year in Years" value="{{year}}">{{year}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+
+            </div>
+            <div class="row">
+                <div class=" col-12 ">
+                    <ul class="d-grid" style="  
+                    grid-column-start: 1;
+                    grid-column-end: 3;
+                    justify-items: stretch;
+                    align-content: space-evenly;
+                    row-gap: 16px;
+                    column-gap: 16px;
+                    grid-template-columns: auto auto auto;"  >
+                            <li class="nav-item p-0 ms-0">
+                                <a class="nav-link btn d-flex flex-column flex-center  min-w-45px py-4 px-3 btn-active-danger ">
+                                    <span class="fs-6 fw-bold Pressent_A" >A</span>                      
+                                    <span class="fs-7 fw-semibold">Absent</span>
+                                </a>                
+                            </li>
+                            <li class="nav-item p-0 ms-0">
+                                <a class="nav-link btn d-flex flex-column flex-center  min-w-45px py-4 px-3 btn-active-danger ">
+                                    <span class="fs-6 fw-bold Pressent_AE" >AE</span>                      
+                                    <span class="fs-7 fw-semibold">Absences Excused</span>
+                                </a>                
+                            </li>
+                            <li class="nav-item p-0 ms-0">
+                                <a class="nav-link btn d-flex flex-column flex-center  min-w-45px py-4 px-3 btn-active-danger ">
+                                    <span class="fs-6 fw-bold Pressent_H" >H</span>                      
+                                    <span class="fs-7 fw-semibold">holiday</span>
+                                </a>                
+                            </li>
+                            <li class="nav-item p-0 ms-0">
+                                <a class="nav-link btn d-flex flex-column flex-center  min-w-45px py-4 px-3 btn-active-danger ">
+                                    <span class="fs-6 fw-bold Pressent_L" >L</span>                      
+                                    <span class="fs-7 fw-semibold">Late</span>
+                                </a>                
+                            </li>
+                            <li class="nav-item p-0 ms-0">
+                                <a class="nav-link btn d-flex flex-column flex-center  min-w-45px py-4 px-3 btn-active-danger ">
+                                    <span class="fs-6 fw-bold Pressent_NA" >NA</span>                      
+                                    <span class="fs-7 fw-semibold">Not Available</span>
+                                </a>                
+                            </li>
+                            <li class="nav-item p-0 ms-0">
+                                <a class="nav-link btn d-flex flex-column flex-center  min-w-45px py-4 px-3 btn-active-danger ">
+                                    <span class="fs-6 fw-bold Pressent_P" >P</span>                      
+                                    <span class="fs-7 fw-semibold">Present</span>
+                                </a>                
+                            </li>
+                            <li class="nav-item p-0 ms-0">
+                                <a class="nav-link btn d-flex flex-column flex-center  min-w-45px py-4 px-3 btn-active-danger ">
+                                    <span class="fs-6 fw-bold Pressent_T" >T</span>                      
+                                    <span class="fs-7 fw-semibold">Tardy</span>
+                                </a>                
+                            </li>
+                            <li class="nav-item p-0 ms-0">
+                                <a class="nav-link btn d-flex flex-column flex-center  min-w-45px py-4 px-3 btn-active-danger ">
+                                    <span class="fs-6 fw-bold Pressent_TE" >TE</span>                      
+                                    <span class="fs-7 fw-semibold">Tardy Excused</span>
+                                </a>                
+                            </li>
+                            <li class="nav-item p-0 ms-0">
+                                <a class="nav-link btn d-flex flex-column flex-center  min-w-45px py-4 px-3 btn-active-danger ">
+                                    <span class="fs-6 fw-bold Pressent_UM" >UM</span>                      
+                                    <span class="fs-7 fw-semibold">Unmarked</span>
+                                </a>                
+                            </li>
+                            <li class="nav-item p-0 ms-0">
+                                <a class="nav-link btn d-flex flex-column flex-center  min-w-45px py-4 px-3 btn-active-danger ">
+                                    <span class="fs-6 fw-bold Pressent_W" >W</span>                      
+                                    <span class="fs-7 fw-semibold">Weekend</span>
+                                </a>                
+                            </li>
+                            <li class="nav-item p-0 ms-0">
+                                <a class="nav-link btn d-flex flex-column flex-center  min-w-45px py-4 px-3 btn-active-danger ">
+                                    <span class="fs-6 fw-bold Pressent_LE" >LE</span>                      
+                                    <span class="fs-7 fw-semibold">Late Excused</span>
+                                </a>                
+                            </li>
+                        </ul>
+                    <div id='calendar'></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .loader-blk:before{
+        opacity: 1;
+    }
+
+    .Pressent_A {
+        color: rgb(243, 125, 26) !important;
+    }
+
+    .Pressent_AE {
+        color: rgb(245, 66, 19) !important;
+    }
+
+    .Pressent_H {
+        color: rgb(234, 43, 21) !important;
+    }
+
+    .Pressent_L {
+        color: rgb(250, 6, 224) !important;
+    }
+
+    .Pressent_NA {
+        color: rgb(142 13 13) !important;
+    }
+
+    .Pressent_P {
+        color: rgb(14, 173, 31) !important;
+    }
+
+    .Pressent_T {
+        color: rgb(133, 86, 73) !important;
+    }
+
+    .Pressent_TE {
+        color: rgb(179, 143, 134) !important;
+    }
+
+    .Pressent_UM {
+        color: rgb(76 70 70) !important;
+    }
+
+    .Pressent_W {
+        color: rgb(149, 179, 215) !important;
+    }
+
+    .Pressent_LE {
+        color: rgb(14, 174, 199) !important;
+    }
+
+
+
+    * {
+        padding: 1px;
+    }
+</style>

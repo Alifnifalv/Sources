@@ -1,0 +1,82 @@
+﻿<div ng-controller="VehicleAttendantController">
+    <div class="headerBar displayFlex alignItemCenter innerHeader">
+        <div class="nav-sidebar align-left">
+            <div class="backtopage" ng-click="$root.goBack()">
+                <img src="./images/back-arrow.png" />
+            </div>
+        </div>
+        <div class="header-text"><span translate>Vehicle Attendant Details</span></div>
+        <div class="headerRight alignright">
+            <div class="notifyIcon"><i class="fa fa-bell-o"></i></div>
+        </div>
+    </div>
+
+    <div class="excludeHeader" ng-init="LoadVehicleInfo()">
+
+        <div class="alert alert-warning text-center" role="alert"
+            ng-if="!ShowLoader && VehiclesDetails.length == 0">
+            <b>Sorry, something went wrong. Please try again later!</b>
+        </div>
+        
+        <div class="dataWrap setBorder boxShadow marginBtm10" ng-repeat="vehicleDet in VehiclesDetails track by $index">
+            <div class="vehicleToggleContainer displayFlex flexColumn whiteBg">
+        
+                <div class="vehicleToggleHeader displayFlex flexColumn pad10">
+                    <div class="mainTitle fullwidth relativePos displayFlex">
+                        <span class="flexOne" translate>Vehicle Reg. No : <strong>{{vehicleDet.VehicleRegistrationNumber}}</strong></span>
+                        <span class="headerBtn flexAuto" ng-click="toggleGrid($event, vehicleDet, 'Vehicle');"><i
+                                class="fa fa-eye" aria-hidden="true"></i> View Attendant</span>
+                    </div>
+                    <div class="gridDataWrap">
+                        <label>Vehicle Type:</label>
+                        <span>{{vehicleDet.VehicleType}}</span>
+                    </div>
+                </div>
+        
+                <div class="vehicleToggleContent pad10 noPaddingTop">
+        
+                    <div class="gridNestedContainer routeToggleHeader">
+                        <div ng-repeat="assign in VehicleAssignDetails track by $index">
+                            <span ng-repeat="attend in assign.VehicleAttendantDetails">
+                                <div class="gridNestedData">
+                                    <div class="gridDataWrap" style="border-bottom: 1px solid #ece2e2; padding-bottom: .5rem;">
+                                        <label>Employee Code:</label>
+                                        <span class="">{{attend.EmployeeCode}}</span>
+                                    </div>
+                                    <div class="gridDataWrap" style="border-bottom: 1px solid #ece2e2; padding-bottom: .5rem; padding-top: 7px;">
+                                        <label>Name:</label>
+                                        <span class="">{{attend.EmployeeFullName}}</span>
+                                    </div>
+                                    <div class="gridDataWrap" style="border-bottom: 1px solid #ece2e2; padding-bottom: .5rem; padding-top: 7px;">
+                                        <label>Work Mobile Number:</label>
+                                        <span class="">{{attend.WorkMobileNo}}</span>
+                                    </div>
+                                    <div class="gridDataWrap" style="border-bottom: 1px solid #ece2e2; padding-bottom: .5rem; padding-top: 7px;">
+                                        <label>Work Email:</label>
+                                        <span class="">{{attend.WorkEmail}}</span>
+                                    </div>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+        
+                </div>
+        
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<style>
+    body {
+    height: 100%;
+    width: 100%;
+    /* font-family: 'Roboto-Regular'; */
+    font-weight: 400;
+    font-size: 15px;
+    background: #f7f7f7;
+    user-select: none;
+    -webkit-user-select: none;
+    }
+</style>

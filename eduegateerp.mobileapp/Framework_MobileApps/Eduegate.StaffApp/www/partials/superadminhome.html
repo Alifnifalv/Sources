@@ -1,0 +1,456 @@
+﻿<div class="displayFlex flexColumn pad5" ng-controller="SuperAdminDashboardController">
+    <!-- <div class="pageTitle noBorder">Welcome {{UserName}}!</div> -->
+    <div class="alignleft fullWidth">
+        <div class="wrapper h-100 pb-0" style="min-height: auto;">
+            <header class="header">  
+                 <div class="header-wrp">
+                    <div class="menu">
+                    <div class="menu-icon" >
+                    <a href="#" data-target="slide-out" class="sidenav-trigger">
+                    <div class="menu-icon"><span></span><span></span><span></span></div>
+                    <img src="./images/menu.png"/></div>
+                </a>
+            </div>
+            <div class="notification">
+                <div class="notif-icon"><img src="./images/notification.png"/></div>			
+            </div>
+        </div>
+    </header>
+    <section class="banner" style="background-image:url(./images/bg.svg); width: 100%; background-size: cover;">
+        <div class="container">
+            <div class="banner-cnt">
+                <h2>Welcome <span class="user-name">{{UserName}}!</h2></span>
+            </div>
+        </div>
+    </section>
+    <!-- Button trigger modal -->
+
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Attention!</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            Location settings on your device are currently turned off. In order to accurately mark your attendance, please enable location services on your device.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <section class="dsh-menu-sc">
+        <div class="container">
+            <div class="dsh-menu-cnt">
+             
+                <div class="dsh-menu-list" ui-sref="mywards"  ng-if="!Driver">
+                    <div class="dsh-menu-icon">
+                        <img src="./images/mywards.png">
+                    </div>
+                    <div class="dsh-menu-head">
+                        <h4>Academics</h4>
+                    </div>
+                    </a>
+                </div>
+                <div class="dsh-menu-list" ui-sref="enroll">
+                    <div class="dsh-menu-icon"> <img src="./images/enroll.png">
+                    </div>
+                    <div class="dsh-menu-head">
+                        <h4>HR</h4>
+                    </div>
+                    </a>
+                </div>
+                <div class="dsh-menu-list" ui-sref="driverschedule" ng-if="Driver">
+                    <div class="dsh-menu-icon">
+                        <img src="./images/driverschedule.png">
+                    </div>
+                    <div class="dsh-menu-head">
+                        <h4>Driver schedule</h4>
+                    </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="card m-3" id="attendanceCard">
+        <div class="d-flex justify-content-center mt-3" ng-show="attendanceCardSpinner">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+        <div class="card-body">
+            <h6 class="card-title">{{TodaysAttendanceData.AttendenceDate}}</h6>
+            <div class="card-text text-gray-800 row">
+            <h6 style="font-size: 12px;">Your attendance is marked as :</h6>
+            <h3 class="text-uppercase right">{{TodaysAttendanceData.PresentStatus}}</h3>
+            </div>
+            <div class="d-flex flex-end"> 
+            <a class="btn btn-sm fw-bold btn-secondary w-100 me-4" ng-click="GetTodaysAttendance()">Refresh</a>
+            <a class="btn btn-sm fw-bold btn-primary text-white w-100" ng-click="CloseAttendanceCard()">
+                Close</a>
+            </div>
+        </div>
+    </div>
+
+        <ul class="quickList p-2">
+                <button class="btn btn-dark app-layout-builder-toggle lh-1 py-4"  ng-if="Driver" ng-click="changeText()" style="    position: fixed;
+    z-index: 105;
+    bottom: 40px;height: 56px;background: #ECE6F0;display: flex;
+flex-direction: row;    -webkit-box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+    -moz-box-shadow: 0 2px 4px -1px rgba(0,0,0,.2),0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12);
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+justify-content: center;
+align-items: center;gap: 12px;background: #4284f4;
+
+
+border-radius: 16px;
+    right: 40px;" >
+    <img  ng-src="{{src}}"   style="width: 24px; height: 24px;"/>
+    <span class="indicator-label" ng-bind="buttonText">
+        Start work
+    </span>
+    <span  class="indicator-progress">
+        Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+    </span>
+
+    </button>
+            <li class="p-2">
+                <span class="listWrap greengrad_bg z-depth-2">
+                    <span class="listWrapInner align-items-start p-4" ui-sref="notifications">
+                        <span class="svg-icon-3x mb-3  d-flex justify-content-between w-100">
+                            <img src="./images/notifications.svg">
+                            <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2" style="font-size: 22px;">{{NotificationCount}}</span>
+
+                        </span>
+                        <span class="fs-6 fw-bold text-white">Pending notifications</span>
+                        <!-- <span class="listValue">{{NotificationCount}}</span> -->
+                    </span>
+                </span>
+            </li >
+            <li class="p-2">
+                <span class="listWrap greengrad_bg z-depth-2">
+                    <span class="listWrapInner align-items-start p-4" ui-sref="studentpickerverificationHome">
+                        <span class="svg-icon-3x mb-3  d-flex justify-content-between w-100">
+                            <img src="./images/notifications.svg">
+                            <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2" style="font-size: 22px;"></span>
+
+                        </span>
+                        <span class="fs-6 fw-bold text-white">Pickup verification</span>
+                    </span>
+                </span>
+            </li >
+            <li ng-if="!Driver" class="p-2">
+                <span class="listWrap orangegrad_bg z-depth-2">
+                    <span class="listWrapInner align-items-start p-4" ui-sref="teacherclasses">
+                        <span class="svg-icon-3x mb-3  d-flex justify-content-between w-100">
+                            <img src="./images/myclass.svg">
+                            <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2" style="font-size: 22px;">{{MyClassCount}}</span>
+
+                        </span>
+                        <span class="fs-6 fw-bold text-white">My classes</span>
+                        <!-- <span class="listValue">{{MyClassCount}}</span> -->
+                    </span>
+                </span>
+            </li>      
+            <li ng-if="!Driver" class="p-2">
+                <span class="listWrap bluegrad_bg z-depth-2">
+                    <span class="listWrapInner align-items-start p-4" ui-sref="assignments">
+                        <span class="svg-icon-3x mb-3  d-flex justify-content-between w-100">
+                            <img src="./images/assignment.svg">
+                            <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2" style="font-size: 22px;">{{NewAssignmentCount}}</span>
+
+                        </span>
+                        <span class="fs-6 fw-bold text-white">My assignments</span>
+                        <!-- <span class="listValue">{{NewAssignmentCount}}</span> -->
+                    </span>
+                </span>
+            </li>     
+            <li ng-if="Driver" class="p-2">
+                <span class="listWrap purplegrad_bg z-depth-2">
+                    <span class="listWrapInner align-items-start p-4" ui-sref="routedetails">
+                        <span class="svg-icon-3x mb-3  d-flex justify-content-between w-100">
+                            <img src="./images/route.svg">
+                            <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2" style="font-size: 22px;">{{RouteCount}}</span>
+
+                        </span>
+                        <span class="fs-6 fw-bold text-white">Routes details</span>
+                        <!-- <span class="listTitle">Routes details</span> -->
+                        <!-- <span class="listValue">{{RouteCount}}</span> -->
+                    </span>
+                </span>
+            </li>
+            <li class="p-2" ng-if="!Driver">
+                <span class="listWrap yellowgrad_bg z-depth-2">
+                    <span class="listWrapInner align-items-start p-4" ui-sref="lessonplan">
+                        <span class="svg-icon-3x mb-3  d-flex justify-content-between w-100">
+                            <img src="./images/lesson.svg">
+                            <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2" style="font-size: 22px;">{{LessonPlanCount}}</span>
+
+                        </span>
+                        <span class="fs-6 fw-bold text-white">Lesson plan</span>
+                        <span class="listTitle"></span>
+                        <!-- <span class="listValue">{{LessonPlanCount}}</span> -->
+                    </span>
+                </span>
+            </li>
+            <li class="p-2" ng-if="Driver">
+                <span class="listWrap bluegrad_bg  z-depth-2">
+                    <span class="listWrapInner align-items-start p-4 " ui-sref="vehicleattendantdetails">
+                        <span class="svg-icon-3x mb-3 d-flex justify-content-between w-100">
+                            <img src="./images/attendend.svg">
+                            <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2" style="font-size: 22px;">{{VehicleCount}}</span>
+
+                        </span>
+                        <span class="fs-6 fw-bold text-white">Vehicle attendant details</span>
+                        <!-- <span class="listValue">{{VehicleCount}}</span> -->
+                    </span>
+                </span>
+            </li>
+            <li class="p-2" ng-if="Driver">
+                <span class="listWrap yellowgrad_bg z-depth-2">
+                    <span class="listWrapInner align-items-start p-4 " ui-sref="driverReportDetails">
+                        <span class="svg-icon-3x mb-3 d-flex justify-content-between w-100">
+                            <img src="./images/report.png">
+                            <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2" style="font-size: 22px;"></span>
+
+                        </span>
+                        <span class="fs-6 fw-bold text-white">Reports</span>
+                    </span>
+                </span>
+            </li>
+
+            <li class="p-2">
+                <span class="listWrap yellowgrad_bg z-depth-2">
+                    <span class="listWrapInner align-items-start p-4 " ui-sref="employeeleaveapplication">
+                        <span class="svg-icon-3x mb-3 d-flex justify-content-between w-100">
+                            <img src="./images/arrow-right-from-bracket.svg" class="" style="height: 24px;">
+
+                              
+                            <span class="fs-2hx fw-bold text-white me-2 lh-1 ls-n2" style="font-size: 22px;"></span>
+
+                        </span>
+                        <span class="fs-6 fw-bold text-white">Employee Leave Request</span>
+                    </span>
+                </span>
+            </li>
+  
+        </ul>
+        <div class="pageTitle noBorder px-3">Events</div>
+        <div class="eventsGallery fullWidth alignleft z-depth-2 m-2 mx-3" style="border-radius: 16px ;"> 
+            <img src="./images/events.jpg"/>
+        </div>
+    </div>
+
+</div>
+</div>
+<script>
+    var chart = c3.generate({
+        bindto: '#barChart',
+        size: {
+            height: 160
+        },
+        data: {
+            x : 'x',
+            columns: [
+                ['x','1st Term Exam','Mid Term Exam','Annual Exam'],
+                ['Kid_A', 70, 80, 89],
+                ['Kid_B', 80, 70, 80],
+                ['Kid_C', 90, 80, 90]
+            ],
+            type: 'bar',
+            ratio: 0.5 // this makes bar width 50% of length between ticks
+        },
+        bar: {
+            width: {
+            }
+            // or
+            //width: 100 // this makes bar width 100px
+        },
+        axis: {
+            x: {
+                type: 'category',
+                tick: {
+                    rotate: 0,
+                    multiline: false
+                },
+            },
+            y: {
+                label: {
+                text: 'Marks(%)',
+                position: 'outer-middle'
+                },
+                tick:{
+                    //format:d3.format("%"),
+                    values:[25,50,75,100],
+                    count: 4
+                },
+            }
+        }
+    });
+</script>
+<style>
+    .banner-cnt h2 span.user-name{
+        
+        font-size: 18px;
+    }
+    ul.quickList li span.listWrap{
+
+        border-radius: 20px;
+    }
+    .excludeHeader
+     { 
+         top:0px;   
+    }
+    .excludeHeaderInner {
+    padding: 0px 0;
+    }
+    .header-wrp {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    align-items: center;
+}
+h4 {
+    font-weight: 500;
+    padding: 5px;
+    text-align: center;
+    margin: 0;
+    padding-top: 10px;
+    font-size: 13px;
+    color: #6a717f;
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.2;
+    }
+.textright {
+    text-align: right;
+    color: white;
+    font-weight: 600;
+    }
+.listTitle {
+    color: white;
+    text-align: center;
+    font-weight: 700;
+    font-size: 15px;
+    }
+/* ul.quickList li span.listWrapInner {
+    padding: 30px 1px;
+    } */
+.listValue { 
+    font-size: 26px;
+    font-weight: 600;
+    }
+ul.quickList li {  
+    padding:6px; 
+    display: flex;
+    flex: 1 auto;
+    }
+.container{
+    padding-right: 8px;
+    padding-left: 8px;
+}
+ul.quickList li span.listWrapInner {
+    padding: 10px 8px;
+}
+/* ul.quickList li span.listWrapInner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 10px;
+    align-items: center;
+} */
+    </style>
+
+
+    <div id="myModal" class="modal w-90" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content p-0">
+            <div class="modal-header">
+              <h5 class="modal-title">Your ID Card</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div ng-controller="IDCardController" ng-init="LoadProfileInfo()">
+                                    <div class="p-3">
+                                        <a class="h-40px d-flex justify-content-center" >
+                                            <img class="h-40px mb-3"  style="height:40px" alt="Logo" src="./images/pearl_logo.png">
+                                        </a>
+                                        <div class="rounded-3 overflow-hidden position-relative d-flex justify-content-center">
+                                            <!-- Image -->
+                                            <img ng-src="{{ParentUrlService}}/Content/ReadImageContentsByID?contentID={{Profile.EmployeePhoto}}" on-error-src="./images/profile_img.png"
+                                             class="img-thumbnail" width="200px" height="200px" alt="">
+                                            <!-- Overlay -->
+                                            <!-- <div class="bg-overlay bg-dark opacity-4"></div> -->
+                                            
+                                            <!-- Hover element -->
+                                            <!-- <div class="card-img-overlay d-flex justify-content-center">
+                                                <span class=" badge bg-dark mt-auto ms-0">
+
+                                            </span> -->
+                                            <!-- </div> -->
+                                        </div>
+                                        <!-- Card body -->
+                                        <div class="card-body px-2 text-center">
+                                            <span class=" fw-semibold  mb-0 text-dark" >
+                                                {{Profile.DesignationName}}</span>
+                                            <!-- Badge and Rating -->
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <div class="barcode" style="font-weight:normal;font-size: 17vw; ; font-weight:400; height:80px;">
+                                                    *{{Profile.EmployeeCode}}*
+                                                </div>
+                                            </div>
+                
+                                            <!-- Title -->
+                                            <h6 class="card-title fw-bold">{{Profile.EmployeeName}} </h6>
+                                            
+                                            <!-- Other Details -->
+                                            <div class="justify-content-between align-items-center mb-0">
+                                                <!-- Code -->
+                                                <!-- <h6 class="text-success mb-0">Emp.Code </span></h6> -->
+                                                <span class=" mb-0 text-reset">{{Profile.EmployeeCode}}</span>
+                                                <br>
+                                                <!-- Code -->
+                                                <!-- <h6 class="text-success mb-0">Designation </span></h6>
+                                                <span class=" mb-0 text-reset">{{Profile.DesignationName}}</span>
+                                                <br> -->
+                                                <!-- Code -->
+                                                <h6 class="text-success mb-0">Mobile No. </span></h6>
+                                                <span class=" mb-0 text-reset">{{Profile.WorkMobileNo}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                    </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+<style>
+
+    .id-card {
+    
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 0 1.5px 0px #b9b9b9;
+    }
+    .id-card img {
+        margin: 0 auto;
+    }
+.barcode {
+    font-family: 'Libre Barcode 39';
+}
+</style>

@@ -1,0 +1,108 @@
+<div ng-controller="VehicleAttendantController">
+    <div class="headerBar displayFlex alignItemCenter innerHeader">
+        <div class="nav-sidebar align-left">
+            <div class="backtopage" ng-click="$root.goBack()">
+                <img src="./images/back-arrow.png" />
+            </div>
+        </div>
+        <div class="header-text"><span translate>Reports</span></div>
+        <div class="headerRight alignright">
+            <div class="notifyIcon"><i class="fa fa-bell-o"></i></div>
+        </div>
+    </div>
+    <div class="excludeHeader" ng-init="LoadVehicleInfo()">   
+        <div class="pad10 noPaddingTop">       
+            <div class="gridNestedContainer">
+                        <div class="gridNestedData"> 
+           <label for="scheduletype">Get data by :</label><br>
+            <select style="width: 60%;" ng-model="ScheduleType" id="ScheduleType" convert-to-number>
+                <option value="0">Today</option>
+                <option value="1">Yesterday</option>
+              </select>
+            <br>
+        <div>
+            <span class="headerBtn flexAuto" ng-click="viewData($event);"><i class="fa fa-eye" aria-hidden="true"></i> View</span>
+            <span class="headerBtn flexAuto" onclick="window.print()"><i class="fa fa-print" aria-hidden="true"></i> Print</span>
+        </div>
+        <br>
+        <div
+      class="alert alert-warning text-center"
+      role="alert"
+      ng-if="!ShowLoader && passengerList.length == 0"
+    >
+      <b>Sorry, no data found !</b>
+    </div>
+        <div class="containerWrap  px-6" ng-if="passengerList.length > 0">
+            <div class="gridStyle displayFlex  flexColumn p-2  marginBtm10 whiteBg" style="box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+                        border-radius: 8px;">
+                <div class="gridDataWrap bg-transparent pb-0">
+                    <label>Selected date :</label><span>&nbsp;&nbsp;{{SelectedDateString}}</span>
+                </div>
+                <div class="gridDataWrap bg-transparent pb-0">
+                    <label>Vehicle reg.No :</label><span>&nbsp;&nbsp;{{VehicleRegistrationNo}}</span>
+                </div>
+                <div class="gridDataWrap bg-transparent pb-0">
+                    <label>Route code :</label><span>&nbsp;&nbsp;{{RouteCode}}</span>
+                </div>
+                <div class="gridDataWrap bg-transparent pb-0">
+                    <label>Total Pick-IN :</label><span>&nbsp;&nbsp;{{PickINCount}}</span>
+                </div>
+                <div class="gridDataWrap bg-transparent pb-0">
+                    <label>Total Drop-IN :</label><span>&nbsp;&nbsp;{{DropINCount}}</span>
+                </div>
+            </div>
+        </div>
+        <table id="passengers" ng-if="passengerList.length > 0">
+            <tr>
+              <th></th>
+              <th>Passenger</th>
+              <th>Class</th>
+              <th>Status</th>
+            </tr>
+            <tr ng-repeat="list in passengerList">
+              <td>{{$index+1}}</td>
+              <td>{{list.PassengerName}}</td>
+              <td>{{list.ClassSection}}</td>
+              <td class="align center">{{list.StatusMark}}</td>
+            </tr>
+          </table>
+</div>
+</div></div>
+</div>
+</div>
+
+<style>
+    .setBorder {
+  border: 1px solid #d8d8d8;
+  border-radius: 28px;
+}
+    .text-center {
+    text-align: center!important;
+    font-weight: 500;
+}
+
+#passengers {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#passengers td, #passengers th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#passengers tr:nth-child(even){background-color: #f2f2f2;}
+
+#passengers tr:hover {background-color: #ddd;}
+
+#passengers th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #04AA6D;
+  color: white;
+}
+</style>
+
+
