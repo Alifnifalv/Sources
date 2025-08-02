@@ -1,0 +1,257 @@
+﻿app.controller('LayoutController', ['$scope', '$http', '$compile', "$rootScope", "subscriptionService", "toaster", function ($scope, $http, $compile, $rootScope, $root, $subscription, $toaster) {
+    console.log('LayoutController controller loaded.');
+
+    $scope.WindowTabs = [];
+    $scope.SelectedWindowIndex = 0;
+    $scope.AlertCount = 0;
+    $scope.MenuItems = [];
+    var _menuItemsCache = [];
+    $root.MenuSearchText = "";
+    $scope.layout = null;
+    $scope.WindowCount = 0;
+
+    //$subscription.subscribe(
+    //    { 'subscribeTo': 'alertcount', 'componentID': 'layout', 'container': '' },
+    //    SetAlertCount
+    //);
+
+    function SetAlertCount(count) {
+        $scope.$apply(function () {
+            $scope.AlertCount = count;
+        });
+    }
+
+    $scope.ShowClose = function (index) {
+        if (index == 0) return false;
+        return true; 
+    }
+    $scope.isClicked = false;
+    $scope.value = 'month';
+
+    $scope.showDatePicker = function () {
+        if ($scope.value == 'custom') {
+            $scope.isClicked = true;
+        } else {
+            $scope.isClicked = false;
+        }
+    }
+    $scope.Init = function (layout) {
+        $scope.layout = layout;
+        $scope.WindowTabs.push({ Index: 0, Name: 'Dashbaord', Title: 'Dashbaord', Container: 'DashbaordWindow' });
+        //load menu tree structure
+        if ($scope.layout == 'smart') {
+            loadMenuFlatStructure();
+        }
+        else {
+            loadMenuTreeStructure();
+        }
+    }
+
+    $scope.NewApplicationGuestClick = function () {
+        window.location = "NewApplication?loginID=" + $rootScope.LoginID;
+    };
+
+    function loadMenuFlatStructure() {
+        $.ajax({
+            url: "Mutual/GetERPMenuFlat?menuLinkType=ERPNavigation",
+            type: "GET",
+            success: function (result) {
+                if (!result != null) {
+                    angular.copy(result, _menuItemsCache);
+                    var ordered = _.sortBy(result, 'MenuGroup');
+                    var menuItems = _.groupBy(ordered, 'MenuGroup');
+                    $scope.MenuItems = menuItems;
+                }
+            }
+        });
+    }
+
+    function loadMenuTreeStructure() {
+        $.ajax({
+            url: "Mutual/GetERPMenu?menuLinkType=ERPNavigation",
+            type: "GET",
+            success: function (result) {
+                if (!result != null) {
+                    angular.copy(result.MenuItems, _menuItemsCache);
+                    $scope.$apply(function () {
+                        $scope.MenuItems = result.MenuItems;
+                    });
+                }
+            }
+        });
+    }
+
+    $scope.FilterMenu = function (event) {
+        var filteredMenu = new JSLINQ(_menuItemsCache)
+            .Where(function (item) {
+                return item.Hierarchy.toUpperCase().indexOf($root.MenuSearchText.toUpperCase()) >= 0;
+            }).items;
+
+        $scope.MenuItems = [];
+        $.each(filteredMenu, function (index, value) {
+            $scope.MenuItems.push(value);
+        });
+    };
+
+    $scope.ShowWindow = function (name, title, container) {
+        var item = $.grep($scope.WindowTabs, function (e) { return e.Name == name; });
+        if (item.length == 0)
+            return false;
+        else {
+            $scope.SelectedWindowIndex = item[0].Index;
+            var itemContainer = $("#" + item[0].Container);
+            itemContainer.attr('windowindex', $scope.SelectedWindowIndex);
+            $(".windowcontainer").slideUp(100);
+            $("#" + item[0].Container).slideDown(100);
+            return true;
+        }
+    };
+
+    $scope.AddWindow = function (name, title, container) {
+        $scope.WindowCount = $scope.WindowCount + 1;
+        var item = $.grep($scope.WindowTabs, function(e){ return e.Name == name; });
+
+        if (item.length == 0) {
+            $scope.WindowTabs.push({ Index: $scope.WindowTabs.length, Name: name, Title: title, Container: container });
+            $scope.SelectedWindowIndex = $scope.WindowTabs.length - 1;
+        }
+        else
+        {
+            $scope.SelectedWindowIndex = item[0].Index;
+        }
+
+        var item = $.grep($scope.WindowTabs, function (e) { return e.Name == name; });
+        $(".windowcontainer").hide();
+        var container = $("#" + item[0].Container);
+        container.attr('windowindex', $scope.SelectedWindowIndex);
+
+        if (container.length == 0) {
+            $("#LayoutContentSection").append("<div id='" + item[0].Container + "' class='windowcontainer' style='display:block;color:white;'><center><div class='bounce-wrapper' id='Load'><div class='three-bounce-inner'><div class='bounce-item bi-item1'></div><div class='bounce-item bi-item2'></div><div class='bounce-item bi-item3'></div></div></div></center></div>");
+        }
+
+        container.slideDown('slow');
+        return item[0].Container;
+    }
+
+    $scope.SelectWindowTab = function (event, index) {
+        if ($scope.SelectedWindowIndex == index) return;
+        $scope.SelectedWindowIndex = index;
+        $(".windowcontainer").hide();
+        $("#" + $scope.WindowTabs[index].Container).show();
+    }
+
+    $scope.CloseWindowTab = function (index) {
+
+        if (index >= $scope.WindowTabs.length) {
+            index = $scope.WindowTabs.length - 1;
+        }
+
+        var window = $('#' + $scope.WindowTabs[index].Container);
+        window.hide();
+        window.html('');
+        window.remove();
+        $scope.WindowTabs.splice(index, 1);
+
+        if ($scope.SelectedWindowIndex >= index)
+            $scope.SelectWindowTab(null, $scope.SelectedWindowIndex - 1);
+
+        var topmenucontainer = $("body").find(".topmenuwrap-inner").outerWidth();
+        var itemwidth = 0;
+        $('ul.bodyrightmain-tab').children().each(function () {
+            itemwidth += $(this).outerWidth();
+            // change to .outerWidth(true) if you want to calculate margin too.
+        });
+        if (itemwidth < topmenucontainer) {
+            $('.btncontrols-wrap').hide();
+        }
+
+        $scope.WindowCount = $scope.WindowCount - 1;
+    };
+
+    $scope.CloseSmartWindow = function (event) {
+        $scope.CloseWindowTab($scope.WindowCount);
+    };
+
+    $scope.CloseWindow = function (event) {
+        var window = $(event.currentTarget).closest('.windowcontainer');
+        $scope.CloseWindowTab(window.attr('windowindex'));        
+    };
+
+    $scope.ChangePassword = function (event) {
+        event.stopPropagation();
+        var offs = $('.header').offset();
+        var yposition = event.pageY - offs.top;
+        $('.transparent-overlay').show();
+        $('.popup.gridpopupfields').slideDown("fast");
+        $('.popup.gridpopupfields').addClass('fixedpos');
+        $('.popup.gridpopupfields').css({ 'top': yposition });
+        $('.myprofile-dropdown').slideUp('fast');
+        
+
+        $('#globalPopupContainer').html('<center><span id="Load" class="fa fa-circle-o-notch fa-pulse waypoint" style="font-size:20px;color:white;"></span></center>');
+
+        $.ajax({
+            url: "Account/ResetPassword",
+            type: 'GET',
+            success: function (content) {
+                $('#globalPopupContainer').html($compile(content)($scope));
+                $('#globalPopupContainer').removeClass('loading');
+                $('#globalPopupContainer').addClass('loaded');
+            }
+        });
+    }
+
+
+    $scope.ClosePopup = function (event) {
+        $(event.currentTarget).hide();
+        $('.popup.gridpopupfields').fadeOut("fast");
+        setTimeout(function (e) {
+            $('.popup.gridpopupfields').css('top', '');
+            $('.popup.gridpopupfields').removeClass('fixedpos');
+        }, 200);
+        $('.popup.gridpopupfields', $(windowContainer)).removeAttr('data-list');
+        $('#popupContainer', $(windowContainer)).html('');
+        //$('.statusview').removeClass('active');
+    }
+
+    $rootScope.ShowPopup = function (currentTarget, windowContainer) {
+        var popdetect = $(currentTarget).attr('data-popup-type')
+        $('.preload-overlay', $(windowContainer)).show()
+        var xpos = $(".popup[data-popup-type='" + popdetect + "']", $(windowContainer)).outerWidth() / 2
+        var ypos = $(".popup[data-popup-type='" + popdetect + "']", $(windowContainer)).outerHeight() / 2
+        $(".popup[data-popup-type='" + popdetect + "']", $(windowContainer)).css({ 'margin-top': '-' + ypos + 'px', 'margin-left': '-' + xpos + 'px' })
+        $(".popup[data-popup-type='" + popdetect + "']", $(windowContainer)).fadeIn(500)
+        $(".popup[data-popup-type='" + popdetect + "']", $(windowContainer)).addClass('show')
+
+        $('.popup', $(windowContainer)).on('click', 'span.close', function () {
+            $(this).closest('.popup').fadeOut(500);
+            $(this).closest('.popup').removeClass('show cropPopup');
+            $('.preload-overlay', $(windowContainer)).fadeOut(500);
+            $(".dynamicPopoverOverlay, .snapshotOverlay").hide();
+            $("input.UploadFile").val('');
+        })
+
+        $('.popupbtn a', $(windowContainer)).on('click', function (e) {
+            e.preventDefault()
+        })
+
+        $('.preload-overlay', $(windowContainer)).on('click', function () {
+            $('.popup', $(windowContainer)).removeClass('show')
+            $('.popup', $(windowContainer)).fadeOut(500)
+            $('.preload-overlay', $(windowContainer)).fadeOut(500);
+        })
+    }
+
+    $scope.AboutClick = function () {
+        window.location.replace(utility.myHost + "Home/About");
+    };
+
+    $scope.ContactClick = function () {
+        window.location.replace(utility.myHost + "Home/Contact");
+    };
+
+    $scope.CounselorListClick = function () {
+        window.location.replace(utility.myHost + "Home/CounselorList");
+    };
+
+}]);

@@ -1,0 +1,24 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+@{
+    Layout = null;
+    var viewIID = Eduegate.Services.Contracts.Enums.SearchView.JobOpening;    
+}
+
+<div id="JobOpeningLists" class="windowcontainer">
+    <div ng-controller="ViewController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model), '@viewIID');InitializeWayPoint();">
+        @*<div class="pagenav"><a class="pagenav-leftmargin">Dashboard </a><a class="pagenav-leftmargin">  </a> /<span> Lists</span></div>*@
+        <div class="pageheadername"><div>View Job Opening</div>
+        <div class="alignright menugroup">
+            @if (ViewBag.HasEditAccess)
+            { 
+                <div class="createprodlink button-orange alignright" ng-click="Create('@viewIID')">
+                <a title="Create Job Opening"><i class="fa fa-plus"></i><span>Create Job Opening</span></a>
+                </div>
+            }
+            </div>
+        </div>
+
+        @await Html.PartialAsync("_SummaryHeader", Model)
+        @await Html.PartialAsync("_List", Model)
+    </div>
+</div>

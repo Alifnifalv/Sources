@@ -1,0 +1,287 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+@using Eduegate.Domain;
+@using Eduegate.Framework.Extensions;
+
+@{
+    string model = Model.IsChild ? "ChildModel" : "RowModel";
+    var rowEvent = "\"" + model + ".RowClick('" + (!string.IsNullOrEmpty(Model.ViewFullPath) ? Model.ViewFullPath : string.IsNullOrEmpty(Model.ControllerName) ? Model.ViewName.ToString() : Model.ControllerName)
+        + "', $index, $event, Row," + (Model.IsDetailedView ? "true" : "false") + "," + (Model.IsReloadSummarySmartViewAlways ? "true" : "false") + ");\"";
+    var imagePath = new Eduegate.Domain.Setting.SettingBL().GetSettingValue<string>("ImageHostUrl");
+
+}
+<tr>
+    <td class="toggleContainer">
+        <table class="mainGrid">
+            <tbody>
+                <tr ng-repeat="(index,Row) in @(model).rows" data-rowid="moreDetails1" class="mainrow" @*ng-click="@(model).ShowPopup($event)"*@
+                    ng-dblclick=@(Html.Raw(Model.IsRowClickForMultiSelect ? "\"" + "MultiSelectClick(Row)\"" : rowEvent))>
+                    <th style="width:2px;"></th>
+                    <!-- TD to toggle child rows -->
+
+                    @if (Model.HasChild)
+                    {
+                        <td class="treeview"><span><label><i ng-click="@(model).GetChildView('@(string.IsNullOrEmpty(Model.ControllerName) ? Model.ViewName.ToString() : Model.ControllerName)', $index, $event, @(Model.ChildView.HasValue ? Model.ChildView.Value : 0));" class="fa fa-plus-square-o plustominus zoomin"></i></label></span></td>
+                    }
+
+                    <!-- showing color lables -->
+                    @if (Model.IsCategoryColumnEnabled)
+                    {
+                        <td class="statuscolumn status-color ng-class:Row.RowCategory"
+                            style="border-bottom-width: 0px;
+                                    border-bottom: solid;
+                                    border-bottom-color: var(--bs-body-bg);
+                                    border-top-width: 0px;
+                                    border-top: solid;
+                                    border-top-color:  var(--bs-body-bg);
+                                    width:5px;
+                                ">
+                            <label class="">&nbsp;</label>
+                        </td>
+                    }
+                    <td style="width:50px;text-align:center;">{{((RowModel.CurrentPage?(RowModel.CurrentPage-1):0)*25)+index+1}}</td>
+                    @if (Model.IsMultilineEnabled)
+                    {
+                        <td class="check-box">
+                            <label class="checkboxwrap">
+                                <input type="checkbox" data-role="none" ng-model="Row.IsRowSelected" ng-click="@(model).RowSelection($event, Row)">
+                                <span class="checkboxinner"></span>
+                            </label>
+                        </td>
+                    }
+
+                    @if (Model.HeaderList != null)
+                    {
+                        //Binding data
+                        foreach (var cell in Model.HeaderList.Where(a => a.ColumnName != "RowCategory" && a.IsVisible))
+                        {
+                            if (cell.IsExpression)
+                            {
+                                <td>
+                                    <span @(Html.Raw(cell.IsExpression ? cell.Expression : string.Empty))></span>
+                                </td>
+                            }
+                            else
+                            {
+                                <td @(cell.DataType.ToLower().Trim().Equals("imageicon") ? " class=icon-column" : cell.DataType.ToLower().Trim().Equals("currency") ? "class=textright" : string.Empty)>
+                                    @if (Model.IsChild)
+                                    {
+                                        <span class="gridtitle">@cell.Header</span>
+                                    }
+
+                                    @switch (cell.DataType.ToLower().Trim())
+                                    {
+                                        case "datetime":
+                                            <span title="{{Row.@cell.ColumnName  | date:@(model).DateTimeFormat}}" ng-bind="Row.@cell.ColumnName  | date:@(model).DateTimeFormat"></span>
+                                            break;
+                                        case "date":
+                                            <span title="{{Row.@cell.ColumnName  | date:@(model).DateFormat}}" ng-bind="Row.@cell.ColumnName  | date:@(model).DateFormat"></span>
+                                            break;
+                                        case "imageicon":
+                                            if (!string.IsNullOrEmpty(cell.ColumnName))
+                                            {
+                                                <img class="grid-image-icon" style="width:25px;height:25px;" src="{{Row.@cell.ColumnName}}" />
+                                            }
+                                            break;
+                                        case "imagecolumn":
+                                            <span class="selectedBanner">
+                                                <a prettyp class="lightbox" ng-href="@(imagePath){{Row.@cell.ColumnName}}" rel="prettyPhoto[]">
+                                                    <img ng-src="@(imagePath){{Row.@cell.ColumnName}}" />
+                                                </a>
+                                            </span>
+                                            break;
+                                        case "image":
+                                            break;
+                                        case "currency":
+                                            <span class="currSign" title="{{Row.@cell.ColumnName}}" ng-bind="Row.@cell.ColumnName | number : @ViewBag.DefaultDecimalPoints" @Html.Raw(cell.Expression)></span>
+                                            break;
+                                        case "workflow":
+                                <div class="badge badge-primary" @Html.Raw(cell.Expression) style="color:white;"> <i class="fa fa-anchor zoomin"></i> WF</div>
+                                            break;
+                                        case "avatar":
+                                            <div @Html.Raw(cell.Expression)><gfl-text-avatar>{{Row.@cell.ColumnName}}</gfl-text-avatar></div>
+                                            break;
+                                        case "action":
+                                            <span class="excludeGridStyle" style="text-align:right">
+                                                <a ng-click="@(model).@cell.Expression">{{Row.@cell.ColumnName}}</a>
+                                            </span>
+                                            break;
+                                        default:
+                                            if (cell.ColumnName == "Amount" || cell.ColumnName == "PayableAmount" || cell.ColumnName == "Balance" || cell.ColumnName == "RouteFareOneWay" || cell.ColumnName == "DueAmount" || cell.ColumnName == "CollectedAmount" || cell.ColumnName == "BalanceDue" || cell.ColumnName == "RefundAmount" || cell.ColumnName == "TotalAmount" || cell.ColumnName == "LastCost" || cell.ColumnName == "BookPrice" || cell.ColumnName == "PostPrice" || cell.ColumnName == "CreditNote" || cell.ColumnName == "PrvCollect" || cell.ColumnName == "NowPaying" || cell.ColumnName == "CollAmount" || cell.ColumnName == "CrDrAmount" || cell.ColumnName == "Earnings" || cell.ColumnName == "Deductions" || cell.ColumnName == "InstallmentAmount" || cell.ColumnName == "LoanAmount" || cell.ColumnName == "InstallAmount" || cell.ColumnName == "PaidAmount" || cell.ColumnName == "ApprovedAmount")
+                                            { 
+                                                var decimalPoints = @ViewBag.DefaultDecimalPoints ?? 3;
+                                                <span class="currSign" title="{{Row.@cell.ColumnName}}" @Html.Raw(cell.Expression)>{{Row.@cell.ColumnName| number: decimalPoints }}</span>
+                                            }
+                                            else
+                                            {
+                                                <span title="{{Row.@cell.ColumnName}}" ng-bind="Row.@cell.ColumnName" @Html.Raw(cell.Expression)></span>
+                                            }
+                                            break;
+                                    }
+                                </td>
+                            }
+                        }
+                    }
+
+                    <td class="last-col" align="right">
+                        <div class="iconset">
+                            @foreach (var cell in Model.HeaderList.Where(a => a.ColumnName != "RowCategory" && a.IsVisible))
+                            {
+                                switch (cell.DataType.ToLower().Trim())
+                                {
+                                    case "image":
+                                        <span>
+                                            @if (cell.ColumnName.IsNotNullOrEmpty())
+                                            {
+                                                <a prettyp class="lightbox" ng-href="@(imagePath){{Row.@cell.ColumnName}}" rel="prettyPhoto[]">
+                                                    <img ng-src="@(imagePath){{Row.@cell.ColumnName}}" style="width:50px;height:50px;" />
+                                                </a>
+                                            }
+                                            else
+                                            {
+                                                <i @Html.Raw(cell.Expression)></i>
+                                            }
+                                        </span>
+                                        break;
+                                }
+                            }
+
+                            @*<span><i class="fa fa-eye zoomin" aria-hidden="true" ng-click=@(Html.Raw(Model.IsRowClickForMultiSelect ? "\"" + "MultiSelectClick(Row)\"" : rowEvent))></i></span>*@
+
+                            @if (Model.IsEditableLink)
+                            {
+                                <span><i class="fa fa-clone zoomin" aria-hidden="true" ng-click="@(model).@(Model.IsGenericCRUDSave ? "CRUDDuplicate" : "Duplicate")('@Model.ViewName', $index, $event, '@Model.RuntimeFilter')"></i></span>
+
+                                <span class="editcolor" ng-click="@(model).@(Model.IsGenericCRUDSave ? "EditViewCRUDFramework" : "EditView")('@Model.ViewName', $index, $event, '@Model.RuntimeFilter', '@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Edit") @Model.ViewTitle');">
+                                    <i class="fa fa-edit" aria-hidden="true" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Edit")"></i>
+                                </span>
+
+                                if (Model.IsChild == true && Model.IsDeleteLink == true)
+                                {
+                                    <span class="editcolor" ng-click="@(model).DeleteChild('@Model.RuntimeFilter','@Model.ControllerName', $index, $event);">
+                                        <i class="fa fa-trash" aria-hidden="true" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Delete")"></i>
+                                    </span>
+                                }
+
+                                if (Model.IsChild == false && Model.IsDeleteLink == true)
+                                {
+                                    <span class="editcolor" ng-click="@(model).DeleteParent('@Model.ControllerName', $index, $event);">
+                                        <i class="fa fa-trash" aria-hidden="true" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Delete")"></i>
+                                    </span>
+                                }
+                            }
+
+                            @if (Model.ContextMenus.Count > 0)
+                            {
+                                <span>
+                                    <div class="dropdown">
+                                        <span><i class="fa fa-ellipsis-h zoomin" aria-hidden="true" onclick="$(this).closest('.dropdown').find('ul').slideToggle('fast', function () { if ($(this).is(':visible')) $(this).css('display','inline-block');});"></i></span>
+                                        <ul class="dropdown-menu">
+                                            @foreach (var menu in Model.ContextMenus)
+                                            {
+                                                <li @menu.Value>@menu.Key</li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </span>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </td>
+</tr>
+
+
+
+<script id="dataHistoryTemplate" type="text/ng-template">
+    <div class="w-100 mx-3">
+        <div class="d-flex ">
+            <div class="symbol symbol-25px me-2">
+                <span class="symbol-label">
+                    <i class="fa fa-history" aria-hidden="true" title="Edit"></i>
+                </span>
+            </div>
+            <div class="d-flex align-items-center flex-stack flex-wrap d-grid gap-1 flex-row-fluid">
+                <div class="">
+                    <a href="#" class="text-gray-800 fw-bold text-hover-primary fs-6">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("CreatedBy")</a>
+                    <span class="text-gray-600 fw-semibold fs-7 d-block text-start ps-0">{{HistoryInfo.CreatedUserName}}</span>
+                </div>
+                <div class="d-flex align-items-center">
+
+                </div>
+            </div>
+        </div>
+        <div class="separator my-2" ng-if="HistoryInfo.CreatedDate"></div>
+        <div class="d-flex" ng-if="HistoryInfo.CreatedDate">
+            <div class="symbol symbol-25px me-2">
+                <span class="symbol-label">
+                    <i class="fa fa-history" aria-hidden="true" title="Edit"></i>
+                </span>
+            </div>
+            <div class="d-flex align-items-center flex-stack flex-wrap d-grid gap-1 flex-row-fluid">
+                <div class="">
+                    <a href="#" class="text-gray-800 fw-bold text-hover-primary fs-6">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("CreatedOn")</a>
+                    <span class="text-gray-600 fw-semibold fs-7 d-block text-start ps-0">{{HistoryInfo.CreatedDate | date:'yyyy-MM-dd HH:mm:ss' }}</span>
+                    <p>Time Since: {{ getTimeSince(HistoryInfo.CreatedDate) }}</p>
+                </div>
+                <div class="d-flex align-items-center">
+
+                </div>
+            </div>
+        </div>
+        <div class="separator my-2" ng-if="HistoryInfo.UpdatedUserName"></div>
+
+        <div class="d-flex " ng-if="HistoryInfo.UpdatedUserName">
+            <div class="symbol symbol-25px me-2">
+                <span class="symbol-label">
+                    <i class="fa fa-history" aria-hidden="true" title="Edit"></i>
+                </span>
+            </div>
+            <div class="d-flex align-items-center flex-stack flex-wrap d-grid gap-1 flex-row-fluid">
+                <div class="">
+                    <a href="#" class="text-gray-800 fw-bold text-hover-primary fs-6">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("UpdatedBy")</a>
+                    <span class="text-gray-600 fw-semibold fs-7 d-block text-start ps-0">{{HistoryInfo.UpdatedUserName}}</span>
+                </div>
+                <div class="d-flex align-items-center">
+
+                </div>
+            </div>
+        </div>
+        <div class="separator my-2" ng-if="HistoryInfo.UpdatedDate"></div>
+
+        <div class="d-flex " ng-if="HistoryInfo.UpdatedDate">
+            <div class="symbol symbol-25px me-2">
+                <span class="symbol-label">
+                    <i class="fa fa-history" aria-hidden="true"></i>
+                </span>
+            </div>
+            <div class="d-flex align-items-center flex-stack flex-wrap d-grid gap-1 flex-row-fluid">
+                <div class="">
+                    <a href="#" class="text-gray-800 fw-bold text-hover-primary fs-6">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("UpdatedOn")</a>
+                    <span class="text-gray-600 fw-semibold fs-7 d-block text-start ps-0">{{HistoryInfo.UpdatedDate | date:'yyyy-MM-dd HH:mm:ss' }}</span>
+                    <p>Time Since: {{ getTimeSince(HistoryInfo.UpdatedDate) }}</p>
+
+                </div>
+                <div class="d-flex align-items-center">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="MailConfirmationWindow" type="text/ng-template">
+    <div>
+        <p>Are you sure want to send mail?</p>
+        <p>
+            <input type="button" value="Cancel" class="button-orange" ng-click="CloseMailConfirmBox();" />
+            <span><input type="button" value="Confirm" class="button-orange" ng-click="ConfirmMailSend();" /></span>
+
+            <span id="MailConfirmationOverlay">
+                <span class="spinner-border spinner-border-sm" role="status"></span>
+                Sending...
+            </span>
+        </p>
+    </div>
+</script>

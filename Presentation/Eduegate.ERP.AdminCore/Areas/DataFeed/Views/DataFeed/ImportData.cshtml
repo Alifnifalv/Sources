@@ -1,0 +1,122 @@
+﻿@model Eduegate.Web.Library.ViewModels.DataFeedViewModel
+@{
+    Layout = null;
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div class="windowcontainer" id="ImportData" ng-model="DataFeedModel" ng-controller="DataFeedController" ng-init="Init('@windowName', @Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+    <div id="@windowName">
+        <div class="pageheader">
+            <span>Import Documents</span>
+        </div>
+
+        <script>
+            function getfilename() {
+                $('.uploadexcel').change(function () {
+
+                    var showfilename = $(".uploadexcel").val().split('\\').pop().split('/').pop();
+                    $('.filename').val(showfilename);
+                });
+            }
+           
+            $(document).ready(function () {
+                $('.uploadfile').on('click', function () {
+                    $('.uploadexcel').trigger('click');
+                    getfilename();
+                });
+                $('.filename').on('click', function () {
+                    $('.uploadexcel').trigger('click');
+                });
+                $('.filename').focus(function () {
+                    $('.uploadexcel').trigger('click');
+                    getfilename();
+                });
+              
+            });
+        </script>
+
+        <div class="pagecontent">
+            <div class="pagecontent-inner">
+                <div class="pagecontent-column">
+                    <div class="productcreaterightnav">
+                        <div class="tab-content form-horizontal">
+                            <div class="fileimportsection">
+                                <div class="content-left">
+                                    @*<select class="catlist">
+                                            <option value="1">Inventory Update</option>
+                                            <option value="2">Product Import</option>
+                                            <option value="3">Employee</option>
+                                            <option value="3">Product Status</option>
+                                            <option value="3">Project Manager</option>
+                                        </select>*@
+                                    <div class="fullwidth alignleft">
+                                        <div class="selectwrapper alignleft">
+                                            <select id="DataFeedType" ng-model="DataFeedModel.DataFeedTypeID">
+                                                <option value="">Select document</option>
+                                                <option attribute_url="{{type.TemplatePath}}" ng-repeat="type in DataFeedModel.DataFeedTypes" value="{{type.DataFeedTypeID}}">{{type.Name}}</option>
+                                            </select>
+                                            <i class="dropdownarrow fa fa-caret-down"></i>
+                                        </div>
+
+                                        @*<a href="" class="button-orange alignright">Upload Format</a>*@
+                                    </div>
+                                </div>
+                                <div class="content-right">
+                                    <div class="import-content">
+                                        <div class="title">Inventory Update</div>
+                                        <a href="" class="button-orange alignright" ng-click="DownloadTemplate();">Download Template</a>
+                                        <div class="fullwidth alignleft uploadfield">
+                                            <input type="file" class="uploadexcel" file-model="feedFile"
+                                                   accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                                            <span><input type="text" class="filename" /></span>
+                                            <button class="button-orange uploadfile">Upload File</button>
+                                        </div>
+                                        <div class="fullwidth alignleft processimport">
+                                            <label class="alignleft"><input type="checkbox" />&nbsp; Ignore Errors</label>
+                                            <button class="button-orange alignright" ng-click="InitiateFeed();">Process Import</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="imported-filestatus" id="divUploadedFiles">
+
+                            </div>
+
+                            <div class="popup viewlogpopup" data-popup-type="viewlogmsg">
+                                <div class="popup-wrap">
+                                    <span class="close">X</span>
+                                    <div class="productcreteheader"> Log Details</div>
+                                    <div class="fullwidth alignleft content">
+                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.
+                                        Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <script>
+                                $(document).ready(function () {
+                                    $('.popupbtn').on('click', function () {
+                                        var detectlog = $(this).attr('data-popup-type');
+                                        var xpos = $(".popup[data-popup-type='" + detectlog + "']").outerWidth() / 2;
+                                        var ypos = $(".popup[data-popup-type='" + detectlog + "']").outerHeight() / 2;
+                                        $(".popup[data-popup-type='" + detectlog + "']").css({ 'margin-top': '-' + ypos + 'px', 'margin-left': '-' + xpos + 'px' });
+                                        $(".popup[data-popup-type='" + detectlog + "']").fadeIn(500);
+                                        $(".popup[data-popup-type='" + detectlog + "']").addClass('show');
+                                    });
+
+                                    $('.popup').on('click', 'span.close', function () {
+                                        $(this).closest('.popup').fadeOut(500);
+                                        $(this).closest('.popup').removeClass('show');
+                                        $('.overlaydiv').fadeOut(500);
+                                    });
+                                });
+                            </script>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

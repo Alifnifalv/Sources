@@ -1,0 +1,80 @@
+﻿@using Eduegate.Services.Contracts.Enums
+
+@{
+    Layout = null;
+    var viewIID = Eduegate.Services.Contracts.Enums.SearchView.BranchGroup;
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div id="@windowName" class="summary-wrap" ng-controller="SummaryViewController" ng-init="SummaryViewInit('@windowName', '@viewIID', @ViewBag.IID,'@DynamicViews.BranchGroup');">
+    <div class="preload-overlay" style="display:block;">
+        <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+    </div>
+
+    <div class="summary-header">
+        <div class="summary-controls">
+            @*<ul class="summary-tab">
+                    <li class="summary-tab-list active" title="Product Detail" content-tab="productdetail"><i class="fa fa-file-text"></i></li>
+                        <li class="summary-tab-list" title="Sales" content-tab="sales"><i class="fa fa-bar-chart"></i></li>
+                        <li class="summary-tab-list" title="Purchase" content-tab="purchase"><i class="fa fa-shopping-cart"></i></li>
+                        <li class="summary-tab-list" title="Inventory" content-tab="inventory"><i class="fa fa-cube"></i></li>
+                        <li class="summary-tab-list" title="Operation" content-tab="operation"><i class="fa fa-cogs"></i></li>
+                        <li class="summary-tab-list" title="Accounts" content-tab="accounts"><i class="fa fa-list-alt"></i></li>
+                </ul>*@
+            <div class="alignright panelcontrols">
+                <span class="remove" ng-click="CloseSummaryPanel($event);">x</span>
+                <span class="minmax"></span>
+            </div>
+        </div>
+    </div>
+    <div class="quickviewwrap">
+        <div class="summarytab-content show">
+            <h4>BranchGroup Details</h4>
+            <div class="summary-tab-inner">
+                <div class="summary-content">
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">ID</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.BranchGroup).BranchGroupIID"></span>
+                            <i class="fa fa-pencil" title="Edit" ng-click="Edit('BranchGroup', ViewModels.@(DynamicViews.BranchGroup).BranchGroupIID)"></i>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Group Name</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.BranchGroup).GroupName"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Created</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.BranchGroup).CreatedDate"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Updated</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.BranchGroup).UpdatedDate"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+<script>
+    $(document).ready(function () {
+
+        $('#@windowName .summary-panel .remove').on('click', function () {
+            $('.pagecontent', '#@windowName').removeClass('summaryview');
+        });
+
+        $('#@windowName .summary-toggle .sum_toggleheader').on('click', function () {
+            $(this).parent().toggleClass('show');
+
+            if ($(this).parent().hasClass('show')) {
+                $(this).parent().addClass('show');
+                $(this).parent().find('.sum_togglecontent').slideDown('fast');
+            }
+            else {
+                $(this).parent().removeClass('show');
+                $(this).parent().find('.sum_togglecontent').slideUp('fast');
+            }
+        });
+    });
+</script>

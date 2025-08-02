@@ -1,0 +1,36 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_Notifications";
+    var documentTypeID = Model.GetParameterValue<string>("DocumentTypeID");
+    var title = Model.GetParameterValue<string>("Title");
+    var cultureTitle = Model.GetParameterValue<string>("Title_" + System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower());
+    if (!string.IsNullOrEmpty(cultureTitle))
+    {
+        title = cultureTitle;
+    }
+}
+
+<div class="card card-flush" style="height:100%;">
+    <div id="@windowName" template="DashBoard_Notifications" ng-controller="DashboardController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+        <div class="card-header border-0 pt-5">
+            <h3 class="card-title align-items-start flex-column">
+                <span class="card-label fw-bold text-dark">@title</span>
+            </h3>
+            <div class="card-toolbar">
+                <button class="btn btn-icon btn-color-gray-400 btn-active-color-primary justify-content-end" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true">
+                    <i class="ki-duotone ki-dots-square fs-1"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></i>
+                </button>
+            </div>
+        </div>
+        <div class="card-body" style="height: 400px; overflow-y: auto;">
+            <div ng-repeat="x in Notifications.MyInboxNotificationList" ng-show="Notifications.MyInboxNotificationList.length > 0">
+                <h5 style="color:burlywood">{{x.Message}}</h5>
+                <div class="mt-4 text-right">{{x.NotificationDateString}}</div>
+                <hr>
+            </div>
+        </div>
+        <!-- Removed or commented out footer section if it exists -->
+    </div>
+</div>

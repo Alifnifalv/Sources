@@ -1,0 +1,45 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutPayment.cshtml";
+    ViewData["Title"] = "PayOne Payment";
+    var qPayData = ViewBag.qPayData as Eduegate.Web.Library.ViewModels.Payment.PaymenQPAYViewModel;
+}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="Head1" runat="server">
+    <title></title>
+</head>
+
+
+<body>
+    @*  <p>secretKey: @qPayData.secretKey</p>   *@
+    <!-- Add your HTML form -->
+    <form id="paymentForm" method="post" action="@qPayData.MerchantGatewayUrl">
+
+        <input type="hidden" name="Action" value="@qPayData.ActionID" />
+        <input type="hidden" name="BankID" value="@qPayData.BankID" />
+        <input type="hidden" name="MerchantID" value="@qPayData.MerchantID" />
+        <input type="hidden" name="CurrencyCode" value="@qPayData.CurrencyCode" />
+        <input type="hidden" name="Amount" value="@qPayData.Amount" />
+        <input type="hidden" name="PUN" value="@qPayData.PUN" />
+        <input type="hidden" name="PaymentDescription" value="@qPayData.PaymentDescription" />
+        <input type="hidden" name="MerchantModuleSessionID" value="@qPayData.MerchantModuleSessionID" />
+        <input type="hidden" name="TransactionRequestDate" value="@qPayData.transactionRequestDate" />
+        <input type="hidden" name="Quantity" value="@qPayData.Quantity" />
+        <input type="hidden" name="ExtraFields_f14" value="@qPayData.ExtraFields_f14" />
+        <input type="hidden" name="Lang" value="@qPayData.Lang" />
+        <input type="hidden" name="NationalID" value="@qPayData.NationalID" />
+        <input type="hidden" name="SecureHash" value="@qPayData.SecureHash" />
+        @* <button type="submit">Submit Payment</button> *@
+    </form>
+</body>
+
+</html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("paymentForm").submit();
+    });
+</script>

@@ -1,0 +1,523 @@
+﻿@model Eduegate.Web.Library.ViewModels.BaseMasterViewModel
+@using System.Reflection;
+@using Eduegate.Framework.Mvc.Attributes;
+@using Eduegate.ERP.Admin.Helpers;
+@using Eduegate.Frameworks.Mvc.Attributes;
+
+@{
+    var modelContainerType = (ContainerTypeAttribute)Model.GetType().GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+    string bindingPrefix = "CRUDModel.ViewModel";
+    Model.NamePrefix = Model.NamePrefix + "_" + ViewBag.WindowName;
+
+    if (modelContainerType != null)
+    {
+        bindingPrefix = string.IsNullOrEmpty(modelContainerType.GridBindingPrefix) ? modelContainerType.BindingPrefix : modelContainerType.GridBindingPrefix;
+    }
+
+    var orderBy = (OrderAttribute)Model.GetType().GetCustomAttributes(typeof(OrderAttribute)).FirstOrDefault();
+    IEnumerable<PropertyInfo> properties = null;
+
+    if (orderBy == null)
+    {
+        properties = Model.GetType().GetProperties();
+    }
+    else
+    {
+        properties = Model.GetType().GetProperties().Where(a => a.GetCustomAttribute(typeof(OrderAttribute), false) != null).OrderBy(a => (a.GetCustomAttribute(typeof(OrderAttribute), false) as OrderAttribute).Order);
+    }
+
+    foreach (var property in properties)
+    {
+        //if the parameters are supplied.
+        if (ViewBag.Parameters != null)
+        {
+            var parameter = (ViewBag.Parameters as ICollection<Eduegate.Web.Library.ViewModels.Common.ClientParameter>)
+                .Where(a => a.ParameterName == property.Name).FirstOrDefault();
+
+            if (parameter != null)
+            {
+                continue;
+            }
+        }
+
+        var claimType = (HasClaimAttribute)property.GetCustomAttributes(typeof(HasClaimAttribute)).FirstOrDefault();
+
+        if (claimType != null)
+        {
+            var allClaims = (ViewBag.Claims as List<Eduegate.Web.Library.ViewModels.Security.ClaimViewModel>);
+            var allClaimNames = allClaims.Select(a => a.ResourceName).ToList();
+            if (!claimType.HasAccess(allClaimNames))
+            {
+                continue;
+            }
+        }
+
+        var title = (System.ComponentModel.DisplayNameAttribute)property.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+        var containerType = (ContainerTypeAttribute)property.GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault(); // make sure this is a field
+
+        if (title != null && containerType == null)
+        {
+            var controlType = (ControlTypeAttribute)property.GetCustomAttributes(typeof(ControlTypeAttribute)).FirstOrDefault();
+
+            <div class="@(string.IsNullOrEmpty(controlType.Css) ? string.Empty : controlType.Css)
+                     @(controlType.IsFullColumn ? string.Empty : "form-group")
+                     @(controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.FileUpload ? "upload-banner" : string.Empty)
+                     @(controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.RichTextEditor || controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.RichTextEditorMultiLanguage ? "textaligntop editorfield" : string.Empty)
+                     @(controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.Grid ? "threecolumn-layout" : string.Empty)
+                     @(controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.GridGroup ? "threecolumn-layout" : string.Empty)
+                     @(controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.FieldSet ? "" : string.Empty)
+                     @(controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.GroupInfo ? "columns" : string.Empty)">
+
+                @if (controlType.ControlType != Eduegate.Framework.Enums.ControlTypes.ShowFlowStatus && controlType.ControlType != Eduegate.Framework.Enums.ControlTypes.NewLine)
+                {
+                    <label class="addprodleft control-label">
+                        @(controlType.ControlType != Eduegate.Framework.Enums.ControlTypes.Button && controlType.ControlType != Eduegate.Framework.Enums.ControlTypes.GroupInfo ? title.DisplayName : string.Empty)
+                        <span class="redcolor"></span>
+                        @if (!string.IsNullOrEmpty(controlType.TooltipText))
+                        {
+                            <span class="tooltip_Data" tooltipdata="@controlType.TooltipText">
+                                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                            </span>
+                        }
+                    </label>
+                }
+
+                @{
+                    if (controlType != null)
+                    {
+                        switch (controlType.ControlType)
+                        {
+                            case Eduegate.Framework.Enums.ControlTypes.NewLine:
+                                <div></div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.CheckBox:
+                                <label class="checkboxwrap">
+                                    <input type="checkbox" ng-model="@bindingPrefix.@property.Name"
+                                    @Html.Raw((string.IsNullOrEmpty(controlType.Attributes) ? string.Empty : controlType.Attributes))
+                                    @Html.GetValidationAttributes(Html.CheckBox(property.Name), Model.NamePrefix) @Html.Raw(controlType.Attributes) />
+                                    <span class="checkboxinner"></span>
+                                </label>
+                                @Html.ValidationMessage(Model.NamePrefix + property.Name)
+                                ;
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.YesNoCheckBox:
+                                var randomControlID = new Random().Next().ToString();
+                                <div class="controls">
+                                    <div class="slidebtn">
+                                        <input type="checkbox" id="assigned_@(property.Name)_@(randomControlID)" ng-model="@bindingPrefix.@property.Name"
+                                        @Html.Raw((string.IsNullOrEmpty(controlType.Attributes) ? string.Empty : controlType.Attributes))
+                                        @Html.GetValidationAttributes(Html.CheckBox(property.Name), Model.NamePrefix) />
+                                        <label for="assigned_@(property.Name)_@(randomControlID)"><i></i></label>
+                                    </div><!-- /slidebtn -->
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.DropDown:
+                                var lookUpType = (LookUpAttribute)property.GetCustomAttributes(typeof(LookUpAttribute)).FirstOrDefault();
+                                <div class="controls brand">
+                                    <select ng-init="FieldSettings('@property.Name', @bindingPrefix)" @Html.GetValidationAttributes(Html.DropDownList(property.Name, Enumerable.Empty<SelectListItem>()), Model.NamePrefix)
+                                            ng-model="@bindingPrefix.@property.Name" @Html.Raw(controlType.Attributes)>
+                                        <i class="fa fa-caret-down"></i>
+                                        <option ng-repeat="data in @lookUpType.DataSource" value={{data.Key}}>{{data.Value}}</option>
+                                    </select>
+                                    <i class="dropdownarrow fa fa-caret-down"></i>
+                                    @Html.ValidationMessage(Model.NamePrefix + property.Name)
+                                </div>
+
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.HtmlLabel:
+                                if (property.PropertyType == typeof(double?) || property.PropertyType == typeof(double))
+                                {
+                                    <label class="control-label @controlType.Attributes2"><span @(string.IsNullOrEmpty(controlType.Attributes) ? Html.Raw("ng-bind-html='" + bindingPrefix + "." + property.Name + "' | number : " + ViewBag.DefaultDecimalPoints) : Html.Raw(controlType.Attributes)) /><span class="redcolor"></span></label>
+                                }
+                                else
+                                {
+                                    <label class="control-label @controlType.Attributes2"><span @(string.IsNullOrEmpty(controlType.Attributes) ? Html.Raw("ng-bind-html='" + bindingPrefix + "." + property.Name + "'") : Html.Raw(controlType.Attributes)) /><span class="redcolor"></span></label>
+                                }
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.Label:
+                                if (property.PropertyType == typeof(double?) || property.PropertyType == typeof(double))
+                                {
+                                    <label class="control-label"><span @(string.IsNullOrEmpty(controlType.Attributes) ? Html.Raw("ng-bind='" + bindingPrefix + "." + property.Name + "' | number : " + ViewBag.DefaultDecimalPoints) : Html.Raw(controlType.Attributes)) /><span class="redcolor"></span></label>
+                                }
+                                else
+                                {
+                                    <label class="control-label"><span @(string.IsNullOrEmpty(controlType.Attributes) ? Html.Raw("ng-bind='" + bindingPrefix + "." + property.Name + "'") : Html.Raw(controlType.Attributes)) /><span class="redcolor"></span></label>
+                                }
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.TextBoxEditable:
+                                <div class="controls">
+                                    <input selectonclick type="text" ng-model="@bindingPrefix.@property.Name"
+                                    @Html.GetValidationAttributes(Html.TextBox(property.Name), Model.NamePrefix) @Html.Raw(controlType.Attributes)
+                                           ng-disabled="!@bindingPrefix.@(property.Name)Enabled" />
+                                    <input type="checkbox" ng-model="@bindingPrefix.@(property.Name)Enabled" ng-init="@bindingPrefix.@(property.Name)Enabled = (@bindingPrefix.@property.Name == '' || @bindingPrefix.@property.Name == '0')" />
+
+                                    @Html.ValidationMessage(Model.NamePrefix + property.Name)
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.TextBox:
+                                <div class="controls">
+                                    @if (property.PropertyType == typeof(double?) || property.PropertyType == typeof(double) || property.PropertyType == typeof(decimal) || property.PropertyType == typeof(decimal?))
+                                    {
+                                        <input autocomplete="off" selectonclick type="text" ng-model="@bindingPrefix.@property.Name" value="{{ @bindingPrefix.@property.Name | number : @ViewBag.DefaultDecimalPoints}}"
+                                        @Html.GetValidationAttributes(Html.TextBox(property.Name), Model.NamePrefix) @Html.Raw(controlType.Attributes) @Html.Raw(controlType.Attributes2) @Html.Raw(controlType.Attributes3) />
+                                    }
+                                    else
+                                    {
+                                        <input selectonclick type="text" autocomplete="off" ng-model="@bindingPrefix.@property.Name"
+                                        @Html.GetValidationAttributes(Html.TextBox(property.Name), Model.NamePrefix) @Html.Raw(controlType.Attributes) />
+                                    }
+
+                                    @Html.ValidationMessage(Model.NamePrefix + property.Name)
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.TextBoxWithAutogeneration:
+                                <div class="controls">
+                                    @if (property.PropertyType == typeof(double?) || property.PropertyType == typeof(double) || property.PropertyType == typeof(decimal) || property.PropertyType == typeof(decimal?))
+                                    {
+                                        <input step="0.01" selectonclick type="text" ng-model="@bindingPrefix.@property.Name" value="{{ @bindingPrefix.@property.Name | number : @ViewBag.DefaultDecimalPoints}}"
+                                        @Html.GetValidationAttributes(Html.TextBox(property.Name), Model.NamePrefix) @Html.Raw(controlType.Attributes) />
+                                    }
+                                    else
+                                    {
+                                        <input selectonclick type="text" ng-model="@bindingPrefix.@property.Name"
+                                        @Html.GetValidationAttributes(Html.TextBox(property.Name), Model.NamePrefix) @Html.Raw(controlType.Attributes) />
+                                    }
+                                    <span class="lang-icon" ng-click="GetNextSequence('@property.Name', @bindingPrefix, '@property.Name')"><i class="fa fa-circle-o"></i></span>
+                                    @Html.ValidationMessage(Model.NamePrefix + property.Name)
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.TextBoxWithMultiLanguage:
+                                <div class="controls productname fieldpopup">
+                                    <input type="text" autocomplete="off" ng-model="@bindingPrefix.@(property.Name).Text"
+                                    @Html.GetValidationAttributes(Html.TextBox(property.Name), Model.NamePrefix) @Html.Raw(controlType.Attributes)
+                                           ng-focus="MultilanguagePopup($event, 'show');" class="" style="display:inline !important;" />
+                                    <span class="lang-icon" id="datepicker-icon-trigger" data-datepicker="#datepicker-icon"><i class="fa fa-language"></i></span>
+                                    <div id="languageoption" class="languageoption">
+                                        <ul>
+                                            <li ng-repeat="culture in @(bindingPrefix).@(property.Name).CultureDatas">
+                                                <label>{{culture.CultureName}} </label>
+                                                <input type="text" autocomplete="off" value="{{culture.CultureValue; @bindingPrefix.@(property.Name).Text=culture.CultureValue;}}"
+                                                       ng-model="culture.CultureValue" ng-if="$first" class="haslanguage">
+                                                <input type="text" autocomplete="off" value="{{culture.CultureValue;}}" ng-model="culture.CultureValue" ng-if="!$first" class="haslanguage">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    @Html.ValidationMessage(Model.NamePrefix + property.Name)
+                                </div>
+
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.Hidden:
+                                <input type="hidden" ng-model="@bindingPrefix.@property.Name"
+                                @Html.GetValidationAttributes(Html.TextBox(property.Name), Model.NamePrefix) @Html.Raw(controlType.Attributes) />
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.Password:
+
+                                <div class="controls">
+                                    <input type="password" ng-model="@bindingPrefix.@property.Name"
+                                    @Html.GetValidationAttributes(@Html.Password(property.Name), Model.NamePrefix) @Html.Raw(controlType.Attributes) />
+                                    @Html.ValidationMessage(Model.NamePrefix + property.Name)
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.DatePicker:
+                                <div class="controls">
+                                    <div class="datetime_picker">
+                                        <input type="text" autocomplete="off" ng-init="FieldSettings('@property.Name', @bindingPrefix)" ng-model="@bindingPrefix.@property.Name" wb-datepicker @(!string.IsNullOrEmpty(controlType.Attributes) ? Html.Raw(controlType.Attributes) : Html.Raw(""))
+                                        @Html.GetValidationAttributes(Html.TextBox(property.Name), Model.NamePrefix) />
+                                    </div>
+                                    @Html.ValidationMessage(Model.NamePrefix + property.Name)
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.DateTimePicker:
+                                <div class="controls">
+                                    <div class="datetime_picker">
+                                        <input type="text" autocomplete="off" ng-model="@bindingPrefix.@property.Name" datetimepicker
+                                        @Html.GetValidationAttributes(Html.TextBox(property.Name), Model.NamePrefix) />
+                                    </div>
+                                    @Html.ValidationMessage(Model.NamePrefix + property.Name)
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.TimePicker:
+                                <div class="controls">
+                                    <div class="datetime_picker">
+                                        <input type="text" autocomplete="off" ng-model="@bindingPrefix.@property.Name" timepicker
+                                        @(!string.IsNullOrEmpty(controlType.Attributes) ? Html.Raw(controlType.Attributes) : Html.Raw(""))
+                                        @Html.GetValidationAttributes(Html.TextBox(property.Name), Model.NamePrefix) />
+                                    </div>
+                                    @Html.ValidationMessage(Model.NamePrefix + property.Name)
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.FileUpload:
+                                var fileUploadInfo = (FileUploadInfoAttribute)property.GetCustomAttributes(typeof(FileUploadInfoAttribute)).FirstOrDefault();
+                                <div class="controls">
+                                    <div ng-click="TriggerUploadFile($event, true);" class="dropzone" style="cursor: pointer;">
+                                        <center> @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Click here to Upload") </center>
+                                        <div class="fallback">
+                                            <input type="file" onchange="angular.element(this).scope().UploadImageFiles(this,'@(fileUploadInfo.ActionUrl)','@(fileUploadInfo.ImageType)','@bindingPrefix','@fileUploadInfo.ImageSourceModel')"
+                                                   id="UploadFile" multiple accept="image/*" />
+                                        </div>
+                                    </div>
+                                    <a prettyp class="lightbox" href="#" rel="prettyPhoto[]">
+                                        <img id="student" ng-src="Content/ReadContentsByID?contentID={{@bindingPrefix.@fileUploadInfo.ImageSourceModel}}"
+                                             style="width:120px;height:90px;" onerrorsrc="/Images/unknown.png">
+                                    </a>
+                                    <i id="Image_trash" name="Image_trash" class="fa fa-2x fa-trash" title="Delete" ng-click="RemoveContent('Content/DeleteContentsByID?contentID='+@bindingPrefix.@fileUploadInfo.ImageSourceModel)">
+                                    </i>
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.FileUploadCrop:
+                                {
+                                    await Html.RenderPartialAsync("~/Areas/Frameworks/Views/Controls/_SingleFileUpload.cshtml", new ViewDataDictionary(ViewData) { { "BindingPrefix", bindingPrefix }, { "Property", property } });
+                                }
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.MultipleFileUploadCrop:
+                                {
+                                    await Html.RenderPartialAsync("~/Areas/Frameworks/Views/Controls/_MultipleFileUpload.cshtml", new ViewDataDictionary(ViewData) { { "BindingPrefix", bindingPrefix }, { "Property", property } });
+                                }
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.TextArea:
+                                <div class="controls">
+                                    <textarea selectonclick rows="5" cols="100" ng-model="@bindingPrefix.@property.Name"
+                                    @Html.GetValidationAttributes(Html.TextArea(property.Name), Model.NamePrefix) , @Html.Raw(controlType.Attributes)></textarea>
+                                    @Html.ValidationMessage(Model.NamePrefix + property.Name)
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.DataPicker:
+                                var dataPicker = (DataPickerAttribute)property.GetCustomAttributes(typeof(DataPickerAttribute)).FirstOrDefault();
+                                <div class="controls">
+                                    <div class="advanced-search popupbtn" data-popup-type="flowlayout-advsearch">
+                                        <a @Html.Raw(controlType.Attributes) class="button-orange" ng-click="AdvanceSearch('@dataPicker.View','@Convert.ToString(dataPicker.PartialCalculation)', $data,'@dataPicker.Invoker', @Html.Raw((string.IsNullOrEmpty(dataPicker.RuntimeFilter) ? "''" : dataPicker.RuntimeFilter)) , $event)">
+                                            <i class="fa fa-search-plus"></i>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Pick")
+                                        </a>
+                                    </div>
+                                    <span ng-bind="@bindingPrefix.@property.Name" />
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.RichTextEditor:
+                                <div class="controls">
+                                    <span class="text-editor"><a class="popupbtn" data-popup-type="editor" title="designer text" href="" ng-click="RichEditorClick($event, '@bindingPrefix.@property.Name', '@property.Name')"></a></span>
+                                    <textarea rows="5" cols="100" class="texteditor editor" , data-popup-type="editor" ng-model="@bindingPrefix.@property.Name"
+                                    @Html.GetValidationAttributes(Html.TextArea(property.Name), Model.NamePrefix)></textarea>
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.RichTextEditorInline:
+                                <div class="controls">
+                                    <div class="richtexteditor" data-popup-type="editor" ng-controller="CKEditorController">
+                                        <div @Html.Raw(controlType.Attributes2)>
+                                            <div class="texteditwrapper" angularckeditor ng-model="@bindingPrefix.@property.Name"></div>
+                                        </div>
+                                        <input type="hidden" id="richtext" ng-model="Model.HtmlText" />
+                                    </div>
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.RichTextEditorMultiLanguage:
+                                <div class="controls productname fieldpopup">
+                                    <input type="text" autocomplete="off" ng-model="@bindingPrefix.@(property.Name).Text"
+                                    @Html.GetValidationAttributes(Html.TextBox(property.Name), Model.NamePrefix) @Html.Raw(controlType.Attributes)
+                                           ng-focus="MultilanguagePopup($event, 'show');" class="" style="display:inline !important;" />
+                                    <span class="lang-icon" id="datepicker-icon-trigger" data-datepicker="#datepicker-icon"><i class="fa fa-language"></i></span>
+                                    <div id="languageoption" class="languageoption" style="width:500px;">
+                                        <ul>
+                                            <li ng-repeat="culture in @(bindingPrefix).@(property.Name).CultureDatas">
+                                                <label>{{culture.CultureName}} </label>
+                                                <span class="text-editor">
+                                                    <a class="popupbtn" data-popup-type="editor" title="designer text" href=""
+                                                       ng-click="RichEditorClick($event, '@bindingPrefix.@(property.Name).Text', 'Text', culture)"></a>
+                                                </span>
+                                                <textarea rows="5" cols="100" class="texteditor editor haslanguage" data-popup-type="editor" ng-model="culture.CultureValue"
+                                                @Html.GetValidationAttributes(Html.TextArea(property.Name), Model.NamePrefix)
+                                                          value="{{culture.CultureValue; @bindingPrefix.@(property.Name).Text = culture.CultureValue;}}"
+                                                          ng-if="$first"></textarea>
+                                                <textarea rows="5" cols="100" class="texteditor editor haslanguage" data-popup-type="editor" ng-model="culture.CultureValue"
+                                                @Html.GetValidationAttributes(Html.TextArea(property.Name), Model.NamePrefix)
+                                                          value="{{culture.CultureValue;}}" ng-if="!$first"></textarea>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    @Html.ValidationMessage(Model.NamePrefix + property.Name)
+                                </div>
+
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.Select2:
+                                <div class="controls viewdetails">
+                                    @{
+                                        ViewBag.RowName = bindingPrefix;
+                                        ViewBag.ModelAttributes = Html.Hidden(property.Name);
+
+                                        await Html.RenderPartialAsync("~/Areas/Frameworks/Views/Controls/_Select2.cshtml", new ViewDataDictionary(ViewData) { { "BindingPrefix", bindingPrefix }, { "Property", property } });
+                                    }
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.Grid:
+                                var modelCollection = property.GetValue(Model, null) as System.Collections.IList;
+
+                                <div class="fullcolumn-layout">
+                                    @if (!string.IsNullOrEmpty(controlType.Attributes2))
+                                    {
+                                        <a @Html.Raw(controlType.Attributes2) class="button-orange">+</a>
+                                    }
+
+                                    <table id="GridTable" class="fullcolumn-layout grid @controlType.Css">
+                                        @if (modelCollection.Count > 0)
+                                        {
+                                            @await Html.PartialAsync("_GridBuildField", modelCollection[0])
+                                            ;
+                                        }
+                                    </table>
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.AttachmentComponent:
+                                <div class="controls viewdetails" style="display:flex">
+                                    @{
+                                        var fileAttachment = (FileUploadInfoAttribute)property.GetCustomAttributes(typeof(FileUploadInfoAttribute)).FirstOrDefault();
+
+                                        <div ng-repeat="attachment in @bindingPrefix.@property.Name" ng-if="attachment.@fileAttachment.ImageSourceModel">
+                                            <i class="fa-download" aria-hidden="true"></i>
+                                        </div>
+
+                                        <i class="fa fa-paperclip" aria-hidden="true" ng-click="TriggerUploadFile($event, true);" class="dropzone" style="cursor: pointer;">
+                                            <center> @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Click here to Upload")</center>
+                                            <div class="fallback">
+                                                <input type="file" onchange="angular.element(this).scope().UploadImageFiles(this,'@(fileAttachment.ActionUrl)','@(fileAttachment.ImageType)','@bindingPrefix','@fileAttachment.ImageSourceModel', @bindingPrefix.@property.Name)"
+                                                       id="UploadFile" multiple accept="image/*" />
+                                            </div>
+                                        </i>
+
+
+                                    }
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.GridGroup:
+                                var groupCollection = property.GetValue(Model, null) as System.Collections.IList;
+
+                                <div class="fullcolumn-layout">
+                                    @if (!string.IsNullOrEmpty(controlType.Attributes2))
+                                    {
+                                        <a @Html.Raw(controlType.Attributes2) class="button-orange">+</a>
+                                    }
+
+                                    <table id="GridTable" class="fullcolumn-layout grid @controlType.Css">
+                                        @if (groupCollection.Count > 0)
+                                        {
+                                            @await Html.PartialAsync("_GridBuildField", groupCollection[0])
+                                            ;
+                                        }
+                                    </table>
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.FieldSet:
+                                var fieldSet = property.GetValue(Model, null);
+                                <div class="form-group fullwidth">
+                                    <fieldset>
+                                        @if (fieldSet != null)
+                                        {
+                                            @await Html.PartialAsync("_BuildField", fieldSet)
+                                            ;
+                                        }
+                                    </fieldset>
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.HorizontalTab:
+                                var horizontalTab = property.GetValue(Model, null);
+                                <div class="fullcolumn-layout" @Html.Raw(controlType.Attributes)>
+                                    @if (!string.IsNullOrEmpty(controlType.Attributes2))
+                                    {
+                                        <a @Html.Raw(controlType.Attributes2) class="button-orange">+</a>
+                                    }
+
+                                    <table id="GridTable" class="fullcolumn-layout grid @controlType.Css">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    @await Html.PartialAsync("~/Views/Shared/_BuildTabAndFields.cshtml", horizontalTab)
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.PivotGrid:
+                                var pivotGrid = property.GetValue(Model, null) as System.Collections.IList;
+
+                                <div class="controls">
+                                    <table id=" GridTable" class="fullcolumn-layout grid">
+                                        @if (pivotGrid.Count > 0)
+                                        {
+                                            @await Html.PartialAsync("_PivotGridBuildField", pivotGrid[0])
+                                            ;
+                                        }
+                                    </table>
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.Button:
+                                <div class="controls">
+                                    <a @Html.Raw(controlType.Attributes) class="button-orange">@title.DisplayName</a>
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.GeoLocation:
+                                <div class="controls">
+                                    <a ng-click="GetLocationMapInNewWindow();">
+                                        <i class="fa fa-map-marker"></i>
+                                    </a>
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.GroupInfo:
+                                var groupInfoModel = property.GetValue(Model, null);
+
+                                <div class="columntitle">@title.DisplayName</div>
+                                <div class="three-col-inner">
+                                    @await Html.PartialAsync("~/Views/Shared/_BuildField.cshtml", groupInfoModel)
+                                </div>
+                                break;
+                            case Eduegate.Framework.Enums.ControlTypes.ShowFlowStatus:
+                                List<string> flowStatus = property.GetValue(Model, null) as List<string>;
+                                <div class="step-container">
+                                    <div>
+                                        <span>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Documents")</span>
+                                        <ul class="step-progressbar">
+                                            @foreach (var value in Enum.GetValues(typeof(Eduegate.Services.Contracts.Enums.DocumentFlowStatus)))
+                                            {
+                                                if (value.ToString() == flowStatus[0])
+                                                {
+                                                    <li class="active">@value</li>
+                                                }
+                                                else
+                                                {
+                                                    <li>@value</li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <span>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Processing")</span>
+                                        <ul class="step-progressbar">
+                                            @foreach (var value in Enum.GetValues(typeof(Eduegate.Services.Contracts.Enums.TransactionFlowStatus)))
+                                            {
+                                                if (value.ToString() == flowStatus[1])
+                                                {
+                                                    <li class="active">@value</li>
+                                                }
+                                                else
+                                                {
+                                                    <li>@value</li>
+                                                }
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                                break;
+                        }
+                    }
+                }
+            </div>
+        }
+    }
+}
+<script>
+
+    $(function () {
+        $('.languageoption').resizable({
+            minHeight: 155,
+            minWidth: 300
+        });
+    });
+</script>

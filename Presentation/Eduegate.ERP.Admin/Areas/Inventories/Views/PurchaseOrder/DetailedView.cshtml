@@ -1,0 +1,208 @@
+﻿@using Eduegate.Services.Contracts.Enums
+@{
+    Layout = null;
+    var viewIID = Eduegate.Services.Contracts.Enums.SearchView.PurchaseOrder;
+    var windowName = "window_" + Guid.NewGuid().ToString();
+}
+
+<div id="@windowName" class="summary-wrap" ng-controller="SummaryViewController" ng-init="SummaryViewInit('@windowName', '@viewIID', @ViewBag.IID,'@DynamicViews.PurchaseOrder');">
+    <div class="preload-overlay" style="display:block;">
+        <div class="preloader">
+            <img src="~/Images/preloader.gif" width="32" height="32" alt="Loading" />
+            <div class="loadertextwrap">
+                <div id="Loadertext">
+                    <div id="fadetext_1" class="loadingtext">L</div>
+                    <div id="fadetext_2" class="loadingtext">o</div>
+                    <div id="fadetext_3" class="loadingtext">a</div>
+                    <div id="fadetext_4" class="loadingtext">d</div>
+                    <div id="fadetext_5" class="loadingtext">i</div>
+                    <div id="fadetext_6" class="loadingtext">n</div>
+                    <div id="fadetext_7" class="loadingtext">g</div>
+                    <div id="fadetext_8" class="loadingtext">.</div>
+                    <div id="fadetext_9" class="loadingtext">.</div>
+                    <div id="fadetext_10" class="loadingtext">.</div>
+                </div>
+                <span class="canceloperation" ng-click="CloseSummaryPanel($event);">Cancel</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="summary-header">
+        <div class="summary-controls">
+            <ul class="summary-tab">
+                    <li class="summary-tab-list active" title="Product Detail" content-tab="productdetail"><i class="fa fa-file-text"></i></li>
+                        <li class="summary-tab-list" title="Sales" content-tab="sales"><i class="fa fa-bar-chart"></i></li>
+                        <li class="summary-tab-list" title="Purchase" content-tab="purchase"><i class="fa fa-shopping-cart"></i></li>
+                        <li class="summary-tab-list" title="Inventory" content-tab="inventory"><i class="fa fa-cube"></i></li>
+                        <li class="summary-tab-list" title="Operation" content-tab="operation"><i class="fa fa-cogs"></i></li>
+                        <li class="summary-tab-list" title="Accounts" content-tab="accounts"><i class="fa fa-list-alt"></i></li>
+                        <li class="summary-tab-list" title="Comments" content-tab="comments"><i class="fa fa-comments"></i></li>
+                </ul>
+            <div class="alignright panelcontrols">
+                <span class="remove" ng-click="CloseSummaryPanel($event);">x</span>
+                <span class="minmax"></span>
+            </div>
+        </div>
+    </div>
+    <div class="quickviewwrap">
+        <div id="productdetail" class="summarytab-content first">
+            <h4>Purchase Order Details</h4>
+            <div class="summary-tab-inner">
+                <div class="summary-content">
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">ID</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).HeadIID"></span>
+                            <i class="fa fa-pencil" title="Edit" ng-click="Edit('PurchaseOrder', ViewModels.@(DynamicViews.PurchaseOrder).HeadIID)"></i>
+                            <i class="fa fa-file-text" title="Report" ng-click="Print($event,'@viewIID','@DynamicViews.PurchaseOrder Print Preview','%2fEduegate.Inventory.Reports%2f@(DynamicViews.PurchaseOrder)', ViewModels.@(DynamicViews.PurchaseOrder).HeadIID);"></i>
+                            <i class="fa fa-print" title="Print" ng-click="PrintTransaction($event,'@viewIID','@DynamicViews.PurchaseOrder Print Preview','%2fEduegate.Inventory.Reports%2f@(DynamicViews.PurchaseOrder)', ViewModels.@(DynamicViews.PurchaseOrder).HeadIID);"></i>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Purchase Order Number</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).TransactionNo"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Branch</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).BranchName"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Document</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).TransactionTypeName"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Entitlement</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).EntitlementName"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Delivery Type</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).DeliveryMethod"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Date</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).TransactionDate"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Validity</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).DueDate"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Delivery Date</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).DeliveryDate"></span>
+                        </div>                       
+                    </div>
+
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Created</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).CreatedDate"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Updated</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).UpdatedDate"></span>
+                        </div>
+                    </div>
+
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Document Status</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).DocumentStatus"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Processing Status</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).TransactionStatus"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" ng-click="GetDynamicView('@DynamicViews.Supplier', ViewModels.@(DynamicViews.PurchaseOrder).SupplierID, false, $event)">
+                        Supplier Details - <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).Supplier"></span> 
+                        (<span class="link-content" ng-bind="ViewModels.@(DynamicViews.PurchaseOrder).SupplierID"></span>)
+                    </div>
+
+                    @{
+                        Html.RenderPartial("_SupplierDetails");
+                    }
+                </div>
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" ng-click="GetDynamicViewGrid('@DynamicViews.PurchaseSKUMaps', ViewModels.@(DynamicViews.PurchaseOrder).HeadIID, false, $event)">Product Details</div>
+                    <div class="sum_togglecontent">
+                        <table class="data-grid">
+                            <thead>
+                                <tr>
+
+                                    <th>SKU Name</th>
+                                    <th>Qty</th>
+                                    <th>unit Price</th>
+                                    <th>Bar Code</th>
+                                    <th>Part Number</th>
+
+                                    @*<th>Created</th>
+                                    <th>SKUId</th>
+                                    <th>Updated</th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr ng-repeat="grid in ViewModels.@(DynamicViews.PurchaseSKUMaps)">
+                                    <td><span ng-bind="grid.SKU"></span></td>
+                                    <td><span ng-bind="grid.Quantity"></span></td>
+                                    <td><span ng-bind="grid.UnitPrice"></span></td>
+                                    <td><span ng-bind="grid.Barcode"></span></td>
+                                    <td><span ng-bind="grid.PartNo"></span></td>
+
+                                    @*<td><span ng-bind="grid.ProductSKUMapID"></span> </td>
+                                    <td ><span ng-bind="grid.CreatedDate"></span> </td>
+                                    <td ><span ng-bind="grid.UpdatedDate"></span> </td>*@
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" ng-click="GetDynamicViewGrid('@DynamicViews.TransactionComments', ViewModels.@(DynamicViews.PurchaseOrder).HeadIID, false, $event)">Comments</div>
+                    <div class="label-value-box" ng-repeat="comment in ViewModels.@(DynamicViews.TransactionComments)">
+                        <span class="link-content" ng-bind-html="comment.Comment1"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="comments" class="summarytab-content">
+            <div class="summary-tab-inner">
+                @*@Html.Partial("~/Views/Mutual/Comment.cshtml", new Eduegate.Web.Library.ViewModels.CommentViewModel() { EntityType = Eduegate.Services.Contracts.Enums.EntityTypes.Ticket, ReferenceID = ViewBag.IID })*@
+                @{Html.RenderAction("Comment", "Mutual", new { area = "", type = Eduegate.Services.Contracts.Enums.EntityTypes.Transaction, referenceID = ViewBag.IID });}
+            </div>
+        </div>
+    </div>
+    </div>
+<script>
+    $(document).ready(function () {
+        $('#@windowName .summary-panel .remove').on('click', function () {
+            $('.pagecontent', '#@windowName').removeClass('summaryview');
+        });
+
+        $('#@windowName .summary-toggle .sum_toggleheader').on('click', function () {
+            $(this).parent().toggleClass('show');
+
+            if ($(this).parent().hasClass('show')) {
+                $(this).parent().addClass('show');
+                $(this).parent().find('.sum_togglecontent').slideDown('fast');
+            }
+            else {
+                $(this).parent().removeClass('show');
+                $(this).parent().find('.sum_togglecontent').slideUp('fast');
+            }
+        });
+
+        $('#@windowName .summarytab-content.first').show();
+
+        $('#@windowName .summary-tab .summary-tab-list').on('click', function () {
+            $('.summary-tab-list', '#@windowName').removeClass('active');
+            $('.summarytab-content', '#@windowName').hide();
+            $(this).addClass('active');
+            $('#' + $(this).attr('content-tab'), '#@windowName').fadeIn('medium');
+        });
+    });
+</script>
+
+

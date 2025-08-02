@@ -1,0 +1,49 @@
+﻿<span class="close">X</span>
+<div class="popup-title">Payment Summary</div>
+
+<div id="divPaymentMethods" class="fullwidth alignleft paddingbtm10 divPaymentMethods">
+	<div class="tableHeader col-xs-12 nopadding">
+		<table class="listing currentsale pos">
+			<thead>
+				<tr>
+					<th class="medium-col-width">Payment method</th>
+					<th class="medium-col-width">Amount(@ViewBag.DefaultCurrencyCode)</th>
+					<th class="medium-col-width">Date</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+	<div class="tableBody col-xs-12 nopadding">
+		<table class="listing currentsale pos">
+			<tbody>
+				<tr ng-repeat="item in PosModel.TransactionPaymentMethods">
+					<td class="medium-col-width">{{item.PaymentMethodID}}</td>
+					<td class="medium-col-width">{{item.Amount}}</td>
+					<td class="medium-col-width">{{item.PaymentDate|date:'dd-MMM-yyyy'}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="tableFooter col-xs-12 nopadding">
+		<table class="listing currentsale pos">
+			 <tfoot>
+				<tr class="subtotal" ng-repeat="tax in PosModel.TaxDetails.Taxes">
+					<td class="medium-col-width">{{tax.TaxName}}</td>
+                    <td colspan="2" class="medium-col-width text-right"> <span class="caption">Incl.</span>&nbsp;&nbsp;{{tax.InclusiveTaxAmount.toFixed(@ViewBag.DefaultDecimalPoints)}}&nbsp;&nbsp;&nbsp;<span class="caption">Excl.</span>&nbsp;&nbsp;<span>{{(tax.ExclusiveTaxAmount).toFixed(@ViewBag.DefaultDecimalPoints)}}</span></td>
+				</tr>
+                 @if (ViewBag.HASDELIVERY == true)
+                 {
+				    <tr class="subtotal">
+					    <td class="medium-col-width">Delivery Charge</td>
+					    <td colspan="2" class="medium-col-width text-right">{{PosModel.DeliveryCharge.toFixed(@ViewBag.DefaultDecimalPoints)}}</td>
+				    </tr>
+                 }
+
+				<tr class="grandtotal">
+                    <td class="medium-col-width"><span class="caption">Total:</span>{{GrandTotal.toFixed(@ViewBag.DefaultDecimalPoints)}}</td>
+					<td colspan="2" class="medium-col-width text-right"><span class="caption">Paid:</span>{{PosModel.Payment.AmountPaid.toFixed(@ViewBag.DefaultDecimalPoints)}}</td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>

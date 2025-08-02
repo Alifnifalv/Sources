@@ -1,0 +1,133 @@
+﻿@model  Eduegate.Web.Library.ViewModels.FilterViewModel
+@{
+    Layout = null;
+    int index = 0;
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#@windowName').closest('.filterdropdown').find('ul li label').on('click', function () {
+            $(this).closest('li').toggleClass('active');
+            $(this).closest('li').find('span.filter-items').slideToggle(200);
+        });
+
+    });
+
+
+</script>
+<div id="@windowName">
+    <form id="filterForm">
+        <filter ng-app="Filter" ng-controller="FilterController as FilterModel" ng-init="init('@windowName', @Newtonsoft.Json.JsonConvert.SerializeObject(Model), '@Model.View')">
+            <ul>
+                @foreach (var col in Model.Columns)
+                {
+                    <li class="filter-fields" ng-class="{filtermodified:FilterModelModel[@index].IsDirty}">
+                        <label class="">@col.ColumnCaption</label>
+                        <span class="filter-items" ng-class="{'threefields': Model[@index].FilterCondition=='Between', '': Model[@index].FilterCondition !='Between'}">
+                            <span class='select-wrapper'>
+                                <select class="custom-select" ng-model="Model[@index].FilterCondition">
+                                    @foreach (var condition in col.FilterConditions)
+                                    {
+                                        <option>@condition</option>
+                                    }
+                                </select>
+                                <span class='holder' ng-bind="Model[@index].FilterCondition"></span>
+                            </span>
+
+                            @switch (col.ColumnType)
+                            {
+                                case Eduegate.Services.Contracts.Enums.DataTypes.Date:
+                                    <span class="filtename">
+
+                                        <span class="date-field">
+
+                                            <input type="text" id="datepicker-icon-controller" placeholder="@col.ColumnCaption" ng-model="Model[@index].FilterValue"
+                                                   ng-change="Model[@index].IsDirty=(Model[@index].FilterValue.length!=0);" ng-keyup="$event.keyCode == 13 && SaveFilter()" skien-Datepicker />
+                                            <span data-datepicker="#datepicker-icon" id="datepicker-icon-trigger" class="input-group-addon1" ng-click="dateiconclick()"><i class="fa fa-calendar"></i></span>
+                                        </span>
+                                        <span class="date-field">
+                                            <input type="text"  id="datepicker-icon-controller" placeholder="@col.ColumnCaption" ng-model="Model[@index].FilterValue2"
+                                                   ng-change="Model[@index].IsDirty=(Model[@index].FilterValue2.length!=0);" ng-show="Model[@index].FilterCondition=='Between'" ng-keyup="$event.keyCode == 13 && SaveFilter()" skien-Datepicker>
+                                            <span data-datepicker="#datepicker-icon" id="datepicker-icon-trigger" class="input-group-addon1"
+                                                  ng-show="Model[@index].FilterCondition=='Between'"  ng-click="dateiconclick()"><i class="fa fa-calendar"></i></span>
+                                        </span>
+                                    </span>
+                                    break;
+                                case Eduegate.Services.Contracts.Enums.DataTypes.DateTime:
+                                    <span class="filtename">
+
+                                        <span class="date-field">
+                                            <input type="text" placeholder="@col.ColumnCaption" ng-model="Model[@index].FilterValue"
+                                                   ng-change="Model[@index].IsDirty=(Model[@index].FilterValue.length!=0);" ng-keyup="$event.keyCode == 13 && SaveFilter()" datetimepicker>
+                                            <span data-datepicker="#datepicker-icon" class="input-group-addon1"><i class="fa fa-calendar"></i></span>
+                                        </span>
+                                        <span class="date-field">
+                                            <input type="text" placeholder="@col.ColumnCaption" ng-model="Model[@index].FilterValue2"
+                                                   ng-change="Model[@index].IsDirty=(Model[@index].FilterValue2.length!=0);" ng-show="Model[@index].FilterCondition=='Between'" ng-keyup="$event.keyCode == 13 && SaveFilter()" datetimepicker>
+                                            <span data-datepicker="#datepicker-icon" class="input-group-addon1"
+                                                  ng-show="Model[@index].FilterCondition=='Between'"><i class="fa fa-calendar"></i></span>
+                                        </span>
+
+                                    </span>
+                                    break;
+                                case Eduegate.Services.Contracts.Enums.DataTypes.String:
+                                case Eduegate.Services.Contracts.Enums.DataTypes.Number:
+                                case Eduegate.Services.Contracts.Enums.DataTypes.CommaSeparated:
+
+                                    if (!col.LookUpID.HasValue)
+                                    {
+                                        col.FilterControlType = Eduegate.Services.Contracts.Enums.UIControlTypes.TextBox;
+                                    }
+
+                                    switch (col.FilterControlType)
+                                    {
+                                        case Eduegate.Services.Contracts.Enums.UIControlTypes.TextBox:
+                                            <span class="filtename">
+                                                <input type="text" data-rel="tooltip-right" placeholder="@col.ColumnCaption" class="width-70" ng-model="Model[@index].FilterValue"
+                                                       ng-keyup="$event.keyCode == 13 && SaveFilter()" ng-change="Model[@index].IsDirty=(Model[@index].FilterValue.length!=0);">
+                                                <input type="text" data-rel="tooltip-right" placeholder="@col.ColumnCaption" class="width-70" ng-model="Model[@index].FilterValue2"
+                                                       ng-keyup="$event.keyCode == 13 && SaveFilter()" ng-show="c" ng-change="Model[@index].IsDirty=(Model[@index].FilterValue2.length!=0);">
+                                            </span>
+                                            break;
+                                        case Eduegate.Services.Contracts.Enums.UIControlTypes.DropDown:
+                                            <span class="filtename">
+                                                <ui-select style="width: 100%;"
+                                                           ng-model="Model[@index].FilterValue3"
+                                                           theme="select2" class="pos-txt" ng-change="Model[@index].IsDirty=(Model[@index].FilterValue3!=null && Model[@index].FilterValue3.Key.length!=0);"
+                                                           ng-click="LoadLookups('@(((Eduegate.Services.Contracts.Enums.LookUpTypes)col.LookUpID).ToString())')" ng-keyup="$event.keyCode == 13 && SaveFilter()">
+                                                    <ui-select-match>{{$select.selected.Value}}</ui-select-match>
+                                                    <ui-select-choices repeat="data in LookUps.@(((Eduegate.Services.Contracts.Enums.LookUpTypes)col.LookUpID).ToString()) | filter:$select.search">{{data.Value}}</ui-select-choices>
+                                                </ui-select>
+
+                                            </span>
+                                            break;
+                                    }
+
+                                    break;
+                            }
+                            <span class="clearbtn alignleft fullwidth textright">
+                                <input type="button" style="width:50px" class="button-orange reset" value="Clear" ng-click="ClearField(@index);" />
+                            </span>
+                        </span>
+
+                    </li>
+
+                    index++;
+                }
+
+                <li class="last alignright">
+                    <span ng-click="ResetSaveFilter()">
+                        <input type="reset" class="button-orange btn-default reset" value="Reset" />
+                    </span>
+                    <span ng-click="SaveFilter()">
+                        <input value="Filter" form="nameform" type="submit" class="button-orange alignright" id="filter-btn" />
+                    </span>
+                </li>
+            </ul>
+
+        </filter>
+    </form>
+</div>
+

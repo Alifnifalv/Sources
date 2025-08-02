@@ -1,0 +1,336 @@
+
+# Creating a New User and SSH Access in a GCP Linux Server
+
+This guide provides instructions to create a new user on a GCP Linux server and set up SSH access for that user.
+
+----------
+
+**1. Create a New User on the GCP Linux Server**
+
+1.  **Add a new user**:
+
+	```
+	sudo adduser test
+	```
+
+Replace `test` with the desired username. Follow the prompts to set up a password for the user.
+
+2.  **Grant sudo privileges**:
+
+	```
+	sudo usermod -aG sudo test
+	```
+
+3.  **Switch to the new user**:
+
+	```
+	su - test
+	```
+
+4.  **Verify sudo access**:
+
+	```
+	sudo whoami
+	```
+
+>This should return:
+```
+root
+```
+
+----------
+
+**2. Generate SSH Keys on Windows**
+
+1.  **Open a terminal (PowerShell or Command Prompt)** and run:
+
+	```
+	ssh-keygen -t rsa -C test
+	```
+
+	Replace test with your username or email for identification. Follow the prompts to generate the key pair.
+
+	The keys will be saved in the default location (e.g., `C:\Users\YOUR_USERNAME\.ssh\test and test.pub`).
+
+2. **Copy the public key**: Open the .pub file (e.g., test.pub) and copy its content:
+
+		`cat test.pub`
+
+	Or use a text editor to view and copy the key.
+
+----------
+
+**3. Add the SSH Key to the GCP Instance**
+
+**Option 1: Add to the VM Instance**
+
+1.  Go to the **Google Cloud Console**.
+2.  Navigate to **Compute Engine > VM Instances**.
+3.  Find your instance and click **Edit**.
+4.  Scroll to the **SSH keys** section.
+5.  Paste the copied SSH key (from `test.pub`) into the text box.
+6.  Click **Save**.
+
+----------
+
+**Option 2: Add to Project Metadata (Optional)**
+
+1.  Go to the **Google Cloud Console**.
+2.  Navigate to **Compute Engine > Metadata**.
+3.  Select the **SSH Keys** tab.
+4.  Add a new key by pasting the copied SSH key (from test.pub).
+5.  Click **Save**.
+
+----------
+
+**4. SSH Into the New User**
+
+1.  **Use the private key to SSH into the new user:**
+
+```
+ssh -i C:\Users\aadil\.ssh\test test@INSTANCE_EXTERNAL_IP
+```
+
+>**Replace:**
+`C:\Users\aadil\.ssh\test` with the path to your private key.
+`test` with your username.
+`INSTANCE_EXTERNAL_IP` with the external IP address of your VM.
+
+----------
+
+**5. Notes**
+
+-   Ensure the ssh directory and authorized_keys file on the server have the correct permissions:
+
+
+```
+sudo chmod 700 /home/test/.ssh
+
+sudo chmod 600 /home/test/.ssh/authorized_keys
+
+sudo chown -R test:test /home/test/.ssh
+```
+
+>   If you face connectivity issues, check the SSH server logs:
+	`sudo tail -f /var/log/auth.log`
+
+----------
+
+**6. Granting Access to Permission-Denied Folders**
+
+If you encounter "permission denied" errors for certain folders, you can adjust ownership and permissions as follows:
+
+1. **Change Folder Ownership:**
+
+	Replace `<username>` with your current user name.
+
+	```
+	sudo chown -R <username>:<username> /path/to/target/folder
+	```
+2. **Grant Write Permissions:**
+
+	Ensure your user has write access to the folder.
+
+	```
+	sudo chmod -R u+w /path/to/target/folder
+	```
+
+**Important Notes:**
+
+-   Replace /path/to/target/folder with the actual directory path.
+-   Use these commands cautiously. Changing ownership or permissions recursively (-R) may have unintended consequences for subfolders and files.
+-   For shared environments or sensitive systems, consult with an administrator to avoid compromising security.
+----
+
+**7. Configuring SSH Key File Permissions on a Remote System**
+
+After copying the SSH private key file from the host to the remote system, you need to secure the file by adjusting its permissions. Follow these steps on the remote system:
+
+**Steps to Secure the SSH Key File**
+
+1. Locate the copied `SSH` private key file on the remote system.
+2. Right-click the file and select **`Properties`**.
+3. Navigate to the **`Security`** tab and click on **`Advanced`**.
+4. In the **`Advanced` Security Settings** window:
+   - **`Remove all users`** except for:
+     - The **`Administrator`** account.
+     - The **`current user`** account.
+   - Disable **`inheritance`** by clicking on **`Disable inheritance`** and confirming the changes.
+
+5. Apply the changes and close the properties window.
+
+---
+
+By completing these steps, you ensure that the SSH key file is properly secured and complies with the required permissions for SSH authentication.
+This guide can be shared with others for consistent setup and troubleshooting.
+
+---
+# Changing the SSH Port for Security
+
+Changing the default SSH port (22) to a custom port can help enhance server security by reducing exposure to automated attacks. This guide explains how to change the SSH port on a Linux server.
+
+----------
+
+## **Steps to Change the SSH Port**
+
+### **1. Open the SSH Configuration File**
+
+The SSH server configuration file is located at `/etc/ssh/sshd_config`. Open it using a text editor:
+
+```bash
+sudo nano /etc/ssh/sshd_config
+
+```
+
+----------
+
+### **2. Modify the Port Directive**
+
+Locate the line starting with `Port`. If it is commented out (preceded by `#`), uncomment it by removing the `#`, and change the value to your desired port (e.g., `8088`):
+
+```plaintext
+Port 20
+
+```
+
+You can also specify multiple ports if needed:
+
+```plaintext
+Port 22
+Port 20
+
+```
+
+----------
+
+### **3. Save and Exit**
+
+In the editor, save the file and exit:
+
+-   For **nano**: Press `Ctrl+O` to save, then `Enter`, and `Ctrl+X` to exit.
+
+----------
+
+### **4. Restart the SSH Service**
+
+Restart the SSH daemon to apply the changes:
+
+```bash
+sudo systemctl restart sshd
+
+```
+
+----------
+
+### **5. Allow the New Port in the Firewall**
+
+#### **For UFW (Uncomplicated Firewall):**
+
+If UFW is active, allow the new port and reload the firewall:
+
+```bash
+sudo ufw allow 20/tcp
+sudo ufw reload
+
+```
+
+#### **For iptables:**
+
+Add a rule to allow traffic on the new port:
+
+```bash
+sudo iptables -A INPUT -p tcp --dport 20 -j ACCEPT
+
+```
+
+Persist the rules to ensure they are not lost on reboot.
+
+#### **For Google Cloud Platform (GCP):**
+
+1.  Go to the **VPC Network > Firewall Rules** section in the GCP Console.
+2.  Add or edit a firewall rule to allow TCP traffic on port `8088` for your instance.
+
+----------
+
+### **6. Verify SSH is Listening on the New Port**
+
+Check if the SSH daemon is listening on the specified port:
+
+```bash
+sudo netstat -tuln | grep 20
+
+```
+
+You should see output similar to:
+
+```plaintext
+tcp    0    0 0.0.0.0:20      0.0.0.0:*       LISTEN
+
+```
+
+----------
+
+### **7. Test the New Configuration**
+
+From another machine, connect to the server using the new port:
+
+```bash
+ssh -p 20 username@server_ip
+
+```
+
+Replace:
+
+-   `username` with your server's username.
+-   `server_ip` with the public IP or hostname of your server.
+
+----------
+
+### **8. Keep Backup Access**
+
+Keep the default port (22) accessible until you’ve confirmed that the new configuration works. You can do this by temporarily leaving both ports active in the configuration:
+
+```plaintext
+Port 22
+Port 20
+
+```
+
+Once verified, remove port `22` to disable access through it.
+
+----------
+
+## **Troubleshooting**
+
+1.  **SSH Service Fails to Start**:
+    
+    -   Check the SSH configuration syntax:
+        
+        ```bash
+        sudo sshd -t
+        
+        ```
+        
+    -   Review SSH logs:
+        
+        ```bash
+        sudo tail -f /var/log/auth.log
+        
+        ```
+        
+2.  **Connection Issues**: Ensure the port is accessible:
+    
+    -   Test port availability:
+        
+        ```bash
+        telnet server_ip 20
+        
+        ```
+        
+    -   Verify firewall and network rules.
+3.  **Locked Out**: If you are locked out, use a console or another method (like a GCP serial console) to revert the changes.
+    
+
+----------
+
+By changing the SSH port, you add an additional layer of security, making your server less visible to automated attacks.

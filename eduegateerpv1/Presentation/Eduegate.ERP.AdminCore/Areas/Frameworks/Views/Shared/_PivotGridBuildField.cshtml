@@ -1,0 +1,68 @@
+﻿@model Eduegate.Web.Library.ViewModels.BaseMasterViewModel
+@using Eduegate.ERP.Admin.Helpers;
+@using Eduegate.Framework.Mvc.Attributes
+@using System.Reflection;
+
+@{
+    var modelContainerType = (ContainerTypeAttribute)Model.GetType().GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+    string bindingPrefix = "CRUDModel.ViewModel";
+
+    if (modelContainerType != null)
+    {
+        bindingPrefix = modelContainerType.BindingPrefix;
+        Model.NamePrefix = modelContainerType.ContainerName + "[{{$index}}].";
+    }
+
+    <thead>
+        <tr>
+            @foreach (var property in Model.GetType().GetProperties())
+            {
+                var title = (System.ComponentModel.DisplayNameAttribute)property.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+                var controlType = (ControlTypeAttribute)property.GetCustomAttributes(typeof(ControlTypeAttribute)).FirstOrDefault();
+
+                if (title != null && controlType.ControlType != Eduegate.Framework.Enums.ControlTypes.PivotColumn)
+                {
+                    <th @(string.IsNullOrEmpty(controlType.Css) ? string.Empty : "css:" + controlType.Css)>@title.DisplayName</th>
+                }
+
+                var pivotValues = property.GetValue(Model, null) as System.Collections.IList;
+
+                if (controlType != null && controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.PivotColumn)
+                {
+                    <th ng-repeat="loop in LookUps.AllocationBranch">{{loop.Value}}</th>
+                }
+            }
+
+        </tr>
+    </thead>
+    <tr ng-focus="FocusGrid($event,'@bindingPrefix')" ng-repeat="gridModel in @bindingPrefix track by $index">
+        @foreach (var property in Model.GetType().GetProperties())
+        {
+            var title = (System.ComponentModel.DisplayNameAttribute)property.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+
+            if (title != null)
+            {
+                var controlType = (ControlTypeAttribute)property.GetCustomAttributes(typeof(ControlTypeAttribute)).FirstOrDefault();
+                if (controlType != null)
+                {
+                    switch (controlType.ControlType)
+                    {
+                        case Eduegate.Framework.Enums.ControlTypes.Label:
+                            <td @(string.IsNullOrEmpty(controlType.Css) ? string.Empty : "css:" + controlType.Css)>
+                                <label class="control-label"><span ng-bind="gridModel.@property.Name" /><span class="redcolor"></span></label>
+                            </td>
+                            break;
+
+                        case Eduegate.Framework.Enums.ControlTypes.PivotColumn:
+                        <td ng-repeat="data in LookUps.AllocationBranch track by $index">
+                            @{ var propertyModel = property.Name + "[$index]";}
+                            <input type="text" ng-model="gridModel.@propertyModel" ng-change="Grid({{$index}})"
+                                   @Html.GetValidationAttributes(Html.TextBox(property.Name), Model.NamePrefix) />
+                        </td>
+                             break;
+                    }
+                }
+            }
+        }
+    </tr>
+}

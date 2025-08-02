@@ -1,0 +1,1110 @@
+﻿@*@model Eduegate.Web.Library.ViewModels.SearchListViewModel*@
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+
+    var settingBL = new Eduegate.Domain.Setting.SettingBL(null);
+    var imageHostURL = settingBL.GetSettingValue<string>("ERPRootUrl");
+}
+
+<div id="TimeTableBuilder" class="windowcontainer timetable drag"
+     ng-controller="TimeTableController"
+     ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+
+    <style>
+        #TimeTableAllacate_timetablesubjects_Tab_02, #TimeTableAllacate_Tab_02, #AllocatedDateController {
+            display: none;
+        }
+
+        #TimeTableAllacate_timetablesubjects_Tab_03, #TimeTableAllacate_Tab_03 {
+            display: none;
+        }
+
+        .seletedsubject {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+
+        .sidebarTimeTable {
+            /* position: absolute; */
+            right: -25%;
+            width: 25%;
+            background-color: white;
+            color: black;
+            transition: transform 0.3s ease, right 0.3s ease;
+            z-index: 1000;
+            box-shadow: -1px -1px 3px rgba(0, 0, 0, .12), -2px 4px 8px rgba(0, 0, 0, .24);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transform: scale(0.9); /* Start with a smaller scale */
+            opacity: 0; /* Initially hidden */
+        }
+
+            /* Zoom-in effect and visible state */
+            .sidebarTimeTable.visible {
+                right: 0;
+                transform: scale(1); /* Scale up to normal size */
+                opacity: 1;
+            }
+
+        .zoom-card {
+            transition: transform 0.3s ease;
+        }
+
+            .zoom-card:hover {
+                transform: scale(1.25);
+                z-index: 10;
+                box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+            }
+
+        .ui.exceeding.progress .bar {
+            background-color: #ff851b !important; /* custom orange color */
+        }
+
+        .teacherleave .overlay-content {
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+            .teacherleave .overlay-content i {
+                font-size: 24px;
+                margin-bottom: 5px;
+            }
+
+        .glow-border {
+            outline: 2px solid #00bfff; /* Outer border color */
+            outline-offset: 3px;
+            box-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff; /* Glowing effect */
+            border-radius: 8px; /* Adjust if needed */
+        }
+
+        .glow-border_edit {
+            outline: 2px solid #00ff99; /* Outer border color */
+            outline-offset: 3px;
+            box-shadow: 0 0 10px #00ff99, 0 0 20px #00ff99; /* Glowing effect */
+            border-radius: 8px; /* Adjust if needed */
+        }
+
+        .glow_border_reassign {
+            outline: 2px solid green;
+            outline-offset: 3px;
+            box-shadow: 0 0 10px green;
+        }
+
+        .clickable-card {
+            cursor: pointer; /* Change cursor to a pointer on hover */
+        }
+
+    </style>
+
+    <div class="window-tab preload-overlay" style="display:none;">
+        <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+    </div>
+    @*<div id='divLoad' style="display:block;background:transparent;">
+    <center><div class='bounce-wrapper' id='Load'><div class='three-bounce-inner'><div class='bounce-item bi-item1'></div><div class='bounce-item bi-item2'></div><div class='bounce-item bi-item3'></div></div></div></center>
+    </div>*@
+
+    @*//-----NOTE: Needed for TAB chnages.
+    <div class="subjectList fullwidth displaylineBlock">
+    <div class="menuinnertab">
+    <ul>
+    <li data-target="subject" class="active"><a href="#">Subjects</a></li>
+    <li data-target="teachers"><a href="#">Teachers</a></li>
+    <li data-target="classes"><a href="#">Classes</a></li>
+    </ul>
+    </div>
+    </div>*@
+
+    <div class="card scheduleWrapper innertab subject first">
+<div class="card-body">
+        <div >
+            <div>
+                <ul class="nav nav-tabs justify-content-center">
+                    <li class="nav-item" ng-click="onTimeTableAllacateMasterTab('Master_Tab_01')">
+                        <a class="nav-link active" id="Master_Tab_01_nav" href="#"><span class="seletedsubject">Global/Daily</span></a>
+                    </li>
+                    <li class="nav-item" ng-click="onTimeTableAllacateMasterTab('Master_Tab_02')">
+                        <a class="nav-link" id="Master_Tab_02_nav" href="#"><span class="seletedsubject">Smart scheduler</span></a>
+                    </li>
+                    <li class="nav-item" ng-click="onTimeTableAllacateMasterTab('Setups_Tab')">
+                        <a class="nav-link" id="Setups_Tab_nav" href="#"><span class="seletedsubject">Setups</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="MasterTab_01">
+            <div class="d-flex align-items-end mb-6 mt-6">
+                <div class="w-25 me-3">
+                    <label for="timeTableType" class="form-label">Time Table Type</label>
+                    <select name="TimeTable" id="timeTableType" class="form-select"
+                            ng-model="selectedTableMasterData"
+                            ng-change="LoadClasswiseTimeTable('TimeTable', selectedTableMasterData)">
+                        <option value="" disabled selected>Select Time Table Type</option>
+                        <option ng-repeat="data in TableMasterData" value="{{data.Key}}">{{data.Value}}</option>
+                    </select>
+                </div>
+
+                <div class="w-25 me-3">
+                    <label for="class" class="form-label">Class</label>
+                    <select name="Class" id="class" class="form-select"
+                            ng-model="selectedClasses"
+                            ng-change="LoadClasswiseTimeTable('Class', selectedClasses)">
+                        <option value="" disabled selected>Select Class</option>
+                        <option ng-repeat="class in Classes" value="{{class.Key}}">{{class.Value}}</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <ul class="nav nav-tabs justify-content-center">
+                <li class="nav-item" ng-click="onTimeTableAllacateTab('Tab_01')">
+                    <a class="nav-link active" id="Tab_01_nav" href="#"><span class="seletedsubject">Global</span></a>
+                </li>
+                <li class="nav-item" ng-click="onTimeTableAllacateTab('Tab_02')">
+                    <a class="nav-link" id="Tab_02_nav" href="#"><span class="seletedsubject">Daily</span></a>
+                </li>
+            </ul>
+
+            <ul class="timetablesubjects" id="TimeTableAllacate_timetablesubjects_Tab_01">
+                <li ng-repeat="subject in Subjects">
+                    <span class="scaleWrap Block--isDraggable">
+                        <span style="background: #{{subject.HexColorCode || '346C9F'}}; color: white; padding: 10px; border-radius: 5px;" class="seletedsubject" title="Subject: {{subject.SubjectName}}" data-Staff-id="" data-Alloc-id="0" data-subject-id="{{subject.SubjectID}}">
+                            <img ng-if="subject.IconFileName" src="~/gallery/icons/{{subject.IconFileName}}" alt="icon" class="me-2" style="width:20px;height: 20px;">
+                            {{subject.SubjectName}}
+                        </span>
+                    </span>
+                </li>
+                <li>
+                    <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%); color: white; padding: 10px; border-radius: 5px;">Home Room</span></span>
+                    <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%); color: white; padding: 10px; border-radius: 5px;">Recess 1</span></span>
+                    <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%); color: white; padding: 10px; border-radius: 5px;">Recess 2</span></span>
+                    <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%); color: white; padding: 10px; border-radius: 5px;">Dispersal</span></span>
+                </li>
+            </ul>
+            <div class="" id="TimeTableAllacate_timetablesubjects_Tab_02">
+                <div class="d-flex gap-4 mb-2 mt-2">
+                    <div class="controls w-25 mt-1">
+                        <div class="datetime_picker">
+                            <input type="text" autocomplete="off" ng-model="AllocatedDate" skien-datepicker
+                                   ng-change="LoadDailyTimeTable(AllocatedDate)" />
+                        </div>
+                    </div>
+                    <div class="d-flex ms-3 mb-1">
+                        <button type="button" class="btn btn-primary me-2 d-flex align-items-center gap-2" ng-click="TimeTableGenerate('Generate')">
+                            <svg width="13" height="14" viewBox="0 0 13 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.0911 7.63623C11.7392 7.63623 11.4547 7.92133 11.4547 8.27262C11.4547 9.32518 10.5982 10.1817 9.54562 10.1817H4.45462V8.27262C4.45462 8.02824 4.31399 7.80489 4.09444 7.69923C3.87235 7.5936 3.61206 7.62286 3.42052 7.77561L0.238633 10.3211C0.0878023 10.442 0 10.6247 0 10.8181C0 11.0116 0.0878297 11.1942 0.238633 11.3151L3.42052 13.8606C3.53569 13.9523 3.67635 14 3.81824 14C3.91178 14 4.00661 13.979 4.09441 13.937C4.31396 13.8314 4.45459 13.608 4.45459 13.3636V11.4545H9.54559C11.3001 11.4545 12.7275 10.0271 12.7275 8.27262C12.7275 7.92133 12.443 7.63623 12.0911 7.63623Z" fill="white" />
+                                <path d="M0.636382 6.3635C0.988302 6.3635 1.27276 6.07841 1.27276 5.72712C1.27276 4.67455 2.12932 3.818 3.18188 3.818H8.27288V5.72712C8.27288 5.97149 8.41352 6.19484 8.63306 6.3005C8.72152 6.3425 8.81569 6.3635 8.90924 6.3635C9.05116 6.3635 9.19179 6.31578 9.30696 6.22412L12.4888 3.67862C12.6397 3.55771 12.7275 3.37508 12.7275 3.18161C12.7275 2.98815 12.6396 2.80552 12.4888 2.68461L9.30699 0.139106C9.11607 -0.0136118 8.85261 -0.0428975 8.63306 0.0627333C8.41352 0.168364 8.27288 0.391739 8.27288 0.636114V2.54523H3.18188C1.4274 2.54523 0 3.97263 0 5.72712C0 6.07841 0.284462 6.3635 0.636382 6.3635Z" fill="white" />
+                            </svg>
+
+                            Generate
+                        </button>
+                        <button type="button" class="btn btn-primary me-2 d-flex align-items-center gap-2" ng-click="TimeTableGenerate('Re_generate')">
+                            <svg width="13" height="14" viewBox="0 0 13 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.0911 7.63623C11.7392 7.63623 11.4547 7.92133 11.4547 8.27262C11.4547 9.32518 10.5982 10.1817 9.54562 10.1817H4.45462V8.27262C4.45462 8.02824 4.31399 7.80489 4.09444 7.69923C3.87235 7.5936 3.61206 7.62286 3.42052 7.77561L0.238633 10.3211C0.0878023 10.442 0 10.6247 0 10.8181C0 11.0116 0.0878297 11.1942 0.238633 11.3151L3.42052 13.8606C3.53569 13.9523 3.67635 14 3.81824 14C3.91178 14 4.00661 13.979 4.09441 13.937C4.31396 13.8314 4.45459 13.608 4.45459 13.3636V11.4545H9.54559C11.3001 11.4545 12.7275 10.0271 12.7275 8.27262C12.7275 7.92133 12.443 7.63623 12.0911 7.63623Z" fill="white" />
+                                <path d="M0.636382 6.3635C0.988302 6.3635 1.27276 6.07841 1.27276 5.72712C1.27276 4.67455 2.12932 3.818 3.18188 3.818H8.27288V5.72712C8.27288 5.97149 8.41352 6.19484 8.63306 6.3005C8.72152 6.3425 8.81569 6.3635 8.90924 6.3635C9.05116 6.3635 9.19179 6.31578 9.30696 6.22412L12.4888 3.67862C12.6397 3.55771 12.7275 3.37508 12.7275 3.18161C12.7275 2.98815 12.6396 2.80552 12.4888 2.68461L9.30699 0.139106C9.11607 -0.0136118 8.85261 -0.0428975 8.63306 0.0627333C8.41352 0.168364 8.27288 0.391739 8.27288 0.636114V2.54523H3.18188C1.4274 2.54523 0 3.97263 0 5.72712C0 6.07841 0.284462 6.3635 0.636382 6.3635Z" fill="white" />
+                            </svg>
+
+                            Re-generate
+                        </button>
+                        <button type="button" class="btn btn-primary d-flex align-items-center gap-2" ng-click="ReAssignTimeTable()">
+                            <img src="~/Images/re_assign.svg" alt="icon" />
+
+                            Reassign for Absence
+                        </button>
+                    </div>
+                </div>
+                <div class="card card-body">
+                    <ul class="timetablesubjects">
+                        <li ng-repeat="subject in Subjects">
+                            <span class="scaleWrap Block--isDraggable">
+                                <span style="background: #{{subject.HexColorCode || '346C9F'}}; color: white; padding: 10px; border-radius: 5px;" class="seletedsubject" title="Subject: {{subject.SubjectName}}" data-Staff-id="" data-Alloc-id="0" data-subject-id="{{subject.SubjectID}}">
+                                    <img ng-if="subject.IconFileName" src="~/gallery/icons/{{subject.IconFileName}}" alt="icon" class="me-2" style="width:20px;height: 20px;">
+                                    {{subject.SubjectName}}
+                                </span>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%); color: white; padding: 10px; border-radius: 5px;">Home Room</span></span>
+                            <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%); color: white; padding: 10px; border-radius: 5px;">Recess 1</span></span>
+                            <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%); color: white; padding: 10px; border-radius: 5px;">Recess 2</span></span>
+                            <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%); color: white; padding: 10px; border-radius: 5px;">Dispersal</span></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="MasterTab_02" ng-show="isMasterTabVisible">
+
+            <ul class="nav nav-tabs justify-content-center">
+                <li class="nav-item hide" ng-click="onTimeTableAllacateTab('Tab_03')">
+                    <a class="nav-link" id="Tab_03_nav" href="#"><span class="seletedsubject">Smart Scheduler</span></a>
+                </li>
+            </ul>
+
+        </div>
+
+        <ul class="timetablesubjects" id="TimeTableAllacate_timetablesubjects_Tab_03">
+
+            <div class="d-flex align-items-end mb-6 mt-6">
+                <div class="w-25 me-3">
+                    <label for="timeTableType" class="form-label">Time Table Type <span class="cufon" style="color:red;font-weight:700">&nbsp;*</span> </label>
+                    <select id="timeTableType" class="form-select" ng-model="selectedTableMasterData" ng-change="GetSmartTimeTableDetails(selectedTableMasterData,null)">
+                        <option value="" disabled selected>Select Time Table Type</option>
+                        <option ng-repeat="data in TableMasterData" value="{{data.Key}}">{{data.Value}}</option>
+                    </select>
+                </div>
+
+                <div class="w-25 me-3">
+                    <label for="class" class="form-label">Class</label>
+                    <select id="class" class="form-select" ng-model="selectedClasses" ng-change="GetSmartTimeTableDetails(selectedTableMasterData,selectedClasses)">
+                        <option value="" disabled selected>Select Class</option>
+                        <option ng-repeat="class in Classes" value="{{class.Key}}">{{class.Value}}</option>
+                    </select>
+                </div>
+
+                <div class="d-flex ms-3 mb-1">
+                    <button type="button" class="btn btn-primary me-2 d-flex align-items-center gap-2" ng-click="TimeTableGenerate('Smart_Scheduler')">
+                        <svg width="13" height="14" viewBox="0 0 13 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12.0911 7.63623C11.7392 7.63623 11.4547 7.92133 11.4547 8.27262C11.4547 9.32518 10.5982 10.1817 9.54562 10.1817H4.45462V8.27262C4.45462 8.02824 4.31399 7.80489 4.09444 7.69923C3.87235 7.5936 3.61206 7.62286 3.42052 7.77561L0.238633 10.3211C0.0878023 10.442 0 10.6247 0 10.8181C0 11.0116 0.0878297 11.1942 0.238633 11.3151L3.42052 13.8606C3.53569 13.9523 3.67635 14 3.81824 14C3.91178 14 4.00661 13.979 4.09441 13.937C4.31396 13.8314 4.45459 13.608 4.45459 13.3636V11.4545H9.54559C11.3001 11.4545 12.7275 10.0271 12.7275 8.27262C12.7275 7.92133 12.443 7.63623 12.0911 7.63623Z" fill="white" />
+                            <path d="M0.636382 6.3635C0.988302 6.3635 1.27276 6.07841 1.27276 5.72712C1.27276 4.67455 2.12932 3.818 3.18188 3.818H8.27288V5.72712C8.27288 5.97149 8.41352 6.19484 8.63306 6.3005C8.72152 6.3425 8.81569 6.3635 8.90924 6.3635C9.05116 6.3635 9.19179 6.31578 9.30696 6.22412L12.4888 3.67862C12.6397 3.55771 12.7275 3.37508 12.7275 3.18161C12.7275 2.98815 12.6396 2.80552 12.4888 2.68461L9.30699 0.139106C9.11607 -0.0136118 8.85261 -0.0428975 8.63306 0.0627333C8.41352 0.168364 8.27288 0.391739 8.27288 0.636114V2.54523H3.18188C1.4274 2.54523 0 3.97263 0 5.72712C0 6.07841 0.284462 6.3635 0.636382 6.3635Z" fill="white" />
+                        </svg>
+
+                        Re-generate
+                    </button>
+                    @* <button type="button" class="btn btn-primary me-2 d-flex align-items-center gap-2" ng-click="TimeTableGenerate('SaveAsNew')">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="me-1">
+                    <path d="M14.8799 3.75609L12.2439 1.12015C12.167 1.04323 12.0627 1 11.9539 1H11.0753H4.04607H2.50845C1.6767 1 1 1.6767 1 2.50847V13.4915C1 14.3233 1.6767 15 2.50845 15H4.04607H11.9539H13.4915C14.3233 15 15 14.3233 15 13.4915V4.04609C15 3.93732 14.9568 3.833 14.8799 3.75609ZM10.6651 1.82031V5.14438C10.6651 5.52383 10.3564 5.83254 9.97695 5.83254H5.14438C4.76493 5.83254 4.45622 5.52383 4.45622 5.14438V1.82031H10.6651ZM4.45622 14.1797V9.97695C4.45622 9.59753 4.76493 9.28882 5.14438 9.28882H10.8556C11.235 9.28882 11.5437 9.59753 11.5437 9.97695V14.1797H4.45622ZM14.1797 13.4915C14.1797 13.871 13.871 14.1797 13.4915 14.1797H12.3641V9.97695C12.3641 9.14521 11.6874 8.46851 10.8556 8.46851H5.14438C4.31261 8.46851 3.63591 9.14521 3.63591 9.97695V14.1797H2.50845C2.12902 14.1797 1.82031 13.871 1.82031 13.4915V2.50847C1.82031 2.12902 2.12902 1.82031 2.50845 1.82031H3.63591V5.14438C3.63591 5.97615 4.31261 6.65286 5.14438 6.65286H9.97695C10.8087 6.65286 11.4854 5.97615 11.4854 5.14438V1.82031H11.784L14.1797 4.21601V13.4915Z" fill="white" stroke="white" stroke-width="0.5" />
+                    <path d="M9.31787 4.89558C9.54439 4.89558 9.72803 4.71194 9.72803 4.48543V3.16746C9.72803 2.94094 9.54439 2.7573 9.31787 2.7573C9.09136 2.7573 8.90771 2.94094 8.90771 3.16746V4.48543C8.90771 4.71194 9.09136 4.89558 9.31787 4.89558Z" fill="white" stroke="white" stroke-width="0.5" />
+                    </svg>
+                    Save as new
+                    </button>
+                    <button type="button" class="btn btn-primary d-flex align-items-center gap-2" ng-click="TimeTableGenerate('SaveAndReplace')">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="me-1">
+                    <path d="M14.8799 3.75609L12.2439 1.12015C12.167 1.04323 12.0627 1 11.9539 1H11.0753H4.04607H2.50845C1.6767 1 1 1.6767 1 2.50847V13.4915C1 14.3233 1.6767 15 2.50845 15H4.04607H11.9539H13.4915C14.3233 15 15 14.3233 15 13.4915V4.04609C15 3.93732 14.9568 3.833 14.8799 3.75609ZM10.6651 1.82031V5.14438C10.6651 5.52383 10.3564 5.83254 9.97695 5.83254H5.14438C4.76493 5.83254 4.45622 5.52383 4.45622 5.14438V1.82031H10.6651ZM4.45622 14.1797V9.97695C4.45622 9.59753 4.76493 9.28882 5.14438 9.28882H10.8556C11.235 9.28882 11.5437 9.59753 11.5437 9.97695V14.1797H4.45622ZM14.1797 13.4915C14.1797 13.871 13.871 14.1797 13.4915 14.1797H12.3641V9.97695C12.3641 9.14521 11.6874 8.46851 10.8556 8.46851H5.14438C4.31261 8.46851 3.63591 9.14521 3.63591 9.97695V14.1797H2.50845C2.12902 14.1797 1.82031 13.871 1.82031 13.4915V2.50847C1.82031 2.12902 2.12902 1.82031 2.50845 1.82031H3.63591V5.14438C3.63591 5.97615 4.31261 6.65286 5.14438 6.65286H9.97695C10.8087 6.65286 11.4854 5.97615 11.4854 5.14438V1.82031H11.784L14.1797 4.21601V13.4915Z" fill="white" stroke="white" stroke-width="0.5" />
+                    <path d="M9.31787 4.89558C9.54439 4.89558 9.72803 4.71194 9.72803 4.48543V3.16746C9.72803 2.94094 9.54439 2.7573 9.31787 2.7573C9.09136 2.7573 8.90771 2.94094 8.90771 3.16746V4.48543C8.90771 4.71194 9.09136 4.89558 9.31787 4.89558Z" fill="white" stroke="white" stroke-width="0.5" />
+                    </svg>
+                    Save and Replace
+                    </button> *@
+                </div>
+            </div>
+
+
+            @* <button ng-click="toggleSidebar()" class="pull-right">Summary</button> *@
+            <div class="card card-body">
+                <div class="d-flex">
+                    <div class="w-100">
+                        <h1>Summary</h1>
+                    </div>
+                    <div>
+                        <a class="" data-bs-toggle="collapse" href="#summaryCollapse" role="button" aria-expanded="false" aria-controls="summaryCollapse">
+                            <svg width="24" height="13" viewBox="0 0 24 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22.8556 0H1.42023C0.405872 0 -0.110874 1.22488 0.616399 1.95215L11.3341 12.6699C11.7743 13.11 12.5016 13.11 12.9419 12.6699L23.6597 1.95215C24.3867 1.22488 23.87 0 22.8556 0Z" fill="black" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="card rounded" id="summaryCollapse">
+                    <div class="d-flex gap-4">
+                        <div class="card rounded shadow-sm w-50">
+                            <div class="card bg-primary">
+                                <h2 class="h5 mb-2 mt-2 ms-4 text-white">Teacher-wise Summary</h2>
+                            </div>
+                            <div class="card w-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-end mb-3">
+                                        <div class="input-group" style="max-width: 300px;">
+                                            <input type="text" class="form-control rounded-start" placeholder="Search Teacher" ng-model="searchTeacher" style="height:45px;">
+                                            <button class="btn btn-secondary" type="button">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="table-responsive overflow-scroll h-400px">
+                                        <table class="ui table table-bordered table-striped table-hover">
+                                            <thead class="thead-dark fw-bold">
+                                                <tr>
+                                                    <th scope="col">Teacher</th>
+                                                    @* <th scope="col">Total Periods</th>
+                                                    <th scope="col">Allocated Periods</th> *@
+                                                    <th scope="col">Periods %</th>
+                                                    <th scope="col">&nbsp;</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr ng-repeat="teacher in TeacherSummary | filter: { Employee: { Value: searchTeacher } }">
+                                                    <td>{{teacher.Employee.Value}}</td>
+                                                    @* <td>{{teacher.WeekPeriods}}</td>
+                                                    <td>{{teacher.AllocatedPeriods}}</td> *@
+                                                    <td>
+                                                        <div class="ui progress" data-value="{{teacher.AllocatedPeriods}}" data-total="{{teacher.WeekPeriods}}" id="progress-{{teacher.Employee.Key}}">
+                                                            <div class="bar">
+                                                                @* <div class="progress" style="color:black;">{{teacher.AllocatedPeriods}}/{{teacher.WeekPeriods}}</div> *@
+                                                                <div class="text-center text-white">{{teacher.AllocatedPeriods}}/{{teacher.WeekPeriods}}</div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="symbol symbol-30px" ng-click="ViewDetails(teacher.Employee.Key, null, 'TeacherSummary')">
+                                                            <span class="symbol-label">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                                                    <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                                                    <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+                                                                </svg>
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="card rounded shadow-sm w-50">
+                            <div class="card bg-primary text-white">
+                                <h2 class="h5 mb-2 mt-2 ms-4 text-white">Class-wise Summary</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-end mb-3">
+                                    <div class="input-group" style="max-width: 300px;">
+                                        <input type="text" class="form-control rounded-start" placeholder="Search Class or Section" ng-model="searchQuery" style="height:45px;">
+                                        <button class="btn btn-secondary" type="button">
+                                            <i class="fa fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive overflow-scroll h-400px">
+                                    <table class="ui table table-bordered table-striped table-hover">
+                                        <thead class="thead-dark fw-bold">
+                                            <tr>
+                                                <th scope="col">Class</th>
+                                                <th scope="col">Section</th>
+                                                @* <th scope="col">Total Periods</th> *@
+                                                @* <th scope="col">Allocated Periods</th> *@
+                                                <th scope="col">Periods %</th>
+                                                <th class="col">&nbsp;</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="class in ClassSummary | filter: customSearchFilter">
+                                                <td>{{class.Class.Value}}</td>
+                                                <td>{{class.Section.Value}}</td>
+                                                @* <td>{{class.WeekPeriods}}</td>
+                                                <td>{{class.AllocatedPeriods}}</td> *@
+                                                <td>
+                                                    <div class="ui progress" data-value="{{class.AllocatedPeriods}}" data-total="{{class.WeekPeriods}}" id="progress-{{class.Class.Key_class.Section.Key}}">
+                                                        <div class="bar">
+                                                            @* <div class="progress" style="color:black;">{{teacher.AllocatedPeriods}}/{{teacher.WeekPeriods}}</div> *@
+                                                            <div class="text-center text-white">{{class.AllocatedPeriods}}/{{class.WeekPeriods}}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="symbol symbol-30px" ng-click="ViewDetails(class.Class.Key, class.Section.Key, 'ClassSummary')">
+                                                        <span class="symbol-label">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+                                                            </svg>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ul>
+
+        <div class="schedulerTable" id="TimeTableAllacate_Tab_01">
+            <strong>Global</strong>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="noBorderBtm" style="background: #D6D6D6 !important;">&nbsp;</th>
+                        <th ng-repeat="WkDay in WeekDay" style="background: #D6D6D6 !important;">{{WkDay.Value}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="hours" style="background: #D6D6D6;">
+                        <th class="columnHeader border" style="background: #D6D6D6 !important;"></th>
+                        <td ng-repeat="WkDay in WeekDay" data-week-id="{{WkDay.Key}}">
+                            <table>
+                                <tr class="time">
+                                    <td ng-repeat="clsTime in ClassTime" data-time-id="{{clsTime.Key}}">{{clsTime.Value}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr class="content section" ng-repeat="ClassMap in TimeTableMapping" data-section-id="{{ClassMap.Section.Key}}">
+                        <th class="columnHeader" style="min-width: 150px; background: #D6D6D6 !important;">{{(ClassMap.Class.Value) +' '+ (ClassMap.Section.Value)}}</th>
+                        <td ng-repeat="WkDay in WeekDay" class="WeekDay" data-week-id="{{WkDay.Key}}">
+                            <div class="scaleWrap resizable">
+                                <table>
+                                    <tr>
+                                        <td ng-repeat="clsTime in ClassTime" class="classtime" data-time-id="{{clsTime.Key}}">
+                                            <span class="colspan border" id="colspan{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}">
+                                                @*<span class="SeletedSubject" ng-if="checkExist(ClassMap.AllocInfoDetails,WkDay.Key,clsTime.Key,this)" style="background: linear-gradient(135deg,#ee8ebc,#eea08e);">englishh<span class="closeItem" data-Alloc-id="{{ClassMap.TimeTableAllocationIID}}">x</span></span>*@
+                                                <span class="seletedsubject d-flex align-items-center justify-content-between"
+                                                      id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}"
+                                                      ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key),'IsBreakTime':false }:true"
+                                                      ng-if="!allocstudent.IsBreakTime"
+                                                      title="Subject: {{allocItem.Subject.Value}}&#10;Teacher: {{allocItem.Employee.Value}}"
+                                                      data-Staff-id="{{allocItem.StaffIDs}}"
+                                                      data-Subject-id="{{allocItem.SubjectID}}"
+                                                      data-Alloc-id="{{allocItem.TimeTableAllocationIID}}"
+                                                      style="background: #{{allocItem.HexColorCode || '346C9F'}}; color: white; padding: 10px; border-radius: 5px;">
+
+                                                    <img ng-if="allocItem.IconFileName"
+                                                         src="~/gallery/icons/{{allocItem.IconFileName}}"
+                                                         alt="{{allocItem.Subject.Value}} icon"
+                                                         class="me-2"
+                                                         style="width: 20px; height: 20px;">
+
+                                                    <span class="text-center fw-normal fs-6 text-uppercase" style="color: white;">{{allocItem.Subject.Value}}</span>
+
+                                                    <span ng-click="DeleteTimeTableEntry(allocItem.TimeTableAllocationIID)" class="closeItem ms-2 text-white" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}">&times;</span>
+                                                </span>
+
+                                                <span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key),'IsBreakTime':true }:true" ng-if="!allocstudent.IsBreakTime" title="Subject: {{allocItem.Subject.Value}}&#10;Teacher: {{allocItem.Employee.Value}}" data-Staff-id="{{allocItem.StaffID}}" data-Subject-id="{{allocItem.SubjectID}}" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}" style="background: linear-gradient(to top, #ee8ebc 0%,#eea08e 46%);">{{allocItem.Subject.Value}}</span>
+                                                @*<span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key) ,'IsBreakTime':true}:true" ng-if="allocstudent.IsBreakTime" title="Break" data-Staff-id="0" data-Subject-id="0" data-Alloc-id="0" style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%);">Break</span>*@
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="schedulerTable" id="TimeTableAllacate_Tab_02">
+            <strong>Daily</strong>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="noBorderBtm" style="background: #D6D6D6 !important;">&nbsp;</th>
+                        <th ng-repeat="WkDay in WeekDay" style="background: #D6D6D6 !important;">{{WkDay.Value}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="hours" style="background: #D6D6D6;">
+                        <th class="columnHeader border" style="background: #D6D6D6 !important;"></th>
+                        <td ng-repeat="WkDay in WeekDay" data-week-id="{{WkDay.Key}}">
+                            <table>
+                                <tr class="time">
+                                    <td ng-repeat="clsTime in ClassTime" data-time-id="{{clsTime.Key}}">{{clsTime.Value}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr class="content section" ng-repeat="ClassMap in TimeTableDailyMapping" data-section-id="{{ClassMap.Section.Key}}">
+                        <th class="columnHeader" style="min-width: 150px; background: #D6D6D6 !important;">{{(selectedClasses.Value) +' '+ (ClassMap.Section.Value)}}</th>
+                        <td ng-repeat="WkDay in WeekDay" class="WeekDay" data-week-id="{{WkDay.Key}}">
+                            <div class="scaleWrap resizable">
+                                <table>
+                                    <tr>
+                                        <td ng-repeat="clsTime in ClassTime" class="classtime" data-time-id="{{clsTime.Key}}">
+                                            <span class="colspan border" id="colspan{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}">
+                                                @*<span class="SeletedSubject" ng-if="checkExist(ClassMap.AllocInfoDetails,WkDay.Key,clsTime.Key,this)" style="background: linear-gradient(135deg,#ee8ebc,#eea08e);">englishh<span class="closeItem" data-Alloc-id="{{ClassMap.TimeTableAllocationIID}}">x</span></span>*@
+                                                <span class="seletedsubject d-flex align-items-center justify-content-between"
+                                                      id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}"
+                                                      ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key),'IsBreakTime':false }:true" ng-if="!allocstudent.IsBreakTime && !allocItem.IsTeacherLeave"
+                                                      title="Subject: {{allocItem.Subject.Value}}&#10;Teacher: {{allocItem.Employee.Value}}"
+                                                      data-Staff-id="{{allocItem.StaffIDs}}"
+                                                      data-Subject-id="{{allocItem.SubjectID}}"
+                                                      ng-class="{'glow_border_reassign': allocItem.IsReAssigned}"
+                                                      data-Alloc-id="{{allocItem.TimeTableAllocationIID}}"
+                                                      style="background: #{{allocItem.HexColorCode || '346C9F'}}; color: white; padding: 10px; border-radius: 5px;">
+
+                                                    <img ng-if="allocItem.IconFileName"
+                                                         src="~/gallery/icons/{{allocItem.IconFileName}}"
+                                                         alt="{{allocItem.Subject.Value}} icon"
+                                                         class="me-2"
+                                                         style="width: 20px; height: 20px;">
+
+                                                    <div class="d-flex flex-column">
+                                                        <span class="d-flex fw-normal fs-8 text-uppercase p-1" style="color: white;">{{allocItem.Subject.Value}}</span>
+                                                        <span class="d-flex fw-light fs-8 text-uppercase p-1" style="color: white;">{{allocItem.Employee.Value}}</span>
+                                                    </div>
+
+                                                    <div ng-if="allocItem.IsReAssigned" class="overlay d-flex align-items-center justify-content-center h-100 w-100 color-white position-absolute" style="top:0; left: 0;">
+                                                        <div class="overlay-content text-center w-100 mt-15">
+                                                            <div class="d-flex gap-1 p-1" style="background:green;">
+                                                                <div>
+                                                                <img src="~/gallery/basic_icons/reassigned-icon.svg"
+                                                                    alt="icon"
+                                                                    style="width: 20px; height: 20px;">
+                                                                </div>
+                                                                <div class="fw-normal">Reassigned</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @* <span class="fw-normal fs-8 text-uppercase" style="color: white;">{{allocItem.Subject.Value}}</span>
+                                                    <br />
+                                                    <span class="fw-light fs-8 text-uppercase" style="color: white;">{{allocItem.Employee.Value}}</span> *@
+
+                                                    <span ng-click="DeleteTimeTableEntry(allocItem.TimeTableAllocationIID)" class="closeItem ms-2 text-white" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}">&times;</span>
+                                                </span>
+                                                <span class="seletedsubject teacherleave"
+                                                      id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}"
+                                                      ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key),'IsBreakTime':false }:true"
+                                                      ng-if="!allocstudent.IsBreakTime && allocItem.IsTeacherLeave"
+                                                      title="Subject: {{allocItem.Subject.Value}}&#10;Teacher: {{allocItem.Employee.Value}}"
+                                                      data-Staff-id="{{allocItem.StaffIDs}}"
+                                                      data-Subject-id="{{allocItem.SubjectID}}"
+                                                      data-Alloc-id="{{allocItem.TimeTableAllocationIID}}"
+                                                      style="background: #{{allocItem.HexColorCode || '346C9F'}}; color: white; padding: 10px; border-radius: 5px; position: relative;">
+
+                                                    <!-- Main Content -->
+                                                    <img ng-if="allocItem.IconFileName"
+                                                         src="~/gallery/icons/{{allocItem.IconFileName}}"
+                                                         alt="{{allocItem.Subject.Value}} icon"
+                                                         class="me-2"
+                                                         style="width: 20px; height: 20px;">
+
+                                                    <div class="d-flex flex-column">
+                                                        <span class="d-flex fw-normal fs-8 text-uppercase p-1" style="color: white;">{{allocItem.Subject.Value}}</span>
+                                                        <span class="d-flex fw-light fs-8 text-uppercase p-1" style="color: white;">{{allocItem.Employee.Value}}</span>
+                                                    </div>
+
+                                                    <!-- Overlay -->
+                                                    <div class="overlay d-flex align-items-center justify-content-center h-100 w-100 color-white position-absolute" style="top:0; left: 0; background: rgba(0, 0, 0, 0.45);">
+                                                        <div class="overlay-content text-center w-100 mt-4">
+                                                            <i class="fa fa-ban"></i> <!-- Icon similar to the screenshot -->
+                                                            <div class="d-flex gap-1 p-1" style="background:#601515;">
+                                                                <div class="fa fa-ban mt-1"></div>
+                                                                <div class="fw-normal">Not Available</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <span ng-click="DeleteTimeTableEntry(allocItem.TimeTableAllocationIID)" class="closeItem ms-2 text-white" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}">&times;</span>
+                                                </span>
+
+                                                <span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key),'IsBreakTime':true }:true" ng-if="!allocstudent.IsBreakTime" title="Subject: {{allocItem.Subject.Value}}&#10;Teacher: {{allocItem.Employee.Value}}" data-Staff-id="{{allocItem.StaffIDs}}" data-Subject-id="{{allocItem.SubjectID}}" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}" style="background: linear-gradient(to top, #ee8ebc 0%,#eea08e 46%);">{{allocItem.Subject.Value}}</span>
+                                                @*<span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key) ,'IsBreakTime':true}:true" ng-if="allocstudent.IsBreakTime" title="Break" data-Staff-id="0" data-Subject-id="0" data-Alloc-id="0" style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%);">Break</span>*@
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="schedulerTable" id="TimeTableAllacate_Tab_03" @* style="height:500px;" *@>
+
+            <div class="row">
+                <div class="card col-12 h-1050px" id="smartscheduler">
+                    <div class="d-flex flex-column">
+                        <div class="d-flex mt-4">
+                            <div class="w-100">
+                                <h2>Smart Scheduler</h2>
+                            </div>
+                            <div class="d-flex justify-content-end mb-4 w-25" ng-show="!isVisible">
+                                @* <button ng-click="toggleSidebar()" class="pull-right">Summary</button> *@
+                                <button type="button" class="btn btn-primary me-2 d-flex align-items-center pull-right gap-2" ng-click="toggleSidebar()">
+                                    View Time Table Summary
+
+                                    <svg width="29" height="18" viewBox="0 0 29 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M14.3978 0C6.84684 0 0.456839 8.1 0.186839 8.451C0.0656913 8.60837 0 8.8014 0 9C0 9.1986 0.0656913 9.39163 0.186839 9.549C0.456839 9.9 6.84684 18 14.3978 18C21.9488 18 28.3388 9.9 28.6088 9.549C28.73 9.39163 28.7957 9.1986 28.7957 9C28.7957 8.8014 28.73 8.60837 28.6088 8.451C28.3388 8.1 21.9488 0 14.3978 0ZM14.3978 16.2C8.79084 16.2 3.59784 10.8 2.06784 9C3.59784 7.2 8.78184 1.8 14.3978 1.8C20.0138 1.8 25.1978 7.2 26.7278 9C25.1978 10.8 20.0138 16.2 14.3978 16.2Z" fill="white" />
+                                        <path d="M18.898 8.09998C19.0466 8.09986 19.1928 8.06297 19.3236 7.9926C19.4545 7.92224 19.5658 7.82058 19.6478 7.69671C19.7298 7.57284 19.7799 7.4306 19.7935 7.28268C19.8072 7.13476 19.784 6.98576 19.726 6.84898C19.2309 5.86313 18.4691 5.03599 17.5272 4.46163C16.5853 3.88727 15.5012 3.58874 14.398 3.59998C12.9659 3.59998 11.5924 4.1689 10.5797 5.1816C9.56697 6.1943 8.99805 7.56781 8.99805 8.99998C8.99805 10.4321 9.56697 11.8057 10.5797 12.8184C11.5924 13.831 12.9659 14.4 14.398 14.4C15.5012 14.4112 16.5853 14.1127 17.5272 13.5383C18.4691 12.964 19.2309 12.1368 19.726 11.151C19.784 11.0142 19.8072 10.8652 19.7935 10.7173C19.7799 10.5694 19.7298 10.4271 19.6478 10.3032C19.5658 10.1794 19.4545 10.0777 19.3236 10.0074C19.1928 9.93699 19.0466 9.9001 18.898 9.89998C18.7767 9.91271 18.6541 9.89818 18.5391 9.85745C18.4241 9.81672 18.3197 9.75082 18.2335 9.66457C18.1472 9.57831 18.0813 9.47388 18.0406 9.3589C17.9998 9.24392 17.9853 9.12129 17.998 8.99998C17.9853 8.87866 17.9998 8.75603 18.0406 8.64105C18.0813 8.52607 18.1472 8.42164 18.2335 8.33538C18.3197 8.24913 18.4241 8.18323 18.5391 8.1425C18.6541 8.10178 18.7767 8.08725 18.898 8.09998Z" fill="white" />
+                                    </svg>
+
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-scroll h-1000px">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th class="noBorderBtm" style="background: #D6D6D6 !important;">&nbsp;</th>
+                                        <th ng-repeat="WkDay in WeekDay" style="background: #D6D6D6 !important;">{{WkDay.Value}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hours" style="background: #D6D6D6;">
+                                        <th class="columnHeader border" style="background: #D6D6D6 !important;"></th>
+                                        <td ng-repeat="WkDay in WeekDay" data-week-id="{{WkDay.Key}}">
+                                            <table>
+                                                <tr class="time">
+                                                    <td ng-repeat="clsTime in ClassTime" data-time-id="{{clsTime.Key}}">{{clsTime.Value}}</td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr class="content section" ng-repeat="ClassMap in TimeTableDailyMapping" data-section-id="{{ClassMap.Section.Key}}">
+                                        <th class="columnHeader" style="min-width: 150px; background: #D6D6D6 !important;">{{(ClassMap.Class.Value) +' '+ (ClassMap.Section.Value)}}</th>
+                                        <td ng-repeat="WkDay in WeekDay" class="WeekDay" data-week-id="{{WkDay.Key}}">
+                                            <div class="scaleWrap resizable">
+                                                <table>
+                                                    <tr class="">
+                                                        <td ng-repeat="clsTime in ClassTime" class="classtime" data-time-id="{{clsTime.Key}}">
+                                                            <span class="colspan border" id="colspan{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}">
+                                                                @*<span class="SeletedSubject" ng-if="checkExist(ClassMap.AllocInfoDetails,WkDay.Key,clsTime.Key,this)" style="background: linear-gradient(135deg,#ee8ebc,#eea08e);">englishh<span class="closeItem" data-Alloc-id="{{ClassMap.TimeTableAllocationIID}}">x</span></span>*@
+                                                                <span class="seletedsubject d-flex align-items-center justify-content-between"
+                                                                      id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}"
+                                                                      ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key),'IsBreakTime':false }:true"
+                                                                      ng-if="!allocstudent.IsBreakTime"
+                                                                      title="Subject: {{allocItem.Subject.Value}}&#10;Teacher: {{allocItem.Employee.Value}}"
+                                                                      data-Staff-id="{{allocItem.StaffIDs}}"
+                                                                      data-Subject-id="{{allocItem.SubjectID}}"
+                                                                      data-Alloc-id="{{allocItem.TimeTableAllocationIID}}"
+                                                                      style="background: #{{allocItem.HexColorCode || '346C9F'}}; color: white; padding: 10px; border-radius: 5px;">
+
+                                                                    <img ng-if="allocItem.IconFileName"
+                                                                         src="~/gallery/icons/{{allocItem.IconFileName}}"
+                                                                         alt="{{allocItem.Subject.Value}} icon"
+                                                                         class="me-2"
+                                                                         style="width: 20px; height: 20px;">
+
+                                                                    <span class="text-center fw-normal fs-6 text-uppercase" style="color: white;">{{allocItem.Subject.Value}}</span>
+
+                                                                    <span ng-click="DeleteTimeTableEntry(allocItem.TimeTableAllocationIID)" class="closeItem ms-2 text-white" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}">&times;</span>
+                                                                </span>
+
+                                                                <span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key),'IsBreakTime':true }:true" ng-if="!allocstudent.IsBreakTime" title="Subject: {{allocItem.Subject.Value}}&#10;Teacher: {{allocItem.Employee.Value}}" data-Staff-id="{{allocItem.StaffIDs}}" data-Subject-id="{{allocItem.SubjectID}}" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}" style="background: linear-gradient(to top, #ee8ebc 0%,#eea08e 46%);">{{allocItem.Subject.Value}}</span>
+                                                                @*<span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key) ,'IsBreakTime':true}:true" ng-if="allocstudent.IsBreakTime" title="Break" data-Staff-id="0" data-Subject-id="0" data-Alloc-id="0" style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%);">Break</span>*@
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebarTimeTable col-4 h-1050px" ng-class="{'visible': isVisible}" id="sidebar">
+                    <div class="d-flex flex-column">
+                        <div class="d-flex mt-3 mb-4">
+                            <div class="w-100">
+                                <h2>Time table Summary</h2>
+                            </div>
+                            <h4 class="text-right mx-8 " ng-click="toggleSidebar()">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill slidecloseButton" viewBox="0 0 16 16" ng-click="closeSlide()" style="cursor:pointer;">
+                                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z" />
+                                </svg>
+                            </h4>
+                        </div>
+                        @* <div class="d-flex justify-content-end align-items-end">
+                        <button type="button" class="btn btn-primary mx-8 mt-3 pull-right gap-2" ng-click="toggleSidebar()">
+                        Time Table Summary
+
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.5116 19.1395H7.48837C5.19522 19.1395 3.52839 18.6511 2.43756 17.5592C1.34677 16.4673 0.860466 14.8005 0.860466 12.5116V7.48837C0.860466 5.19933 1.34893 3.53258 2.44075 2.44075C3.53258 1.34893 5.19933 0.860465 7.48837 0.860465H12.5116C14.8007 0.860465 16.4674 1.34893 17.5592 2.44075C18.6511 3.53258 19.1395 5.19933 19.1395 7.48837V12.5116C19.1395 14.8007 18.6511 16.4674 17.5592 17.5592C16.4674 18.6511 14.8007 19.1395 12.5116 19.1395ZM17.6047 7.48837C17.6047 5.56845 17.2617 4.30856 16.4766 3.52343C15.6914 2.73831 14.4316 2.39535 12.5116 2.39535H7.48837C5.56845 2.39535 4.30856 2.73831 3.52343 3.52343C2.73831 4.30856 2.39535 5.56845 2.39535 7.48837V12.5116C2.39535 14.4316 2.73831 15.6914 3.52343 16.4766C4.30856 17.2617 5.56845 17.6047 7.48837 17.6047H12.5116C14.4316 17.6047 15.6914 17.2617 16.4766 16.4766C17.2617 15.6914 17.6047 14.4316 17.6047 12.5116V7.48837Z" fill="white" stroke="white" stroke-width="0.27907" />
+                        <path d="M8.25575 18.372C8.25575 18.7924 7.90862 19.1395 7.4883 19.1395C7.0584 19.1395 6.72086 18.7911 6.72086 18.372V1.62785C6.72086 1.20753 7.06799 0.860404 7.4883 0.860404C7.90862 0.860404 8.25575 1.20753 8.25575 1.62785V18.372Z" fill="white" stroke="white" stroke-width="0.27907" />
+                        <path d="M13.8912 12.6856C13.7381 12.8387 13.5429 12.9107 13.3488 12.9107C13.1491 12.9107 12.9518 12.8404 12.8048 12.684L10.6632 10.5424C10.3659 10.2451 10.3659 9.75486 10.6632 9.45758L12.8064 7.31432C13.1037 7.01704 13.5939 7.01704 13.8912 7.31432C14.1885 7.61161 14.1885 8.10181 13.8912 8.3991L12.2903 9.99997L13.8912 11.6008C14.1885 11.8981 14.1885 12.3883 13.8912 12.6856Z" fill="white" stroke="white" stroke-width="0.27907" />
+                        </svg>
+
+                        </button>
+                        </div> *@
+                        <div class="d-flex">
+                            <div class="d-flex justify-content-start mb-3">
+                                <div class="input-group" style="max-width: 250px;">
+                                    <input type="text" class="form-control rounded-start" placeholder="Search Class or Section" ng-model="searchTTQuery" style="height:45px;">
+                                    <button class="btn btn-secondary" type="button">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body d-flex justify-content-end h-50">
+                                <button type="button" class="btn btn-primary d-flex align-items-center" ng-click="DownloadReports(0,0,timeTable.SchoolID)">
+                                    <!-- Text and SVG Icon -->
+                                    <span class="fs-8">Preview all</span>
+                                    <span class="symbol-label ms-2">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+                                            <path stroke="#d2d9d4" stroke-linejoin="round" stroke-width="2" d="M8 17H5a1 1 0 01-1-1v-5a2 2 0 012-2h12a2 2 0 012 2v5a1 1 0 01-1 1h-3M8 4h8v5H8V4zm0 11h8v4H8v-4z" />
+                                            @* <circle cx="7" cy="12" r="1" fill="#000000" /> *@
+                                        </svg>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-scroll h-950px">
+                            <div class="row gap-4 h-900px">
+
+                                <div class="col-12" ng-repeat="timeTable in ClassSectionTimeTable | filter: customSearchFilterTT track by $index">
+                                    <div class="card overlay overflow-hidden zoom-card">
+                                        <div>
+                                            <div class="overlay-wrapper" style="zoom: 0.3;">
+                                                <!-- Display Class and Section -->
+                                                <div class="d-flex" style="justify-content: space-between">
+                                                    <h1>{{ timeTable.MainDetails[0].MapDetails[0].Class.Value + ' ' + timeTable.MainDetails[0].MapDetails[0].Section.Value }}</h1>
+
+                                                </div>
+                                                <table class="table table-bordered">
+                                                    <thead class="thead-light">
+                                                        <tr>
+                                                            <th class="columnHeader">Time</th>
+                                                            <!-- Display WeekDays -->
+                                                            <th ng-repeat="day in WeekDay">{{ day.Value }}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <!-- Display Class Timings -->
+                                                        <tr class="content section" ng-repeat="clsTime in timeTable.MainDetails[0].MapDetails track by clsTime.ClassTimingID + '-' + $index">
+                                                            <!-- Show class timing (e.g. 1st period, 2nd period) -->
+                                                            <th class="columnHeader" style="min-width: 150px;">
+                                                                {{ clsTime.ClassTiming.Value }}
+                                                            </th>
+
+                                                            <!-- Loop through each WeekDay and display subjects accordingly -->
+                                                            <td ng-repeat="mainDetail in timeTable.MainDetails track by mainDetail.WeekDayID + '-' + $index">
+                                                                <div ng-repeat="clsTimeDetail in mainDetail.MapDetails | filter: { 'ClassTimingID': clsTime.ClassTimingID } track by clsTimeDetail.ClassTimingID + '-' + $index"
+                                                                     style="background: #{{clsTimeDetail.HexColorCode}}">
+                                                                    <span class="subject-name">
+                                                                        {{ clsTimeDetail.Subject.Value }}
+                                                                    </span>
+                                                                    <br />
+                                                                    <span>
+                                                                        {{ clsTimeDetail.Employee.Value }}
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="overlay-layer bg-dark bg-opacity-25">
+                                                <button type="button" class="btn btn-light-primary btn-shadow ms-2 d-flex align-items-center" ng-click="DownloadReports(timeTable.MainDetails[0].MapDetails[0].Class.Key,timeTable.MainDetails[0].MapDetails[0].Section.Key,timeTable.SchoolID)">
+                                                    <!-- Text and SVG Icon -->
+                                                    <span class="fs-8">Preview</span>
+                                                    <span class="symbol-label ms-2">
+                                                        <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+                                                            <path stroke="#d2d9d4" stroke-linejoin="round" stroke-width="2" d="M8 17H5a1 1 0 01-1-1v-5a2 2 0 012-2h12a2 2 0 012 2v5a1 1 0 01-1 1h-3M8 4h8v5H8V4zm0 11h8v4H8v-4z" />
+                                                            @* <circle cx="7" cy="12" r="1" fill="#000000" /> *@
+                                                        </svg>
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="Setups_Details" ng-show="IsSetupScreenVisible" class="mt-2 mb-2">
+            <div class="d-flex flex-center">
+                <div class="container">
+                    <div class="row gap-4">
+                        <div class="col-2">
+                            <div class="card  h-100">
+                                <div class="card-body">
+                                    <div class="h-100px position-relative d-flex align-items-center justify-content-center">
+                                        <img src="~/gallery/basic_icons/time_table.svg"
+                                             alt="Icon"
+                                             style="width: 50px; height: 50px;" />
+                                    </div>
+                                    <h6 class="mt-3 text-center">Time Table Master</h6>
+                                    <div class="d-flex flex-center gap-6 clickable-card">
+                                        <i class="fa fa-plus fs-1" title="Create" aria-hidden="true" ng-click="GetScreen($event,'Create,Frameworks/CRUD/CreateMaster?screen=TimeTableMaster, $event,Create Time Table Master,TimeTableMaster')"></i>
+                                        <i class="fa fa-list fs-1" title="List" aria-hidden="true" ng-click="GetScreen($event, 'List,School/TimeTableMaster,$event,Time Table Master')"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <div class="h-100px position-relative d-flex align-items-center justify-content-center">
+                                        <img src="~/gallery/basic_icons/classtiming.svg"
+                                             alt="Icon"
+                                             style="width: 50px; height: 50px;" />
+                                    </div>
+                                    <h6 class="mt-3 text-center">Class Timing</h6>
+                                    <div class="d-flex flex-center gap-6 clickable-card">
+                                        <i class="fa fa-plus fs-1" title="Create" aria-hidden="true" ng-click="GetScreen($event,'Create,Frameworks/CRUD/CreateMaster?screen=ClassTiming, $event,Create Class Timing,ClassTiming')"></i>
+                                        <i class="fa fa-list fs-1" title="List" aria-hidden="true" ng-click="GetScreen($event, 'List,School/ClassTiming,$event,Class Timing')"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2 clickable-card">
+                            <div class="card  h-100">
+                                <div class="card-body">
+                                    <div class="h-100px position-relative d-flex align-items-center justify-content-center">
+                                        <img src="~/gallery/basic_icons/classmap.svg"
+                                             alt="Icon"
+                                             style="width: 50px; height: 50px;" />
+                                    </div>
+                                    <h6 class="mt-3 text-center">Class Section Map</h6>
+                                    <div class="d-flex flex-center gap-6 clickable-card">
+                                        <i class="fa fa-plus fs-1" title="Create" aria-hidden="true" ng-click="GetScreen($event,'Create,Frameworks/CRUD/CreateMaster?screen=ClassSectionMap, $event, Create Class Section Map, ClassSectionMap')"></i>
+                                        <i class="fa fa-list fs-1" title="List" aria-hidden="true" ng-click="GetScreen($event, 'List,School/ClassSectionMap,$event,Class Section Map')"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2 clickable-card">
+                            <div class="card  h-100">
+                                <div class="card-body">
+                                    <div class="h-100px position-relative d-flex align-items-center justify-content-center">
+                                        <img src="~/gallery/basic_icons/classsubjectmap.svg"
+                                             alt="Icon"
+                                             style="width: 50px; height: 50px;" />
+                                    </div>
+                                    <h6 class="mt-3 text-center">Class Subject Map</h6>
+                                    <div class="d-flex flex-center gap-6 clickable-card">
+                                        <i class="fa fa-plus fs-1" title="Create" aria-hidden="true" ng-click="GetScreen($event,'Create,Frameworks/CRUD/CreateMaster?screen=ClassSubjectMap, $event,Create Class Subject Map, ClassSubjectMap')"></i>
+                                        <i class="fa fa-list fs-1" title="List" aria-hidden="true" ng-click="GetScreen($event, 'List,School/ClassSubjectMap,$event, Class Subject Map')"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2 clickable-card">
+                            <div class="card  h-100">
+                                <div class="card-body">
+                                    <div class="h-100px position-relative d-flex align-items-center justify-content-center">
+                                        <img src="~/gallery/basic_icons/classteachermap.svg"
+                                             alt="Icon"
+                                             style="width: 50px; height: 50px;" />
+                                    </div>
+                                    <h6 class="mt-3 text-center">Class Teacher Map</h6>
+                                    <div class="d-flex flex-center gap-6 clickable-card">
+                                        <i class="fa fa-plus fs-1" title="Create" aria-hidden="true" ng-click="GetScreen($event,'Create,Frameworks/CRUD/CreateMaster?screen=ClassTeacherMap, $event, Create Class Teacher Map, ClassTeacherMap')"></i>
+                                        <i class="fa fa-list fs-1" title="List" aria-hidden="true" ng-click="GetScreen($event, 'List,School/ClassTeacherMap,$event,Class Teacher Map')"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2 clickable-card">
+                            <div class="card  h-100">
+                                <div class="card-body">
+                                    <div class="h-100px position-relative d-flex align-items-center justify-content-center">
+                                        <img src="~/gallery/basic_icons/subjectmap.svg"
+                                             alt="Icon"
+                                             style="width: 50px; height: 50px;" />
+                                    </div>
+                                    <h6 class="mt-3 text-center">Subject Teacher Map</h6>
+                                    <div class="d-flex flex-center gap-6 clickable-card">
+                                        <i class="fa fa-plus fs-1" title="Create" aria-hidden="true" ng-click="GetScreen($event,'Create,Frameworks/CRUD/CreateMaster?screen=SubjectTeacherMap,$event,Create Subject Teacher Map,SubjectTeacherMap')"></i>
+                                        <i class="fa fa-list fs-1" title="List" aria-hidden="true" ng-click="GetScreen($event, 'List,School/SubjectTeacherMap,$event,Subject Teacher Map')"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2 clickable-card">
+                            <div class="card  h-100">
+                                <div class="card-body">
+                                    <div class="h-100px position-relative d-flex align-items-center justify-content-center">
+                                        <img src="~/gallery/basic_icons/classperiodmap.svg"
+                                             alt="Icon"
+                                             style="width: 50px; height: 50px;" />
+                                    </div>
+                                    <h6 class="mt-3 text-center">Class Subject Period Map</h6>
+                                    <div class="d-flex flex-center gap-6 clickable-card">
+                                        <i class="fa fa-plus fs-1" title="Create" aria-hidden="true" ng-click="GetScreen($event,'Create,Frameworks/CRUD/CreateMaster?screen=ClassSubjectPeriodMap, $event, Create Class Subject Period Map, ClassSubjectPeriodMap')"></i>
+                                        <i class="fa fa-list fs-1" title="List" aria-hidden="true" ng-click="GetScreen($event, 'List,School/ClassSubjectPeriodMap,$event,Class Subject Period Map')"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="gridItemOverlay"></div>
+
+        <div class="modal right" id="globalRightDrawer" tabindex="-1" aria-labelledby="rightModalLabel" aria-hidden="true">
+            <div class="modal-dialog  modal-dialog-centered modal-lg w-100">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--Popup Container Daily-->
+        <div id="ItemPopupDaily" class="TimeTableTeacherMap gridItemPopup gridItemPopupDaily">
+            <div class="window-tab preload-overlay" style="display:none;">
+                <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+            </div>
+            <span class="tooltipArrow"></span>
+            <div class="gridItemPopupInner">
+                <div class="TimeTableTeacherMap gridItemContent" data-attr="TimeTableTeacherMap">
+                    <div class="controls">
+                        <label>TimeTable</label>
+                        <select id="PopupTimeTableMaster" disabled ng-model="PopupTimeTableMaster">
+                            <option ng-repeat="x in TableMasterData" value="{{x.Key}}">{{x.Value}}</option>
+                        </select>
+                    </div>
+                    <div class="controls">
+                        <label>Class</label>
+                        <select id="PopupClass" disabled ng-model="PopupClass">
+                            <option ng-repeat="x in Classes" value="{{x.Key}}">{{x.Value}}</option>
+                        </select>
+                    </div>
+                    <div class="controls">
+                        <label>Section</label>
+                        <select id="PopupSection" disabled ng-model="PopupSection">
+                            <option ng-repeat="x in Sections" value="{{x.Key}}" ng-selected="{{PopupSection == x.Key}}">{{x.Value}}</option>
+                        </select>
+                    </div>
+                    <div class="controls">
+                        <label>Day</label>
+                        <select id="PopupDay" disabled ng-model="PopupDay">
+                            <option ng-repeat="x in WeekDay" value="{{x.Key}}" ng-selected="{{PopupDay == x.Key}}">{{x.Value}}</option>
+                        </select>
+                    </div>
+                    <div class="controls brand">
+                        <label>Time</label>
+                        <select id="PopupTime" disabled ng-model="PopupTime">
+                            <option ng-repeat="x in ClassTime" value="{{x.Key}}" ng-selected="{{PopupTime == x.Key}}">{{x.Value}}</option>
+                        </select>
+                    </div>
+                    <div class="controls brand" id="datedaily">
+                        <label>Date</label>
+                        <div class="datetime_picker">
+                            <input type="text" autocomplete="off" ng-model="PopupDate" wb-datepicker disabled />
+                        </div>
+                    </div>
+                    <div class="controls brand">
+                        <label>Subject<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                        <span class="cufon" style="color:red" ng-show="submitted && PopupSubject <=0">&nbsp;Required!</span>
+                        @*<select id="PopupSubject" ng-model="PopupSubject" ng-change="loadSubjectwiseTeacher()">
+                        <option ng-repeat="x in Subjects" value="{{x.Subject.Key}}" ng-selected="{{PopupSubject == x.Subject.Key}}">{{x.Subject.Value}}</option>
+                        </select>
+                        <i class="dropdownarrow fa fa-caret-down"></i>*@
+                        <ui-select style="width: 100%;" name="PopupSubject" ng-model="PopupSubject" theme="select2" class="pos-txt"
+                                   ng-change="loadSubjectwiseTeacher($select)">
+                            <ui-select-match placeholder="Search">{{SelectedSubject.SubjectName}}</ui-select-match>
+                            <ui-select-choices repeat="data in Subjects | filter:$select.search" ng-selected="{{SelectedSubject.SubjectName}}">{{data.SubjectName}}</ui-select-choices>
+                        </ui-select>
+                    </div>
+                    @*<div class="controls brand">
+
+                    </div>*@
+                    @*<div class="controls">*@
+                    <label>Teacher<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                    <span class="cufon" style="color:red" ng-show="submitted && PopupTeacher <=0">&nbsp;Required!</span>
+                    @*<select id="PopupTeacher" ng-model="PopupTeacher" ng-change="loadSubjectwiseTeacher()" multiple>
+                    <option ng-repeat="x in Teachers" value="{{x.EmployeeID}}" ng-selected="{{PopupTeacher == x.EmployeeID}}">{{x.TeacherName}}</option>
+                    </select>*@
+                    @*<i class="dropdownarrow fa fa-caret-down"></i>*@
+
+                    <div class="d-flex gap-6">
+                        <ui-select name="PopupTeacher" ng-model="PopupTeacher" theme="select2" class="pos-txt" style="width: 85%;" ng-change="loadTeacheKey($select)">
+                            <ui-select-match placeholder="Search">{{SelectedTeacher.Value}}</ui-select-match>
+                            <ui-select-choices repeat="data in Teachers | filter:$select.search" ng-selected="{{SelectedTeacher.Value}}">
+                                {{data.Value}}
+                            </ui-select-choices>
+                        </ui-select>
+                        <div class="mt-1 clickable-card">
+                            <i class="fa fa-plus fs-1" title="Create new Subject Teacher Map" aria-hidden="true" ng-click="GetScreen($event,'Create,Frameworks/CRUD/CreateMaster?screen=SubjectTeacherMap,$event,Create Subject Teacher Map,SubjectTeacherMap')"></i>
+                        </div>
+                    </div>
+                    @*</div>*@
+                    <input type="button" value="Apply" class="button-orange" ng-click="SaveTimeTable('.gridItemPopup');" />
+                    <input type="button" value="Close" class="button-orange" ng-click="ClosePopup();" />
+                </div><!--PopupContent-->
+
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="reportModal" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reportModalLabel">Student Timetable Report</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="reportContainer" style="height: 500px; overflow: auto;">
+                            <!-- The report iframe will be injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script id="timetableTeacherPopover" type="text/ng-template">
+            <div class="table-responsive">
+                        <h3 class="fw-bold text-center">
+                Teacher: {{ TeacherTimeTableList[0].Employee.Value }}
+            </h3>
+                            <table class="ui table table-bordered table-striped table-hover">
+                                <thead class="thead-dark fw-bold">
+                                    <tr>
+                                        <th scope="col">Class</th>
+                                        <th scope="col">Section</th>
+                                        <th scope="col">Subject</th>
+                                        <th scope="col">Total Periods</th>
+                                        <th scope="col">Allocated Periods</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="teacher in TeacherTimeTableList">
+                                        <td>{{teacher.Class.Value}}</td>
+                                        <td>{{teacher.Section.Value}}</td>
+                                        <td>{{teacher.Subject.Value}}</td>
+                                        <td>{{teacher.WeekPeriods}}</td>
+                                        <td>{{teacher.AllocatedPeriods}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+        </script>
+
+        <script id="timetableClassPopover" type="text/ng-template">
+            <div class="table-responsive">
+                <h3 class="fw-bold text-center">
+                    Class: {{ ClassTimeTableList[0].Class.Value }} - {{ ClassTimeTableList[0].Section.Value }}
+                </h3>
+                <table class="ui table table-bordered table-striped table-hover">
+                    <thead class="thead-dark fw-bold">
+                        <tr>
+                            <th scope="col">Subject</th>
+                            <th scope="col">Total Periods</th>
+                            <th scope="col">Allocated Periods</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="class in ClassTimeTableList">
+                            <td>{{class.Subject.Value}}</td>
+                            <td>{{class.WeekPeriods}}</td>
+                            <td>{{class.AllocatedPeriods}}</td>
+                        </tr>
+                    </tbody>
+            </div>
+        </script>
+        <!--End Popup Container Daily-->
+    </div>
+    </div>
+</div>
+

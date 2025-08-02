@@ -1,0 +1,60 @@
+﻿@model Eduegate.ERP.School.ParentPortal.ViewModel.AssignmentDocuments
+@{
+    Layout = null;
+    var Success = Request.QueryString["Success"];
+}
+
+@using (Html.BeginForm("UploadContents", "Content", FormMethod.Post, new { @enctype = "multipart/form-data", @id = "form1", @name = "form1" }))
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal" id="AssignmentDocumentUploadPanel" style="display:none;">
+    <h4>Assignment Documents</h4>
+    <hr />
+    <input type="hidden" id="StudentId" name="StudentId" />
+    <input type="hidden" id="AssignmentIID" name="AssignmentIID" />
+
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(model => model.ProfileUploadFile, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input type="file" id="ProfileUploadFile" name="ProfileUploadFile" class="form-control" required accept=".xlsx,.xls,.doc, .docx,.pdf"/>
+            @Html.ValidationMessageFor(model => model.ProfileUploadFile, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.AttachmentName, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input type="text" id="AttachmentName" name="AttachmentName" class="form-control" required />
+            @Html.ValidationMessageFor(model => model.AttachmentName, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input type="text" id="Description" name="Description" class="form-control" required />
+            @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(model => model.Notes, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <input type="text" id="Notes" name="Notes" class="form-control" required />
+            @Html.ValidationMessageFor(model => model.Notes, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="Send" class="btn btn-default" id="SubmiAssignmentDcoumentBtn" name="SubmiAssignmentDcoumentBtn" ng-click="submitAssignmentDocument()"/>
+        </div>
+    </div>
+</div>
+
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

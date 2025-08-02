@@ -1,0 +1,1 @@
+﻿Scaffold-DbContext "Data Source=192.168.29.100;Initial Catalog=EduEgate_Dev;Persist Security Info=True;User ID=eduegateuser;Password=eduegate@123;MultipleActiveResultSets=True;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -DataAnnotations -OutputDir Data/ -ContextDir "DbContexts" -Force -UseDatabaseNames

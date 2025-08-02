@@ -1,0 +1,40 @@
+﻿@model Eduegate.Framework.PageRendererEngine.ViewModels.PageRedererViewModel
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div id="@Model.ViewModel.PageName.Replace(" ","")" class="app-container windowcontainer " style="display:block" ng-controller="PageController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName', '@Model.ViewModel.PageName.Replace(" ","")');">
+    <div class="switch-field position-absolute end-0 p-0 mt-13 me-5">
+        <input type="radio" name="dashboardType" ng-model="DashboardType" value="Default" />
+        <label ng-click="DashboardType='Default'">Default</label>
+        <input type="radio" name="dashboardType" ng-model="DashboardType" value="PowerBI" />
+        <label ng-click="DashboardType='PowerBI'">Power BI</label>
+    </div>
+    <div class="main-page row g-3 g-xl-5 mb-5 mb-xl-10" " id=" sortable"" ng-show="DashboardType == 'Default'">
+        @Html.Raw(Model.Content)
+    </div>
+    <div class="powerpagecontent" style="height: calc(100vh - 90px)" ng-show="DashboardType == 'PowerBI'">
+        <div id="embed-container" style="height: 800px;">
+            @* <iframe title="Student dashboard live" width="1600" height="750" src="{PowerBiReportID}" frameborder="0" allowFullScreen="true"></iframe> *@
+            <iframe title="Student dashboard live" width="1600" height="750" id="dashboardFrame" src="" frameborder="0" allowfullscreen="true"></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.switch-field input[type="radio"]').on('change', function () {
+        var selectedValue = $(this).val();
+        if (selectedValue === 'PowerBI') {
+            $('.powerpagecontent').show();
+        } else {
+            $('.powerpagecontent').hide();
+        }
+    });
+</script>
+

@@ -1,0 +1,118 @@
+﻿@{
+    Layout = null;
+}
+
+@*<!DOCTYPE html>*@
+<div class="gridItemOverlay"></div>
+
+<div id="ItemPopup" class="gridItemPopup" style="display:none;">
+    <span class="tooltipArrow"></span>
+    <div class="gridItemPopupInner">
+        <div class="gridItemContent">
+            <div class="controls">
+                <label>Sucess</label>
+            </div>
+            <div class="controls"></div>
+            <input id="btnokay" type="button" value="Apply" ng-click="SubmitPopup()" class="button-orange" />
+            <input id="btClose" type="button" value="Close"  ng-click="ClosePopup()" class="button-orange" />
+        </div><!--PopupContent-->
+
+    </div>
+
+</div>
+<button id="myBtn" ng-click="OpenPopup()">Fee Payment</button>
+<div ng-app="rzSliderDemo">
+    @*<head>
+            <meta name="viewport" content="width=device-width" />
+            <title></title>
+            <link rel="stylesheet" href="~/Content/bootstrap.min.css">
+            <link rel="stylesheet" href="~/Content/rzslider.min.css" />
+            <script src="~/Scripts/ui-bootstrap-tpls.js"></script>
+            <script src="~/Scripts/rzslider.min.js"></script>
+
+        </head>*@
+
+
+    <div class="fullWidth displaylineBlock text-right">
+        <div class="displaylineBlock totalAmount">
+            <div class="label displaylineBlock"> Total amount to be paid:</div>
+            <div class="displaylineBlock currSign" ng-bind="GetTotalFeePayAmount(feePays)|number:2"></div>
+        </div>
+    </div>
+
+    @*<button type="submit" ng-click="FeePaymentClick()">Pay Now</button>*@
+
+
+    <table id="GridTable" class="fullcolumn-layout grid">
+
+        <thead>
+            <tr>
+                <th class="textleft"> </th>
+
+                <th class="medium-col-width">Student</th>
+
+                <th class="feeStructure"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- ngRepeat: gridModel in FeeTypes track by $index -->
+            <tr ng-focus="FocusGrid($event,'feePays')" ng-repeat-start="gridModel in feePays track by $index" class="ng-scope">
+                <td class="textleft">
+                    <div class="controls text-center">
+                        <a small-col-width="" ng-click="ExpandCollapase($event, gridModel, 'IsExpand')">
+                            <i ng-if="gridModel.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                            <i ng-if="!gridModel.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                        </a>
+                    </div>
+
+                </td>
+
+                <td class="medium-col-width">
+                    <label class="control-label"><span ng-bind="gridModel.Student" class="ng-binding"></span><span class="redcolor"></span></label>
+
+                </td>
+                <td class="feeStructure">
+                </td>
+            </tr>
+            <tr class="ng-scope" ng-if="gridModel.FeeTypes.length > 0">
+                <td class="feeStructure" colspan="5">
+                    <table class="fullcolumn-layout grid">
+
+                        <thead>
+                            <tr>
+                                <th class="textright">Fee</th>
+                                <th class="textright">Fee Option</th>
+                                <th class="textright">Amount</th>
+                                <th class="textright">Paying Now</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- ngRepeat: gridModel in gridModel.FeeTypes track by $index -->
+                            <tr ng-focus="FocusGrid($event,'gridModel.FeeTypes')" ng-repeat-start="gridModel in gridModel.FeeTypes track by $index" class="ng-scope">
+                                <td>
+                                    <label><span ng-bind="gridModel.FeeMaster" class="ng-binding"></span><span class="redcolor"></span></label>
+
+                                </td>
+                                <td>
+                                    <rzslider rz-slider-model="gridModel.Slider.value" rz-slider-options="gridModel.Slider.options"></rzslider>
+                                </td>
+                                <td>
+                                    <label><span ng-bind="getFee()" class="ng-binding"></span><span class="redcolor"></span></label>
+
+                                </td>
+                                <td>
+                               <input type="checkbox" ng-model="gridModel.IsPayingNow" id="chk" >
+                                </td>
+                            </tr>
+                            <tr ng-repeat-end="" class="ng-scope"></tr><!-- end ngRepeat: gridModel in gridModel.FeeTypes track by $index -->
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <tr ng-repeat-end="" class="ng-scope"></tr><!-- end ngRepeat: gridModel in feePays track by $index -->
+
+
+        </tbody>
+    </table>
+
+</div>

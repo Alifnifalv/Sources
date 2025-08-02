@@ -1,0 +1,60 @@
+﻿@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div class="windowcontainer calendar myinbox" id="CreateActivity" ng-controller="ActivityController as vm">
+    <div id="@windowName" ng-init="vm.Init('@windowName')">
+        <div class="pageheadername stickdiv">
+            <span>
+                @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Activities")
+            </span>
+            <div class="alignright menugroup">
+                <div class="viewsummary active"></div>
+
+                <div class="button-orange alignright" ng-click="vm.CloseWindow(@windowName);">
+                  <i class="fa fa-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="pagecontent">
+            <div class="prod-tab-wrap">
+                <div class="">
+                    <div class="card-block">
+                        <div class="msgList">
+                            <div class="msgListItem" ng-repeat="item in vm.ActivityData" ng-click="vm.DetailView(item, $event)">
+                                @*<span class="mr-3">
+									<span ng-if="item.AlertTypeID == 2" class="btn btn-sm btn-danger">Approve</span><br>
+									<span class="text-white">12:00pm</span>
+								</span>*@
+                                <span>{{item.Description}} </span>
+								<span>
+									<a href="#" data-userid="{{item.CreatedUserName}}">
+										<span class="msgListUserIcon" style="background:url('../Eduegate.ERP.Admin/Images/Accounts.png') no-repeat center #fff"></span>
+										{{item.CreatedUserName}}
+									</a>
+								</span>
+                                <span class="time"><time><span>{{vm.fromNow(item.CreatedDate)}}</span></time></span>
+								<button class="btn btn-success btn-round tickBtn"><i class="fa fa-check"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="waypoint" id="activityWayPoint">
+                        <center>
+                            <i class="content-load fa fa-circle-o-notch fa-pulse"
+                               style="font-size:20px;color:white;"></i>
+                        </center>
+                    </div>
+                </div>
+                <div id="summarypanel" class="summary-panel">
+                </div><!--summary-->
+            </div>
+        </div>
+
+    </div>
+</div>

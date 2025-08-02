@@ -1,0 +1,89 @@
+﻿@model Eduegate.Web.Library.ViewModels.BaseMasterViewModel
+@using Eduegate.Framework.Mvc.Attributes;
+@using Eduegate.Framework.Extensions;
+@using System.Reflection;
+@using Eduegate.Frameworks.Mvc.Attributes;
+
+@{
+    var firstContainer = Model.GetType().GetCustomAttribute(typeof(ContainerTypeAttribute));
+    var firstContainerAttribute = (ContainerTypeAttribute)Model.GetType().GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+    var firstTabTitle = (System.ComponentModel.DisplayNameAttribute)Model.GetType().GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+
+    var props = Model.GetType().GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(ContainerTypeAttribute)));
+
+    var allClaims = (ViewBag.Claims as List<Eduegate.Web.Library.ViewModels.Security.ClaimViewModel>);
+
+    if (firstContainer != null)
+    {
+        <div class="menuinnertab">
+            <ul>
+                <li data-target="@(firstContainerAttribute == null ? string.Empty : firstContainerAttribute.ContainerName)" class="active">
+                    <a href="#">
+                        @(firstTabTitle == null ? string.Empty : firstTabTitle.DisplayName)
+                    </a>
+                </li>
+
+                @foreach (var prop in props)
+                {
+                    var tabTitle = (System.ComponentModel.DisplayNameAttribute)prop.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+                    var containerAttribute = (ContainerTypeAttribute)prop.GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+
+                    var claimType = (HasClaimAttribute)prop.GetCustomAttributes(typeof(HasClaimAttribute)).FirstOrDefault();
+
+                    if (claimType != null)
+                    {
+                        var allClaimNames = allClaims.Select(a => a.ResourceName).ToList();
+                        if (!claimType.HasAccess(allClaimNames))
+                        {
+                            continue;
+                        }
+                    }
+
+                    <li data-target="@containerAttribute.ContainerName" @Html.Raw(containerAttribute.ContainerAttribute)>
+                        <a href="#" @Html.Raw(containerAttribute.Attributes)>@tabTitle.DisplayName</a>
+                    </li>
+                }
+            </ul>
+        </div><!--menuinnertab-->
+
+        <div class="innertab @firstContainerAttribute.ContainerName first" refnavbarid="@firstContainerAttribute.ContainerName">
+            <div class="header-list two-column-header">
+                @Html.Partial("~/Views/Shared/_BuildField.cshtml", Model)
+            </div><!--pos-options-->
+        </div><!--innertab-->
+        int count = 1;
+        foreach (var prop in props)
+        {
+            var containerAttribute = (ContainerTypeAttribute)prop.GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+
+            var claimType = (HasClaimAttribute)prop.GetCustomAttributes(typeof(HasClaimAttribute)).FirstOrDefault();
+
+            if (claimType != null)
+            {
+                var allClaimNames = allClaims.Select(a => a.ResourceName).ToList();
+                if (!claimType.HasAccess(allClaimNames))
+                {
+                    continue;
+                }
+            }
+
+            var value = prop.GetValue(Model, null);
+            if (value as Eduegate.Web.Library.ViewModels.BaseMasterViewModel != null)
+            {
+                <div class="innertab @containerAttribute.ContainerName" refnavbarid="@containerAttribute.ContainerName">
+                    <div @(Html.Raw(string.IsNullOrEmpty(containerAttribute.Attributes2) ? "class='header-list two-column-header'" : containerAttribute.Attributes2))>
+                        @Html.Partial("~/Views/Shared/_BuildField.cshtml", prop.GetValue(Model, null))
+                    </div><!--pos-options-->
+                </div><!--innertab-->
+            }
+
+            count++;
+        }
+    }
+    else
+    {
+        <div class="header-list two-column-header">
+            @Html.Partial("~/Views/Shared/_BuildField.cshtml", Model)
+        </div><!--pos-options-->
+    }
+}

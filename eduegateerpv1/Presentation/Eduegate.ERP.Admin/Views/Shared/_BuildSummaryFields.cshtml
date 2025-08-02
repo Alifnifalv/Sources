@@ -1,0 +1,23 @@
+﻿@model Eduegate.Web.Library.ViewModels.BaseMasterViewModel
+@using System.Reflection;
+@using Eduegate.Framework.Mvc.Attributes;
+@using Eduegate.Framework.Extensions;
+
+<div class="summaryheader-blk">
+    <div class="summary-buttons">
+        <span class="refresh"><i class="fa fa-refresh"></i></span>
+        <span class="remove">x</span>
+    </div>
+    <ul class="summaryheader noicon">
+
+        @foreach (var prop in Model.GetType().GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(ControlTypeAttribute))).OrderBy(a => (a.GetCustomAttribute(typeof(OrderAttribute), false) as OrderAttribute).Order))
+        {
+            var title = (System.ComponentModel.DisplayNameAttribute)prop.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+            var controlAttribute = (ControlTypeAttribute)prop.GetCustomAttributes(typeof(ControlTypeAttribute)).FirstOrDefault();
+
+            <li>
+                <label>@title.DisplayName</label><span class="value">@controlAttribute.Attributes</span>
+            </li>
+        }
+    </ul>
+</div>

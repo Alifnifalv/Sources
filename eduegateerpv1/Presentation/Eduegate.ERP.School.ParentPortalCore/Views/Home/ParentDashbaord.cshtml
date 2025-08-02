@@ -1,0 +1,21 @@
+﻿@model Eduegate.Framework.PageRendererEngine.ViewModels.PageRedererViewModel
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div id="DashbaordWindow" class="DashbaordWindow windowcontainer fullWidth" ng-controller="PageController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName','DashbaordWindow');">
+    @*<div class="jumbotron">
+            <h2>&nbsp;&nbsp; Dashboard <i class="pageheader-setting fa fa-cog"></i></h2>
+        </div>*@
+    <div class="fullHeight fullWidth">
+        <div class="displayBlock main-page fullHeight fullWidth">
+            @Html.Raw(Model.Content)
+        </div>
+    </div>
+</div>

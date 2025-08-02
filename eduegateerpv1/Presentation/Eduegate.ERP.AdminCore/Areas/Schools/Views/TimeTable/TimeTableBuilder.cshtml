@@ -1,0 +1,710 @@
+﻿@*@model Eduegate.Web.Library.ViewModels.SearchListViewModel*@
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div id="TimeTableBuilder" class="windowcontainer timetable drag"
+     ng-controller="TimeTableController"
+     ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+
+    <style>
+        #TimeTableAllacate_timetablesubjects_Tab_02, #TimeTableAllacate_Tab_02, #AllocatedDateController {
+            display: none;
+        }
+
+        #TimeTableAllacate_timetablesubjects_Tab_03, #TimeTableAllacate_Tab_03 {
+            display: none;
+        }
+
+        .seletedsubject {
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+
+        .sidebarTimeTable {
+            position: absolute;
+            margin-top: -284px;
+            right: -25%; /* Start hidden off the screen */
+            width: 25%; /* Sidebar takes up 25% of the screen */
+            background-color: white;
+            color: black;
+            transition: right 0.3s ease; /* Slide-in transition */
+            z-index: 1000;
+            box-shadow: -1px -1px 3px rgba(0, 0, 0, .12), -2px 4px 8px rgba(0, 0, 0, .24);
+            display: flex;
+            flex-flow: column;
+            height: 100%;
+        }
+
+            .sidebarTimeTable.visible {
+                right: 0; /* Slide into view */
+            }
+    </style>
+
+    <div class="window-tab preload-overlay" style="display:none;">
+        <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+    </div>
+    @*<div id='divLoad' style="display:block;background:transparent;">
+    <center><div class='bounce-wrapper' id='Load'><div class='three-bounce-inner'><div class='bounce-item bi-item1'></div><div class='bounce-item bi-item2'></div><div class='bounce-item bi-item3'></div></div></div></center>
+    </div>*@
+
+    @*//-----NOTE: Needed for TAB chnages.
+    <div class="subjectList fullwidth displaylineBlock">
+    <div class="menuinnertab">
+    <ul>
+    <li data-target="subject" class="active"><a href="#">Subjects</a></li>
+    <li data-target="teachers"><a href="#">Teachers</a></li>
+    <li data-target="classes"><a href="#">Classes</a></li>
+    </ul>
+    </div>
+    </div>*@
+
+    <div class="scheduleWrapper innertab subject first">
+
+        <div>
+            <div>
+                <ul class="nav nav-tabs justify-content-center">
+                    <li class="nav-item" ng-click="onTimeTableAllacateMasterTab('Master_Tab_01')">
+                        <a class="nav-link active" id="Master_Tab_01_nav" href="#"><span class="seletedsubject">Global/Daily</span></a>
+                    </li>
+                    <li class="nav-item" ng-click="onTimeTableAllacateMasterTab('Master_Tab_02')">
+                        <a class="nav-link" id="Master_Tab_02_nav" href="#"><span class="seletedsubject">Smart scheduler</span></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div id="MasterTab_01">
+            <div class="field-row">
+                <span class="form-group">
+                    <span class="controls">
+                        <label>Time Table Type</label>
+                        <ui-select style="width: 100%;" name="TimeTable" ng-model="selectedTableMasterData"
+                                   theme="select2" class="pos-txt"
+                                   ng-change="loadClasswiseTimeTable($select)">
+                            <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                            <ui-select-choices repeat="data in TableMasterData | filter:$select.search">{{data.Value}}</ui-select-choices>
+                        </ui-select>
+                    </span>
+                </span>
+                <span class="form-group">
+                    @*<span class="controls">
+                    <label>Classes</label>
+                    <select id="selectedClasses" ng-change="loadClasswiseTimeTable()" ng-model="selectedClasses" ng-options="x.Value for x in Classes">
+                    </select>
+                    </span>*@
+                    <span class="controls">
+                        <label>Class</label>
+                        <ui-select name="Class" ng-model="selectedClasses" theme="select2" class="pos-txt" style="width: 100%;" ng-change="loadClasswiseTimeTable($select)">
+                            <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                            <ui-select-choices repeat="class in Classes | filter:$select.search">
+                                {{class.Value}}
+                            </ui-select-choices>
+                        </ui-select>
+                        @*<span class="cufon" style="color:red" ng-show="submitted && selectedClasses.length <=0">Class is required</span>*@
+                    </span>
+                </span>
+            </div>
+
+            <ul class="nav nav-tabs justify-content-center">
+                <li class="nav-item" ng-click="onTimeTableAllacateTab('Tab_01')">
+                    <a class="nav-link active" id="Tab_01_nav" href="#"><span class="seletedsubject">Global</span></a>
+                </li>
+                <li class="nav-item" ng-click="onTimeTableAllacateTab('Tab_02')">
+                    <a class="nav-link" id="Tab_02_nav" href="#"><span class="seletedsubject">Daily</span></a>
+                </li>
+            </ul>
+
+            <ul class="timetablesubjects" id="TimeTableAllacate_timetablesubjects_Tab_01">
+                <li ng-repeat="subject in Subjects"><span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top, #0099ff 0%, #66ffff 46%);" class="seletedsubject" title="Subject: {{subject.Value}}" data-Staff-id="" data-Alloc-id="0" data-subject-id="{{subject.Key}}">{{subject.Value}}</span></span></li>
+                @*<li ng-repeat="subject in Subjects"><span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(135deg,#ee8ebc,#eea08e);" class="seletedsubject" title="Subject: {{subject.Subject.Value}}" data-Staff-id="" data-Alloc-id="0" data-subject-id="{{subject.Subject.Key}}">{{subject.Subject.Value}}</span></span></li>*@
+                <li>
+                    <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%);">Home Room</span></span>
+                    <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%);">Recess 1</span></span>
+                    <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%);">Recess 2</span></span>
+                    <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%);">Dispersal</span></span>
+                </li>
+            </ul>
+            <ul class="timetablesubjects" id="TimeTableAllacate_timetablesubjects_Tab_02">
+                <div class="field-row">
+                    <div class="controls">
+                        <div class="datetime_picker">
+                            <input type="text" autocomplete="off" ng-model="AllocatedDate" wb-datepicker
+                                   ng-change="LoadDailyTimeTable(AllocatedDate)" />
+                        </div>
+                    </div>
+                    <input type="button" value="Generate" class="button-orange" ng-click="TimeTableGenerate('Generate')" />
+                    <input type="button" value="Re-generate" class="button-orange" ng-click="TimeTableGenerate('Re_generate')" />
+                </div>
+                <li ng-repeat="subject in Subjects"><span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top, #0099ff 0%, #66ffff 46%);" class="seletedsubject" title="Subject: {{subject.Value}}" data-Staff-id="" data-Alloc-id="0" data-subject-id="{{subject.Key}}">{{subject.Value}}</span></span></li>
+                @*<li ng-repeat="subject in Subjects"><span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(135deg,#ee8ebc,#eea08e);" class="seletedsubject" title="Subject: {{subject.Subject.Value}}" data-Staff-id="" data-Alloc-id="0" data-subject-id="{{subject.Subject.Key}}">{{subject.Subject.Value}}</span></span></li>*@
+                <li>
+                    <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%);">Home Room</span></span>
+                    <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%);">Recess 1</span></span>
+                    <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%);">Recess 2</span></span>
+                    <span class="scaleWrap Block--isDraggable"><span style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%);">Dispersal</span></span>
+                </li>
+            </ul>
+        </div>
+        <div id="MasterTab_02" ng-show="isMasterTabVisible">
+
+            <ul class="nav nav-tabs justify-content-center">
+                <li class="nav-item hide" ng-click="onTimeTableAllacateTab('Tab_03')">
+                    <a class="nav-link" id="Tab_03_nav" href="#"><span class="seletedsubject">Smart Scheduler</span></a>
+                </li>
+            </ul>
+
+        </div>
+
+        <ul class="timetablesubjects" id="TimeTableAllacate_timetablesubjects_Tab_03">
+
+            @* Reference table for Summary *@
+            @* <div class="table-responsive w-50 card p-4">
+            <table class="table table-row-solid align-middle gs-0 gy-4 my-0">
+            <thead>
+            <tr class="fw-bold fs-6 text-gray-800 px-7">
+            <th rowspan="2" class="align-middle border-bottom border-end w-200px">Name</th>
+            <th colspan="2" class="border-bottom">Opening</th>
+            <th colspan="2" class="border-bottom">Closing</th>
+            </tr>
+            <tr class="fw-bold fs-6 text-gray-800 px-7">
+            <th class="ps-2">Debit</th>
+            <th>Credit</th>
+            <th>Debit</th>
+            <th>Credit</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+            <td>
+            Bank statement
+            </td>
+            <td class="ps-0">
+            <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end"></span>
+
+            </td>
+            <td>
+            <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end"></span>
+            </td>
+            <td class="text-end pe-0">
+            <span class="text-gray-800 fw-bold d-block fs-6"></span>
+            </td>
+            <td class="text-end pe-0">
+            <span class="text-gray-800 fw-bold d-block fs-6"></span>
+            </td>
+            </tr>
+            <tr>
+            <td>
+            Ledger Balance
+            </td>
+            <td class="ps-0">
+            <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end"></span>
+
+            </td>
+            <td>
+            <span class="text-gray-800 fw-bold d-block fs-6 ps-0 text-end"></span>
+            </td>
+            <td class="text-end pe-0">
+            <span class="text-gray-800 fw-bold d-block fs-6"></span>
+            </td>
+            <td class="text-end pe-0">
+            <span class="text-gray-800 fw-bold d-block fs-6"></span>
+            </td>
+            </tr>
+
+            </tbody>
+            </table>
+            </div>*@
+            <div class="field-row">
+                <span class="form-group">
+                    <span class="controls">
+                        <label>Time Table Type</label>
+                        <ui-select style="width: 100%;" name="TimeTable" ng-model="selectedTableMasterData"
+                                   theme="select2" class="pos-txt"
+                                   ng-change="loadClasswiseTimeTable($select)">
+                            <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                            <ui-select-choices repeat="data in TableMasterData | filter:$select.search">{{data.Value}}</ui-select-choices>
+                        </ui-select>
+                    </span>
+                </span>
+                <span class="form-group">
+                    @*<span class="controls">
+                    <label>Classes</label>
+                    <select id="selectedClasses" ng-change="loadClasswiseTimeTable()" ng-model="selectedClasses" ng-options="x.Value for x in Classes">
+                    </select>
+                    </span>*@
+                    <span class="controls">
+                        <label>Class</label>
+                        <ui-select name="Class" ng-model="selectedClasses" theme="select2" class="pos-txt" style="width: 100%;" ng-change="loadClasswiseTimeTable($select)">
+                            <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                            <ui-select-choices repeat="class in Classes | filter:$select.search">
+                                {{class.Value}}
+                            </ui-select-choices>
+                        </ui-select>
+                        @*<span class="cufon" style="color:red" ng-show="submitted && selectedClasses.length <=0">Class is required</span>*@
+                    </span>
+                </span>
+            </div>
+
+            <div class="field-row mb-9">
+                <div class="">
+                    <input type="button" value="Re-generate" class="button-orange" ng-click="TimeTableGenerate('Re_generate')" />
+                    <input type="button" value="Save as new" class="button-orange" ng-click="TimeTableGenerate('SaveAsNew')" />
+                    <input type="button" value="Save and replace" class="button-orange" ng-click="TimeTableGenerate('SaveAndReplace')" />
+                </div>
+            </div>
+            @* <button ng-click="toggleSidebar()" class="pull-right">Summary</button> *@
+            <div>
+                <h1>Summary</h1>
+                <div class="card">
+                    <div class="d-flex gap-4">
+                        <div class="card shadow-sm w-50 overflow-scroll h-300px">
+                            <div class="card bg-primary text-white">
+                                <h2 class="h5 mb-2 mt-2">Teacher-wise Summary</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3 w-25">
+                                    <input type="text" class="form-control" placeholder="Search Teacher" ng-model="searchTeacher">
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped table-hover">
+                                        <thead class="thead-dark fw-bold">
+                                            <tr>
+                                                <th scope="col">Teacher</th>
+                                                <th scope="col">Total Periods</th>
+                                                <th scope="col">Allocated Periods</th>
+                                                <th class="">&nbsp;</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="teacher in TeacherSummary | filter: { Employee: { Value: searchTeacher } }">
+                                                <td>{{teacher.Employee.Value}}</td>
+                                                <td>{{teacher.WeekPeriods}}</td>
+                                                <td>{{teacher.AllocatedPeriods}}</td>
+                                                <td>
+                                                    <div class="symbol symbol-30px" ng-click="ViewDetails(teacher.Employee.Key,null,'TeacherSummary')">
+                                                        <span class="symbol-label">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+                                                            </svg>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card shadow-sm w-50 overflow-scroll h-300px">
+                            <div class="card bg-primary text-white">
+                                <h2 class="h5 mb-2 mt-2">Class-wise Summary</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3 w-25">
+                                    <input type="text" class="form-control" placeholder="Search Class or Section" ng-model="searchQuery">
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped table-hover">
+                                        <thead class="thead-dark fw-bold">
+                                            <tr>
+                                                <th scope="col">Class</th>
+                                                <th scope="col">Section</th>
+                                                <th scope="col">Total Periods</th>
+                                                <th scope="col">Allocated Periods</th>
+                                                <th class="">&nbsp;</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="class in ClassSummary | filter: customSearchFilter">
+                                                <td>{{class.Class.Value}}</td>
+                                                <td>{{class.Section.Value}}</td>
+                                                <td>{{class.WeekPeriods}}</td>
+                                                <td>{{class.AllocatedPeriods}}</td>
+                                                <td>
+                                                    <div class="symbol symbol-30px" ng-click="ViewDetails(class.Class.Key, class.Section.Key, 'ClassSummary')">
+                                                        <span class="symbol-label">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+                                                            </svg>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ul>
+
+        <div class="schedulerTable" id="TimeTableAllacate_Tab_01">
+            <strong>Global</strong>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="noBorderBtm">&nbsp;</th>
+                        <th ng-repeat="WkDay in WeekDay">{{WkDay.Value}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="hours">
+                        <th class="columnHeader"></th>
+                        <td ng-repeat="WkDay in WeekDay" data-week-id="{{WkDay.Key}}">
+                            <table>
+                                <tr class="time">
+                                    <td ng-repeat="clsTime in ClassTime" data-time-id="{{clsTime.Key}}">{{clsTime.Value}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr class="content section" ng-repeat="ClassMap in TimeTableMapping" data-section-id="{{ClassMap.Section.Key}}">
+                        <th class="columnHeader" style="min-width: 150px;">{{(selectedClasses.Value) +' '+ (ClassMap.Section.Value)}}</th>
+                        <td ng-repeat="WkDay in WeekDay" class="WeekDay" data-week-id="{{WkDay.Key}}">
+                            <div class="scaleWrap resizable">
+                                <table>
+                                    <tr>
+                                        <td ng-repeat="clsTime in ClassTime" class="classtime" data-time-id="{{clsTime.Key}}">
+                                            <span class="colspan" id="colspan{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}">
+                                                @*<span class="SeletedSubject" ng-if="checkExist(ClassMap.AllocInfoDetails,WkDay.Key,clsTime.Key,this)" style="background: linear-gradient(135deg,#ee8ebc,#eea08e);">englishh<span class="closeItem" data-Alloc-id="{{ClassMap.TimeTableAllocationIID}}">x</span></span>*@
+                                                <span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key),'IsBreakTime':false }:true" ng-if="!allocstudent.IsBreakTime" title="Subject: {{allocItem.Subject.Value}}&#10;Teacher: {{allocItem.Employee.Value}}" data-Staff-id="{{allocItem.StaffID}}" data-Subject-id="{{allocItem.SubjectID}}" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}" style="background: linear-gradient(to top, #0099ff 0%, #66ffff 46%);">{{allocItem.Subject.Value}}<span class="closeItem" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}">x</span></span>
+                                                <span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key),'IsBreakTime':true }:true" ng-if="!allocstudent.IsBreakTime" title="Subject: {{allocItem.Subject.Value}}&#10;Teacher: {{allocItem.Employee.Value}}" data-Staff-id="{{allocItem.StaffID}}" data-Subject-id="{{allocItem.SubjectID}}" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}" style="background: linear-gradient(to top, #ee8ebc 0%,#eea08e 46%);">{{allocItem.Subject.Value}}</span>
+                                                @*<span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key) ,'IsBreakTime':true}:true" ng-if="allocstudent.IsBreakTime" title="Break" data-Staff-id="0" data-Subject-id="0" data-Alloc-id="0" style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%);">Break</span>*@
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="schedulerTable" id="TimeTableAllacate_Tab_02">
+            <strong>Daily</strong>
+            <table>
+                <thead>
+                    <tr>
+                        <th class="noBorderBtm">&nbsp;</th>
+                        <th ng-repeat="WkDay in WeekDay">{{WkDay.Value}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="hours">
+                        <th class="columnHeader"></th>
+                        <td ng-repeat="WkDay in WeekDay" data-week-id="{{WkDay.Key}}">
+                            <table>
+                                <tr class="time">
+                                    <td ng-repeat="clsTime in ClassTime" data-time-id="{{clsTime.Key}}">{{clsTime.Value}}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr class="content section" ng-repeat="ClassMap in TimeTableDailyMapping" data-section-id="{{ClassMap.Section.Key}}">
+                        <th class="columnHeader" style="min-width: 150px;">{{(selectedClasses.Value) +' '+ (ClassMap.Section.Value)}}</th>
+                        <td ng-repeat="WkDay in WeekDay" class="WeekDay" data-week-id="{{WkDay.Key}}">
+                            <div class="scaleWrap resizable">
+                                <table>
+                                    <tr>
+                                        <td ng-repeat="clsTime in ClassTime" class="classtime" data-time-id="{{clsTime.Key}}">
+                                            <span class="colspan" id="colspan{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}">
+                                                @*<span class="SeletedSubject" ng-if="checkExist(ClassMap.AllocInfoDetails,WkDay.Key,clsTime.Key,this)" style="background: linear-gradient(135deg,#ee8ebc,#eea08e);">englishh<span class="closeItem" data-Alloc-id="{{ClassMap.TimeTableAllocationIID}}">x</span></span>*@
+                                                <span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key),'IsBreakTime':false }:true" ng-if="!allocstudent.IsBreakTime" title="Subject: {{allocItem.Subject.Value}}&#10;Teacher: {{allocItem.Employee.Value}}" data-Staff-id="{{allocItem.StaffIDs}}" data-Subject-id="{{allocItem.SubjectID}}" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}" style="background: linear-gradient(to top, #0099ff 0%, #66ffff 46%);">{{allocItem.Subject.Value}}<span class="closeItem" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}">x</span></span>
+                                                <span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key),'IsBreakTime':true }:true" ng-if="!allocstudent.IsBreakTime" title="Subject: {{allocItem.Subject.Value}}&#10;Teacher: {{allocItem.Employee.Value}}" data-Staff-id="{{allocItem.StaffIDs}}" data-Subject-id="{{allocItem.SubjectID}}" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}" style="background: linear-gradient(to top, #ee8ebc 0%,#eea08e 46%);">{{allocItem.Subject.Value}}</span>
+                                                @*<span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key) ,'IsBreakTime':true}:true" ng-if="allocstudent.IsBreakTime" title="Break" data-Staff-id="0" data-Subject-id="0" data-Alloc-id="0" style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%);">Break</span>*@
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div class="schedulerTable" id="TimeTableAllacate_Tab_03"@*  style="height:500px;" *@>
+            <strong>Smart Scheduler</strong>
+            <div>
+                <div class="sidebarTimeTable" ng-class="{'visible': isVisible}" id="sidebar">
+                    <div>
+                        <h4 class="text-right mx-8 mt-3" ng-click="toggleSidebar()">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill slidecloseButton" viewBox="0 0 16 16" ng-click="closeSlide()" style="cursor:pointer;">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z" />
+                            </svg>
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            @* @await Html.PartialAsync("TimeTableSmartScheduler") *@
+            <div class="row">
+                <div class="col-8">
+                    <div class="card overflow-scroll">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="noBorderBtm">&nbsp;</th>
+                                    <th ng-repeat="WkDay in WeekDay">{{WkDay.Value}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hours">
+                                    <th class="columnHeader"></th>
+                                    <td ng-repeat="WkDay in WeekDay" data-week-id="{{WkDay.Key}}">
+                                        <table>
+                                            <tr class="time">
+                                                <td ng-repeat="clsTime in ClassTime" data-time-id="{{clsTime.Key}}">{{clsTime.Value}}</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr class="content section" ng-repeat="ClassMap in TimeTableDailyMapping" data-section-id="{{ClassMap.Section.Key}}">
+                                    <th class="columnHeader" style="min-width: 150px;">{{(ClassMap.Class.Value) +' '+ (ClassMap.Section.Value)}}</th>
+                                    <td ng-repeat="WkDay in WeekDay" class="WeekDay" data-week-id="{{WkDay.Key}}">
+                                        <div class="scaleWrap resizable">
+                                            <table>
+                                                <tr>
+                                                    <td ng-repeat="clsTime in ClassTime" class="classtime" data-time-id="{{clsTime.Key}}">
+                                                        <span class="colspan" id="colspan{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}">
+                                                            @*<span class="SeletedSubject" ng-if="checkExist(ClassMap.AllocInfoDetails,WkDay.Key,clsTime.Key,this)" style="background: linear-gradient(135deg,#ee8ebc,#eea08e);">englishh<span class="closeItem" data-Alloc-id="{{ClassMap.TimeTableAllocationIID}}">x</span></span>*@
+                                                            <span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key),'IsBreakTime':false }:true" ng-if="!allocstudent.IsBreakTime" title="Subject: {{allocItem.Subject.Value}}&#10;Teacher: {{allocItem.Employee.Value}}" data-Staff-id="{{allocItem.StaffIDs}}" data-Subject-id="{{allocItem.SubjectID}}" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}" style="background: linear-gradient(to top, #0099ff 0%, #66ffff 46%);">{{allocItem.Subject.Value}}<span class="closeItem" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}">x</span></span>
+                                                            <span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key),'IsBreakTime':true }:true" ng-if="!allocstudent.IsBreakTime" title="Subject: {{allocItem.Subject.Value}}&#10;Teacher: {{allocItem.Employee.Value}}" data-Staff-id="{{allocItem.StaffIDs}}" data-Subject-id="{{allocItem.SubjectID}}" data-Alloc-id="{{allocItem.TimeTableAllocationIID}}" style="background: linear-gradient(to top, #ee8ebc 0%,#eea08e 46%);">{{allocItem.Subject.Value}}</span>
+                                                            @*<span class="seletedsubject" id="{{(ClassMap.Section.Key + WkDay.Key + clsTime.Key)}}" ng-repeat="allocItem in ClassMap.AllocInfoDetails | filter:{ 'WeekDayID' : parseInt(WkDay.Key) , 'ClassTimingID' :parseInt(clsTime.Key) ,'IsBreakTime':true}:true" ng-if="allocstudent.IsBreakTime" title="Break" data-Staff-id="0" data-Subject-id="0" data-Alloc-id="0" style="background: linear-gradient(to top,#ee8ebc 0%,#eea08e 46%);">Break</span>*@
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card overflow-scroll w-75">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12" ng-repeat="timeTable in ClassSectionTimeTable track by $index">
+                                    <div class="card">
+                                        <div>
+                                            <div>
+                                                <!-- Display Class and Section -->
+                                                <h1>{{ timeTable.MainDetails[0].MapDetails[0].Class.Value + ' ' + timeTable.MainDetails[0].MapDetails[0].Section.Value }}</h1>
+                                                <table class="table table-bordered">
+                                                    <thead class="thead-light">
+                                                        <tr>
+                                                            <th class="columnHeader">Time</th>
+                                                            <!-- Display WeekDays -->
+                                                            <th ng-repeat="day in WeekDays">{{ day.DayName }}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <!-- Display Class Timings -->
+                                                        <tr class="content section" ng-repeat="clsTime in timeTable.MainDetails[0].MapDetails track by clsTime.ClassTimingID + '-' + $index">
+                                                            <!-- Show class timing (e.g. 1st period, 2nd period) -->
+                                                            <th class="columnHeader" style="min-width: 150px;">
+                                                                {{ clsTime.ClassTiming.Value }}
+                                                            </th>
+
+                                                            <!-- Loop through each WeekDay and display subjects accordingly -->
+                                                            <td ng-repeat="mainDetail in timeTable.MainDetails track by mainDetail.WeekDayID + '-' + $index">
+                                                                <div ng-repeat="clsTimeDetail in mainDetail.MapDetails | filter: { 'ClassTimingID': clsTime.ClassTimingID } track by clsTimeDetail.ClassTimingID + '-' + $index">
+                                                                    <span class="subject-name">
+                                                                        {{ clsTimeDetail.Subject.Value }}
+                                                                    </span>
+                                                                    <br />
+                                                                    <span>
+                                                                        {{ clsTimeDetail.Employee.Value }}
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+    </div>
+
+    <div class="gridItemOverlay"></div>
+
+        <div class="modal right" id="globalRightDrawer" tabindex="-1" aria-labelledby="rightModalLabel" aria-hidden="true">
+            <div class="modal-dialog  modal-dialog-centered modal-lg w-100">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!--Popup Container Daily-->
+    <div id="ItemPopupDaily" class="TimeTableTeacherMap gridItemPopup gridItemPopupDaily">
+        <div class="window-tab preload-overlay" style="display:none;">
+            <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+        </div>
+        <span class="tooltipArrow"></span>
+        <div class="gridItemPopupInner">
+            <div class="TimeTableTeacherMap gridItemContent" data-attr="TimeTableTeacherMap">
+                <div class="controls">
+                    <label>TimeTable</label>
+                    <select id="PopupTimeTableMaster" disabled ng-model="PopupTimeTableMaster">
+                        <option ng-repeat="x in TableMasterData" value="{{x.Key}}">{{x.Value}}</option>
+                    </select>
+                </div>
+                <div class="controls">
+                    <label>Class</label>
+                    <select id="PopupClass" disabled ng-model="PopupClass">
+                        <option ng-repeat="x in Classes" value="{{x.Key}}">{{x.Value}}</option>
+                    </select>
+                </div>
+                <div class="controls">
+                    <label>Section</label>
+                    <select id="PopupSection" disabled ng-model="PopupSection">
+                        <option ng-repeat="x in Sections" value="{{x.Key}}" ng-selected="{{PopupSection == x.Key}}">{{x.Value}}</option>
+                    </select>
+                </div>
+                <div class="controls">
+                    <label>Day</label>
+                    <select id="PopupDay" disabled ng-model="PopupDay">
+                        <option ng-repeat="x in WeekDay" value="{{x.Key}}" ng-selected="{{PopupDay == x.Key}}">{{x.Value}}</option>
+                    </select>
+                </div>
+                <div class="controls brand">
+                    <label>Time</label>
+                    <select id="PopupTime" disabled ng-model="PopupTime">
+                        <option ng-repeat="x in ClassTime" value="{{x.Key}}" ng-selected="{{PopupTime == x.Key}}">{{x.Value}}</option>
+                    </select>
+                </div>
+                <div class="controls brand" id="datedaily">
+                    <label>Date</label>
+                    <div class="datetime_picker">
+                        <input type="text" autocomplete="off" ng-model="PopupDate" wb-datepicker disabled />
+                    </div>
+                </div>
+                <div class="controls brand">
+                    <label>Subject<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                    <span class="cufon" style="color:red" ng-show="submitted && PopupSubject <=0">&nbsp;Required!</span>
+                    @*<select id="PopupSubject" ng-model="PopupSubject" ng-change="loadSubjectwiseTeacher()">
+                    <option ng-repeat="x in Subjects" value="{{x.Subject.Key}}" ng-selected="{{PopupSubject == x.Subject.Key}}">{{x.Subject.Value}}</option>
+                    </select>
+                    <i class="dropdownarrow fa fa-caret-down"></i>*@
+                    <ui-select style="width: 100%;" name="PopupSubject" ng-model="PopupSubject" theme="select2" class="pos-txt"
+                               ng-change="loadSubjectwiseTeacher($select)">
+                        <ui-select-match placeholder="Search">{{SelectedSubject.Value}}</ui-select-match>
+                        <ui-select-choices repeat="data in Subjects | filter:$select.search" ng-selected="{{SelectedSubject.Value}}">{{data.Value}}</ui-select-choices>
+                    </ui-select>
+                </div>
+                @*<div class="controls brand">
+
+                </div>*@
+                @*<div class="controls">*@
+                <label>Teacher<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                <span class="cufon" style="color:red" ng-show="submitted && PopupTeacher <=0">&nbsp;Required!</span>
+                @*<select id="PopupTeacher" ng-model="PopupTeacher" ng-change="loadSubjectwiseTeacher()" multiple>
+                <option ng-repeat="x in Teachers" value="{{x.EmployeeID}}" ng-selected="{{PopupTeacher == x.EmployeeID}}">{{x.TeacherName}}</option>
+                </select>*@
+                @*<i class="dropdownarrow fa fa-caret-down"></i>*@
+
+                <ui-select name="PopupTeacher" ng-model="PopupTeacher" theme="select2" class="pos-txt" style="width: 100%;" multiple ng-change="loadTeacheKey($select)">
+                    <ui-select-match placeholder="Search">{{$item.Value}}</ui-select-match>
+                    <ui-select-choices repeat="data in Teachers | filter:$select.search">
+                        {{data.Value}}
+                    </ui-select-choices>
+                </ui-select>
+
+                @*</div>*@
+                <input type="button" value="Apply" class="button-orange" ng-click="SaveTimeTable('.gridItemPopup');" />
+                <input type="button" value="Close" class="button-orange" ng-click="ClosePopup();" />
+            </div><!--PopupContent-->
+
+        </div>
+    </div>
+
+        <script id="timetableTeacherPopover" type="text/ng-template">
+            <div class="w-100">
+            <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead class="thead-dark fw-bold">
+                                    <tr>
+                                        <th scope="col">Teacher</th>
+                                        <th scope="col">Class</th>
+                                        <th scope="col">Section</th>
+                                        <th scope="col">Subject</th>
+                                        <th scope="col">Total Periods</th>
+                                        <th scope="col">Allocated Periods</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="teacher in TeacherTimeTableList">
+                                        <td>{{teacher.Employee.Value}}</td>
+                                        <td>{{teacher.Class.Value}}</td>
+                                        <td>{{teacher.Section.Value}}</td>
+                                        <td>{{teacher.Subject.Value}}</td>
+                                        <td>{{teacher.WeekPeriods}}</td>
+                                        <td>{{teacher.AllocatedPeriods}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                </div>
+        </script>
+
+        <script id="timetableClassPopover" type="text/ng-template">
+            <div class="w-100">
+            <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead class="thead-dark fw-bold">
+                                            <tr>
+                                                <th scope="col">Class</th>
+                                                <th scope="col">Section</th>
+                                                <th scope="col">Subject</th>
+                                                <th scope="col">Total Periods</th>
+                                                <th scope="col">Allocated Periods</th>
+                                                <th class="">&nbsp;</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr ng-repeat="class in ClassTimeTableList">
+                                                <td>{{class.Class.Value}}</td>
+                                                <td>{{class.Section.Value}}</td>
+                                                <td>{{class.Subject.Value}}</td>
+                                                <td>{{class.WeekPeriods}}</td>
+                                                <td>{{class.AllocatedPeriods}}</td>
+                                            </tr>
+                                        </tbody>
+                        </div>
+                </div>
+        </script>
+    <!--End Popup Container Daily-->
+</div>
+
+

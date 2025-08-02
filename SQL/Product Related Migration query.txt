@@ -1,0 +1,234 @@
+--Insert Product Families
+
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('Book Set')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('DIARY')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('Notebooks')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('TextBooks')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('T-SHIRTS')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('SHORTS')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('SKIRT')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('SHORT SKIRT')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('PANTS')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('SALWAR KAMEEZ')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('SOCKS')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('BELT')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('SHOES')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('H-UNIFORM')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('WINTER JACKET')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('WINTER PANTS')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('LAB COAT')
+INSERT INTO catalog.ProductFamilies (FamilyName) Values('ID Card')
+
+========================================================================
+--Insert Product Category
+
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('book_set','Book Set',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('diary','DIARY',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('notebooks','Notebooks',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('textbooks','TextBooks',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('t-shirts','T-SHIRTS',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('shorts','SHORTS',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('skirt','SKIRT',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('short_skirt','SHORT SKIRT',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('pants','PANTS',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('salwar_kameez','SALWAR KAMEEZ',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('socks','SOCKS',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('belt','BELT',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('shoes','SHOES',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('h-uniform','H-UNIFORM',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('winter_jacket','WINTER JACKET',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('winter_pants','WINTER PANTS',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('lab_coat','LAB COAT',1)
+INSERT INTO catalog.Categories (CategoryCode,CategoryName,IsActive) Values('id_card','ID Card',1)
+
+========================================================================
+--DELETE catalog.Products
+;WITH SCH_PRODUCT AS
+(
+	SELECT PF.ProductFamilyIID AS ProductFamilyID,PF.FamilyName, SExp.Category, ProductCode=LOWER(REPLACE(SExp.ProductName, ' ', '_')),
+	SExp.ProductName AS ProductName,
+	SExp.Quantity, SExp.CostPrice, SExp.Sellingprice,
+	CASE WHEN SExp.Campus = 'Thumama' then 10 WHEN SExp.Campus = 'Westbay' then 20 WHEN SExp.Campus = 'Meshaf' then 30 end BranchID,
+	CASE WHEN SExp.Campus = 'Thumama' then 1 WHEN SExp.Campus = 'Westbay' then 1 WHEN SExp.Campus = 'Meshaf' then 2 end CompanyID,
+	2 AS ProductTypeID, 1 AS UnitID, 2 AS ProductStatusID
+	FROM schools.ProductExcelExport SExp
+	LEFT JOIN catalog.ProductFamilies as PF ON PF.FamilyName = SExp.Category
+	where SExp.Campus = 'Thumama'
+)
+MERGE catalog.Products P 
+USING SCH_PRODUCT S ON S.ProductName=P.ProductName
+WHEN NOT MATCHED THEN
+INSERT(ProductCode, ProductTypeID, ProductFamilyID, ProductName, ProductDescription, StatusID, UnitID)
+VALUES(ProductCode, ProductTypeID, ProductFamilyID, ProductName, ProductName, ProductStatusID, UnitID)
+WHEN MATCHED THEN 
+UPDATE SET ProductName=S.ProductName;
+
+SELECT * FROM catalog.Products
+
+========================================================================
+--Map product and category
+--DELETE catalog.ProductCategoryMaps
+;WITH SCH_PRODUCT AS
+(
+	SELECT
+	cat.CategoryIID AS CategoryID, cat.CategoryName,
+	SKU.ProductSKUMapIID, Pro.ProductIID,PF.ProductFamilyIID AS ProductFamilyID,PF.FamilyName, SExp.Category, ProductCode=LOWER(REPLACE(SExp.ProductName, ' ', '_')),
+	SExp.ProductName AS ProductName,
+	SExp.Quantity, SExp.CostPrice, SExp.Sellingprice,
+	CASE WHEN SExp.Campus = 'Thumama' then 10 WHEN SExp.Campus = 'Westbay' then 20 WHEN SExp.Campus = 'Meshaf' then 30 end BranchID,
+	CASE WHEN SExp.Campus = 'Thumama' then 1 WHEN SExp.Campus = 'Westbay' then 1 WHEN SExp.Campus = 'Meshaf' then 2 end CompanyID,
+	2 AS ProductTypeID, 1 AS UnitID, 2 AS ProductStatusID
+	FROM schools.ProductExcelExport SExp
+	LEFT JOIN catalog.ProductFamilies as PF ON PF.FamilyName = SExp.Category
+	LEFT JOIN catalog.Products as Pro ON Pro.ProductFamilyID = PF.ProductFamilyIID AND Pro.ProductName in(SExp.ProductName)
+	LEFT JOIN catalog.ProductSKUMaps as SKU ON SKU.ProductID = Pro.ProductIID
+	LEFT JOIN catalog.Categories as cat ON cat.CategoryName = SExp.Category
+	where SExp.Campus = 'Thumama'
+)
+MERGE catalog.ProductCategoryMaps P 
+USING SCH_PRODUCT S ON P.ProductCategoryMapIID = 0
+WHEN NOT MATCHED THEN
+INSERT(ProductID, CategoryID)
+VALUES(ProductIID, CategoryID);
+
+SELECT * FROM catalog.ProductCategoryMaps
+
+========================================================================
+--DELETE catalog.ProductSKUMaps
+;WITH SCH_PRODUCTSKU AS
+(
+	SELECT ProductIID AS ProductID, ProductName
+	FROM catalog.Products
+)
+MERGE catalog.ProductSKUMaps SKU
+USING SCH_PRODUCTSKU S ON S.ProductID=SKU.ProductID
+WHEN NOT MATCHED THEN
+INSERT(ProductID, ProductSKUCode, SKUName, StatusID, CompanyID)
+VALUES(ProductID, ProductName, ProductName, 1, 1)
+WHEN MATCHED THEN 
+UPDATE SET SKUName=S.ProductName;
+
+SELECT * FROM catalog.ProductSKUMaps
+
+========================================================================
+--Update Cost Price
+;WITH SCH_PRODUCTPRICE AS
+(
+	SELECT SKU.ProductSKUMapIID, Pro.ProductIID,PF.ProductFamilyIID AS ProductFamilyID,PF.FamilyName, SExp.Category, ProductCode=LOWER(REPLACE(SExp.ProductName, ' ', '_')),
+	SExp.ProductName AS ProductName,
+	SExp.Quantity, SExp.CostPrice, SExp.Sellingprice,
+	CASE WHEN SExp.Campus = 'Thumama' then 10 WHEN SExp.Campus = 'Westbay' then 20 WHEN SExp.Campus = 'Meshaf' then 30 end BranchID,
+	CASE WHEN SExp.Campus = 'Thumama' then 1 WHEN SExp.Campus = 'Westbay' then 1 WHEN SExp.Campus = 'Meshaf' then 2 end CompanyID,
+	2 AS ProductTypeID, 1 AS UnitID, 2 AS ProductStatusID
+	FROM schools.ProductExcelExport SExp
+	LEFT JOIN catalog.ProductFamilies as PF ON PF.FamilyName = SExp.Category
+	LEFT JOIN catalog.Products as Pro ON Pro.ProductFamilyID = PF.ProductFamilyIID AND Pro.ProductName in(SExp.ProductName)
+	LEFT JOIN catalog.ProductSKUMaps as SKU ON SKU.ProductID = Pro.ProductIID
+	where SExp.Campus = 'Thumama'
+)
+MERGE catalog.ProductPriceListSKUMaps P 
+USING SCH_PRODUCTPRICE S ON S.ProductFamilyID=P.ProductPriceListItemMapIID
+WHEN NOT MATCHED THEN
+INSERT(ProductSKUID, ProductPriceListID, Cost, Price, Amount, CompanyID)
+VALUES(ProductSKUMapIID, 2, CostPrice, CostPrice, CostPrice,CompanyID);
+
+========================================================================
+--Update selling Price
+;WITH SCH_PRODUCTPRICE AS
+(
+	SELECT SKU.ProductSKUMapIID, Pro.ProductIID,PF.ProductFamilyIID AS ProductFamilyID,PF.FamilyName, SExp.Category, ProductCode=LOWER(REPLACE(SExp.ProductName, ' ', '_')),
+	SExp.ProductName AS ProductName,
+	SExp.Quantity, SExp.CostPrice, SExp.Sellingprice,
+	CASE WHEN SExp.Campus = 'Thumama' then 10 WHEN SExp.Campus = 'Westbay' then 20 WHEN SExp.Campus = 'Meshaf' then 30 end BranchID,
+	CASE WHEN SExp.Campus = 'Thumama' then 1 WHEN SExp.Campus = 'Westbay' then 1 WHEN SExp.Campus = 'Meshaf' then 2 end CompanyID,
+	2 AS ProductTypeID, 1 AS UnitID, 2 AS ProductStatusID
+	FROM schools.ProductExcelExport SExp
+	LEFT JOIN catalog.ProductFamilies as PF ON PF.FamilyName = SExp.Category
+	LEFT JOIN catalog.Products as Pro ON Pro.ProductFamilyID = PF.ProductFamilyIID AND Pro.ProductName in(SExp.ProductName)
+	LEFT JOIN catalog.ProductSKUMaps as SKU ON SKU.ProductID = Pro.ProductIID
+	where SExp.Campus = 'Thumama'
+)
+MERGE catalog.ProductPriceListSKUMaps P 
+USING SCH_PRODUCTPRICE S ON S.ProductFamilyID=P.ProductPriceListItemMapIID
+WHEN NOT MATCHED THEN
+INSERT(ProductSKUID, ProductPriceListID, Cost, Price, Amount, CompanyID)
+VALUES(ProductSKUMapIID, 1, Sellingprice, Sellingprice, Sellingprice,CompanyID);
+
+SELECT * FROM catalog.ProductPriceListSKUMaps
+========================================================================
+--Update Quantity in Thumama
+;WITH SCH_PRODUCT AS
+(
+	SELECT
+	cat.CategoryIID AS CategoryID, cat.CategoryName,
+	SKU.ProductSKUMapIID, Pro.ProductIID,PF.ProductFamilyIID AS ProductFamilyID,PF.FamilyName, SExp.Category, ProductCode=LOWER(REPLACE(SExp.ProductName, ' ', '_')),
+	SExp.ProductName AS ProductName,
+	SExp.Quantity, SExp.CostPrice, SExp.Sellingprice,
+	CASE WHEN SExp.Campus = 'Thumama' then 10 WHEN SExp.Campus = 'Westbay' then 20 WHEN SExp.Campus = 'Meshaf' then 30 end BranchID,
+	1 AS CompanyID, 2 AS ProductTypeID, 1 AS UnitID, 2 AS ProductStatusID
+	FROM schools.ProductExcelExport SExp
+	LEFT JOIN catalog.ProductFamilies as PF ON PF.FamilyName = SExp.Category
+	LEFT JOIN catalog.Products as Pro ON Pro.ProductFamilyID = PF.ProductFamilyIID AND Pro.ProductName in(SExp.ProductName)
+	LEFT JOIN catalog.ProductSKUMaps as SKU ON SKU.ProductID = Pro.ProductIID
+	LEFT JOIN catalog.Categories as cat ON cat.CategoryName = SExp.Category
+	where SExp.Campus = 'Thumama'
+)
+MERGE inventory.ProductInventories P 
+USING SCH_PRODUCT S ON P.ProductSKUMapID = 0
+WHEN NOT MATCHED THEN
+INSERT(ProductSKUMapID, Batch, CompanyID, BranchID, Quantity)
+VALUES(ProductSKUMapIID, 1, CompanyID, BranchID, Quantity);
+
+========================================================================
+--Update Quantity in Westbay
+--DELETE inventory.ProductInventories
+;WITH SCH_PRODUCT AS
+(
+	SELECT
+	cat.CategoryIID AS CategoryID, cat.CategoryName,
+	SKU.ProductSKUMapIID, Pro.ProductIID,PF.ProductFamilyIID AS ProductFamilyID,PF.FamilyName, SExp.Category, ProductCode=LOWER(REPLACE(SExp.ProductName, ' ', '_')),
+	SExp.ProductName AS ProductName,
+	SExp.Quantity, SExp.CostPrice, SExp.Sellingprice,
+	CASE WHEN SExp.Campus = 'Thumama' then 10 WHEN SExp.Campus = 'Westbay' then 20 WHEN SExp.Campus = 'Meshaf' then 30 end BranchID,
+	1 AS CompanyID, 2 AS ProductTypeID, 1 AS UnitID, 2 AS ProductStatusID
+	FROM schools.ProductExcelExport SExp
+	LEFT JOIN catalog.ProductFamilies as PF ON PF.FamilyName = SExp.Category
+	LEFT JOIN catalog.Products as Pro ON Pro.ProductFamilyID = PF.ProductFamilyIID AND Pro.ProductName in(SExp.ProductName)
+	LEFT JOIN catalog.ProductSKUMaps as SKU ON SKU.ProductID = Pro.ProductIID
+	LEFT JOIN catalog.Categories as cat ON cat.CategoryName = SExp.Category
+	where SExp.Campus = 'Westbay'
+)
+MERGE inventory.ProductInventories P 
+USING SCH_PRODUCT S ON P.ProductSKUMapID = 0
+WHEN NOT MATCHED THEN
+INSERT(ProductSKUMapID, Batch, CompanyID, BranchID, Quantity)
+VALUES(ProductSKUMapIID, 1, CompanyID, BranchID, Quantity);
+
+SELECT * FROM inventory.ProductInventories
+
+========================================================================
+--Update Quantity in Meshaf
+--DELETE inventory.ProductInventories
+;WITH SCH_PRODUCT AS
+(
+	SELECT
+	cat.CategoryIID AS CategoryID, cat.CategoryName,
+	SKU.ProductSKUMapIID, Pro.ProductIID,PF.ProductFamilyIID AS ProductFamilyID,PF.FamilyName, SExp.Category, ProductCode=LOWER(REPLACE(SExp.ProductName, ' ', '_')),
+	SExp.ProductName AS ProductName,
+	SExp.Quantity, SExp.CostPrice, SExp.Sellingprice,
+	CASE WHEN SExp.Campus = 'Thumama' then 10 WHEN SExp.Campus = 'Westbay' then 20 WHEN SExp.Campus = 'Meshaf' then 30 end BranchID,
+	1 AS CompanyID, 2 AS ProductTypeID, 1 AS UnitID, 2 AS ProductStatusID
+	FROM schools.ProductExcelExport SExp
+	LEFT JOIN catalog.ProductFamilies as PF ON PF.FamilyName = SExp.Category
+	LEFT JOIN catalog.Products as Pro ON Pro.ProductFamilyID = PF.ProductFamilyIID AND Pro.ProductName in(SExp.ProductName)
+	LEFT JOIN catalog.ProductSKUMaps as SKU ON SKU.ProductID = Pro.ProductIID
+	LEFT JOIN catalog.Categories as cat ON cat.CategoryName = SExp.Category
+	where SExp.Campus = 'Meshaf'
+)
+MERGE inventory.ProductInventories P 
+USING SCH_PRODUCT S ON P.ProductSKUMapID = 0
+WHEN NOT MATCHED THEN
+INSERT(ProductSKUMapID, Batch, CompanyID, BranchID, Quantity)
+VALUES(ProductSKUMapIID, 1, CompanyID, BranchID, Quantity);
+
+========================================================================

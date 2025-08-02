@@ -1,0 +1,101 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    ViewData["Title"] = "Applied Jobs";
+    var windowName = "appliedJobs";
+    var settingBL = new Eduegate.Domain.Setting.SettingBL(null);
+    var clientName = settingBL.GetSettingValue<string>("CLIENTINSTANCE");
+}
+
+@await Html.PartialAsync("_ToastMessage")
+
+<div id="JobList" ng-controller="RecruitmentController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+    <div class="kt-container-fluid p-5 lg:p-10">
+        <!--begin::Card-->
+        <div class="kt-card">
+            <!--begin::Card header-->
+            <div class="kt-card-header">
+                <div class="kt-card-heading">
+                    <h3 class="kt-card-title">
+                        Applied Jobs
+                        <span class="kt-badge kt-badge-secondary ms-2">{{ (AppliedJobList | filter: { JobTitle: searchText } | filter: { TypeOfJob: searchJobType }).length }}</span>
+                    </h3>
+                </div>
+                <div class="kt-card-toolbar">
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <div class="kt-input w-full sm:w-48">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                                <path d="M10.5752 11.075L13.5002 14" stroke="currentColor" stroke-width="0.975" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M12.2 6.85C12.2 3.61914 9.58089 1 6.35 1C3.11914 1 0.5 3.61914 0.5 6.85C0.5 10.0809 3.11914 12.7 6.35 12.7C9.58089 12.7 12.2 10.0809 12.2 6.85Z" stroke="currentColor" stroke-width="0.975" stroke-linejoin="round" />
+                            </svg>
+                            <input type="text" placeholder="Search job title" class="w-full" ng-model="searchText" />
+                        </div>
+                        <div class="kt-input w-full sm:w-48">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                                <path d="M10.5752 11.075L13.5002 14" stroke="currentColor" stroke-width="0.975" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M12.2 6.85C12.2 3.61914 9.58089 1 6.35 1C3.11914 1 0.5 3.61914 0.5 6.85C0.5 10.0809 3.11914 12.7 6.35 12.7C9.58089 12.7 12.2 10.0809 12.2 6.85Z" stroke="currentColor" stroke-width="0.975" stroke-linejoin="round" />
+                            </svg>
+                            <input type="text" placeholder="Search job type" class="w-full" ng-model="searchJobType" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--end::Card header-->
+            <!--begin::Card content-->
+            <div class="kt-card-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+                    <!-- Job Card Repeater -->
+                    <div class="kt-card kt-card-border" ng-repeat="job in AppliedJobList | filter: { JobTitle: searchText } | filter: { TypeOfJob: searchJobType }">
+                        <div class="kt-card-content p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <h5 class="text-lg font-semibold text-foreground" ng-bind="job.JobTitle"></h5>
+                                <span class="kt-badge kt-badge-outline-primary" ng-bind="job.TypeOfJob"></span>
+                            </div>
+
+                            <div class="space-y-2 text-sm text-muted-foreground">
+                                <p class="flex items-start gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suitcase-lg-fill shrink-0 mt-0.5" viewBox="0 0 16 16">
+                                        <path d="M7 0a2 2 0 0 0-2 2H1.5A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14H2a.5.5 0 0 0 1 0h10a.5.5 0 0 0 1 0h.5a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2H11a2 2 0 0 0-2-2zM6 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1zM3 13V3h1v10zm9 0V3h1v10z" />
+                                    </svg>
+                                    <span ng-bind="job.JobDescription" class="truncate"></span>
+                                </p>
+                                <p class="flex items-center gap-2">
+                                    <i class="fa fa-map-marker shrink-0" aria-hidden="true"></i>
+                                    <span>{{job.School}}</span>
+                                </p>
+                                <p class="flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar3 shrink-0" viewBox="0 0 16 16">
+                                        <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z" />
+                                        <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
+                                    </svg>
+                                    <span>Applied on: <b class="font-semibold text-foreground">{{job.AppliedDateString}}</b></span>
+                                </p>
+                            </div>
+                        </div>
+                        <div ng-show="job.IsShortListed">
+                            <div class="kt-card-footer">
+                                <p class="flex items-center gap-2 text-sm">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar3 shrink-0" viewBox="0 0 16 16">
+                                        <path d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z" />
+                                        <path d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
+                                    </svg>
+                                    <span>Shortlisted on: <b class="font-semibold text-foreground">{{job.ShortListDateString}}</b></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--begin::Empty State-->
+                <div ng-if="!(AppliedJobList | filter: { JobTitle: searchText } | filter: { TypeOfJob: searchJobType }).length" class="text-center p-10 text-muted-foreground">
+                    You have not applied to any jobs that match the current filters.
+                </div>
+                <!--end::Empty State-->
+            </div>
+            <!--end::Card content-->
+        </div>
+        <!--end::Card-->
+    </div>
+</div>

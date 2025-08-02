@@ -1,0 +1,61 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+    ViewBag.WindowName = windowName;
+    string model = Model.IsChild ? "ChildModel" : "RowModel";
+}
+
+<div class="" id="@windowName" ng-controller="TableRowsController as RowModel" ng-init="RowModel.activate('#@windowName', '@(!string.IsNullOrEmpty(Model.ControllerName) ? Model.ControllerName : Model.ViewName.ToString())', '@Model.JsonModel', '@Model.ViewName.ToString()', @Model.HasFilters.ToString().ToLower(), @Model.EnabledSortableGrid.ToString().ToLower(), '@Model.RuntimeFilter')">
+    <div class="prod-tab-wrap">
+        <div class="producttab">
+            <div class="producttab-space">
+                @await Html.PartialAsync("_ListFilter", Model)
+                <div class="wrapper">
+                    <div class="tablewrapper">
+                        @if (Model.EnabledSortableGrid)
+                        {
+                            await Html.RenderPartialAsync("_SortableTable", Model);
+                        }
+                        else
+                        {
+                            <table cellpadding="0" cellspacing="0" style="width:100%;">
+                                @{
+                                    await Html.RenderPartialAsync("_TableHeader", Model);
+                                    await Html.RenderPartialAsync("_TableRows", Model);
+                                }
+                            </table>
+                        }
+
+                        <center>
+                            <i class="content-load fa fa-circle-o-notch fa-pulse waypoint"
+                               style="font-size:20px;color:black;"></i>
+                        </center>
+                        <div>
+                            <center>
+                                <span ng-if="@(model).rows.length == 0">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("No records found")!!</span>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @await Html.PartialAsync("_FilterView")
+        </div>
+        <div id="summarypanel" class="summary-panel">
+
+        </div><!--summary-->
+    </div>
+    <div class="page-nav position-fixed bottom-0 m-0">
+      
+        <ul>
+            <li>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Total") &nbsp;<span ng-bind="RowModel.TotalRecords" /> @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("records")</li>
+            <li ng-click="RowModel.FirstPage($event)" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Go to first page")"><i class="fa fa-fast-backward"></i></li>
+            <li ng-click="RowModel.PreviousPage($event)" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("previous")"><i class="fa fa-step-backward"></i></li>
+            <li>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Page") <span ng-bind="RowModel.CurrentPage"></span> @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("of") <span ng-bind="RowModel.TotalPages"></span></li>
+            <li ng-click="RowModel.NextPage($event)" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("next")"><i class="fa fa-step-forward"></i></i></li>
+            <li ng-click="RowModel.LastPage($event)" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Go to last page")"> <i class="fa fa-fast-forward"></i></li>
+            <li class="last"><span>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Go to page"): &nbsp;<input type="text" id="txtGetPageNo" ng-model="RowModel.GoToPageNo" ng-keyup="$event.keyCode == 13 && RowModel.GoToPage($event)" /></span></li>
+        </ul>
+
+    </div>
+</div>

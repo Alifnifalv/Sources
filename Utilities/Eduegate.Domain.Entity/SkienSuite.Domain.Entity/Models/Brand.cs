@@ -1,0 +1,42 @@
+using System;
+using System.Collections.Generic;
+
+namespace Eduegate.Domain.Entity.Models
+{
+    public partial class Brand
+    {
+        public Brand()
+        {
+            this.BrandCultureDatas = new List<BrandCultureData>();
+            this.BrandImageMaps = new List<BrandImageMap>();
+            this.BrandTagMaps = new List<BrandTagMap>();
+            this.BrandTags = new List<BrandTag>();
+            this.ProductPriceListBrandMaps = new List<ProductPriceListBrandMap>();
+            this.ProductPriceListCustomerGroupMaps = new List<ProductPriceListCustomerGroupMap>();
+            this.Products = new List<Product>();
+        }
+
+        public long BrandIID { get; set; }
+        public string BrandCode { get; set; }
+        public string BrandName { get; set; }
+        public string Descirption { get; set; }
+        public string LogoFile { get; set; }
+        public Nullable<long> IsIncludeHomePage { get; set; }
+        public Nullable<byte> StatusID { get; set; }
+        public Nullable<int> CreatedBy { get; set; }
+        public Nullable<int> UpdatedBy { get; set; }
+        public Nullable<System.DateTime> CreatedDate { get; set; }
+        public Nullable<System.DateTime> UpdatedDate { get; set; }
+        public byte[] TimeStamps { get; set; }
+        public Nullable<long> SEOMetadataID { get; set; }
+        public virtual ICollection<BrandCultureData> BrandCultureDatas { get; set; }
+        public virtual ICollection<BrandImageMap> BrandImageMaps { get; set; }
+        public virtual BrandStatus BrandStatus { get; set; }
+        public virtual SeoMetadata SeoMetadata { get; set; }
+        public virtual ICollection<BrandTagMap> BrandTagMaps { get; set; }
+        public virtual ICollection<BrandTag> BrandTags { get; set; }
+        public virtual ICollection<ProductPriceListBrandMap> ProductPriceListBrandMaps { get; set; }
+        public virtual ICollection<ProductPriceListCustomerGroupMap> ProductPriceListCustomerGroupMaps { get; set; }
+        public virtual ICollection<Product> Products { get; set; }
+    }
+}

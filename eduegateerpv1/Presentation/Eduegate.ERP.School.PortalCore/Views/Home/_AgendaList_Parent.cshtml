@@ -1,0 +1,108 @@
+﻿
+<div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6">
+    <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2">
+        <h1 class="d-flex text-dark fw-bold m-0 fs-3">Notes</h1>
+        <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+            <li class="breadcrumb-item text-gray-600">
+                <a class="text-gray-600 text-hover-primary">Home</a>
+            </li>
+            <li class="breadcrumb-item text-gray-600">Ward</li>
+            <li class="breadcrumb-item text-gray-500">Notes</li>
+        </ul>
+    </div>
+</div>
+<div class="flex-column-fluid">
+
+    <div id="TopicListOverlay" class="preload-overlay center">
+        <span id="TopicListOverlayButtonLoader" class="preloadImg">
+            <img src="~/Images/preloaderWhite.GIF" alt="loader" />
+        </span>
+    </div>
+    <div class="alert alert-info text-center" ng-if="!ShowPreLoader && (AgendaList == null || AgendaList.length == 0)">
+        <b>There is no Notes found!</b>
+    </div>
+    <div class="fullcolumn-layout" ng-if="AgendaList != null && AgendaList.length > 0">
+        <div class="table-responsive table-responsive-custom">
+            <table id="GridTable" class="table table-striped table-bordered table-hover table-checkable order-column valign-middle">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Subject</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat-start="gridModel in AgendaList track by $index" class="ng-scope">
+                        <td class="medium-col-width">
+                            <span ng-bind="gridModel.Date1String" class="ng-binding"></span>
+                        </td>
+                        <td class="medium-col-width">
+                            <span ng-bind="gridModel.Subject.Value" class="ng-binding"></span>
+                        </td>
+                        <td class="medium-col-width">
+                            <span ng-bind="gridModel.Title" class="ng-binding"></span>
+                        </td>
+                        <td>
+                            <span ng-bind-html="gridModel.AgendaTopicMap[0].Topic" class="ng-binding"></span>
+                        </td>
+
+                        <td class="text-right">
+                            <div class="controls text-right" ng-click="ExpandCollapase($event, gridModel,'IsExpand')">
+                                <span class="gridBtn pointer" ng-if="!gridModel.IsExpand"><i class="fa fa-eye" aria-hidden="true" title="View Details"></i></span>
+                                <span class="gridBtn active pointer" ng-if="gridModel.IsExpand"><i class="fa fa-eye-slash" aria-hidden="true" title="Hide Details"></i></span>
+                            </div><!--controls-->
+                        </td>
+                    </tr>
+                    <tr class="toggleGrid" ng-show="gridModel.IsExpand" style="display:table-row">
+                        <td colspan="6" ng-if="!gridModel.AgendaTaskMap.length" class="noPaddingLeft noPaddingRight">
+                            <span class="alert alert-info displayBlock noMarginBtm text-center">
+                                <b>No details found!</b>
+                            </span>
+                        </td>
+                        <td class="feeStructure noPadding" colspan="6" ng-if="gridModel.AgendaTaskMap.length > 0">
+                            <table class="table table-striped table-bordered table-hover table-checkable order-column valign-middle">
+                                <thead>
+                                    <tr>
+                                        <th class="text-left">Start Date</th>
+                                        <th class="text-left">End Date</th>
+                                        <th class="text-left">Attachments</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat-start="gridModel in gridModel.AgendaTaskMap track by $index" class="ng-scope">
+                                        <td class="text-left">
+                                            <span ng-bind="gridModel.Date1String" class="ng-binding"></span>
+                                        </td>
+                                        <td class="text-left">
+                                            <span ng-bind="gridModel.Date2String" class="ng-binding"></span>
+                                        </td>
+                                        <td class="text-left">
+                                            <div ng-if="gridModel.AttachmentReferenceID != null">
+                                                <i class="fa fa-2x fa-download" aria-hidden="true" title="click here to download" ng-click="DownloadURL('ReadContentsByID?contentID='+gridModel.AttachmentReferenceID)">
+                                                </i>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr ng-repeat-end="" class="ng-scope"></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr ng-repeat-end="" class="ng-scope"></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row gy-5 g-xl-10">
+
+    <!--begin::Col-->
+    <div class="col-xl-4 mb-5 mb-xl-10">
+        <!--begin::Engage widget 1-->
+        <!-- END BEGIN PROFILE SIDEBAR -->
+        <!-- BEGIN PROFILE CONTENT -->
+        <!--end::Engage widget 1-->
+    </div>
+    <!--end::Col-->
+</div>

@@ -1,0 +1,47 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_Notifications";
+    var documentTypeID = Model.GetParameterValue<string>("DocumentTypeID");
+    var title = Model.GetParameterValue<string>("Title");
+    var cultureTitle = Model.GetParameterValue<string>("Title_" + System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower());
+    if (!string.IsNullOrEmpty(cultureTitle))
+    {
+        title = cultureTitle;
+    }
+}
+
+<div class="card card-flush h-xl-100">
+    <div id="@windowName" template="DashBoard_Notifications" ng-controller="DashboardController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+
+        @* <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">*@
+
+        
+            <div class="card-header border-0 pt-5">
+                <h3 class="card-title align-items-start flex-column">
+                    <span class="card-label fw-bold text-dark">@title</span>
+
+                    @*<span class="text-muted mt-1 fw-semibold fs-7">8k social visitors</span>*@
+                </h3>
+
+                <!--begin::Toolbar-->
+                <div class="card-toolbar">
+                    <!--begin::Menu-->
+                    <button class="btn btn-icon btn-color-gray-400 btn-active-color-primary justify-content-end" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-end" data-kt-menu-overflow="true">
+
+                        <i class="ki-duotone ki-dots-square fs-1"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></i>
+                    </button>
+                    <!--end::Menu-->
+                </div>
+                <!--end::Toolbar-->
+            </div>
+            <div class="card-body">
+                <div ng-repeat="x in Notifications.MyInboxNotificationList" ng-show="Notifications.MyInboxNotificationList.length > 0">
+                    <h3 style="color:burlywood">{{x.Message}}</h3>
+                    <div class="mt-4">{{x.NotificationDateString}}</div>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,74 @@
+﻿@model List<Eduegate.Web.Library.OnlineExam.OnlineExam.ExamsListViewModel>
+@{
+    ViewData["Title"] = "Exam";
+    var ExamsList = Model;
+}
+
+<head>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            ShowTime();
+        });
+        function ShowTime() {
+            var dt = new Date();
+            document.getElementById("lblTime").innerHTML = dt.toLocaleTimeString();
+            window.setTimeout(ShowTime, 1000); // Here 1000(milliseconds) means one 1 Sec
+        }
+    </script>
+</head>
+
+<body>
+    <h1 class="anchor fw-bolder mb-5">
+        Exams
+    </h1>
+
+    <div id="OnlineExamMaps" ng-controller="ExamsListController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(ExamsList))">
+        <div id="currenttime" style="text-align: end; font-size: 15px;">
+            <div>
+                <label>Current time : </label>
+                <label id="lblTime" style="font-weight: bold"></label>
+            </div>
+        </div>
+
+        <div>
+            <div class="table-responsive">
+                <table class="table table-rounded table-striped border gy-7 gs-7">
+                    <thead>
+                        <tr class="fw-bold fs-6 text-gray-800 border-bottom-2 border-gray-200">
+                            <th class="min-w-100px">SL no</th>
+                            <th class="min-w-400px">Exam name</th>
+                            <th class="min-w-200px">Duration (Minutes)</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="py-5 fw-bold border-bottom border-gray-300 fs-6" ng-repeat="examData in CandidateOnlineExams">
+                            <td><span>{{$index + 1}}</span></td>
+                            <td>{{examData.OnlineExamName}}</td>
+                            <td>{{examData.TotalExamDuration}}</td>
+                            <td>
+                                <span ng-if="examData.MaximumMarks == examData.CandidateExamQuestionsTotalMarks">
+                                    <span class="btn btn-primary" ng-click="StartExam(examData)" ng-if="!examData.IsCandidateConductedExam">
+                                        <span ng-if="examData.OnlineExamStatusID == ExamStartedStatusID">
+                                            Resume
+                                        </span>
+                                        <span ng-if="examData.OnlineExamStatusID != ExamStartedStatusID">
+                                            Start
+                                        </span>
+                                    </span>
+                                    <span ng-if="examData.OnlineExamStatusID == ExamCompleteStatusID && examData.IsCandidateConductedExam">
+                                        <label style="color:red;">{{examData.OnlineExamStatusName}}</label>
+                                    </span>
+                                </span>
+                                <span ng-if="examData.MaximumMarks != examData.CandidateExamQuestionsTotalMarks">
+                                    <label style="color:orange;">Insufficient questions available to start the exam.</label>
+                                </span>
+                            </td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+

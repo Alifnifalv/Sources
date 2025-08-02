@@ -1,0 +1,104 @@
+﻿@model List<Eduegate.Web.Library.OnlineExam.OnlineExam.ExamsListViewModel>
+@{
+    ViewData["Title"] = "Exam";
+    var ExamsList = Model;
+    var client = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENTINSTANCE");
+    var clientFullName = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENT_FULL_NAME");
+}
+
+<head>
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/Site.css" />
+
+    <link href="~/Content/dashboard/dashboard.css" rel="stylesheet" />
+    <link href="~/Content/dashboard/docs.css" rel="stylesheet" />
+    <link href="~/Content/dashboard/style.bundle.css" rel="stylesheet" />
+    <link href="~/Content/dashboard/Style.css" rel="stylesheet" />
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            ShowTime();
+        });
+        function ShowTime() {
+            var dt = new Date();
+            document.getElementById("lblTime").innerHTML = dt.toLocaleTimeString();
+            window.setTimeout(ShowTime, 1000); // Here 1000(milliseconds) means one 1 Sec
+        }
+    </script>
+</head>
+
+<body>
+    <div id="OnlineExamMaps" ng-controller="ExamsListController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(ExamsList))">
+        <div class="d-flex gap-4">
+            <div class="exam-card d-flex">
+                <div class="exam-header">Exam</div>
+                <div class="heading2">Your Exam is Ready!</div>
+                <div id="currenttime">
+                    <div class="badge badge-success rounded rounded-5">
+                        <span>Current Time: </span>
+                        <span id="lblTime" style="font-weight: bold"></span>
+                    </div>
+                </div>
+                <div class="exam-list">
+                    <!-- ng-repeat loop starts -->
+                    <div class="exam-item" ng-repeat="examData in CandidateOnlineExams">
+                        <div class="d-flex flex-start gap-2 w-100">
+                            <div class="d-flex gap-4">
+                                <div class="d-flex">
+                                    <div class="exam-title" ng-bind="$index + 1"></div>
+                                    <div class="exam-title"> .</div>
+                                </div>
+                                <img src="~/img/paper_blue.svg" alt="Icon" class="exam-icon">
+                            </div>
+                            <div class="exam-details d-flex flex-column w-100">
+                                <div>
+                                    <span class="exam-title" ng-bind="examData.OnlineExamName"></span>
+                                </div>
+                                <div class="d-flex W-100">
+                                    <div class="d-flex flex-between justify-content-between w-50">
+                                        <span>
+                                            <img src="~/img/time.svg" alt="Icon" class="exam-details-icon">
+                                            <span class="exam-details-text" ng-bind="examData.TotalExamDuration"></span> mins
+                                        </span>
+                                        <span>
+                                            <img src="~/img/comment.svg" alt="Icon" class="exam-details-icon">
+                                            <span class="exam-details-text" ng-bind="examData.CandidateExamQuestionsTotalMarks"></span> Questions
+                                        </span>
+                                        <span>
+                                            <img src="~/img/mark.svg" alt="Icon" class="exam-details-icon">
+                                            <span class="exam-details-text" ng-bind="examData.MaximumMarks"></span> Marks
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="d-flex"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <span ng-if="examData.MaximumMarks == examData.CandidateExamQuestionsTotalMarks">
+                            <button type="button" class="btn btn-primary" ng-click="StartExam(examData)" ng-if="!examData.IsCandidateConductedExam">
+                                <span ng-if="examData.OnlineExamStatusID == ExamStartedStatusID">
+                                    Resume
+                                </span>
+                                <span ng-if="examData.OnlineExamStatusID != ExamStartedStatusID">
+                                    Start
+                                </span>
+                            </button>
+                            <span ng-if="examData.OnlineExamStatusID == ExamCompleteStatusID && examData.IsCandidateConductedExam">
+                                <label style="color:red;">{{examData.OnlineExamStatusName}}</label>
+                            </span>
+                        </span>
+                        <span ng-if="examData.MaximumMarks != examData.CandidateExamQuestionsTotalMarks">
+                            <label style="color:orange;">Insufficient questions available to start the exam.</label>
+                        </span>
+                    </div>
+                    <!-- ng-repeat loop ends -->
+                </div>
+            </div>
+            <div class="">
+                <img src="~/img/exam-banner.png" alt="Icon" class="exam-banner">
+            </div>
+        </div>
+</body>
+

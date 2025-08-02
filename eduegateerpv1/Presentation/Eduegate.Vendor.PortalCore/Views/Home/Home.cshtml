@@ -1,0 +1,124 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    var windowName = "summaryCard";
+    var settingBL = new Eduegate.Domain.Setting.SettingBL(null);
+    var clientName = settingBL.GetSettingValue<string>("CLIENTINSTANCE");
+}
+
+@await Html.PartialAsync("_ToastMessage")
+<div id="Home" ng-controller="DashboardController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+    <div class="welcome-div pt-3">
+        Welcome,<br>
+        <h2>{{HeaderInfoModel.Supplier.SupplierCode}}</h2>
+    </div>
+
+    @* Dashboard Banner *@
+    <div class="row">
+        <div class="col-8">
+            <div class="row">
+            <img class="" src="~/Clients/@clientName/banner.png" />
+            @* Dashboard Card *@
+                <div class="row pt-5 ps-5">
+                    <div class="col dashBoardCards" ng-repeat="datas in CardDatas" ng-style="{'border': '1px solid ' + datas.CardColor}">
+                        <div class="row">
+                            <div class="col cardTitle" ng-style="{'color': datas.CardColor}">{{ datas.Header }}</div>
+                            <div class="col">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="128" height="126" viewBox="0 0 128 126" fill="none" class="cardSpiral">
+                                    <g opacity="0.54">
+                                        <path opacity="0.8" fill-rule="evenodd" clip-rule="evenodd" d="M81.499 62.0001C81.499 72.3404 73.1165 80.7228 62.7762 80.7228C52.4359 80.7228 44.0535 72.3404 44.0535 62.0001C44.0535 51.6598 52.4359 43.2773 62.7762 43.2773C73.1165 43.2773 81.499 51.6598 81.499 62.0001ZM62.7762 80.3557C72.9138 80.3557 81.1319 72.1376 81.1319 62.0001C81.1319 51.8626 72.9138 43.6445 62.7762 43.6445C52.6387 43.6445 44.4206 51.8626 44.4206 62.0001C44.4206 72.1376 52.6387 80.3557 62.7762 80.3557Z" fill="{{datas.CardColor}}" />
+                                        <path opacity="0.7" fill-rule="evenodd" clip-rule="evenodd" d="M87.6176 61.3881C87.6176 74.7697 76.7697 85.6176 63.3881 85.6176C50.0066 85.6176 39.1587 74.7697 39.1587 61.3881C39.1587 48.0066 50.0066 37.1587 63.3881 37.1587C76.7697 37.1587 87.6176 48.0066 87.6176 61.3881ZM63.3881 85.2505C76.5669 85.2505 87.2505 74.5669 87.2505 61.3881C87.2505 48.2093 76.5669 37.5258 63.3881 37.5258C50.2093 37.5258 39.5258 48.2093 39.5258 61.3881C39.5258 74.5669 50.2093 85.2505 63.3881 85.2505Z" fill="{{datas.CardColor}}" />
+                                        <path opacity="0.7" fill-rule="evenodd" clip-rule="evenodd" d="M92.5122 61.3881C92.5122 77.473 79.4729 90.5124 63.388 90.5124C47.3031 90.5124 34.2637 77.473 34.2637 61.3881C34.2637 45.3032 47.3031 32.2638 63.388 32.2638C79.4729 32.2638 92.5122 45.3032 92.5122 61.3881ZM63.388 90.1452C79.2701 90.1452 92.1451 77.2702 92.1451 61.3881C92.1451 45.5059 79.2701 32.6309 63.388 32.6309C47.5058 32.6309 34.6308 45.5059 34.6308 61.3881C34.6308 77.2702 47.5058 90.1452 63.388 90.1452Z" fill="{{datas.CardColor}}" />
+                                        <path opacity="0.6" fill-rule="evenodd" clip-rule="evenodd" d="M97.4071 61.3881C97.4071 80.1764 82.1763 95.4073 63.388 95.4073C44.5998 95.4073 29.3689 80.1764 29.3689 61.3881C29.3689 42.5999 44.5998 27.369 63.388 27.369C82.1763 27.369 97.4071 42.5999 97.4071 61.3881ZM63.388 95.0401C81.9735 95.0401 97.04 79.9736 97.04 61.3881C97.04 42.8026 81.9735 27.7361 63.388 27.7361C44.8025 27.7361 29.736 42.8026 29.736 61.3881C29.736 79.9736 44.8025 95.0401 63.388 95.0401Z" fill="{{datas.CardColor}}" />
+                                        <path opacity="0.6" fill-rule="evenodd" clip-rule="evenodd" d="M103.526 62.0001C103.526 83.8296 85.8294 101.526 63.9999 101.526C42.1704 101.526 24.4741 83.8296 24.4741 62.0001C24.4741 40.1705 42.1704 22.4742 63.9999 22.4742C85.8294 22.4742 103.526 40.1705 103.526 62.0001ZM63.9999 101.159C85.6267 101.159 103.159 83.6268 103.159 62.0001C103.159 40.3733 85.6267 22.8414 63.9999 22.8414C42.3732 22.8414 24.8412 40.3733 24.8412 62.0001C24.8412 83.6268 42.3732 101.159 63.9999 101.159Z" fill="{{datas.CardColor}}" />
+                                        <path opacity="0.5" fill-rule="evenodd" clip-rule="evenodd" d="M108.421 61.3882C108.421 86.259 88.259 106.421 63.3882 106.421C38.5174 106.421 18.3557 86.259 18.3557 61.3882C18.3557 36.5174 38.5174 16.3557 63.3882 16.3557C88.259 16.3557 108.421 36.5174 108.421 61.3882ZM63.3882 106.054C88.0562 106.054 108.054 86.0562 108.054 61.3882C108.054 36.7202 88.0562 16.7228 63.3882 16.7228C38.7202 16.7228 18.7228 36.7202 18.7228 61.3882C18.7228 86.0562 38.7202 106.054 63.3882 106.054Z" fill="{{datas.CardColor}}" />
+                                        <path opacity="0.4" fill-rule="evenodd" clip-rule="evenodd" d="M114.539 61.3881C114.539 89.638 91.638 112.539 63.3881 112.539C35.1382 112.539 12.2371 89.638 12.2371 61.3881C12.2371 33.1382 35.1382 10.2371 63.3881 10.2371C91.638 10.2371 114.539 33.1382 114.539 61.3881ZM63.3881 112.172C91.4353 112.172 114.172 89.4353 114.172 61.3881C114.172 33.3409 91.4353 10.6042 63.3881 10.6042C35.3409 10.6042 12.6042 33.3409 12.6042 61.3881C12.6042 89.4353 35.3409 112.172 63.3881 112.172Z" fill="{{datas.CardColor}}" />
+                                        <path opacity="0.4" fill-rule="evenodd" clip-rule="evenodd" d="M120.658 61.3882C120.658 93.0174 95.0174 118.658 63.3882 118.658C31.7591 118.658 6.11865 93.0174 6.11865 61.3882C6.11865 29.7591 31.7591 4.11865 63.3882 4.11865C95.0174 4.11865 120.658 29.7591 120.658 61.3882ZM63.3882 118.291C94.8146 118.291 120.291 92.8146 120.291 61.3882C120.291 29.9619 94.8146 4.48577 63.3882 4.48577C31.9619 4.48577 6.48577 29.9619 6.48577 61.3882C6.48577 92.8146 31.9619 118.291 63.3882 118.291Z" fill="{{datas.CardColor}}" />
+                                        <path opacity="0.3" fill-rule="evenodd" clip-rule="evenodd" d="M128 63C128 97.7939 99.3462 126 64 126C28.6538 126 0 97.7939 0 63C0 28.2061 28.6538 0 64 0C99.3462 0 128 28.2061 128 63ZM64 125.639C99.1435 125.639 127.633 97.5944 127.633 63C127.633 28.4056 99.1435 0.361377 64 0.361377C28.8565 0.361377 0.367113 28.4056 0.367113 63C0.367113 97.5944 28.8565 125.639 64 125.639Z" fill="{{datas.CardColor}}" />
+                                        <path opacity="0.9" fill-rule="evenodd" clip-rule="evenodd" d="M75.3805 62C75.3805 68.9611 69.7374 74.6042 62.7763 74.6042C55.8152 74.6042 50.1721 68.9611 50.1721 62C50.1721 55.0388 55.8152 49.3958 62.7763 49.3958C69.7374 49.3958 75.3805 55.0388 75.3805 62ZM62.7763 74.237C69.5347 74.237 75.0134 68.7583 75.0134 62C75.0134 55.2416 69.5347 49.7629 62.7763 49.7629C56.018 49.7629 50.5392 55.2416 50.5392 62C50.5392 68.7583 56.018 74.237 62.7763 74.237Z" fill="{{datas.CardColor}}" />
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M70.4856 62C70.4856 66.2578 67.034 69.7094 62.7763 69.7094C58.5185 69.7094 55.0669 66.2578 55.0669 62C55.0669 57.7423 58.5185 54.2906 62.7763 54.2906C67.034 54.2906 70.4856 57.7423 70.4856 62ZM62.7763 69.3423C66.8313 69.3423 70.1185 66.055 70.1185 62C70.1185 57.945 66.8313 54.6578 62.7763 54.6578C58.7212 54.6578 55.434 57.945 55.434 62C55.434 66.055 58.7212 69.3423 62.7763 69.3423Z" fill="{{datas.CardColor}}" />
+                                    </g>
+                                </svg>
+                                <div class="cardValue" ng-style="{'color': datas.CardColor}">{{ datas.Value }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-4">
+            <div class="card border-light mb-3 notificationCard">
+                <div class="sticky-header p-7">
+                    <h4>Notifications</h4>
+                </div>
+                <div class="card-body" style="padding: 0rem 1.50rem;">
+                    <div ng-repeat="notif in Notifications" class="notification-container">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8" fill="none">
+                            <circle cx="4" cy="4" r="4" fill="#3F82C0"></circle>
+                        </svg>
+                        <label class="notificationSubject px-2" title="{{notif.Message}}">{{notif.Message}}</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @*     <div class="chart-container">
+    <canvas id="bar-chart"></canvas>
+    </div>
+    <div class="chart-container">
+    <canvas id="pie-chart"></canvas>
+    </div> *@
+
+    @* <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const barData = {
+    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+    datasets: [{
+    label: 'Sales',
+    backgroundColor: 'rgba(52, 152, 219, 0.7)',
+    borderColor: 'rgba(52, 152, 219, 1)',
+    borderWidth: 1,
+    data: [65, 59, 80, 81, 56, 55]
+    }]
+    };
+
+    const barCtx = document.getElementById('bar-chart').getContext('2d');
+    new Chart(barCtx, {
+    type: 'bar',
+    data: barData,
+    options: {
+    responsive: true,
+    maintainAspectRatio: false
+    }
+    });
+
+    const pieData = {
+    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+    datasets: [{
+    data: [12, 19, 3, 5, 2, 3],
+    backgroundColor: [
+    'rgba(231, 76, 60, 0.7)',
+    'rgba(41, 128, 185, 0.7)',
+    'rgba(241, 196, 15, 0.7)',
+    'rgba(46, 204, 113, 0.7)',
+    'rgba(155, 89, 182, 0.7)',
+    'rgba(230, 126, 34, 0.7)'
+    ]
+    }]
+    };
+
+    const pieCtx = document.getElementById('pie-chart').getContext('2d');
+    new Chart(pieCtx, {
+    type: 'pie',
+    data: pieData,
+    options: {
+    responsive: true,
+    maintainAspectRatio: false
+    }
+    });
+    });
+    </script> *@
+</div>

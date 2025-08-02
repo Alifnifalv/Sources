@@ -1,0 +1,378 @@
+﻿
+    <div class="productcreteheader">Quick @*<button value="Submit" class="submitcreateform-style">Next</button>*@</div>
+    <div class="panel-body">
+        <form class="form-horizontal" action="#" name="QuickCreateForm" novalidate="novalidate">
+            <div class="container-left options alignleft">
+                <div class="form-group">
+                    <label class="addprodleft control-label">IsOnline</label>
+                    <div class="controls productname">
+                        <label class="checkboxwrap">
+                            <input name="isOnline" id="cbIsOnline" type="checkbox" ng-model="ProductModel.QuickCreate.IsOnline"><span class="checkboxinner"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="addprodleft control-label">Product Name<span class="redcolor">*</span></label>
+                    <div class="controls productname fieldpopup">
+                        <input name="ProductName" id="prodnameid" class="" style="display:inline !important;" type="text" placeholder="Product Name" data-rel="tooltip-right" data-original-title="Insert your input tips here" ng-model="ProductModel.QuickCreate.ProductName" ng-change="UpdateDefaultLangValueInPopup();" ng-focus="MultilanguagePopup($event, 'show');" required>
+                        @*@Html.TextBoxFor(m=>m.ProductName, null, new { @style = "display:inline !important;", @placeholder = "Product Name", @data_rel = "tooltip-right", @data_original_title = "Insert your input tips here", ng_model = "ProductModel.QuickCreate.ProductName", @ng_change = "UpdateDefaultLangValueInPopup();" })
+                            @Html.ValidationMessageFor(m => m.ProductName)*@
+                        <span class="lang-icon" id="datepicker-icon-trigger" data-datepicker="#datepicker-icon"><i class="fa fa-language"></i></span>
+                        <div id="languageoption" class="languageoption">
+                            <ul>
+                                <li ng-repeat="culture in ProductModel.QuickCreate.CultureInfo"><label>{{culture.CultureName}} </label>
+                                    <input type="text" value={{culture.CultureValue}} ng-model="culture.CultureValue" 
+                                           class="haslanguage" name="language" id="{{culture.CultureName}}" placeholder="" 
+                                           ng-change="UpdateDefaultLangValToProductName('{{culture.CultureName}}');"></li>
+                            </ul>
+                        </div>
+                        <span class="cufon" style="color:red" ng-show="submitted && QuickCreateForm.ProductName.$error.required">Product Name is required</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="addprodleft control-label">Product Family<span class="redcolor">*</span></label>
+                    @*<div class="controls brand">
+                            <select name="ProductFamilyIID" ng-model="ProductModel.QuickCreate.ProductFamilyIID" ng-change="LoadSKUProperties(true)" required>
+                                <i class="fa fa-caret-down"></i>
+                                <option ng-repeat="family in productFamilies" ng-selected="ProductModel.QuickCreate.ProductFamilyIID == family.ProductFamilyIID" value="{{family.ProductFamilyIID}}">{{family.FamilyName}}</option>
+                            </select>
+                            <i class="dropdownarrow fa fa-caret-down"></i>
+                            <span class="cufon" style="color:red" ng-show="submitted && QuickCreateForm.ProductFamilyIID.$error.required">Product Family is required</span>
+                            <button class="button-orange addprod-option" title="Add Product Family">+</button>
+                        </div>*@
+
+                    <div class="controls brand">
+                        <ui-select on-select="LoadSKUProperties(true, $select.selected)" name="ProductFamily"
+                                   ng-model="ProductModel.QuickCreate.ProductFamily" theme="select2" class="pos-txt" ng-required="true">
+                            <ui-select-match placeholder="Select Product Family">{{$select.selected.Value}}</ui-select-match>
+                            <ui-select-choices repeat="family in productFamilies | filter:$select.search" refresh="GetProductFamilies($select.search)"
+                                               refresh-delay="50"><span ng-bind="family.Value"></span></ui-select-choices>
+                        </ui-select>
+                        @*<button class="button-orange addprod-option" title="Add Product Family">+</button>*@
+                    </div>
+                    <span class="cufon" style="color:red" ng-show="submitted && QuickCreateForm.ProductFamily.$error.required">Product Family is required</span>
+
+                </div>
+
+                @*<div class="form-group">
+                        <label class="addprodleft control-label">Product Owner<span class="redcolor">*</span></label>
+                        <div class="controls brand">
+                            <ui-select id="ProductOwner" name="ProductOwner" multiple ng-model="ProductModel.KeyValueOwners" theme="select2" class="pos-txt" ui-select-required>
+                                <ui-select-match placeholder="Select">{{$item.Value}}</ui-select-match>
+                                <ui-select-choices repeat="employee in employees|filter:$select.search">
+                                    {{employee.Value}}
+                                </ui-select-choices>
+                            </ui-select>
+                            <span class="cufon" style="color: red;" ng-show="submitted && QuickCreateForm.ProductOwner.$error.uiSelectRequired">Product Owner is required.</span>
+                        </div>
+                    </div>*@
+
+                <div class="form-group">
+                    <label class="addprodleft control-label">Product Status<span class="redcolor">*</span></label>
+                    <div class="controls brand">
+                        <select name="StatusIID" ng-model="ProductModel.QuickCreate.StatusIID" required>
+                            <i class="fa fa-caret-down"></i>
+                            <option ng-repeat="status in productStatus" ng-selected="ProductModel.QuickCreate.StatusIID == status.StatusIID" value="{{status.StatusIID}}">{{status.StatusName}}</option>
+                        </select>
+                        <i class="dropdownarrow fa fa-caret-down"></i>
+                        <span class="cufon" style="color:red" ng-show="submitted && QuickCreateForm.StatusIID.$error.required">Product Status is required</span>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label class="addprodleft control-label">Actual Status</label>
+                    <div class="controls brand">
+                        <label class="control-label" ng-bind="ProductModel.QuickCreate.StatusName"></label>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label class="addprodleft control-label">Brand Name <span class="redcolor">*</span></label>
+                    @*<div class="controls brand">
+                            <select name="Brand" ng-model="ProductModel.QuickCreate.BrandIID" required>
+                                <i class="fa fa-caret-down"></i>
+                                <option ng-repeat="brand in availableBrands" ng-selected="ProductModel.QuickCreate.BrandIID == brand.BrandIID" value="{{brand.BrandIID}}">{{brand.BrandName}}</option>
+                            </select>
+                            <i class="dropdownarrow fa fa-caret-down"></i>
+                            <span class="cufon" style="color:red" ng-show="submitted && QuickCreateForm.Brand.$error.required">Brand Name is required</span>
+                            <button class="button-orange addprod-option" title="Add New Brand">+</button>
+                        </div>*@
+
+                    <div class="controls brand">
+                        <ui-select id="Brand" name="Brand" on-select="setBrandModel($select.selected)" ng-model="ProductModel.QuickCreate.Brand" theme="select2" class="pos-txt" ng-required="true">
+                            <ui-select-match placeholder="Select Brand">{{$select.selected.Value}}</ui-select-match>
+                            <ui-select-choices repeat="brand in availableBrands | filter:$select.search" refresh="GetBrandList($select.search)"
+                                               refresh-delay="50"><span ng-bind="brand.Value"></span></ui-select-choices>
+                        </ui-select>
+                        @*<button class="button-orange addprod-option" title="Add New Brand">+</button>*@
+                    </div>
+                    <span class="cufon" style="color:red" ng-show="submitted && QuickCreateForm.Brand.$error.required">brand name is required</span>
+                </div>
+
+                @*<div class="form-group">
+                        <label class="addprodleft control-label">Product Owner</label>
+                        <div class="controls brand">
+                            <select name="ProductOwner" ng-model="ProductModel.QuickCreate.ProductOwnderID" required>
+                                <i class="fa fa-caret-down"></i>
+                                <option ng-repeat="employee in employees" ng-selected="ProductModel.QuickCreate.ProductOwnderID == employee.Key" value="{{employee.Key}}">{{employee.Value}}</option>
+                            </select>
+                            <i class="dropdownarrow fa fa-caret-down"></i>
+                            <span class="cufon" style="color:red" ng-show="submitted && QuickCreateForm.ProductOwner.$error.required">Product Owner is required</span>
+                        </div>
+                    </div>*@
+                <div class="form-group">
+                    <label class="addprodleft control-label">Product Owner<span class="redcolor">*</span></label>
+                    <div class="controls brand">
+                        <ui-select id="ProductOwner" name="ProductOwner" multiple ng-model="ProductModel.KeyValueOwners" theme="select2" class="pos-txt" ui-select-required>
+                            <ui-select-match placeholder="Select">{{$item.Value}}</ui-select-match>
+                            <ui-select-choices repeat="employee in employees|filter:$select.search" refresh="GetEmployeeList($select.search)"
+                                               refresh-delay="50">
+                                {{employee.Value}}
+                            </ui-select-choices>
+                        </ui-select>
+                        <span class="cufon" style="color: red;" ng-show="submitted && QuickCreateForm.ProductOwner.$error.uiSelectRequired">Product Owner is required.</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="addprodleft control-label">Product Type<span class="redcolor">*</span></label>
+                    <div class="controls brand">
+                        <select name="ProductTypeID" ng-model="ProductModel.QuickCreate.ProductTypeID" required>
+                            <i class="fa fa-caret-down"></i>
+                            <option ng-repeat="pt in productTypes track by $index" ng-selected="ProductModel.QuickCreate.ProductTypeID == pt.ProductTypeID" value="{{pt.ProductTypeID}}">{{pt.ProductTypeName}}</option>
+                        </select>
+                        <i class="dropdownarrow fa fa-caret-down"></i>
+                        <span class="cufon" style="color:red" ng-show="submitted && QuickCreateForm.ProductTypeID.$error.required">Product Type is required</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="addprodleft control-label">Tax</label>
+                    <div class="controls brand">
+                        <select name="TaxTemplateID" ng-model="ProductModel.QuickCreate.TaxTemplate" required>
+                            <i class="fa fa-caret-down"></i>
+                            <option ng-repeat="tmpl in TaxTemplates track by $index" ng-selected="ProductModel.QuickCreate.TaxTemplate == tmpl.Key" value="{{tmpl.Key}}">{{tmpl.Value}}</option>
+                        </select>
+                        <i class="dropdownarrow fa fa-caret-down"></i>
+                        @*<span class="cufon" style="color:red" ng-show="submitted && QuickCreateForm.TaxTemplateID.$error.required">Tax is required</span>*@
+                    </div>
+
+                </div>
+
+                @*<div class="form-group">
+                    <label class="addprodleft control-label">Product Cost Price</label>
+                    <div class="controls price">
+                        <div class="input-group">
+                            <input type="text" placeholder="" id="" class="">
+                            <span class="input-group-addon" id="" data-datepicker="">KD</span>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="addprodleft control-label">Product Price <span class="redcolor">*</span></label>
+                        <div class="controls price">
+                            <div class="input-group">
+                                <input type="text" placeholder="" id="" class="">
+                                <span class="input-group-addon" id="" data-datepicker="">KD</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="addprodleft control-label">Discount Price</label>
+                        <div class="controls price">
+                            <div class="input-group">
+                                <input type="text" placeholder="" id="" class="">
+                                <span class="input-group-addon" id="" data-datepicker="">KD</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="addprodleft control-label">Cash Back</label>
+                        <div class="controls price">
+                            <div class="input-group">
+                                <input type="text" placeholder="" id="" class="">
+                                <span class="input-group-addon" id="" data-datepicker="">KD</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="addprodleft control-label">  Keywords (Ar) <br><span class="commaseperated">(comma separated)</span></label>
+                        <div class="controls keywords">
+                            <textarea name="" rows="2" cols="20" id="" type="text"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="addprodleft control-label"> Keywords <br><span class="commaseperated">(comma separated)</span></label>
+                        <div class="controls keywords">
+                            <textarea name="" rows="2" cols="20" id="" type="text" ng-model="ProductModel.QuickCreate.KeyWords"></textarea>
+                        </div>
+                    </div>*@
+            </div>
+            <div class="container-right options alignleft">
+                <div id="PropertyType"></div>
+            </div>
+        </form>
+    </div>
+
+    <div class="productcreteheader">SKU's@*<button value="Submit" class="submitcreateform-style">Next</button>*@</div>
+    <div class="panel-body">
+        <ng-form name="SKUMappingForm">
+            <table class="listing planner-create sku ui-table ui-table-reflow" data-role="table" data-mode="reflow" border="0">
+                <thead>
+                    <tr>
+                        <th class="toggle-arrow"><span>&nbsp;</span></th>
+                        @*<th class="large-col-width">SKU</th>*@
+                        <th class="large-col-width">SKU Name</th>
+                        @*<th>ProductPrice <span style="color:white">*</span></th>*@
+                        <th>PartNumber <span style="color:white">*</span></th>
+                        <th>BarCode</th>
+                        <th>SKU Status</th>
+                        <th></th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="product-list" ng-repeat-start="sku in ProductModel.SKUMappings">
+                        @*<td class="chkbox">
+                                <b class="ui-table-cell-label">
+
+                                </b>
+                                <input data-role="none" type="checkbox">
+                                <span class="togglehead first-toggle active">
+                                    <ul class="accordian_header">
+                                        <li>11/26/2012</li>
+                                        <li class="accordian-arrow">
+                                            <span class="accordian-arrow-icon rotate180"></span>
+                                        </li>
+                                        <li>
+                                            <span>8 Hrs</span>
+                                        </li>
+                                    </ul>
+                                </span>
+                            </td>*@
+                        <td class="toggle-arrow" ng-click="ShowCustomSKUField($index);"><span>&nbsp;</span></td>
+                        @*<td class="large-col-width" ng-click="ShowCustomSKUField($index);">
+                                    <label data-role="none"> <a>{{sku.SKU}} </a></label>
+                            </td>*@
+
+                        <td class="large-col-width fieldpopup">
+                            <a>
+                                <input type="text" data-role="none" ng-focus="MultilanguagePopup($event, 'show');" ng-model="sku.SkuName.Text" />
+                                <div class="productname">
+                                    <div id="languageoptionSKU" class="languageoption">
+                                        <ul>
+                                            <li ng-repeat="culture in sku.SkuName.CultureDatas">
+                                                <label ng-bind="culture.CultureName"></label>
+                                                <input ng-if="$index == 0" type="text" value="{{culture.CultureValue; sku.SkuName.Text=culture.CultureValue;}}" ng-model="culture.CultureValue" class="haslanguage">
+                                                <input ng-if="$index!=0" type="text" value="{{culture.CultureValue;}}" ng-model="culture.CultureValue" class="haslanguage">
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </a>
+
+                        </td>
+
+                        @*<td class="job-col bgcolor">
+                                <input name="" data-role="none" placeholder="0.000" ng-model="sku.ProductPrice" type="text" required ng-pattern="/^[0-9]*\d{0,9}(\.?\d{1,3})?%?$/">
+                                <span class="cufon" style="color:red" ng-show="submitted && sku.ProductPrice == undefined">Please enter a valid price </span>
+                            </td>*@
+                        <td class="bgcolor">
+                            <input data-role="none" placeholder="Part Number" ng-model="sku.PartNumber" ng-blur="PartNumberExists(sku);" type="text" required />
+                            <span class="cufon" style="color:red" ng-show="submitted && sku.PartNumber == undefined">Please enter a valid Part Number </span>
+                            <span class="cufon" style="color:red" ng-show="sku.PartNoExists">Part Number Exists Already</span>
+                        </td>
+                        <td class="job-col bgcolor">
+                            <input data-role="none" placeholder="Bar Code" ng-model="sku.BarCode" ng-blur="BarcodeExist(sku);" type="text">
+                            <span class="cufon" style="color:red" ng-show="sku.BarCodeExists">Barcode Exists Already</span>
+                        </td>
+                        <td class="job-col bgcolor">
+                            <select name="StatusIID" ng-model="sku.StatusID" required>
+                                <i class="fa fa-caret-down"></i>
+                                <option ng-repeat="status in productStatus" ng-selected="sku.StatusID == status.StatusIID" value="{{status.StatusIID}}">{{status.StatusName}}</option>
+                            </select>
+                        </td>
+                        <td class="upload-controls">
+                            <span style="margin-top:4px" class="uploadicon popupbtn" data-popup-type="morelistoptions" ng-click="OpenImageMapPopup(sku, $event)">&nbsp;</span>
+                            <span class="uploadvideoicon popupbtn" data-popup-type="morevideolistoptions" ng-click="OpenVideoMapPopup(sku, $event)">&nbsp;</span>
+                            <span class="cufon" style="color:red" ng-show="submitted && sku.ImageMaps.length <= 0">Please map atleast one image </span>
+                        </td>
+
+                    </tr>
+
+
+
+                    @*start*@
+                    <tr id="skuField" class="sku-fields showfields" ng-repeat-end ng-show="$index == SKUIndex">
+                        <td colspan="6">
+                            @{
+                                await Html.RenderPartialAsync("_CustomSKUField", false);
+                            }
+                        </td>
+                    </tr>
+                    @*end*@
+
+                </tbody>
+            </table>
+        </ng-form>
+    </div>
+
+    <div class="popup morelist-options" data-popup-type="morelistoptions" id="ImageMapPopup">
+
+        <div class="popup-wrap">
+            <span class="close" ng-click="CloseImageMapPopup($event)">X</span>
+            <div class="productcreteheader">Customize Product Images</div>
+            <div class="total_imgs">
+                <span class="title">List of Images</span>
+                <ul>
+                    <li ng-repeat="imageInfo in SKUMapImagesToSelect" ng-class="{'selected' : imageInfo.isSelected === true, '' : imageInfo.isSelected === false}" ng-click="ToggleImageSelected(imageInfo);">
+                        <span class="delete">X</span><img ng-src="{{imageInfo.FilePath}}" />
+                    </li>
+                </ul>
+            </div>
+            <div id="add" class="addimagesbtn button-orange set-sku-image" data-skumapid="" ng-click="MapImagesToskuLine($event)"><a href="#">Add<i class="fa fa-angle-double-right"></i></a></div>
+            <div class="selected-images">
+                <span class="title">Selected Images</span>
+                <ul>
+                    <li ng-repeat="imageInfo in selectedSKUMapImages"><span class="delete" data-skumapid="" ng-click="RemoveImageMapsToSKuLines(imageInfo)">X</span><img ng-src="{{imageInfo.ImagePath}}" /></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    @*Video map popup*@
+    <div class="popup morelist-options" data-popup-type="morevideolistoptions" id="VideoMapPopup">
+
+        <div class="popup-wrap">
+            <span class="close" ng-click="CloseVideoMapPopup($event)">X</span>
+            <div class="productcreteheader">Customize Product Videos</div>
+            <div class="total_imgs">
+                <span class="title">List of Videos</span>
+                <ul>
+                    <li ng-repeat="videoInfo in SKUMapVideosToSelect" ng-class="{'selected' : videoInfo.isSelected === true, '' : videoInfo.isSelected === false}" ng-click="ToggleVideoSelected(videoInfo);" style="width: 150px;">
+                        <span class="delete">X</span>
+                        <video width="150" controls>
+                            <source ng-src="{{videoInfo.FilePath}}" type="video/mp4">
+                        </video>
+                    </li>
+                </ul>
+            </div>
+            <div id="addVideo" class="addimagesbtn button-orange set-sku-video" data-skumapid="" ng-click="MapVideosToskuLine($event)"><a href="#">Add<i class="fa fa-angle-double-right"></i></a></div>
+            <div class="selected-images">
+                <span class="title">Selected Videos</span>
+                <ul>
+                    <li ng-repeat="videoInfo in selectedSKUMapVideos" style="width: 150px;">
+                        <span class="delete" data-skumapid="" ng-click="RemoveVideoMapsToSKuLines(imageInfo)">X</span>
+                        <video width="150" controls>
+                            <source ng-src="{{videoInfo.VideoPath}}" type="video/mp4">
+                        </video>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+

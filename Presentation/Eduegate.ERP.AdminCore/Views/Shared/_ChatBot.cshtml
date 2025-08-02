@@ -1,0 +1,240 @@
+﻿@{
+    var clientName = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENTINSTANCE");
+}
+
+<div class="" ng-controller="ChatBotController" >
+
+    <div aria-live="polite" class="eduegate-client">
+        <div id="crisp-chatbox" lang="en" dir="ltr" translate="no" tabindex="-1" class="chat-box" data-hidden="false" data-force-show="false" data-color-mode="light" data-availability="online" data-lock-maximized="false" data-website-logo="false" data-last-operator-face="false" data-ongoing-operator-face="false" data-availability-tooltip="false" data-hide-vacation="false" data-blocked="false" data-mobile-view="false" data-full-view="false" data-small-view="false" data-large-view="true" data-has-local-messages="false" data-was-availability-online="true" data-is-activity-ongoing="false" data-hide-on-away="false" data-hide-on-mobile="false" data-position-reverse="false">
+            <div class="chat-box-wrapper ">
+                <div class="chat-container" data-visible="false" id="chatWindow" data-chat-status="initial" data-animate-minimize="false" data-animate-maximize="false" style="width: 400px !important;">
+            
+                    <div class="chat-container-main" data-has-health="" data-has-offline="true" data-has-feedback="false" data-has-alert="false" data-has-drop-zone="false" data-is-hidden-prompt="false" style="height: 635px !important;">
+                        <div id="rasa-chat-widget">
+                            <div class="card shadow-none w-100  rounded-4" id="kt_drawer_chat_messenger">
+                                <div class="card-header pe-5 py-3 px-4 pb-7"  style="background: linear-gradient(124deg, #4A2F84 2.16%, #495ECD 77.31%); box-shadow: 0px 8px 15.4px 0px rgba(0, 0, 0, 0.25);">
+                                    <div class="card-title">
+                                        <div class="d-flex justify-content-center flex-column me-3">
+                                            <a class="fs-4 fw-semibold text-white text-hover-primary me-1 mb-2 lh-1">eduêBot</a>
+                                            <div class="mb-0 lh-1">
+                                                <span class="fs-7 fw-normal" style="color:#89CDFF;">eduêgate AI Chatbot</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body mt-n2 mb-n2 bg-body rounded-4">
+                                    <div class="scroll-y me-n5 pe-2"  style="height: 470px;">
+                                        <div class="" ng-repeat="msg in messages">
+                                            <div class="d-flex justify-content-start my-2 " ng-if="msg.sender == 'bot'">
+                                                <div class="d-flex flex-column align-items-start" ng-if="msg.text ">
+                                                <div class="px-4 py-3 rounded  text-black fw-normal mw-lg-300px text-start"  style="background-color:#E6EFFD;">
+                                                    {{ msg.text }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                            <div class="d-flex justify-content-end my-2" ng-if="msg.sender == 'user'">
+                                                <div class="d-flex flex-column align-items-end" ng-if="msg.text ">
+                                                <div class="px-4 py-3  text-white fw-normal mw-lg-300px text-end"  style="background-color:#4949AC;border-radius: 12px 0px 12px 12px;
+">
+                                                    {{ msg.text }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                            <!-- Voice Message Display -->
+                                            <div class="d-flex justify-content-{{msg.sender == 'user' ? 'end' : 'start'}} my-2" ng-if="msg.type === 'voice'">
+                                                <div class="d-flex flex-column align-items-{{msg.sender == 'user' ? 'end' : 'start'}}">
+                                                    <div class="px-3 py-2 bg-light text-black fw-normal rounded-pill d-flex align-items-center shadow-sm"
+                                                         style="max-width: 280px; min-width: 180px; position: relative;">
+                                                        <!-- Play Button -->
+                                                        <button class="btn btn-link p-0 me-2" ng-click="togglePlayVoice(msg)">
+                                                            <i class="fa" ng-class="{'fa-play-circle': !msg.isPlaying, 'fa-pause-circle': msg.isPlaying}" style="font-size: 20px; color: #0d6efd;"></i>
+                                                        </button>
+
+                                                        <!-- Progress Bar (like WhatsApp wave effect) -->
+                                                        <div class="progress flex-grow-1" style="height: 3px; background: #ddd;">
+                                                            <div class="progress-bar bg-primary" role="progressbar"
+                                                                 ng-style="{
+            'width': msg.progress + '%',
+            'transition': msg.isPlaying ? 'var(--bs-progress-bar-transition)' : 'none'
+         }"
+                                                                 aria-valuemin="0" aria-valuemax="100">
+                                                            </div>
+                                                        </div>
+
+
+                                                        <!-- Timestamp -->
+                                                        <small class="text-muted ms-2">{{ msg.currentTime | date:'mm:ss' }} / {{ msg.duration | date:'mm:ss' }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
+                                            <!-- Menu Options Display -->
+                                            <div ng-if="msg.type === 'menu'" class="mb-3">
+                                                <div ng-repeat="category in msg.menu_categories track by $index" class="mb-2">
+                                                    <h5 class="fw-semibold text-gray-700">{{ category.category }}</h5>
+                                                    <div class="d-flex flex-wrap gap-2">
+                                                        <span ng-repeat="menu in category.items track by $index"
+                                                              class="badge badge-outline rounded-3 badge-info p-2 " 
+                                                              style="cursor: pointer;     padding: 7px 14px 8px !important;"
+                                                              ng-click="sendMessageFromMenu(menu)">
+                                                            <i class="fa me-2" ng-class="getIconForMenu(category.category)"></i>
+                                                            {{ menu }}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Confirmation Choices -->
+                                            <div ng-if="msg.type === 'confirmation'" class="mb-3">
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    <button ng-repeat="choice in msg.choices track by $index"
+                                                            class=" rounded-3  chatbotbutton"
+                                                            style="cursor: pointer;"
+                                                            ng-click="sendMessageFromMenu(choice)">
+                                                        {{ choice }}
+                                                    </button>
+                                                </div>
+                                            </div>
+
+
+                                            <!-- Display Link as a Button -->
+                                            <div class="d-flex justify-content-end mb-5" ng-if="msg.type === 'link'">
+                                               <div  class="d-flex flex-column align-items-end">
+                                                <span class="mb-2 text-gray-800">{{ msg.link.message }}</span>
+                                                    <button ng-click=" FireEvent($event,msg.link.link_url , menu.Parameters, menu)" class="chatbotbutton" target="_blank">
+                                                    {{ msg.link.link_text }}
+
+                                                </button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                         
+                                    </div>
+                                </div>
+                                <div class="card-footer pt-4 px-4 d-flex bg-light" id="kt_drawer_chat_messenger_footer d-flex">
+                                   
+                                     
+
+                                    <div class="d-flex flex-stack">
+                                        <div class="d-flex align-items-center ms-1 ms-lg-3">
+                                            <!--begin::Menu wrapper-->
+                                            <button class="btn btn-icon  position-relative btn btn-icon  w-30px h-30px w-md-40px h-md-40px " type="button" ng-mousedown="startRecording(); isRecording = true"
+                                                    ng-mouseup="stopRecording(); isRecording = false" title="Hold the Buton to talk " ng-class="{'pulse-active': isRecording}">
+                                                <svg ng-if="!isRecording" xmlns="http://www.w3.org/2000/svg" width="19" height="29" viewBox="0 0 19 29" fill="none">
+                                                    <path d="M17.445 14.2356C17.0056 14.2356 16.6496 14.5917 16.6496 15.031C16.6496 16.8659 15.7971 18.6724 14.3109 19.9869C12.9205 21.2167 11.0923 21.9221 9.29487 21.9221H8.94542C7.14813 21.9221 5.31987 21.2168 3.9295 19.9869C2.44316 18.6724 1.59081 16.866 1.59081 15.031C1.59081 14.5917 1.23478 14.2356 0.795403 14.2356C0.356022 14.2356 0 14.5917 0 15.031C0 17.3215 1.04813 19.5623 2.87554 21.1785C4.39359 22.5214 6.35029 23.3434 8.32469 23.4876V27.2013H4.63041C4.19103 27.2013 3.83501 27.5574 3.83501 27.9967C3.83501 28.436 4.19103 28.7921 4.63041 28.7921H13.6097C14.049 28.7921 14.4051 28.436 14.4051 27.9967C14.4051 27.5574 14.049 27.2013 13.6097 27.2013H9.9156V23.4876C11.89 23.3433 13.8467 22.5213 15.3649 21.1785C17.1924 19.5621 18.2404 17.3214 18.2404 15.031C18.2404 14.5917 17.8843 14.2356 17.445 14.2356Z" fill="#7D7D7D" />
+                                                    <path d="M8.95171 20.4051H9.28896C12.4728 20.4051 15.2658 17.8212 15.2658 14.8755V6.32118C15.2657 3.37564 12.4728 0.791748 9.28885 0.791748H8.9516C5.76766 0.791748 2.97473 3.37564 2.97473 6.32118V14.8755C2.97473 17.8211 5.76766 20.4051 8.95171 20.4051ZM4.56554 6.32118C4.56554 4.25981 6.65617 2.38255 8.95171 2.38255H9.28896C11.5845 2.38255 13.675 4.25981 13.675 6.32118V14.8755C13.675 16.9369 11.5845 18.8143 9.28896 18.8143H8.95171C6.65628 18.8143 4.56564 16.9369 4.56564 14.8755L4.56554 6.32118Z" fill="#7D7D7D" />
+                                                    <rect x="3.92419" y="2.38257" width="10.3933" height="16.7565" rx="4.58156" fill="#7D7D7D" />
+                                                </svg>
+                                                <img ng-if="isRecording" src="./Images/Main Scene.gif" class=" w-45px " />
+                                            </button>
+                                            <!--end::Menu wrapper-->
+                                        </div>
+                                      
+                                    </div>
+                                    <input type="text" class="form-control h-40px rounded-4 px-4" id="userInput"
+                                           placeholder="Type your question here.." ng-model="userInput" ng-keypress="checkEnter($event)" />
+                                    <div class="d-flex flex-stack">
+                                        <button class="btn btn-flush btn-sm mx-4 " type="button" ng-click="sendMessage('text', userInput)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="29" viewBox="0 0 28 29" fill="none">
+                                                <path d="M26.7829 0.850432C26.6307 0.812093 26.4687 0.791748 26.2984 0.791748C26.0225 0.791748 25.7266 0.843705 25.4192 0.946252L1.60492 8.88437C0.782356 9.15854 0.215367 9.71885 0.0494328 10.4217C-0.116557 11.1246 0.139838 11.8795 0.752987 12.4928C0.812983 12.5528 0.88184 12.6031 0.95726 12.642L10.2178 17.4156L26.7829 0.850432Z" fill="#4949AC" />
+                                                <path d="M11.3779 18.5757L16.1517 27.8364C16.1906 27.9118 16.2408 27.9806 16.3008 28.0405C16.7935 28.5333 17.3617 28.7938 17.9442 28.7938H17.9444C18.8265 28.7938 19.5794 28.1787 19.9092 27.1886L27.8474 3.37456C28.0126 2.87867 28.0426 2.41242 27.9421 2.01147L11.3779 18.5757Z" fill="#4949AC" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a data-is-failure="false" id="chatButton" class="chat-toggle-button draggable" tabindex="0" role="button" data-visible="false" data-maximized="false" data-animate-maximize="false" data-animate-minimize="false" data-pane-animate-entrance="false" aria-label="Open chat">
+                    <span class="chat-toggle-icon2 toggle-button-icon" data-has-unread="false">
+                        <span data-prefer-search="false" data-id="chat_opened" class="toggle-button-icon" data-is-ongoing="false">
+                            <span class="toggle-icon">
+                            </span>
+                        </span>
+                    </span>
+                </a>
+            </div>
+        </div>
+      </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const chatButton = document.getElementById('chatButton');
+        const chatWindow = document.getElementById('chatWindow');
+        const draggable = document.querySelector(".draggable");
+
+        let offsetX, offsetY, isDragging = false, dragged = false;
+        let startX, startY;
+
+        chatButton.addEventListener('click', function (e) {
+            if (dragged) return; // Prevent click event if dragged
+
+            const isVisible = chatWindow.getAttribute('data-visible') === 'true';
+
+            if (isVisible) {
+                chatWindow.setAttribute('data-animate-minimize', 'true');
+                chatWindow.setAttribute('data-animate-maximize', 'false');
+                setTimeout(() => {
+                    chatWindow.setAttribute('data-visible', 'false'); // Hide after animation
+                    chatWindow.removeAttribute('data-animate-minimize'); // Clean up
+                }, 300);
+            } else {
+                chatWindow.setAttribute('data-visible', 'true');
+                chatWindow.setAttribute('data-animate-maximize', 'true');
+                chatWindow.removeAttribute('data-animate-minimize');
+            }
+        });
+
+        draggable.addEventListener("mousedown", (e) => {
+            isDragging = true;
+            dragged = false;
+            startX = e.clientX;
+            startY = e.clientY;
+            offsetX = e.clientX - draggable.offsetLeft;
+            offsetY = e.clientY - draggable.offsetTop;
+            draggable.style.cursor = "grabbing";
+        });
+
+        document.addEventListener("mousemove", (e) => {
+            if (!isDragging) return;
+
+            const moveX = Math.abs(e.clientX - startX);
+            const moveY = Math.abs(e.clientY - startY);
+            if (moveX > 5 || moveY > 5) dragged = true; // Only mark dragged if moved significantly
+
+            draggable.style.left = `${e.clientX - offsetX}px`;
+            draggable.style.top = `${e.clientY - offsetY}px`;
+        });
+
+        document.addEventListener("mouseup", (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            draggable.style.cursor = "grab";
+
+            // Determine snapping direction
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+            const elementWidth = draggable.offsetWidth;
+            const elementHeight = draggable.offsetHeight;
+            const x = draggable.offsetLeft;
+            const y = draggable.offsetTop;
+
+            // Snap to closest side
+            let snapX = x < windowWidth / 2 ? 10 : windowWidth - elementWidth - 25;
+            let snapY = Math.min(Math.max(y, 10), windowHeight - elementHeight - 10);
+
+            draggable.style.left = `${snapX}px`;
+            draggable.style.top = `${snapY}px`;
+        });
+    });
+
+   
+
+</script>
+
+

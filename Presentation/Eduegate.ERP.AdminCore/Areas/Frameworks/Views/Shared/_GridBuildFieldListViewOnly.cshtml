@@ -1,0 +1,181 @@
+﻿@model Eduegate.Web.Library.ViewModels.BaseMasterViewModel
+@using Eduegate.Framework.Mvc.Attributes
+@using System.Reflection;
+@using Eduegate.Frameworks.Mvc.Attributes;
+
+@{
+    var modelContainerType = (ContainerTypeAttribute)Model.GetType().GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+    string bindingPrefix = "CRUDModel.ViewModel";
+    string gridBindingPrefix = "gridModel";
+
+    if (modelContainerType != null)
+    {
+        bindingPrefix = modelContainerType.BindingPrefix;
+        Model.NamePrefix = modelContainerType.ContainerName + "[{{$index}}].";
+
+        if (!string.IsNullOrEmpty(modelContainerType.GridBindingPrefix))
+        {
+            gridBindingPrefix = modelContainerType.GridBindingPrefix;
+        }
+    }
+    <div class="displayFlex fullwidth flexWrap">
+        <div class="displayFlex grid_data_list_wrap" ng-focus="FocusGrid($event,'@bindingPrefix')"
+             ng-repeat="@gridBindingPrefix in @bindingPrefix track by $index"
+             @Html.Raw(modelContainerType.ContainerAttribute)>
+            <div class="displayFlex fullwidth borderE4">
+                <div class="grid_data_wrap displayFlex w100">
+
+                    @{
+                        ControlTypeAttribute imageControlType = null;
+                        PropertyInfo imagePropertyInfo = null;
+
+                        foreach (var property in Model.GetType().GetProperties())
+                        {
+                            var title = (System.ComponentModel.DisplayNameAttribute)property.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+
+                            if (title != null)
+                            {
+                                imageControlType = (ControlTypeAttribute)property.GetCustomAttributes(typeof(ControlTypeAttribute)).FirstOrDefault();
+
+                                if (imageControlType.ControlType == Eduegate.Framework.Enums.ControlTypes.Image)
+                                {
+                                    imagePropertyInfo = property;
+                                }
+                            }
+                        }
+
+
+                        if (imagePropertyInfo != null)
+                        {
+                            <div class="grid_data_left flexZero">
+                                @{
+                                    var lookUpType = (LookUpAttribute)imagePropertyInfo.GetCustomAttributes(typeof(LookUpAttribute)).FirstOrDefault();
+                                    <img src="/Images/thumbnail_image.jpg" />
+                                }
+                            </div>
+                        }
+                    }
+
+                    <div class="grid_data_right flexAuto displayFlex flexColumn">
+                        @foreach (var property in Model.GetType().GetProperties())
+                        {
+                            var title = (System.ComponentModel.DisplayNameAttribute)property.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+
+                            if (title != null)
+                            {
+                                var controlType = (ControlTypeAttribute)property.GetCustomAttributes(typeof(ControlTypeAttribute)).FirstOrDefault();
+
+                                var claimType = (HasClaimAttribute)property.GetCustomAttributes(typeof(HasClaimAttribute)).FirstOrDefault();
+
+                                if (claimType != null)
+                                {
+                                    var allClaims = (ViewBag.Claims as List<Eduegate.Web.Library.ViewModels.Security.ClaimViewModel>);
+                                    var allClaimNames = allClaims.Select(a => a.ResourceName).ToList();
+                                    if (!claimType.HasAccess(allClaimNames))
+                                    {
+                                        continue;
+                                    }
+                                }
+
+                                if (controlType != null)
+                                {
+                                    switch (controlType.ControlType)
+                                    {
+
+                                        case Eduegate.Framework.Enums.ControlTypes.DropDown:
+                                            {
+                                                var lookUpType = (LookUpAttribute)property.GetCustomAttributes(typeof(LookUpAttribute)).FirstOrDefault();
+                                                <div class="padbtm5">
+                                                    <span class="grid-select">
+                                                        <label class="checkboxwrap">
+                                                            <span ng-bind="@bindingPrefix.@property.Name" />
+                                                            <span class="checkboxinner"></span>
+                                                        </label>
+                                                    </span>
+                                                </div>
+                                            }
+                                            break;
+                                        case Eduegate.Framework.Enums.ControlTypes.TextBox:
+
+                                            <!--all other fields-->
+                                            <label class="addprodleft control-label">@title.DisplayName</label>
+                                            <div class="controls padbtm5">
+                                                <span ng-bind="@bindingPrefix.@property.Name | number : @ViewContext.ViewBag.DefaultDecimalPoints">
+                                                </span>
+                                            </div>
+
+                                            break;
+                                        case Eduegate.Framework.Enums.ControlTypes.Label:
+
+                                            <!--all other fields-->
+                                            <label class="addprodleft control-label tooltipp">
+                                                @title.DisplayName
+                                                <span ng-bind="gridModel.@property.Name" /><span class="redcolor"></span>
+                                            </label>
+
+                                            break;
+                                        case Eduegate.Framework.Enums.ControlTypes.CheckBox:
+                                            <div class="padbtm5">
+                                                <label class="checkboxwrap">
+                                                    <span ng-bind="@bindingPrefix.@property.Name" />
+                                                    <span class="checkboxinner"></span>
+                                                </label>
+                                            </div>
+                                            break;
+                                        case Eduegate.Framework.Enums.ControlTypes.DataPicker:
+                                            <div class="padbtm5">
+                                                <div class="datetime_picker">
+                                                    <span autocomplete="off" type="text"
+                                                          ng-bind="@bindingPrefix.@property.Name"></span>
+                                                </div>
+                                            </div>
+                                            break;
+                                        case Eduegate.Framework.Enums.ControlTypes.TextArea:
+                                            <div class="padbtm5">
+                                                <span ng-bind="bindingPrefix.@property.Name"></span>
+                                            </div>
+                                            break;
+
+                                        case Eduegate.Framework.Enums.ControlTypes.Select2:
+                                            <div class="padbtm5">
+                                                <span style="background-color:gray;margin-right: 10px;"
+                                                      ng-repeat="data in @(bindingPrefix).@property.Name" class="badge badge-dark"
+                                                      ng-if="data && data != ' '">
+                                                    {{data}}
+                                                </span>
+                                            </div>
+                                            break;
+                                        case Eduegate.Framework.Enums.ControlTypes.Grid:
+                                            var modelCollection = property.GetValue(Model, null) as System.Collections.IList;
+                                            <div class="controls fullcolumn-layout padbtm5">
+                                                <table id="GridTable" class="fullcolumn-layout grid @controlType.Css">
+                                                    @if (modelCollection.Count > 0)
+                                                    {
+                                                        @await Html.PartialAsync("_GridViewBuildField", modelCollection[0]);
+                                                    }
+                                                </table>
+                                            </div>
+                                            break;
+                                        case Eduegate.Framework.Enums.ControlTypes.Button:                                            
+                                            break;
+                                        case Eduegate.Framework.Enums.ControlTypes.TimePicker:
+
+                                            <div class="controls padbtm5">
+                                                <div class="datetime_picker">
+                                                    <span style="width: 170px;" ng-bind="@bindingPrefix.@property.Name"></span>
+                                                </div>
+                                            </div>
+
+                                            break;
+                                    }
+                                }
+
+                            }
+                        }
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

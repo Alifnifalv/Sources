@@ -1,0 +1,25 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+namespace EntityGenerator.Core.Data
+{
+    [Keyless]
+    public partial class Wrong_Transport_Fee_Due_20220618
+    {
+        public long? StudentFeeDueID { get; set; }
+        public long FeeDueFeeTypeMapsID { get; set; }
+        public long? StudentId { get; set; }
+        public int? ClassId { get; set; }
+        public int? SectionID { get; set; }
+        public int? AcadamicYearID { get; set; }
+        public int? FeeMasterID { get; set; }
+        public int? FeePeriodID { get; set; }
+        [Column(TypeName = "decimal(18, 3)")]
+        public decimal? Amount { get; set; }
+        [Column(TypeName = "decimal(38, 3)")]
+        public decimal? Total_Monthly { get; set; }
+    }
+}

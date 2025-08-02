@@ -1,0 +1,55 @@
+﻿@using Eduegate.Framework.Mvc.Attributes
+
+@{
+    var fileUploadInfo = (FileUploadInfoAttribute)ViewBag.Property
+                                   .GetCustomAttributes(typeof(FileUploadInfoAttribute), true)[0];
+    <div class="controls marginBtm5">      
+
+        @if (fileUploadInfo.CroppingHeight != 0 && fileUploadInfo.CroppingWidth != 0)
+        {
+            <div class="displaylineBlock fullwidth text-right fontSize12 lightGrey">
+                Dimension:@(fileUploadInfo.CroppingWidth)w x @(fileUploadInfo.CroppingHeight)h
+            </div>
+        }
+
+        @switch(fileUploadInfo.Types)
+        {
+            case Eduegate.Framework.Enums.FileTypes.Images:      
+                if (fileUploadInfo.ActionUrl.Contains("Content"))
+                {
+                    <a prettyp class="lightbox" ng-src="{{GetContentUrl(@(ViewBag.BindingPrefix + "." + fileUploadInfo.ImageSourceModel)) | trusted}}" rel="prettyPhoto[]">
+                        <img loading="lazy" ng-src="{{GetContentUrl(@(ViewBag.BindingPrefix + "." + fileUploadInfo.ImageSourceModel)) | trusted}}" onerrorsrc="/Images/unknown.png" />
+                    </a>
+                    <div>
+                        <img class="croppingImage" />
+                    </div>
+                }
+                else
+                {
+                    <a prettyp class="lightbox" data-src="{{@ViewBag.BindingPrefix.@fileUploadInfo.ImageSourceModel}}" rel="prettyPhoto[]">
+                        <img loading="lazy" ng-src="{{@ViewBag.BindingPrefix.@fileUploadInfo.ImageSourceModel | trusted}}" />
+                    </a>
+                    <div class="croppingImagePopover" data-popup-type="dynamicPopover" title="Cropping Image">
+                        <img class="croppingImage" />
+                    </div>
+                }
+                break;
+           case Eduegate.Framework.Enums.FileTypes.Attachments:
+                if (fileUploadInfo.ActionUrl.Contains("Content"))
+                {
+                    <img ng-if="@ViewBag.BindingPrefix.@fileUploadInfo.ImageSourceModel" style="width:25px;" src="/Images/filetypes/{{@ViewBag.BindingPrefix.@fileUploadInfo.ImageSourceModel | ext}}.png" />
+                    <a prettyp class="lightbox" ng-src="{{GetContentUrl(@(ViewBag.BindingPrefix + "." + fileUploadInfo.ImageSourceModel)) | trusted}}" rel="prettyPhoto[]">
+                        <i class="fa fa-paperclip" aria-hidden="true"></i>
+                    </a>
+                }
+                else
+                {
+                    <img ng-if="@ViewBag.BindingPrefix.@fileUploadInfo.ImageSourceModel" style="width:25px;" src="/Images/filetypes/{{@ViewBag.BindingPrefix.@fileUploadInfo.ImageSourceModel | ext}}.png" />
+                    <a prettyp class="lightbox" data-src="{{@ViewBag.BindingPrefix.@fileUploadInfo.ImageSourceModel}}" rel="prettyPhoto[]">
+                        <i class="fa fa-paperclip" aria-hidden="true"></i>
+                    </a>
+                }
+                break;
+    }
+    </div>
+}

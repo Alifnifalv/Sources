@@ -1,0 +1,25 @@
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace Eduegate.ERP.Admin.Areas.Assets
+{
+    //TODO: Check if this is needed
+    //public class AssetsAreaRegistration : AreaRegistration 
+    //{
+    //    public override string AreaName 
+    //    {
+    //        get 
+    //        {
+    //            return "Assets";
+    //        }
+    //    }
+
+    //    public override void RegisterArea(AreaRegistrationContext context) 
+    //    {
+    //        context.MapRoute(
+    //            "Assets_default",
+    //            "Assets/{controller}/{action}/{id}",
+    //            new { action = "Index", id = UrlParameter.Optional }
+    //        );
+    //    }
+    //}
+}

@@ -1,0 +1,291 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+
+@{ 
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+
+    var isNonAcademic = Context.Request.Query["type"] == "NonAcademic";
+    var isAcademic = Context.Request.Query["type"] == "Academic";
+}
+
+<style>
+
+    .schedulerTable th {
+        background: #2194c1;
+        background: -moz-linear-gradient(top, #2194c1 0%, #252d47 100%);
+        background: -webkit-linear-gradient(top, #2194c1 0%,#252d47 100%);
+        background: linear-gradient(to bottom, #2194c1 0%,#252d47 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2194c1', endColorstr='#252d47',GradientType=0 );
+        border-bottom: 1px solid #2d5074;
+        border-top: 1px solid #2d5074;
+    }
+
+    #academiccalendermonthPicker .monthPicker .ui-datepicker-calendar, #academiccalendermonthPicker.ui-datepicker-month, #academiccalendermonthPicker {
+        display: none !important;
+    }
+</style>
+<div id="AcademicCalender_@Context.Request.Query["type"]"
+     class="windowcontainer"
+     ng-controller="AcademicCalenderController"
+     ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName', '@Context.Request.Query["type"]')">
+
+    @*@await Html.PartialAsync("_ListFilter", Model)*@
+    <div class="form-horizontal panel-body">
+        <div class="scheduleWrapper innertab subject first">
+            <div class="field-row">
+                <span class="form-group">
+                    <span class="controls">
+                        <label>Calendar</label>
+                        <ui-select style="width: 100%;" name="AcademicCalendar" ng-model="SelectedAcademicCalendar"
+                                   theme="select2" class="pos-txt"
+                                   ng-change="CheckCalenderData($select)">
+                            <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                            <ui-select-choices repeat="data in CalendarMasterData | filter:$select.search">{{data.Value}}</ui-select-choices>
+                        </ui-select>
+                    </span>
+                </span>
+
+            </div>
+            <div class="form-group" style="border:thin">
+                <table border="1">
+                    <tr>
+                        <td style="padding: 2px;" ng-repeat="value in Events track by $index">
+                            <span class="seletedEvent text-center" style="display:block;background-color:{{value.ColorCode}};">{{GetAvatarText(value.EventTitle)}}&nbsp;</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 2px;" ng-repeat="value in Events track by $index">
+                            {{value.EventTitle}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div>
+                <ul class="nav nav-tabs justify-content-center">
+                    <li class="nav-item" ng-click="onCalendarViewTab('Tab_01')">
+                        <a class="nav-link active" id="Tab_01_nav" aria-current="page" href="#"><span class="seletedsubject">Calendar Yearly View</span></a>
+                    </li>
+                    <li class="nav-item" ng-click="onCalendarViewTab('Tab_02')">
+                        <a class="nav-link" id="Tab_02_nav" href="#"><span class="seletedsubject">Events</span></a>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    <div class="scheduleWrapper innertab subject first" id="Calendar_Yearly_Tab_01" style="display:block">
+        <div class="schedulerTable">
+
+            <table class="mainGrid">
+                <thead>
+                    <tr>
+                        <th></th>
+                        @*<th class="noBorderBtm" ng-repeat="i in [].constructor(32) track by $index">{{$index != 0 ? $index : null}}</th>*@
+                        <th class="time" ng-repeat="Day in Days track by $index">{{Day}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+
+                    @*<tr class="content" ng-repeat="i in [].constructor(12) track by $index">
+                        <td class="columnHeader">
+                            {{MonthNames[$index]}}
+                        </td>*@
+                    <tr class="content monthName" ng-repeat="MonthName in MonthNames track by $index" data-month-id="{{$index}}">
+                        <th class="columnHeader">
+                            {{MonthName}}
+                        </th>
+                        @*<td class="academicCalendarData" ng-repeat="academicData in AcademicCalendarData track by $index">*@
+
+                        @*<a class="attendanceStatus" ng-click="LoadPopup('.gridItemPopup',$event, AcademicCalendarData);">
+
+                            </a>*@
+                        <td ng-repeat="DayID in Days track by $index" class="DayId classtime" data-Day-id="{{DayID}}">
+                            <div class="scaleWrap resizable">
+                                <span class="colspan" id="colspan{{(MonthName + parseInt(DayID) + $scope.SelectedYear)}}">
+
+                                    <span ng-if="(AcademicCalendarData | filter:{ 'Day' :  parseInt(DayID) , 'MonthName' : MonthName }:true).length == 0"></span>
+                                    @*<span ng-repeat="academicEventData in AcademicCalendarData" ng-if="!academicEventData.EventTitle"></span>*@
+                                    <span class="seletedEvent" id="{{(MonthName +  parseInt(DayID) + $scope.SelectedYear)}}"
+                                          ng-repeat="academicEventData in AcademicCalendarData | filter:{ 'Day' :  parseInt(DayID) , 'MonthName' : MonthName }:true"
+                                          title="{{academicEventData.EventTitle}}" data-isHoliDay-id="{{academicEventData.IsThisAHoliday}}"
+                                          data-AcademicYearCalendarEventType-id="{{academicEventData.AcademicYearCalendarEventType}}"
+                                          data-academic-id="{{academicEventData.AcademicCalendarID}}" data-AcademicEvent-id="{{academicEventData.AcademicYearCalendarEventID}}" data-startDate-id="{{academicEventData.StartDate}}" data-endDate-id="{{academicEventData.EndDate}}" data-EventTitle-id="{{academicEventData.EventTitle}}" data-Description-id="{{academicEventData.Description}}"
+                                          data-ColorCode-id="{{academicEventData.ColorCode}}" data-NoofHours-id="{{academicEventData.NoofHours}}" style="background:{{academicEventData.ColorCode}} ;">
+
+                                        @{if (@isAcademic == true)
+                                            {
+                                                <span>
+                                                    {{GetAvatarText(academicEventData.EventTitle)}}
+                                                </span>
+
+                                            }
+                                        }
+                                        @{if (isNonAcademic == true)
+                                            {
+                                                <span ng-if="academicEventData.EventTitle">{{GetAvatarText(academicEventData.EventTitle)}}</span>
+                                                <span ng-if="!academicEventData.EventTitle">{{academicEventData.NoofHours}}</span>
+                                            }
+                                        }
+                                        <span ng-click="DeleteEvent($event)" class="closeItem" style="color :black;" data-academic-id="{{academicEventData.AcademicCalendarID}}" data-AcademicEvent-id="{{academicEventData.AcademicYearCalendarEventID}}" ng-if="academicEventData.EventTitle">x</span>
+                                    </span>
+
+                                </span>
+                            </div>
+
+                        </td>
+                        @*</td>*@
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="scheduleWrapper innertab subject first" id="Calendar_Event_Tab_02" style="display:none">
+        <div class="schedulerTable">
+            <table class="mainGrid">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Event Title</th>
+                        <th>Event Description</th>
+                        <th>Event Type</th>
+                        <th>Event Start Date</th>
+                        <th>Event End Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="academicEventData in AcademicCalendarData" ng-if="academicEventData.EventTitle">
+                        <td>{{academicEventData.ActualDateString}}</td>
+                        <td style="color :white;background:{{academicEventData.ColorCode}} ;">{{academicEventData.EventTitle}}</td>
+                        <td>{{academicEventData.Description}}</td>
+                        <td>{{academicEventData.AcademicYearCalendarEventType}}</td>
+                        <td>{{academicEventData.EventStartDateString}}</td>
+                        <td>{{academicEventData.EventEndDateString}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="gridItemOverlay"></div>
+    <!--Popup Container-->
+    <div id="ItemPopup" class="TimeTableTeacherMap gridItemPopup">
+        <div class="window-tab preload-overlay" style="display:none;">
+            <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+        </div>
+        <span class="tooltipArrow"></span>
+        <div class="gridItemPopupInner">
+            <div class="TimeTableTeacherMap gridItemContent" data-attr="TimeTableTeacherMap">
+                <div class="controls"> 
+                </div>
+                <div class="controls"  style="text-align: right;">
+                    <span class="fa fa-plus-circle" ng-click="AddNewEvent()">New</span>
+                </div>
+                <div class="controls">
+                    <label>
+                        Event Title
+                        @{if (@isAcademic == true)
+                            {
+                                <span class="cufon" style="color:red;font-weight:700">&nbsp;*</span>
+                            }
+                        }
+                    </label>
+                    @{if (@isAcademic == true)
+                        {
+                            <span class="cufon" style="color:red" ng-show="submitted && (PopupEventTitle ==null || PopupEventTitle =='')">&nbsp;Required!</span>
+                        }
+                    }
+                    <input type="text" ng-model="PopupEventTitle" maxlength="20" />
+                </div>
+                <div class="controls">
+                    <label>
+                        Description
+                        @{if (@isAcademic == true)
+                            {
+                                <span class="cufon" style="color:red;font-weight:700">&nbsp;*</span>
+                            }
+                        }
+                    </label>
+                    @{if (@isAcademic == true)
+                        {
+                            <span class="cufon" style="color:red" ng-show="submitted && (PopupDescription ==null || PopupDescription  =='')">&nbsp;Required!</span>
+                        }
+                    }
+                    <input type="text" ng-model="PopupDescription" maxlength="50" />
+                </div>
+
+                <div class="controls">
+                    <label>Start Date<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                    <span class="cufon" style="color:red" ng-show="submitted && PopupStartDate  ==''">&nbsp;Required!</span>
+                    <input type="date" min="{{PopupMindate}}" max="{{PopupMaxdate}}" ng-model="PopupStartDate" />
+                </div>
+                <div class="controls">
+                    <label>End Date<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                    <span class="cufon" style="color:red" ng-show="submitted && PopupEndDate  ==''">&nbsp;Required!</span>
+                    <input type="date" min="{{PopupMindate}}" max="{{PopupMaxdate}}" ng-model="PopupEndDate" />
+                </div>
+                <div class="controls brand">
+                    <label>
+                        Color Code
+                        @{if (@isAcademic == true)
+                            {
+                                <span class="cufon" style="color:red;font-weight:700">&nbsp;*</span>
+                            }
+                        }
+                    </label>
+                    @{if (@isAcademic == true)
+                        {
+                            <span class="cufon" style="color:red" ng-show="submitted && (PopupColorCode ==null || PopupColorCode  =='')">&nbsp;Required!</span>
+                        }
+                    }
+
+                    <input type="color" id="favcolor" ng-model="PopupColorCode" name="favcolor" value="#ff0000">
+                </div>
+                @*<div class="controls brand">
+            <label>Status<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+            <span class="cufon" style="color:red" ng-show="submitted && PopupStatus <=0">&nbsp;Required!</span>
+            <select id="PopupStatus" ng-model="PopupStatus">
+                <option ng-repeat="x in AcademicYearCalendarStatus" value="{{x.Key}}" ng-selected="{{PopupStatus == x.Key}}">{{x.Value}}</option>
+            </select>
+            <i class="dropdownarrow fa fa-caret-down"></i>
+        </div>*@
+                <div class="controls brand">
+                    <label>Event Type</label>
+                    <select id="PopupStatus" ng-model="PopupType">
+                        <option ng-repeat="x in AcademicYearCalendarEventType" value="{{x.Key}}" ng-selected="{{PopupType == x.Key}}">{{x.Value}}</option>
+                    </select>
+                    <i class="dropdownarrow fa fa-caret-down"></i>
+                </div>
+
+                <div class="controls brand">
+                    <label>Is this a Holiday<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                    <input type="checkbox" ng-model="PopupIsHoliDay" value="true" ng-change="ChangeCheckBoxData()">
+                </div>
+
+                @{if (@isNonAcademic == true)
+                    {
+                        <div class="controls">
+                            <label>Working Hours<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                            @*<span class="cufon" style="color:red" ng-show="submitted && (PopupHours ==null || PopupHours  =='')">&nbsp;Required!</span>*@
+                            <input type="text" ng-model="PopupHours" maxlength="50" />
+                        </div>
+                    }
+                }
+                <div class="controls"></div>
+                <input type="button" value="Apply" class="button-orange" ng-click="SaveEvents('.gridItemPopup');" />
+                <input type="button" value="Close" class="button-orange" ng-click="ClosePopup();" />
+            </div><!--PopupContent-->
+
+        </div>
+    </div>
+
+</div>

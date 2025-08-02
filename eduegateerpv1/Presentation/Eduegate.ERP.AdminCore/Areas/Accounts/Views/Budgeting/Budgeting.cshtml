@@ -1,0 +1,550 @@
+﻿@model Eduegate.Web.Library.Budgeting.Budget.BudgetingViewModel
+
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div id="Budgeting" class="windowcontainer"
+     ng-controller="BudgetingController"
+     ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+    <div class="main-page row g-0">
+
+        <div class="window-tab preload-overlay" style="display:none;">
+            <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+        </div>
+        <div class="col-md-12">
+            <div class="app-content  flex-column-fluid p-0">
+                <div class="row gy-0 g-xl-2">
+                    <p class="d-inline-flex gap-1">
+                       
+   
+                    <form class="col-12" >
+                        <div class="w-100 card">
+                                <div class="card-header" style="min-height:auto; padding:0.5rem 1rem ; align-items:center" data-bs-toggle="collapse" data-bs-target="#collapseBudget" aria-expanded="false" aria-controls="collapseExample">
+                                    <legend class="col-lg-1">Budget</legend>
+                                    <button class="button-orange p-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBudget" aria-expanded="false" aria-controls="collapseExample">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                            <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="card-body collapse show" id="collapseBudget">
+                                <div class="row gy-0 g-xl-2">
+                                    <div class="col-lg-2">
+                                        <span class="form-group">
+                                            <span class="controls w-75">
+                                                <label>Budget<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                <span class="controls brand">
+                                                    <ui-select style="width: 100%;" ng-model="SearchMastersData.Budget" ng-change="BudgetChanges(SearchMastersData.Budget)" ng-disabled="IsEditScreen"
+                                                               theme="select2" class="pos-txt" sortable="true" name="SelectedBudget" id="SelectedBudget">
+                                                        <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                        <ui-select-choices repeat="data in Budgets | filter:$select.search">{{data.Value}}</ui-select-choices>
+                                                    </ui-select>
+                                                </span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <span class="form-group">
+                                            <span class="controls w-75">
+                                                <label>Period from</label>
+                                                <span class="controls brand">
+                                                    <span>{{SearchMastersData.FromDateString}}</span>
+                                                    @* <input type="text" autocomplete="off" ng-model="SearchMastersData.FromDateString" skien-Datepicker /> *@
+                                                </span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <span class="form-group">
+                                            <span class="controls w-75">
+                                                <label>Period to</label>
+                                                <span class="controls brand">
+                                                    <span>{{SearchMastersData.ToDateString}}</span>
+                                                    @* <input type="text" autocomplete="off" ng-model="SearchMastersData.ToDateString" skien-Datepicker /> *@
+                                                </span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        <span class="form-group">
+                                            <span class="controls w-75">
+                                                <label>Budget type</label>
+                                                <span class="controls brand">
+                                                    <span>{{SearchMastersData.BudgetType.Value}}</span>
+                                                    @* <ui-select style="width: 100%;" ng-model="SearchMastersData.BudgetType"
+                                                               theme="select2" class="pos-txt" sortable="true" name="SelectedBudgetTypes" id="SelectedBudgetTypes">
+                                                        <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                        <ui-select-choices repeat="data in BudgetTypes | filter:$select.search">{{data.Value}}</ui-select-choices>
+                                                    </ui-select> *@
+                                                </span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-2">
+                                        @* <input type="button" value="Reload budget entries" class="button-orange" ng-click="BudgetChanges(SearchMastersData.Budget)" /> *@
+                                    </div>
+
+                                    <div class="col-lg-2">
+                                        <input type="button" value="View report" class="button-orange" ng-click="ViewBudgetReport(SearchMastersData)" ng-disabled="!IsEditScreen" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <form class="col-6">
+                        <div class="w-100 h-100 card">
+                                <div class="card-header" style="min-height:auto; padding:0.5rem 1rem ; align-items:center" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseExample">
+                                    <legend class="col-lg-2">Filters</legend>
+
+                                    <button class="button-orange p-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseExample">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                            <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="card-body collapse show" id="collapseFilter">
+                                <div class="row gy-0 g-xl-2">
+                                    <div class="col-lg-6">
+                                        <span class="form-group">
+                                            <span class="controls w-75">
+                                                <label>Account groups</label>
+                                                <span class="controls brand">
+                                                    @* <ui-select style="width: 100%;" ng-model="SearchMastersData.AccountGroup"
+                                                               theme="select2" class="pos-txt" sortable="true" name="selectedAccountGroupMaster" id="selectedAccountGroupMaster">
+                                                        <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                        <ui-select-choices repeat="data in AccountGroups | filter:$select.search">{{data.Value}}</ui-select-choices>
+                                                    </ui-select> *@
+                                                    <ui-select name="SelectedGroup" ng-model="SearchMastersData.AccountGroupList" theme="select2" class="pos-txt" style="width: 100%;" multiple>
+                                                        <ui-select-match placeholder="Search">{{$item.Value}}</ui-select-match>
+                                                        <ui-select-choices repeat="data in AccountGroups | filter:$select.search">
+                                                            {{data.Value}}
+                                                        </ui-select-choices>
+                                                    </ui-select>
+                                                </span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="col-lg-6">
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <input type="button" value="Fill accounts" class="button-orange" ng-click="FillGridsFromGroup()" />
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <form class="col-6">
+                        <div class="w-100 card">
+                                <div class="card-header" style="min-height:auto; padding:0.5rem 1rem ; align-items:center" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseExample">
+                                    <legend class="col-6">Suggestion</legend>
+
+                                    <button class="button-orange p-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseExample">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                            <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="card-body collapse show" id="collapseFilter">
+
+                                <div class="row gy-0 g-xl-2">
+                                    <div class="col-lg-6">
+                                        <span class="form-group">
+                                            <span class="controls w-75">
+                                                <label>Budget suggestions</label>
+                                                <span class="controls brand">
+                                                    <ui-select style="width: 100%;" ng-model="SearchMastersData.BudgetSuggestion" ng-change="SuggestionChanges()"
+                                                               theme="select2" class="pos-txt" sortable="true" name="selectedBudgetSuggestion" id="selectedBudgetSuggestion">
+                                                        <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                        <ui-select-choices repeat="data in BudgetSuggestions | filter:$select.search">{{data.Value}}</ui-select-choices>
+                                                    </ui-select>
+                                                </span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                  @*   <div class="col-lg-2">
+                                        <input type="button" value="Reload" title="Reload suggestion dates" class="button-orange" ng-click="SuggestionChanges()" />
+                                    </div> *@
+                                    
+                                    <div class="w-100"></div>
+
+                                    <div class="col-lg-6">
+                                        <span class="form-group">
+                                            <span class="controls w-75">
+                                                <label>From date</label>
+                                                <span class="controls brand">
+                                                    <input type="text" autocomplete="off" ng-model="SearchMastersData.SuggestedFromDateString" skien-Datepicker />
+                                                </span>
+                                            </span>
+                                        </span>
+                                    </div>
+
+                                    <div class="col-lg-6">
+                                        <span class="form-group">
+                                            <span class="controls w-75">
+                                                <label>To date</label>
+                                                <span class="controls brand">
+                                                    <input type="text" autocomplete="off" ng-model="SearchMastersData.SuggestedToDateString" skien-Datepicker />
+                                                </span>
+                                            </span>
+                                        </span>
+                                    </div>
+
+                                    <div class="w-100"></div>
+
+                                    <div class="col-lg-6">
+                                        <input type="button" value="Get suggestion" class="button-orange" ng-click="FillSuggestions()" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="w-100"></div>
+                    @* <div class="col-lg-4">
+                        <span class="form-group">
+                            <span class="controls w-75">
+                                <label>CostCenter</label>
+                                <span class="controls brand">
+                                    <ui-select style="width: 100%;" ng-model="SearchMastersData.CostCenter"
+                                               theme="select2" class="pos-txt" sortable="true" name="selectedCostCenter" id="selectedCostCenter">
+                                        <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                        <ui-select-choices repeat="data in CostCenters | filter:$select.search">{{data.Value}}</ui-select-choices>
+                                    </ui-select>
+                                </span>
+                            </span>
+                        </span>
+                    </div> *@
+                    <div class="card shadow-none">
+                        <div class="d-flex ">
+                                <div >
+                                    <input type="button" value="Clear entry" class="button-orange me-3" ng-click="ClearEntryGrid()" />
+                                </div>
+
+                                <div>
+                                    <input type="button" value="Save entries" class="button-orange" ng-click="SaveBudgetingEntries()" />
+                                </div>
+                            </div>
+                    </div>
+                </div>
+
+                <div class="row gy-5 g-xl-2">
+                    <div class="col-md-12 ">
+                        <div class="app-content  flex-column-fluid overflow-auto" style="padding-top:200px; padding-bottom:200px;     margin-top: -200px; margin-bottom: -200px;">
+
+                            <div class="card shadow-none card-flush mb-5 my-xl-20">
+                                <div class="card-body p-0">
+                                    <div class="dataTables_wrapper dt-bootstrap4 no-footer position-relative overflow-y-visible">
+                                        <div>
+                                            <table class="table align-middle fs-6 gy-3  no-footer mb-0 budgetting">
+                                                <thead style=" background: #f5f5f5; border-bottom: 1px solid #e1e1e1; border-top: 1px solid #e1e1e1;">
+                                                    <tr class="text-start align-middle text-gray-700 fw-normal fs-6  gs-0 text-truncate">
+                                                        <th class="text-center align-middle pe-3 min-w-40px w-40px me-3 sorting_disabled sticky dtfc-fixed-right">SL. <br />No.</th>
+                                                        <th class="text-start align-middle pe-3 min-w-200px sorting sticky" style="left:40px">Account<br /> group</th>
+                                                        <th class="text-start align-middle pe-3 min-w-200px sorting dtfc-fixed-left sticky" style="left:240px">Account</th>
+                                                        <th class="text-start align-middle pe-3 min-w-50px sorting dtfc-fixed-left sticky" style="left:440px"></th>
+
+                                                        <th class="text-end align-middle min-w-100px sorting " >Suggested<br /> value</th>
+                                                        <th class="text-end align-middle min-w-70px sorting " >
+                                                            <div class=" input-group text-end">
+                                                                
+                                                                <div class=" input-group flex-nowrap">
+                                                                    <input type="text" class="text-end" ng-model="SearchMastersData.PercentageValue" ng-change="HeaderPercentageChanges()">
+
+                                                                    <span class="input-group-text py-0  px-2" id="basic-addon1"  title="Percentage">
+                                                                        %
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </th>
+                                                        <th class="text-end align-middle pe-3 min-w-150px sorting">Budgeted<br /> value</th>
+                                                        <th class="text-center align-middle pe-3 min-w-150px sorting"
+                                                            ng-repeat="title in BudgetingModel.HeaderTitles">
+                                                            Amount<br />
+                                                            {{title}}
+                                                        </th>
+                                                        <th class="align-middle  min-w-30px sorting sticky-last dtfc-fixed-right" style="right: 30px;">
+                                                            <div class="controls text-center">
+                                                                <button type="button" class="button-orange p-1" ng-click="InsertRow($index + 1)">
+                                                                    <span class="svg-icon svg-icon-3 m-0">
+                                                                        <svg width="24" height="24" fill="#ffffff" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                            <rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)" fill="#ffffff"></rect>
+                                                                            <rect x="6" y="11" width="12" height="2" rx="1" fill="#ffffff"></rect>
+                                                                        </svg>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </th>
+                                                        <th class="align-middle  min-w-30px sorting mr-3 sticky-last dtfc-fixed-left">
+                                                            <div class="controls text-center">
+                                                                <button type="button" class="button-orange p-1" ng-click="RemoveRow($index + 1)">
+                                                                    <span class="svg-icon svg-icon-3 m-0">
+                                                                        <svg width="24" height="24" fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                            <rect x="6" y="11" width="12" height="2" rx="1" fill="#ffffff"></rect>
+                                                                        </svg>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="fw-normal text-gray-600 text-truncate">
+
+                                                    <tr ng-if="BudgetEntries.length == 0" colspan="100%">
+                                                        <td colspan="100%">
+                                                            <div class="py-4 text-center">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#666666" class="bi bi-database-fill-exclamation w-35px h-35px" viewBox="0 0 16 16">
+                                                                    <path d="M8 1c-1.573 0-3.022.289-4.096.777C2.875 2.245 2 2.993 2 4s.875 1.755 1.904 2.223C4.978 6.711 6.427 7 8 7s3.022-.289 4.096-.777C13.125 5.755 14 5.007 14 4s-.875-1.755-1.904-2.223C11.022 1.289 9.573 1 8 1Z" />
+                                                                    <path d="M2 7v-.839c.457.432 1.004.751 1.49.972C4.722 7.693 6.318 8 8 8s3.278-.307 4.51-.867c.486-.22 1.033-.54 1.49-.972V7c0 .424-.155.802-.411 1.133a4.51 4.51 0 0 0-4.815 1.843A12.31 12.31 0 0 1 8 10c-1.573 0-3.022-.289-4.096-.777C2.875 8.755 2 8.007 2 7Zm6.257 3.998L8 11c-1.682 0-3.278-.307-4.51-.867-.486-.22-1.033-.54-1.49-.972V10c0 1.007.875 1.755 1.904 2.223C4.978 12.711 6.427 13 8 13h.027a4.552 4.552 0 0 1 .23-2.002Zm-.002 3L8 14c-1.682 0-3.278-.307-4.51-.867-.486-.22-1.033-.54-1.49-.972V13c0 1.007.875 1.755 1.904 2.223C4.978 15.711 6.427 16 8 16c.536 0 1.058-.034 1.555-.097a4.507 4.507 0 0 1-1.3-1.905Z" />
+                                                                    <path d="M16 12.5a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Zm-3.5-2a.5.5 0 0 0-.5.5v1.5a.5.5 0 0 0 1 0V11a.5.5 0 0 0-.5-.5Zm0 4a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1Z" />
+                                                                </svg>`
+                                                            </div>
+                                                            <center>
+                                                                <span>No records found!!</span>
+                                                            </center>
+                                                        </td>
+                                                    </tr>
+                                                    <tr ng-repeat-start="budget in BudgetEntries track by $index" class="ng-scope" ng-init="current = $parent.start; $parent.start=$parent.start+1;">
+                                                        <td class="text-center sticky dtfc-fixed-right">
+                                                            {{$index +1}}
+                                                        </td>
+                                                        <td class="text-start   brand sticky topshow text-gray-600" style="left:40px">
+                                                                <ui-select style="width: 100%;" ng-model="budget.BudgetingAccountDetail.AccountGroup" ng-change="AccountGroupChanges(budget)"
+                                                                           theme="select2" class="pos-txt" sortable="true" name="SelectedAccountGroup" id="SelectedAccountGroup">
+                                                                    <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                    <ui-select-choices repeat="group in AccountGroups | filter:$select.search">{{group.Value}}</ui-select-choices>
+                                                                </ui-select>
+                                                        </td>
+                                                        <td class="text-start dtfc-fixed-left brand sticky topshow text-gray-600" style="left:240px ; ">
+                                
+                                                            <div class="input-group">
+                                                                <span class="form-control p-0">
+                                                                <span class="min-w-100">
+                                                                        <ui-select class="text-gray-600" style="width: 100%;" ng-model="budget.BudgetingAccountDetail.Account" ng-change="AccountChanges(budget)"
+                                                                                   ng-click="LoadAccount(budget)"
+                                                                               theme="select2" class="pos-txt" sortable="true" name="SelectedAccount" id="SelectedAccount">
+                                                                        <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                        <ui-select-choices repeat="account in GroupAccounts | filter:$select.search">{{account.Value}}</ui-select-choices>
+                                                                    </ui-select>
+                                                                </span>
+                                                                </span>
+
+                                                                <span class="input-group-text py-0" id="basic-addon1" ng-click="ShowAccountDetails('Account details',budget, $event)" title="Account details"><i class="fa fa-ellipsis-v"></i></span>
+                                                            </div>
+
+                                                     
+                                                        </td>
+                                                        <td class="text-start dtfc-fixed-left brand sticky topshow text-gray-600" style="left:440px ; ">
+                                                            <span>
+                                                                <img src="~/Images/credit.svg" class="h-30px" ng-if="budget.BudgetingAccountDetail.GroupDefaultSide == 'C'" />
+
+                                                                <img src="~/Images/debit.svg" class="h-30px" ng-if="budget.BudgetingAccountDetail.GroupDefaultSide == 'D'" />
+                                                            </span>
+                                                        </td>
+
+                                                        <td class="text-end " >
+                                                            {{budget.SuggestedValue}}
+                                                        </td>
+
+                                                        <td class="text-end  " >
+
+                                                            <div class=" input-group flex-nowrap">
+                                                            <input type="text" class="ng-pristine text-end" ng-model="budget.Percentage" ng-change="RowPercentageChanges(budget)">
+                                                                <span class="input-group-text py-0  px-2" id="basic-addon1">
+                                                                    %
+                                                                </span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="text-end  " >
+                                                            
+                                                            <div class="input-group ">
+                                                                <input type="text" class="form-control text-end" ng-model="budget.Amount">
+                                                                <span class="input-group-text py-0 px-2" id="basic-addon1" ng-click="ApplyAmountMonthValues(budget)" title="Apply to amounts"><i class="fa fa-toggle-right"></i></span>
+                                                            </div>
+                                                        </td>
+                                                        <td ng-repeat="alloc in budget.Allocations track by $index" class="min-w-150px" >
+                                                            <div class="d-flex form-group ">
+                                                                <div class=" input-group flex-nowrap">
+                                                                    <span class="input-group-text py-0 px-2" id="basic-addon1">
+                                                                        <span class="d-flex flex-column">
+                                                                            @* <span class="fs-10">Sugg : {{alloc.SuggestedValue}}</span> *@
+                                                                            <span class="fs-7">
+                                                                                {{alloc.Percentage}}%
+
+                                                                            </span>
+                                                                        </span>
+                                                                    </span>
+                                                                    <input class="text-end" type="text" ng-model="alloc.Amount" aria-describedby="basic-addon1" ng-change="MonthAmountChanges(budget)" />
+                                                                    <span class="input-group-text py-0 px-2" id="basic-addon1" ng-click="ShowAllocationDetails('Allocation details',alloc, $parent.$index, $event)" title="Allocation details">
+                                                                        <i class="fa fa-ellipsis-v"></i>
+                                                                    </span>
+
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="text-end me-6" title="Suggested Value">
+                                                                <span class="fs-8">
+                                                                    <i class="fa fa-money" aria-hidden="true"></i>
+                                                                    {{alloc.SuggestedValue}}</span>
+                                                            </div> 
+                                                        </td>
+                                                        <td class="sticky-last dtfc-fixed-right" style="right: 30px;">
+                                                            <div class="controls text-center">
+                                                                <button type="button" class="button-orange p-1" ng-click="InsertRow($index + 1)">
+                                                                    <span class="svg-icon svg-icon-3 m-0">
+                                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+                                                                            <rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)" fill="#ffffff"></rect>
+                                                                            <rect x="6" y="11" width="12" height="2" rx="1" fill="#ffffff"></rect>
+                                                                        </svg>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                        <td class="sticky-last dtfc-fixed-left" >
+                                                            <div class="controls text-center">
+                                                                <button type="button" class="button-orange p-1" ng-click="RemoveRow($index)">
+                                                                    <span class="svg-icon svg-icon-3 m-0">
+                                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+                                                                            <rect x="6" y="11" width="12" height="2" rx="1" fill="#ffffff"></rect>
+                                                                        </svg>
+                                                                    </span>
+                                                                </button>
+                                                            </div>
+                                                        </td>
+
+                                                    </tr>
+
+                                                    <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                </tbody>
+                                                <!--end::Table body-->
+                                            </table>
+                                        </div><div class="row"><div class="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start"></div><div class="col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end"></div></div>
+                                    </div>
+                                    <!--end::Table-->
+                                </div>
+                                <!--end::Card body-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!--end::Row-->
+                @* </div> *@
+            </div>
+            <!--end::Content container-->
+        </div>
+    </div>
+</div>
+
+<script id="AllocationDetailsTemplate" type="text/ng-template">
+    <table class="table table-striped table-responsive-md btn-table">
+        <tr>
+            <td>Suggested start date : </td>
+            <td>{{AllocationDetail.SuggestedStartDateString}}</td>
+        </tr>
+        <tr>
+            <td>Suggested end date : </td>
+            <td>{{AllocationDetail.SuggestedEndDateString}}</td>
+        </tr>
+        <tr>
+            <td>Start date : </td>
+            <td>{{AllocationDetail.StartDateString}}</td>
+        </tr>
+        <tr>
+            <td>End date : </td>
+            <td>{{AllocationDetail.EndDateString}}</td>
+        </tr>
+        <tr>
+            <td>Suggested value : </td>
+            <td>{{AllocationDetail.SuggestedValue}}</td>
+        </tr>
+        <tr>
+            <td>Percentage : </td>
+            <td class="text-end align-middle sticky" style="left:140px">
+                <div class=" input-group flex-nowrap">
+                    <input type="text" class="ng-pristine text-end" ng-model="AllocationDetail.Percentage" ng-change="MonthWisePercentageChanges(AllocationDetail)">%
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>Amount : </td>
+            <td><input type="text" class="ng-pristine text-end" ng-model="AllocationDetail.Amount"></td>
+        </tr>
+        <tr>
+            <td>Remarks : </td>
+            <td>
+                <textarea ng-model="AllocationDetail.Remarks"></textarea>
+            </td>
+        </tr>
+    </table>
+</script>
+
+<script id="BudgetDetailsTemplate" type="text/ng-template">
+    <table class="table table-striped table-responsive-md btn-table">
+        <tr>
+            <td>Suggested value : </td>
+            <td>{{BudgetDetail.SuggestedValue}}</td>
+        </tr>
+        <tr>
+            <td>Remarks : </td>
+            <td>
+                <textarea ng-model="BudgetDetail.BudgetingAccountDetail.Remarks"></textarea>
+            </td>
+        </tr>
+    </table>
+</script>
+
+<style>
+    .budgetting .table > :not(caption) > * > * {
+        padding: 0.75rem 0.75rem;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    .budgetting table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow-x: auto; /* Enable the horizontal scrollbar */
+    }
+
+    .budgetting th, .budgetting td {
+        white-space: nowrap; /* Prevent text wrapping in cells */
+        padding:2px 5px !important;
+    }
+
+
+        .budgetting th.sticky, .budgetting td.sticky {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+        }
+
+        .budgetting th.sticky {
+            background-color: #f5f5f5;
+        }
+
+        .budgetting td.sticky {
+            background-color: #ffffff;
+        }
+
+        .budgetting th.sticky-last, .budgetting td.sticky-last {
+            background-color: #f5f5f5;
+            position: sticky;
+            right: 0;
+            z-index: 1;
+        }
+
+    .table.gy-3 th, .table.gy-3 td{
+        border-bottom: 1px solid #e1e1e1;
+    }
+</style>

@@ -1,0 +1,26 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+@{
+    Layout = null;
+    var viewIID = Eduegate.Services.Contracts.Enums.SearchView.JobProfile;
+}
+
+<div id="JobProfileArchivedLists" class="windowcontainer">
+    <div ng-controller="ViewControllerJobProfile" ng-init="ChildInit(@Newtonsoft.Json.JsonConvert.SerializeObject(Model), '@viewIID');InitializeWayPoint();">
+        @await Html.PartialAsync("~/Views/Shared/_InfoMessage.cshtml")
+        @*<div class="pagenav"><a class="pagenav-leftmargin">Dashboard </a><a class="pagenav-leftmargin">  </a> /<span> Lists</span></div>*@
+        <div class="pageheadername">
+            <div>View Job Profile</div>
+            @if (ViewBag.HasEditAccess)
+            {
+                <div class="alignright menugroup">
+                    <div class="createprodlink button-orange alignright" ng-click="ChangeJobProfileStatusToActive($event)">
+                        <a title="Move to archive"><i class="fa fa-plus"></i><span>Move to Active</span></a>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @await Html.PartialAsync("_SummaryHeader", Model)
+        @await Html.PartialAsync("_List", Model)
+    </div>
+</div>

@@ -1,0 +1,71 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@*@model Eduegate.Web.Library.ViewModels.SearchListViewModel*@
+@using Eduegate.Framework.Extensions;
+@{
+    Random rnd = new Random();
+    var window = "window_GridList";
+    var documentTypeID = Model.GetParameterValue<string>("DocumentTypeID");
+    var title = Model.GetParameterValue<string>("Title");
+    var viewID = Model.GetParameterValue<string>("ViewID"); 
+    bool isSortableList = false;
+    string parameters = null;
+    var refernceID = Model.GetParameterValue<string>("REFERENCEID");
+    if (refernceID != null && refernceID !="0")
+        parameters = "StudentID=" + refernceID;
+    var cultureTitle = Model.GetParameterValue<string>("Title_" + System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower());
+    if (!string.IsNullOrEmpty(cultureTitle))
+    {
+        title = cultureTitle;
+    }
+    var metadata = await Eduegate.Services.Client.Factory.ClientFactory.SearchServiceClient(new Eduegate.Framework.CallContext()
+    { LanguageCode = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower(),
+        CompanyID = 1
+    }).SearchList((Eduegate.Services.Contracts.Enums.SearchView) int.Parse(viewID)); 
+    var viewFullPath = metadata?.ViewFullPath;
+    var viewName = (Eduegate.Infrastructure.Enums.SearchView)int.Parse(viewID); //metadata?.ViewName;
+
+    var vm = new Eduegate.Web.Library.ViewModels.SearchListViewModel
+            {
+                ControllerName = "Frameworks/Search",
+                ViewName = viewName,
+                ViewTitle = string.IsNullOrEmpty(metadata.ViewTitle) ? metadata.ViewName : metadata.ViewTitle,
+                HeaderList = metadata.Columns,
+                SummaryHeaderList = metadata.SummaryColumns,
+                SortColumns = metadata.SortColumns,
+                UserViews = metadata.UserViews,
+                IsMultilineEnabled = metadata.MultilineEnabled,
+                IsCategoryColumnEnabled = metadata.RowCategoryEnabled,
+                FilterColumns = metadata.QuickFilterColumns,
+                HasFilters = metadata.HasFilters,
+                UserValues = metadata.UserValues,
+                EnabledSortableGrid = isSortableList,
+                ViewFullPath = metadata.ViewFullPath,
+                ViewActions = metadata.ViewActions,
+
+                HasChild = metadata.HasChild,
+                ChildView = metadata.ChildView,
+                ChildFilterField = metadata.ChildFilterField,
+                ActualControllerName = metadata.ControllerName,
+                IsRowClickForMultiSelect = metadata.IsRowClickForMultiSelect,
+                IsMasterDetail = metadata.IsMasterDetail,
+                IsEditableLink = metadata.IsEditable,
+                IsGenericCRUDSave = metadata.IsGenericCRUDSave,
+                IsReloadSummarySmartViewAlways = metadata.IsReloadSummarySmartViewAlways,
+                JsControllerName = metadata.JsControllerName,
+                RuntimeFilter = parameters
+            };
+}
+
+
+<div class="card card-flush h-xl-100 overflow-hidden">
+    <div class="card-header border-0 pt-5 min-h-auto">
+        <h3 class="card-title align-items-start flex-column">
+            <span class="card-label fw-bold text-dark">@title</span>
+
+            @*<span class="text-muted mt-1 fw-semibold fs-7">8k social visitors</span>*@
+        </h3>
+        </div>
+    @await Html.PartialAsync("~/Areas/Frameworks/Views/Shared/_ListCustom.cshtml", vm)
+
+</div>

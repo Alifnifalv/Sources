@@ -1,0 +1,180 @@
+﻿<div class="main-page row g-0 g-xl-2 mb-5 mb-xl-10">
+    <div class="scheduleWrapper innertab subject" id="Timesheet_Manual_Entry_Tab" style="display:block">
+        <div class="window-tab preload-overlay" style="display:none;">
+            <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+        </div>
+        <div class="col-md-12">
+            <div class="app-content  flex-column-fluid p-0">
+                @* <div class="app-container  container-fluid "> *@
+
+                    <div class="d-flex flex-stack flex-wrap ">
+
+                        <div class="my-1 me-5">
+
+                        </div>
+
+                        <input type="button" value="Reset" class="button-orange" ng-click="LoadManualEntry()" />
+
+                    </div>
+
+                    <div class="row gy-0 g-xl-2">
+
+                        <div class="col-lg-4">
+                            <span class="form-group">
+                                <span class="controls">
+                                    <label>Status</label>
+                                    <span class="controls brand">
+                                        <select class="form-control validate" name="SelectedStatus" id="SelectedStatus"
+                                                ng-options="item as item.Value for item in ApprovalStatuses track by item.Key"
+                                                ng-model="ManualEntryMaster.SelectedStatus" ng-change="UpdateManualEntriesStatus()">
+                                        </select>
+                                        <i class="dropdownarrow fa fa-caret-down"></i>
+                                    </span>
+                                </span>
+                            </span>
+                        </div>
+                        <div class="w-100"></div>
+                        <div class="col-lg-4">
+                            <input type="button" value="Save All" class="button-orange" ng-click="SaveManualEntriesTimesheetData()" />
+                        </div>
+                    </div>
+
+                    <div class="row gy-5 g-xl-10">
+                        <div class="col-md-12">
+                            <div class="app-content  flex-column-fluid">
+
+                                <div class="card card-flush mb-5 mb-xl-10">
+                                    <div class="card-body p-0">
+                                        <div class="dataTables_wrapper dt-bootstrap4 no-footer">
+                                            <div>
+                                                <table class="table  align-middle fs-6 gy-3  no-footer mb-0">
+                                                    <thead style=" background: #f5f5f5; border-bottom: 1px solid #e1e1e1; border-top: 1px solid #e1e1e1;">
+                                                        <tr class="text-start align-middle text-gray-600 fw-normal fs-7  gs-0 text-truncate">
+                                                            <th class="text-center align-middle pe-3 min-w-30px w-40px me-3 sorting_disabled">SL. No.</th>
+                                                            <th class="text-start align-middle pe-3 min-w-150px sorting">Employee name</th>
+                                                            <th class="text-start align-middle pe-3 min-w-30px sorting">From date</th>
+                                                            <th class="text-start align-middle pe-3 min-w-30px sorting">To date</th>
+                                                            <th class="text-start align-middle  min-w-30px w-150px sorting">Type</th>
+                                                            <th class="text-start align-middle  min-w-75px w-40px sorting">Normal hours</th>
+                                                            <th class="text-start align-middle  min-w-75px w-40px sorting">OT hours</th>
+                                                            <th class="text-start align-middle  min-w-75px w-150px sorting">Status</th>
+                                                            <th class="text-start align-middle  min-w-75px sorting">Remarks</th>
+                                                            <th class="align-middle  min-w-30px sorting">
+                                                                <div class="controls text-center">
+                                                                <button type="button" class="button-orange p-2" ng-click="InsertEntryRow($index + 1)">
+                                                                        <span class="svg-icon svg-icon-3 m-0">
+                                                                            <svg width="24" height="24" fill="#ffffff" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                            <rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)" fill="#ffffff"></rect>
+                                                                            <rect x="6" y="11" width="12" height="2" rx="1" fill="#ffffff"></rect>
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                </div>
+                                                            </th>
+                                                            <th class="align-middle  min-w-30px sorting mr-3">
+                                                                <div class="controls text-center">
+                                                                <button type="button" class="button-orange p-2" ng-click="RemoveEntryRow($index + 1)">
+                                                                        <span class="svg-icon svg-icon-3 m-0">
+                                                                        <svg width="24" height="24" fill="#ffffff" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                                            <rect x="6" y="11" width="12" height="2" rx="1" fill="#ffffff"></rect>
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                </div>
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="fw-normal text-gray-800 text-truncate">
+                                                        <tr ng-repeat="timesheet in ManualEntryTimeSheetDatas track by $index" class="ng-scope" ng-init="current = $parent.start; $parent.start=$parent.start+1;">
+                                                            <td class="text-center align-middle">
+                                                                {{$index +1}}
+                                                            </td>
+                                                            <td class="text-start align-middle">
+                                                                <span class="controls brand min-w-100">
+                                                                    <ui-select style="width: 100%;" ng-model="timesheet.Employee"
+                                                                               theme="select2" class="pos-txt" sortable="true" name="ManualSelectedEmployee" id="ManualSelectedEmployee">
+                                                                        <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                        <ui-select-choices repeat="data in ManualEntryEmployees | filter:$select.search">{{data.Value}}</ui-select-choices>
+                                                                    </ui-select>
+                                                                </span>
+                                                            </td>
+                                                            <td class="text-end align-middle">
+                                                                <input type="text" autocomplete="off" ng-model="timesheet.DateFromString" skien-Datepicker ng-change="ChangeManualEntryFromDate(timesheet)" />
+                                                            </td>
+                                                            <td class="text-end align-middle">
+                                                                <input type="text" autocomplete="off" ng-model="timesheet.DateToString" skien-Datepicker ng-change="CheckManualEntryDateRanges(timesheet)" />
+                                                            </td>
+                                                            <td class="text-start align-middle">
+                                                                <span class="controls brand min-w-100">
+                                                                    <select class="form-control  validate" required="" aria-required="true" name="TimesheetTimeType" id="TimesheetTimeType"
+                                                                            ng-options="item as item.Value for item in TimeTypes track by item.Key"
+                                                                            ng-model="timesheet.TimesheetTimeType" ng-change="ManualEntryTypeChanges(timesheet)">
+                                                                    </select>
+                                                                    <i class="dropdownarrow fa fa-caret-down"></i>
+                                                                </span>
+                                                            </td>
+                                                            <td class="text-end align-middle">
+                                                                <input type="text" ng-model="timesheet.ApprovedNormalHours" />
+                                                            </td>
+                                                            <td class="text-end align-middle">
+                                                                <input type="text" ng-model="timesheet.ApprovedOTHours" />
+                                                            </td>
+                                                            <td class="text-end align-middle">
+                                                                <span class="controls brand min-w-100">
+                                                                    <select class="form-control  validate" required="" aria-required="true" name="TimesheetApprovalStatus" id="TimesheetApprovalStatus"
+                                                                            ng-options="item as item.Value for item in ApprovalStatuses track by item.Key"
+                                                                            ng-model="timesheet.TimesheetApprovalStatus">
+                                                                    </select>
+                                                                    <i class="dropdownarrow fa fa-caret-down"></i>
+                                                                </span>
+                                                            </td>
+                                                            <td class="text-end align-middle">
+                                                                <input type="text" ng-model="timesheet.Remarks" />
+                                                            </td>
+                                                            <td>
+                                                                <div class="controls text-center">
+                                                                <button type="button" class="button-orange p-2" ng-click="InsertEntryRow($index + 1)">
+                                                                        <span class="svg-icon svg-icon-3 m-0">
+                                                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+                                                                            <rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)" fill="#ffffff"></rect>
+                                                                            <rect x="6" y="11" width="12" height="2" rx="1" fill="#ffffff"></rect>
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="controls text-center">
+                                                                <button type="button" class="button-orange p-2" ng-click="RemoveEntryRow($index + 1)">
+                                                                        <span class="svg-icon svg-icon-3 m-0">
+                                                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+                                                                            <rect x="6" y="11" width="12" height="2" rx="1" fill="#ffffff"></rect>
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div><div class="row"><div class="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start"></div><div class="col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end"></div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @* </div> *@
+            </div>
+        </div>
+    </div>
+
+</div>
+<style>
+    .table > :not(caption) > * > * {
+        padding: 0.75rem 0.75rem;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+</style>

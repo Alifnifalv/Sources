@@ -1,0 +1,180 @@
+﻿@{
+    ViewBag.Title = "My Lesson Plans";
+    Int64 CandidateIDfromOutSide = 0;
+
+    try
+    {
+        if (!string.IsNullOrEmpty(Context.Request.Query["sID"]))
+        { CandidateIDfromOutSide = Convert.ToInt64(Context.Request.Query["sID"]); }
+    }
+    catch { CandidateIDfromOutSide = 0; }
+    <input type="hidden" id="CandidateIDfromOutSide" value="@CandidateIDfromOutSide" />
+}
+
+<div ng-controller="MyLessonPlanController" ng-init="Init()">
+    
+
+    <!--begin::Wrapper container-->
+    <div class="app-container py-20">
+
+        <!--begin::Main-->
+        <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+            <!--begin::Content wrapper-->
+            <div class="d-flex flex-column flex-column-fluid">
+                <div id="kt_app_content" class="app-content flex-column-fluid ">
+                    <div class="row g-5 g-xl-8">
+                        <div class="col-xl-8 ps-xl-12">
+                            <div class="card bgi-position-y-bottom bgi-position-x-end bgi-no-repeat bgi-size-cover min-h-250px bg-body mb-5 mb-xl-8">
+                                <div class="card-body d-flex flex-column justify-content-center">
+
+                                    <div class="container-fluid">
+                                        <div class="row align-items-center">
+                                            <div class="col-12 align-items-center">
+                                                <div class="ui styled fluid accordion">
+                                                    <div class="active title">
+                                                        <i class="dropdown icon"></i>
+                                                       Classes
+                                                        <div class="ui small basic icon buttons ">
+                                                            <button class="ui button"><i class="file icon"></i></button>
+                                                            <button class="ui button"><i class="save icon"></i></button>
+                                                            <button class="ui button"><i class="upload icon"></i></button>
+                                                            <button class="ui button"><i class="download icon"></i></button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="active content">
+                                                        Welcome to level 1
+                                                        <div class="accordion">
+                                                            <div class="active title">
+                                                                <i class="dropdown icon"></i>
+                                                                Level 1A
+                                                            </div>
+                                                            <div class="active content">
+                                                                <p>Level 1A Contents</p>
+                                                                <div class="accordion" ng-repeat="LessonPlanList in LessonPlanList">
+                                                                    <div class="title">
+                                                                        <i class="dropdown icon"></i>
+                                                                        Level 1A-A
+                                                                    </div>
+                                                                    <div class="content" >
+                                                                        Level 1A-A Contents
+                                                                        <div class="ui container">
+                                                                            <h1 class="ui header">Lesson Plan Details</h1>
+
+                                                                            <div class="ui segment">
+                                                                                <h2 class="ui dividing header">Basic Information</h2>
+                                                                                <div class="ui list">
+                                                                                    <div class="item" ng-if="LessonPlanList.Title">{{ LessonPlanList.Title }}</div>
+                                                                                    <div class="item" ng-if="LessonPlanList.Description && LessonPlanList.Description !== 'N/A'"><strong>Description:</strong> {{ LessonPlanList.Description }}</div>
+                                                                                    <div class="item" ng-if="LessonPlanList.Content && LessonPlanList.Content !== 'N/A'"><strong>Content:</strong> {{ LessonPlanList.Content }}</div>
+                                                                                    <div class="item" ng-if="LessonPlanList.Subject.Value"><strong>Subject:</strong> {{ LessonPlanList.Subject.Value }}</div>
+                                                                                    <div class="item" ng-if="LessonPlanList.LessonPlanStatus.Value"><strong>Status:</strong> {{ LessonPlanList.LessonPlanStatus.Value }}</div>
+                                                                                    <div class="item" ng-if="LessonPlanList.AcademicYearID"><strong>Academic Year:</strong> {{ LessonPlanList.AcademicYearID }}</div>
+                                                                                    <div class="item" ng-if="LessonPlanList.StartDate"><strong>Start Date:</strong> {{ LessonPlanList.StartDate }}</div>
+                                                                                    <div class="item" ng-if="LessonPlanList.EndDate"><strong>End Date:</strong> {{ LessonPlanList.EndDate }}</div>
+                                                                                </div>
+
+                                                                                <h2 class="ui dividing header">Class and Section</h2>
+                                                                                <div class="ui list">
+                                                                                    <div class="item" ng-if="LessonPlanList.LessonPlanClassSectionMaps[0].Class.Value"><strong>Class:</strong> {{ LessonPlanList.LessonPlanClassSectionMaps[0].Class.Value }}</div>
+                                                                                    <div class="item" ng-if="LessonPlanList.LessonPlanClassSectionMaps[0].Section.Value"><strong>Section:</strong> {{ LessonPlanList.LessonPlanClassSectionMaps[0].Section.Value }}</div>
+                                                                                </div>
+
+                                                                                <h2 class="ui dividing header">Additional Information</h2>
+                                                                                <div class="ui list">
+                                                                                    <div class="item" ng-if="LessonPlanList.LearningExperiences && LessonPlanList.LearningExperiences !== 'N/A'"><strong>Learning Experiences:</strong> {{ LessonPlanList.LearningExperiences }}</div>
+                                                                                    <div class="item" ng-if="LessonPlanList.TeachingMethodology && LessonPlanList.TeachingMethodology !== 'N/A'"><strong>Teaching Methodology:</strong> {{ LessonPlanList.TeachingMethodology }}</div>
+                                                                                    <div class="item" ng-if="LessonPlanList.HomeWorks && LessonPlanList.HomeWorks !== 'N/A'"><strong>Homework:</strong> {{ LessonPlanList.HomeWorks }}</div>
+                                                                                    <div class="item" ng-if="LessonPlanList.Reflections && LessonPlanList.Reflections !== 'N/A'"><strong>Reflections:</strong> {{ LessonPlanList.Reflections }}</div>
+                                                                                </div>
+
+                                                                                <h2 class="ui dividing header">Created Information</h2>
+                                                                                <div class="ui list">
+                                                                                    <div class="item" ng-if="LessonPlanList.CreatedBy"><strong>Created By:</strong> User ID {{ LessonPlanList.CreatedBy }}</div>
+                                                                                    <div class="item" ng-if="LessonPlanList.CreatedDate"><strong>Created Date:</strong> {{ LessonPlanList.CreatedDate }}</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="title">
+                                                                <i class="dropdown icon"></i>
+                                                                Level 1B
+                                                            </div>
+                                                            <div class="content">
+                                                                Level 1B Contents
+                                                            </div>
+                                                            <div class="title">
+                                                                <i class="dropdown icon"></i>
+                                                                Level 1C
+                                                            </div>
+                                                            <div class="content">
+                                                                Level 1C Contents
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="title">
+                                                        <i class="dropdown icon"></i>
+                                                        Level 2
+                                                    </div>
+                                                    <div class="content">
+                                                        <p>Welcome to level 2</p>
+                                                        <div class="accordion">
+                                                            <div class="active title">
+                                                                <i class="dropdown icon"></i>
+                                                                Level 2A
+                                                            </div>
+                                                            <div class="active content">
+                                                                <p>Level 2A Contents</p>
+                                                                <div class="accordion">
+                                                                    <div class="title">
+                                                                        <i class="dropdown icon"></i>
+                                                                        Level 2A-A
+                                                                    </div>
+                                                                    <div class="content">
+                                                                        Level 2A-A Contents
+                                                                    </div>
+                                                                    <div class="title">
+                                                                        <i class="dropdown icon"></i>
+                                                                        Level 2A-B
+                                                                    </div>
+                                                                    <div class="content">
+                                                                        Level 2A-B Contents
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="title">
+                                                                <i class="dropdown icon"></i>
+                                                                Level 2B
+                                                            </div>
+                                                            <div class="content">
+                                                                Level 2B Contents
+                                                            </div>
+                                                            <div class="title">
+                                                                <i class="dropdown icon"></i>
+                                                                Level 2C
+                                                            </div>
+                                                            <div class="content">
+                                                                Level 2C Contents
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    $('.ui.accordion').accordion();
+</script>

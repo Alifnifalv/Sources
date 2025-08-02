@@ -1,0 +1,143 @@
+﻿
+<div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6">
+    <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2">
+        <h1 class="d-flex text-dark fw-bold m-0 fs-3">Lesson Plan</h1>
+        <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+            <li class="breadcrumb-item text-gray-600">
+                <a class="text-gray-600 text-hover-primary">Home</a>
+            </li>
+            <li class="breadcrumb-item text-gray-600">Ward</li>
+            <li class="breadcrumb-item text-gray-500">Lesson Plan</li>
+        </ul>
+    </div>
+</div>
+<div class="flex-column-fluid">
+    <div id="LessonPlanListOverlay" class="preload-overlay center">
+        <span id="LessonPlanListOverlayButtonLoader" class="preloadImg">
+            <img src="~/Images/preloaderWhite.gif" alt="loader" />
+        </span>
+    </div>
+    <div class="page-content-wrapper" ng-controller="MyWardController" ng-init="init('','')">
+        <div class="card-stacked" ng-if="!ShowPreLoader && LessonPlanList.length == 0">
+            <div class="alert alert-info text-center">
+                <b>No LessonPlan details Found.</b>
+            </div>
+        </div>
+        <div class="m-0" ng-if="LessonPlanList.length != 0"
+             id="data.CircularIID" ng-repeat="data in LessonPlanList"
+             ng-init="current = $parent.start; $parent.start=$parent.start+1;">
+            <div class="d-flex align-items-center collapsible py-3 toggle mb-0" data-bs-toggle="collapse" data-bs-target="#lesson-plan{{$index}}" aria-expanded="true">
+                <div class="btn btn-sm btn-icon mw-20px btn-active-color-primary me-5">
+                    <span class="svg-icon toggle-on svg-icon-primary svg-icon-1">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="currentColor"></rect>
+                            <rect x="6.0104" y="10.9247" width="12" height="2" rx="1" fill="currentColor"></rect>
+                        </svg>
+                    </span>
+                    <span class="svg-icon toggle-off svg-icon-1">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="currentColor"></rect>
+                            <rect x="10.8891" y="17.8033" width="12" height="2" rx="1" transform="rotate(-90 10.8891 17.8033)" fill="currentColor"></rect>
+                            <rect x="6.01041" y="10.9247" width="12" height="2" rx="1" fill="currentColor"></rect>
+                        </svg>
+                    </span>
+                </div>
+                <h4 class="text-gray-700 fw-bold cursor-pointer m-0" ng-bind="data.Subject.Value"></h4>
+            </div>
+            <div id="lesson-plan{{$index}}" class="fs-6 ms-1 collapse" style="">
+                <div class="mb-4">
+                    <div class="d-flex align-items-center ps-10">
+                        <div class="card card-muted">
+                            <div class="card-body pt-5">
+                                <div class="d-flex flex-stack">
+                                    <div class="text-gray-700 fw-semibold fs-6 me-2">Month</div>
+                                    <div class="d-flex align-items-senter">
+                                        <span class="text-gray-900 fw-bolder fs-6" ng-bind="data.MonthNameString"></span>
+                                    </div>
+                                </div>
+                                <div class="separator separator-dashed my-3"></div>
+                                <div class="d-flex flex-stack">
+                                    <div class="text-gray-700 fw-semibold fs-6 me-2">Start Date</div>
+                                    <div class="d-flex align-items-senter">
+                                        <span class="text-gray-900 fw-bolder fs-6" ng-bind="data.StartDate"></span>
+                                    </div>
+                                </div>
+                                <div class="separator separator-dashed my-3"></div>
+                                <div class="d-flex flex-stack">
+                                    <div class="text-gray-700 fw-semibold fs-6 me-2">End Date</div>
+                                    <div class="d-flex align-items-senter">
+                                        <span class="text-gray-900 fw-bolder fs-6" ng-bind="data.EndDate"></span>
+                                    </div>
+                                </div>
+                                <div class="separator separator-dashed my-3"></div>
+                                @*<div class="d-flex flex-stack">
+                                    <div class="text-gray-700 fw-semibold fs-6 me-2">Total No.of Periods</div>
+                                    <div class="d-flex align-items-senter">
+                                        <span class="text-gray-900 fw-bolder fs-6" ng-bind="data.NumberOfPeriods"></span>
+                                    </div>
+                                </div>
+                                <div class="separator separator-dashed my-3"></div>*@
+                                <div class="d-flex flex-stack">
+                                    <div class="text-gray-700 fw-semibold fs-6 me-2">Title</div>
+                                    <div class="d-flex align-items-senter">
+                                        <span class="text-gray-900 fw-bolder fs-6" ng-bind="data.Title"></span>
+                                    </div>
+                                </div>
+                                <div class="separator separator-dashed my-3"></div>
+                                <div class="d-flex flex-stack">
+                                    <div class="text-gray-700 fw-semibold fs-6 me-8">Content</div>
+                                    <div class="d-flex align-items-senter">
+
+                                        <span class="text-gray-900 fw-bolder fs-6" ng-bind="data.Content"></span>
+                                    </div>
+                                </div>
+                                @*<div class="separator separator-dashed my-3"></div>
+                                <div class="d-flex flex-stack">
+                                    <div class="text-gray-700 fw-semibold fs-6 me-2">Resources</div>
+                                    <div class="d-flex align-items-senter">
+                                        <span class="text-gray-900 fw-bolder fs-6" ng-bind="data.Resourses"></span>
+                                    </div>
+                                </div>
+                                <div class="separator separator-dashed my-3"></div>
+                                <div class="d-flex flex-stack">
+                                    <div class="text-gray-700 fw-semibold fs-6 me-2"> Homework/SE/AIL/Assignments/Extended Activity for students (if any):</div>
+                                    <div class="d-flex align-items-senter">
+                                        <span class="text-gray-900 fw-bolder fs-6" ng-bind-html="data.HomeWorks"></span>
+                                    </div>
+                                </div>*@
+                                @*<div class="separator separator-dashed my-3"></div>
+                                <div class="d-flex flex-stack">
+                                    <div class="text-gray-700 fw-semibold fs-6 me-2">Attachment</div>
+                                    <div class="d-flex align-items-senter">
+                                        <span class="text-gray-900 fw-bolder fs-6">
+                                            <button class="btn btn-primary mb-2 ms-2 " ng-click="DownloadURL('ReadContentsByID?contentID='+gridModel.AttachmentReferenceID)" ng-repeat="gridModel in data.LessonPlanAttachmentMap track by $index">
+                                                <div ng-if="gridModel.AttachmentReferenceID != null">
+                                                    <i class="fa fa-2x fa-download" aria-hidden="true" title="Click here to Download">
+                                                    </i>&nbsp;&nbsp;
+                                                    <span ng-bind="gridModel.AttachmentDescription" class="ng-binding"></span>
+                                                </div>
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>*@
+                            </div>
+                            <!--end::Label-->
+                        </div>
+                    </div>
+                    <!--end::Item-->
+                </div>
+                <!--end::Item-->
+            </div>
+            <!--end::Content-->
+            <!--begin::Separator-->
+            <div class="separator separator-dashed"></div>
+            <!--end::Separator-->
+        </div>
+
+    </div>
+
+</div>
+<div class="row gy-5 g-xl-10">
+    <div class="col-xl-4 mb-5 mb-xl-10">
+    </div>
+</div>

@@ -1,0 +1,39 @@
+using System;
+using System.Collections.Generic;
+
+namespace Eduegate.Domain.Entity.Models
+{
+    public partial class Currency
+    {
+        public Currency()
+        {
+            this.Payables = new List<Payable>();
+            this.Receivables = new List<Receivable>();
+            this.InvetoryTransactions = new List<InvetoryTransaction>();
+            this.TransactionHeads = new List<TransactionHead>();
+            this.Companies = new List<Company>();
+            this.CompanyCurrencyMaps = new List<CompanyCurrencyMap>();
+            this.Countries = new List<Country>();
+        }
+
+        public int CurrencyID { get; set; }
+        public Nullable<int> CompanyID { get; set; }
+        public string ISOCode { get; set; }
+        public string AnsiCode { get; set; }
+        public Nullable<int> NumericCode { get; set; }
+        public string Name { get; set; }
+        public string Symbol { get; set; }
+        public Nullable<byte> DecimalPrecisions { get; set; }
+        public Nullable<decimal> ExchangeRate { get; set; }
+        public Nullable<bool> IsEnabled { get; set; }
+        public string DisplayCode { get; set; }
+        public virtual ICollection<Payable> Payables { get; set; }
+        public virtual ICollection<Receivable> Receivables { get; set; }
+        public virtual ICollection<InvetoryTransaction> InvetoryTransactions { get; set; }
+        public virtual ICollection<TransactionHead> TransactionHeads { get; set; }
+        public virtual ICollection<Company> Companies { get; set; }
+        public virtual Company Company { get; set; }
+        public virtual ICollection<CompanyCurrencyMap> CompanyCurrencyMaps { get; set; }
+        public virtual ICollection<Country> Countries { get; set; }
+    }
+}

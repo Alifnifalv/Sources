@@ -1,0 +1,46 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+
+@using Eduegate.Framework.Extensions;
+@{
+    Random rnd = new Random();
+    var window = "window_CardView";
+    var documentTypeID = Model.GetParameterValue<string>("DocumentTypeID");
+    var title = Model.GetParameterValue<string>("Title");
+    var viewID = Model.GetParameterValue<string>("ViewID");
+    var cultureTitle = Model.GetParameterValue<string>("Title_" + System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower());
+    if (!string.IsNullOrEmpty(cultureTitle))
+    {
+        title = cultureTitle;
+    }
+   
+    var viewName = (Eduegate.Services.Contracts.Enums.SearchView)int.Parse(viewID); //metadata?.ViewName;
+}
+
+<div class="card card-flush h-xl-100">
+    <div id="@window" template="_DashBoard_Grid" ng-controller="CardViewBoilerPlateController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@window','@viewName')">
+        @* <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">*@
+        <div>
+            <div class="card-header border-0 pt-5">
+                <h3 class="card-title align-items-start flex-column">
+                    <span class="card-label fw-bold text-dark">@title</span>
+                </h3>               
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table border="0" style="border-collapse: separate;border-spacing: 0 10px;">
+                        <tbody>
+                            <tr ng-if="$index % 2 ==0" ng-repeat="x  in DataResults">
+                                <td>{{DataResults[$index].Head}} </td>                               
+                                <td style="padding-left:20px;">{{DataResults[$index].Data}}</td>
+                                <td style="padding-left:20px;">{{DataResults[$index+1].Head}} </td>                                
+                                <td style ="padding-left:20px;">{{DataResults[$index+1].Data}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 

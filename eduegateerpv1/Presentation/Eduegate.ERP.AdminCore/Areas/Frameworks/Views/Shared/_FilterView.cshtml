@@ -1,0 +1,60 @@
+﻿@{
+    Layout = null;
+    var windowName = "window_" + Guid.NewGuid().ToString();
+}
+
+<script>
+    $(document).ready(function () {
+        $('.filter-arrow', '#@windowName').on('click', function () {
+            $(this).toggleClass('show');
+            if ($(this).hasClass('show')) {
+                $('.filterwrap').slideDown(200);
+            }
+            else {
+                $('.filterwrap').slideUp(200);
+            }
+        });
+    });
+
+    $('.filterdropdown', '#@windowName').draggable({
+        handle: '.filterheader',
+        containment: ".main-body"
+    });
+
+
+    $(".filterheader .close-pin", '#@windowName').click(function () {
+        var filterypos = $('.filterdropdown', '#@windowName').offset().top;
+        var filterxpos = $('.filterdropdown', '#@windowName').offset().left;
+        var currentypos = $('.filterdropdown', '#@windowName').offset().top - 274;
+        var currentxpos = $('.filterdropdown', '#@windowName').offset().left - 70;
+
+        $(this).toggleClass("unpin");
+        if ($(this).hasClass('unpin')) {
+            $(this).parents('.filterdropdown').css({ 'position': 'fixed', 'top': filterypos + 'px', 'left': filterxpos + 'px' });
+            $('.filterdropdown', '#@windowName').draggable({ disabled: true });
+        }
+        else {
+            $(this).parents('.filterdropdown').css({ 'position': 'absolute', 'top': currentypos + 'px', 'left': currentxpos + 'px' });
+            $('.filterdropdown', '#@windowName').draggable({ disabled: false });
+        }
+    });
+</script>
+
+<div id="@windowName">
+    <div ng-show="RowModel.IsShowFilterView" class="filterdropdown ui-draggable-handle" id="filterview">
+        <div class="filterheader">
+            <span>Filter</span>
+            <button id="close-filter" value="Submit" form="nameform" type="submit" class="close-filter alignright" ng-click="RowModel.CloseFilterView();">
+                <i class="fa fa-close"></i>
+            </button>
+            <button value="Submit" form="nameform" type="submit" class="close-pin alignright" id="close-pin"><i class="pin fa"></i></button>
+            <div class="filter-arrow alignright show"><i class="fa fa-caret-up"></i></div>
+            <button class="filter-settings alignright"><i class="fa fa-gear"></i></button>
+        </div>
+        <div class="filterwrap">
+            <div class="preload-overlay"></div>
+            <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+            <div id="filterContent"></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+﻿@using Eduegate.Services.Contracts.Enums
+
+@{
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div id="@windowName" class="summary-toggle">
+    <div class="sum_toggleheader" data-slide="sp-settings" ng-click="GetDynamicViewGrid('@DynamicViews.BundleWrap', ViewModels.@(DynamicViews.ProductSKUDetails).ProductSKUMapIID, false, $event)">Bundle Details - @ViewBag.IID</div>
+
+    <div class="sum_togglecontent" data-slide="sp-settings">
+        <div class="fullwidth displaylineBlock overflowAuto">
+            <table class="data-grid" cellpadding="0" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="medium-col-width">Product Name</th>
+                        <th class="small-col-width">Quantity</th>
+                        <th class="small-col-width">Cost Price</th>
+                        <th class="small-col-width">Selling Price</th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="bundleWrap in ViewModels.@(DynamicViews.BundleWrap)">
+                    <tr>
+                        <td class="medium-col-width">
+                            <span ng-bind="bundleWrap.FromProductName"></span>
+                        </td>
+                        <td class="small-col-width">
+                            <span class="codewrap fieldwithicon" ng-bind="bundleWrap.Quantity"></span>
+                        </td>
+                        <td class="small-col-width">
+                            <span class="codewrap fieldwithicon" ng-bind="bundleWrap.CostPrice"></span>
+                        </td>
+                        <td class="small-col-width">
+                            <span class="codewrap fieldwithicon" ng-bind="bundleWrap.SellingPrice"></span>
+                        </td>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

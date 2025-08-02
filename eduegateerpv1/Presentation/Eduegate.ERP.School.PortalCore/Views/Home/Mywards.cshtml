@@ -1,0 +1,1344 @@
+﻿@{
+    ViewBag.Title = "My Wards";
+    Int64 CandidateIDfromOutSide = 0;
+
+    try
+    {
+        if (!string.IsNullOrEmpty(Context.Request.Query["sID"]))
+        { CandidateIDfromOutSide = Convert.ToInt64(Context.Request.Query["sID"]); }
+    }
+    catch { CandidateIDfromOutSide = 0; }
+    <input type="hidden" id="CandidateIDfromOutSide" value="@CandidateIDfromOutSide" />
+}
+<!-- start page content -->
+<div class="d-flex flex-column bg-light "  style="flex:1;" ng-controller="MyWardController" ng-init="init('','')">
+ 
+    <div class=" w-100 d-flex ">
+        <div class="container-xxl d-none d-lg-flex flex-column">
+            
+            <div class="content d-flex flex-column mb-lg-10 mb-6 mt-10 ">
+                <div class="col-6 col-lg-6 mb-lg-10 mb-md-0 min-h-275px">
+                    <div class="d-flex align-items-lg-end flex-column flex-lg-row bg-white rounded-3  candidateProfile" id="{{allocstudent.StudentIID}}" ng-repeat="allocstudent in Students" ng-if="allocstudent.IsSelected">
+                        <div class="symbol symbol-80px symbol-lg-150px me-lg-10  rounded-end-0">
+                            <div id="profile-header" class=" w-100 header-wrapper fileOnlyHeader-23hdD">
+                                <div class="header-wrapper-inner py-0">
+                                    <div class="resume-header-wrapper bg-transparent">
+                                        <div class="resume-header grid-container p-0">
+                                            <div class="grid-row  m-0">
+                                                <div class="grid-col-md-8 grid-fill-height is-file-only-width overflow-auto">
+                                                    <div class="header-text  flex-column p-0 bg-transparent align-items-start align-items-lg-center">
+                                                        <div class="avatar-outer fs-mask mb-3 overlay">
+                                                            <a href="/Content/ReadContentsByID?contentID={{allocstudent.StudentProfile}}"
+                                                                   data-fancybox="gallery"
+                                                                   data-preload="false" class="overlay-wrapper avatar-container justify-content-start justify-content-lg-center border-0 avatar-css horizontal position-relative overflow-hidden avatar-profile bg-secondary">
+                                                                <img ng-src="/Content/ReadContentsByID?contentID={{allocstudent.StudentProfile}}" onerrorsrc="/Images/profile-holder.svg"
+                                                                     title="{{allocstudent.FirstName}}&nbsp;{{allocstudent.MiddleName}}&nbsp;{{allocstudent.LastName}}"
+                                                                     style="background-size:cover;background-repeat:no-repeat;    top: 0;"
+                                                                     class="position-absolute w-100 lozad " />
+
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center align-items-lg-start flex-wrap  mb-2 py-10 py-lg-0 px-lg-0">
+                            <div class="d-flex flex-column">
+                                <div class="d-flex  mb-4 flex-column align-items-start">
+                                    <div class="text-gray-900 text-hover-primary fs-3 fw-bold me-1 mb-2"> {{StudentDetails.FirstName}}&nbsp;{{StudentDetails.MiddleName}}&nbsp;{{StudentDetails.LastName}}</div>
+
+                                    <div  class="badge badge-primary fs-7 fw-bold me-2 " ng-bind="StudentDetails.AdmissionNumber"></div>
+                                </div>
+                                <div class="d-flex flex-column fw-semibold fs-6 mb-4 pe-2">
+                                    <div  class="d-flex align-items-center text-gray-700 text-hover-primary me-5 mb-2">
+                                        <span>Section -&nbsp; </span>
+                                        <span ng-bind="StudentDetails.Section.Value"></span>
+                                    </div>
+                                    <div  class="d-flex align-items-center text-gray-700 text-hover-primary me-5 mb-2">
+                                        <span ng-bind="StudentDetails.StudentClass.Value"></span>
+                                    </div>
+                                    <div  class="d-flex align-items-center text-gray-700 text-hover-primary mb-2">
+                                        <span ng-bind="StudentDetails.School.Value"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+         @*        <div class="col-6 app-navbar flex-shrink-0 d-flex justify-content-end" >
+                    <!--begin::Quick links-->
+                    <div class=" app-navbar-item me-2 me-lg-5">
+                        <a class="nav-link btn btn-outline-light btn-flex btn-color-muted  flex-column overflow-hidden w-80px h-85px pt-5 pb-2 hover-elevate-up"  data-bs-toggle="modal" data-bs-target="#select_sibling_modal">
+                            <!--begin::Icon-->
+                            <div class="nav-icon mb-3">
+                                <img src="../Images/mortarboard-fill.svg" />
+                            </div>
+                            <span class="nav-text text-gray-800 fw-bold fs-6 lh-1">Sibling</span>
+                        </a>
+                        <div class="modal fade" id="select_sibling_modal" tabindex="-1" aria-modal="true" role="dialog">
+                            <!--begin::Modal dialog-->
+                            <div class="modal-dialog  modal-dialog-centered">
+                                <!--begin::Modal content-->
+                                <div class="modal-content rounded-4">
+                                    <!--begin::Modal header-->
+                                    <div class="modal-header justify-content-end border-0 pb-0">
+                                        <!--begin::Close-->
+                                        <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                                            <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+                                            <span class="svg-icon svg-icon-1">
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor"></rect>
+                                                    <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor"></rect>
+                                                </svg>
+                                            </span>
+                                            <!--end::Svg Icon-->
+                                        </div>
+                                        <!--end::Close-->
+                                    </div>
+                                    <div class="modal-body pt-0 pb-15 px-5 px-xl-20" id="kt_engage_sitemap_body">
+                                        <div class="mb-13">
+                                            <h3 class="card-title align-items-start flex-row">
+                                                <span class="card-label fw-bold text-gray-800">Select sibling</span>
+                                            </h3>
+
+                                        </div>
+                                        <div class="container-fluid">
+                                            <style>
+                                                .app-sitemap-thumbnail {
+                                                    border: 1px solid var(--kt-body-bg);
+                                                    filter: drop-shadow(0px 0px 50px rgba(49, 52, 122, 0.12));
+                                                }
+                                            </style>
+
+                                            <div class="symbol-group symbol-hover flex-wrap">
+                                                <div class="bg-hover-light symbol symbol-40px me-6 mb-2 d-flex otherCandidates flex-grow-1" id="{{allocstudent.StudentIID}}" ng-repeat="allocstudent in Students" ng-if="!allocstudent.IsSelected">
+                                                    <div class="symbol   me-6">
+                                                        <div id="profile-header" class=" w-100 header-wrapper fileOnlyHeader-23hdD">
+                                                            <div class="header-wrapper-inner py-0">
+                                                                <div class="resume-header-wrapper bg-transparent">
+                                                                    <div class="resume-header grid-container p-0">
+                                                                        <div class="grid-row centered m-0">
+                                                                            <div class="grid-col-md-8 grid-fill-height is-file-only-width overflow-auto">
+                                                                                <div class="header-text  flex-column p-0 bg-transparent">
+                                                                                    <div class="avatar-outer fs-mask mb-3">
+                                                                                        <div class="avatar-container border-0 avatar-css horizontal position-relative overflow-hidden">
+                                                                                            <img ng-src="/Content/ReadContentsByID?contentID={{allocstudent.StudentProfile}}" onerrorsrc="/Images/profile-holder.svg"
+                                                                                                 title="{{allocstudent.FirstName}}&nbsp;{{allocstudent.MiddleName}}&nbsp;{{allocstudent.LastName}}"
+                                                                                                 style="background-size:cover;background-repeat:no-repeat;top:0;"
+                                                                                                 class="position-absolute w-100" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex align-items-center flex-row-fluid flex-wrap">
+                                                        <div class="flex-grow-1 me-2">
+                                                            <a href="#" class="text-gray-800 text-hover-primary fs-6 fw-bold">  {{allocstudent.FirstName}}&nbsp;{{allocstudent.MiddleName}}&nbsp;{{allocstudent.LastName}}</a>
+                                                            <span class="text-muted fw-semibold d-block fs-7">{{(allocstudent.ClassName) +' '+ (allocstudent.SectionName) }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--end::Modal body-->
+                                </div>
+                                <!--end::Modal content-->
+                            </div>
+                            <!--end::Modal dialog-->
+                        </div>
+                    </div>
+                </div> *@
+                <div class="d-flex flex-center">
+                    <a class="otherCandidates overlay overflow-hidden me-10" id="{{allocstudent.StudentIID}}" data-ng-repeat="allocstudent in Students"
+                    ng-if="!allocstudent.IsSelected">
+                        <div class="symbol symbol-70px overlay-wrapper badge-light-success rounded overflow-hidden ">
+                            <span class="d-flex w-25px h-25px fs-2 flex-center position-absolute z-index-0" style="  top: 50%;
+                                  left: 50%;
+                                  transform: translate(-50%, -50%);">
+                                {{allocstudent.StudentInitials}}
+
+                            </span>
+                            <img ng-src="/Content/ReadContentsByID?contentID={{allocstudent.StudentProfile}}" onerrorsrc="/Images/transparency-svg.svg"
+                                 title="{{allocstudent.FirstName}}&nbsp;{{allocstudent.MiddleName}}&nbsp;{{allocstudent.LastName}}"
+                                 class="object-fit-cover  position-relative border-active-primary btn-active-light-primary "
+                                 style="object-position:0 0;">
+                       
+                            <div class="overlay-layer  bg-light-info" style="background-color:#944A9660 !important">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#ffffff" viewBox="0 0 16 16">
+                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0" />
+                                </svg>
+                            </div>
+                        </div>
+                 
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="container-xxl p-md-sm-0" data-aos="fade-up">
+        <!--begin::Demos layout -->
+        <div class="content d-flex flex-column flex-lg-row py-2 py-lg-15 mb-lg-10 mb-20">
+            <!--begin::Sidebar-->
+            <div class="app-sidebar-nav  d-lg-flex flex-column flex-lg-row-auto w-100 w-lg-250px p-5 py-lg-0 ps-lg-0 pe-lg-12 min-h-lg-700px" data-kt-drawer="true" data-kt-drawer-name="app-demos-sidebar" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="225px" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_app_demos_sidebar_toggle">
+                <!--begin::Sticky aside-->
+                <div class="mb-0" id="kt_app_demos_sidebar_sticky_wrapper" style=" position: sticky; top: 30px;  left: 65.5px;">
+                    <ul class="nav nav-tabs nav-pills flex-column border-0 d-grid gap-3" role="tablist">
+                        <li class="nav-item me-0" data-mdb-ripple-color="secondary" ng-click="mywardsTabSelection('StudentProfile')">
+
+                            <a href="#StudentProfile" class="nav-link menu-item py-1 py-1 active" data-bs-toggle="tab">
+                                <span class="menu-icon mr-2">
+                                    <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+                                    <span class="svg-icon svg-icon-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="#444444" > <path d="M575.997 247.992C575.997 241.19 573.12 234.435 567.526 229.679L303.529 5.672C299.045 1.891 293.522 0 287.998 0S276.952 1.891 272.467 5.672L8.471 229.679C2.877 234.435 0 241.19 0 247.992C0 264.053 13.727 271.992 24.028 271.992C29.511 271.992 35.023 270.125 39.533 266.305L64.001 245.541V448C64.001 483.346 92.655 512 128.001 512H447.996C483.342 512 511.996 483.346 511.996 448V245.541L536.464 266.305C540.98 270.118 546.495 271.993 551.979 271.993C562.14 271.993 575.997 263.963 575.997 247.992ZM463.996 207.991V447.999C463.996 456.835 456.833 463.999 447.996 463.999H128.001C119.164 463.999 112.001 456.835 112.001 447.999V207.991C112.001 207.028 111.563 206.207 111.452 205.274L287.998 55.455L464.545 205.274C464.434 206.207 463.996 207.028 463.996 207.991Z "></path></svg>
+                                    </span>
+                                    <!--end::Svg Icon-->
+                                </span>Home
+                            </a>
+                        </li>
+
+                        <li class="nav-item me-0" data-mdb-ripple-color="secondary" ng-click="mywardsTabSelection('Fees')">
+                            <a href="#Fees" class="nav-link menu-item py-1"
+                               data-bs-toggle="tab" title="Fees">
+                                <span class="menu-icon mr-2">
+                                    <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+                                    <span class="svg-icon svg-icon-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#444444"><path d="M491.301 207.586C484.27 171.426 431.566 15.902 256 16C181.545 15.961 125.334 47.152 86.348 86.32L54.395 54.344C40.231 40.169 16 50.201 16 70.239V191.82C16 200.653 23.16 207.812 31.992 207.812H153.444C173.495 207.812 183.54 183.574 169.367 169.391L131.633 131.629C184.082 78.82 243.541 79.938 256 79.945C349.996 79.914 413.16 147.816 427.938 217.531C452.047 331.281 365.551 431.957 256 431.957C227.399 431.957 200.396 425.061 176.508 412.881C163.95 406.479 148.811 408.377 138.849 418.348L138.849 418.348C123.705 433.506 127.217 459.364 146.236 469.232C179.116 486.292 216.394 496 256 496C404.314 496 521.207 361.375 491.301 207.586ZM256.014 128C242.764 128 232.014 138.75 232.014 152V272C232.014 279.562 235.576 286.656 241.607 291.188L305.607 339.188C309.936 342.438 314.982 344 319.998 344C327.295 344 334.498 340.688 339.217 334.406C347.17 323.781 345.014 308.75 334.42 300.812L280.014 260V152C280.014 138.75 269.264 128 256.014 128Z" /></svg>
+                                    </span>
+                                    <!--end::Svg Icon-->
+                                </span>Fees
+                            </a>
+                        </li>
+                        @*<li class="nav-item me-0" data-mdb-ripple-color="secondary" ng-click="mywardsTabSelection('FeePayment')">
+            <a href="#FeePayment" class="nav-link menu-item py-1" title="Fee Payment"
+               data-bs-toggle="tab">Fee Payment</a>
+        </li>*@
+                        <li class="nav-item me-0" data-mdb-ripple-color="secondary" ng-click="mywardsTabSelection('Assignments')">
+                            <a href="#Assignments" class="nav-link menu-item py-1"
+                               data-bs-toggle="tab" title="Assignments">
+                                <span class="menu-icon mr-2">
+                                    <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+                                    <span class="svg-icon svg-icon-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="#444444">
+                                            <path d="M264 224H120C106.75 224 96 234.75 96 248S106.75 272 120 272H264C277.25 272 288 261.25 288 248S277.25 224 264 224ZM168 320H120C106.75 320 96 330.75 96 344S106.75 368 120 368H168C181.25 368 192 357.25 192 344S181.25 320 168 320ZM264 128H120C106.75 128 96 138.75 96 152S106.75 176 120 176H264C277.25 176 288 165.25 288 152S277.25 128 264 128ZM320 0H64C28.654 0 0 28.652 0 64V448C0 483.346 28.654 512 64 512H320C355.346 512 384 483.346 384 448V64C384 28.652 355.346 0 320 0ZM336 448C336 456.822 328.822 464 320 464H64C55.178 464 48 456.822 48 448V64C48 55.178 55.178 48 64 48H320C328.822 48 336 55.178 336 64V448Z" />
+                                        </svg>
+                                    </span>
+                                    <!--end::Svg Icon-->
+                                </span>Assignments
+                            </a>
+                        </li>
+
+                        <li class="nav-item me-0 " data-mdb-ripple-color="secondary" ng-click="mywardsTabSelection('Leave')">
+                            <a href="#Leave" class="nav-link menu-item py-1"
+                               data-bs-toggle="tab" title="Leave">
+                                <span class="menu-icon mr-2">
+                                    <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+                                    <span class="svg-icon svg-icon-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#444444">
+                                            <path d="M168 432H96C69.6 432 48 410.398 48 384V128C48 101.602 69.6 80 96 80H168C181.254 80 192 69.254 192 56C192 42.742 181.254 32 168 32H96C42.98 32 0 74.98 0 128V384C0 437.02 42.98 480 96 480H168C181.254 480 192 469.254 192 456C192 442.742 181.254 432 168 432ZM503.938 238.555L351.5 104.422C341.656 95.672 327.5 93.547 315.406 98.953C303.625 104.266 296 115.922 296 128.672V183.984H176C153.938 183.984 136 201.922 136 223.984V287.984C136 310.047 153.938 327.984 176 327.984H296V383.297C296 396.047 303.625 407.703 315.406 413.016C319.844 415.016 324.562 415.984 329.25 415.984C337.312 415.984 345.281 413.078 351.5 407.547L503.938 274.43C509.062 269.898 512 263.367 512 256.492S509.062 243.086 503.938 238.555ZM344 350.016V279.984H184V231.984H344V161.953L451.844 256.492L344 350.016Z" />
+                                        </svg>
+                                    </span>
+                                    <!--end::Svg Icon-->
+                                </span>Leave
+                            </a>
+                        </li>
+                        <li class="nav-item me-0" data-mdb-ripple-color="secondary" ng-click="mywardsTabSelection('Teacher')">
+                            <a href="#TeacherDetails" class="nav-link menu-item py-1"
+                               data-bs-toggle="tab" title="Teacher">
+                                <span class="menu-icon mr-2">
+                                    <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+                                    <span class="svg-icon svg-icon-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" fill="#444444">
+                                            <path d="M192 352H128C57.307 352 0 409.305 0 480C0 497.672 14.326 512 32 512H288C305.674 512 320 497.672 320 480C320 409.305 262.693 352 192 352ZM49.607 464C57.041 427.529 89.367 400 128 400H192C230.633 400 262.959 427.529 270.393 464H49.607ZM160 320C213.02 320 256 277.016 256 224C256 170.98 213.02 128 160 128C106.982 128 64 170.98 64 224C64 277.016 106.982 320 160 320ZM160 176C186.467 176 208 197.533 208 224S186.467 272 160 272S112 250.467 112 224S133.533 176 160 176ZM584 0H216C185.125 0 160 25.125 160 56V80C160 93.25 170.75 104 184 104S208 93.25 208 80V56C208 51.594 211.594 48 216 48H584C588.406 48 592 51.594 592 56V360C592 364.406 588.406 368 584 368H528V336C528 318.326 513.674 304 496 304H416C398.326 304 384 318.326 384 336V368H352C338.75 368 328 378.75 328 392S338.75 416 352 416H584C614.875 416 640 390.875 640 360V56C640 25.125 614.875 0 584 0Z" />
+                                        </svg>
+                                    </span>
+                                    <!--end::Svg Icon-->
+                                </span>Teacher
+                            </a>
+                        </li>
+                        <li class="nav-item me-0" data-mdb-ripple-color="secondary" ng-click="mywardsTabSelection('Attendance')">
+                            <a href="#Attendance" class="nav-link menu-item py-1"
+                               data-bs-toggle="tab" title="Attendance">
+                                <span class="menu-icon mr-2">
+                                    <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+                                    <span class="svg-icon svg-icon-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="#444444">
+                                            <path d="M384 64H344V24C344 10.75 333.25 0 320 0S296 10.75 296 24V64H152V24C152 10.75 141.25 0 128 0S104 10.75 104 24V64H64C28.654 64 0 92.652 0 128V448C0 483.348 28.654 512 64 512H384C419.346 512 448 483.348 448 448V128C448 92.652 419.346 64 384 64ZM384 464H64C55.178 464 48 456.824 48 448V192H400V448C400 456.824 392.822 464 384 464Z" />
+                                        </svg>
+                                    </span>
+                                    <!--end::Svg Icon-->
+                                </span>Attendance
+                            </a>
+                        </li>
+                        <li class="nav-item me-0" data-mdb-ripple-color="secondary" ng-click="mywardsTabSelection('Assessment')">
+                            <a href="#Assessment" class="nav-link menu-item py-1"
+                               data-bs-toggle="tab" title="Assessment">
+                                <span class="menu-icon mr-2">
+                                    <span class="svg-icon svg-icon-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" fill="#444444">
+                                            <path d="M280 64h40c35.3 0 64 28.7 64 64V448c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128C0 92.7 28.7 64 64 64h40 9.6C121 27.5 153.3 0 192 0s71 27.5 78.4 64H280zM64 112c-8.8 0-16 7.2-16 16V448c0 8.8 7.2 16 16 16H320c8.8 0 16-7.2 16-16V128c0-8.8-7.2-16-16-16H304v24c0 13.3-10.7 24-24 24H192 104c-13.3 0-24-10.7-24-24V112H64zm128-8a24 24 0 1 0 0-48 24 24 0 1 0 0 48z" />
+                                        </svg>
+                                    </span>
+                                </span>Assessment
+                            </a>
+                        </li>
+                        <li class="nav-item me-0" data-mdb-ripple-color="secondary" ng-click="mywardsTabSelection('TCRequest')">
+                            <a href="#TCRequest" class="nav-link menu-item py-1"
+                               data-bs-toggle="tab" title="TC/Withdrawal Request">
+                                <span class="menu-icon mr-2">
+                                    <span class="svg-icon svg-icon-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="#444444">
+                                            <path d="M384 32H64.02C28.674 32 0.02 60.652 0.02 96L0 416C0 451.344 28.654 480 64 480H309.373C326.348 480 342.625 473.258 354.627 461.254L429.256 386.617C441.258 374.613 448 358.336 448 341.359V96C448 60.797 419.199 32 384 32ZM400.002 320H320.008C302.334 320 288.008 334.328 288.008 352V431.875H64C55.164 431.875 48 424.711 48 415.875L48.018 96C48.018 87.164 55.18 80 64.018 80H384.002C392.838 80 400.002 87.164 400.002 96V320Z" />
+                                        </svg>
+                                    </span>
+                                </span>TC Request
+                            </a>
+                        </li>
+                        <li class="nav-item me-0" data-mdb-ripple-color="secondary" ng-click="mywardsTabSelection('Agenda')">
+                            <a class="nav-link menu-item py-1" href="#Topic"
+                               data-bs-toggle="tab" title="Notes">
+                                <span class="menu-icon mr-2">
+                                    <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+                                    <span class="svg-icon svg-icon-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#444444">
+                                            <path d="M510.354 435.363L402.686 35.422C396.939 14.078 377.547 0 356.354 0C352.242 0 348.059 0.531 343.896 1.641L282.078 18.125C276.193 19.695 270.939 22.383 266.295 25.758C258.254 10.508 242.436 0 224 0H160C151.213 0 143.084 2.531 136 6.656C128.916 2.531 120.787 0 112 0H48C21.49 0 0 21.492 0 48V464C0 490.508 21.49 512 48 512H112C120.787 512 128.916 509.469 136 505.344C143.084 509.469 151.213 512 160 512H224C250.51 512 272 490.508 272 464V165.281L355.805 476.578C361.553 497.926 380.945 512 402.139 512C406.25 512 410.432 511.469 414.594 510.359L476.412 493.875C502.018 487.043 517.215 460.848 510.354 435.363ZM224 48V96H160V48H224ZM160 144H224V368H160V144ZM112 368H48V144H112V368ZM112 48V96H48V48H112ZM48 464V416H112V464H48ZM160 464V416H224V464H160ZM294.445 64.504L356.271 48.02L356.361 48L368.742 93.93L306.828 110.445L294.445 64.504ZM319.266 156.586L381.18 140.074L439.223 355.41L377.309 371.922L319.266 156.586ZM402.154 464.102L389.746 418.066L451.66 401.555L464.045 447.496L402.154 464.102Z" />
+                                        </svg>
+                                    </span>
+                                    <!--end::Svg Icon-->
+                                </span>Notes
+                            </a>
+                        </li>
+                        <li class="nav-item me-0" data-mdb-ripple-color="secondary" ng-click="mywardsTabSelection('LessonPlan')">
+                            <a class="nav-link menu-item py-1" href="#LessonPlanParentPortal"
+                               data-bs-toggle="tab" title="Lesson Plan">
+                                <span class="menu-icon mr-2">
+                                    <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+                                    <span class="svg-icon svg-icon-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="#444444">
+                                            <path d="M493.211 56.262L455.703 18.748C443.209 6.252 426.83 0 410.452 0C394.071 0 377.696 6.25 365.196 18.75L45.11 338.885C36.541 347.451 30.584 358.275 27.926 370.094L0.319 492.854C-1.701 502.967 6.159 512 15.946 512C16.993 512 18.061 511.896 19.143 511.68C19.143 511.68 103.75 493.73 141.895 484.748C153.432 482.031 163.76 476.225 172.139 467.844C221.264 418.719 406.649 233.33 493.301 146.676C518.293 121.684 518.202 81.256 493.211 56.262ZM138.202 433.902C136.086 436.018 133.698 437.365 130.893 438.025C112.719 442.307 83.432 448.738 58.203 454.203L74.752 380.627C75.418 377.668 76.903 374.973 79.049 372.824L320.936 130.902L381.065 191.035L138.202 433.902ZM552 464H248C234.746 464 224 474.744 224 488C224 501.254 234.746 512 248 512H552C565.254 512 576 501.254 576 488C576 474.744 565.254 464 552 464Z" />
+                                        </svg>
+                                    </span>
+                                    <!--end::Svg Icon-->
+                                </span>Lesson Plan
+                            </a>
+                        </li>
+                        <li class="nav-item me-0" data-mdb-ripple-color="secondary" ng-click="mywardsTabSelection('StudentMoreDetail')">
+                            <a href="#StudentMoreDetail" class="nav-link menu-item py-1" title="Guardian Details"
+                               data-bs-toggle="tab">
+                                <span class="menu-icon mr-2">
+                                    <!--begin::Svg Icon | path: icons/duotune/communication/com013.svg-->
+                                    <span class="svg-icon svg-icon-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" fill="#444444">
+                                            <path d="M256 128H320C337.674 128 352 113.672 352 96V32C352 14.326 337.674 0 320 0H256C238.326 0 224 14.326 224 32V96C224 113.672 238.326 128 256 128ZM288 304C323.346 304 352 275.346 352 240C352 204.652 323.346 176 288 176S224 204.652 224 240C224 275.346 252.654 304 288 304ZM512 64H384V112H512C520.822 112 528 119.178 528 128V448C528 456.822 520.822 464 512 464H64C55.178 464 48 456.822 48 448V128C48 119.178 55.178 112 64 112H192V64H64C28.654 64 0 92.654 0 128V448C0 483.346 28.654 512 64 512H512C547.346 512 576 483.346 576 448V128C576 92.654 547.346 64 512 64ZM192 432H384C392.836 432 400 424.836 400 416C400 371.816 364.184 336 320 336H256C211.816 336 176 371.816 176 416C176 424.836 183.164 432 192 432Z" />
+                                        </svg>
+                                    </span>
+                                    <!--end::Svg Icon-->
+                                </span>Details
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex-lg-row-fluid ms-lg-7 ms-xl-12">
+                <div class="tab-content position-relative" id="kt_app_demos_tab_content">
+                    <button class="btn btn-dark app-layout-builder-toggle lh-1 py-4 d-lg-none z-index-3 m3-fab-container" id="kt_app_demos_sidebar_toggle"
+                            style="position: fixed; z-index: 105; bottom: 16px;height: 56px;background: #ECE6F0;display: flex;
+                            flex-direction: row;    -webkit-box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12);
+                            -moz-box-shadow: 0 2px 4px -1px rgba(0,0,0,.2),0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12);
+                            box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12) !important;
+                            justify-content: center;
+                            align-items: center;gap: 12px;background: #045ba7;
+                            border:none;
+                            border-radius: 16px;
+                            right: 16px;">
+                        <div class="sidebar-menu-icon-wrap">
+                            <div class="sidebar-menu-icon">
+                                <span class="bg-white"></span>
+                                <span class="bg-white"></span>
+                                <span class="bg-white"></span>
+                            </div>
+                        </div>
+                        My Ward Menu
+                    </button>
+                    <button class="btn btn-dark app-layout-builder-toggle lh-1 py-4 z-index-3 d-lg-none m3-fab-container" data-kt-menu-trigger="click" data-kt-menu-placement="top-end" data-kt-menu-offset="0px, 24px"
+                            style="position: fixed; z-index: 105; bottom: 88px; width: 40px; height: 40px; background: #ECE6F0; display: flex; flex-direction: row; -webkit-box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12); -moz-box-shadow: 0 2px 4px -1px rgba(0,0,0,.2),0 4px 5px 0 rgba(0,0,0,.14),0 1px 10px 0 rgba(0,0,0,.12); box-shadow: 0 2px 4px -1px rgba(0,0,0,.2), 0 4px 5px 0 rgba(0,0,0,.14), 0 1px 10px 0 rgba(0,0,0,.12) !important; justify-content: center; align-items: center; gap: 12px; background: #4284f4; border: none; border-radius: 16px; right: 16px; ">
+                        <img style="width: 24px; height: 24px; filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(200deg) brightness(102%) contrast(101%); "
+                             src="../Images/mortarboard-fill.svg" />
+                    </button>
+
+                    <div class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-800 menu-state-bg-light-primary fw-bold w-300px" data-kt-menu="true">
+                        <!--begin::Menu item-->
+                        <div class="menu-item px-3">
+                            <div class="menu-content fs-6 text-dark fw-bolder px-3 py-4">Switch sibling</div>
+                        </div>
+                        <div class="separator mb-3 opacity-75"></div>
+                        <div class="menu-item px-3  otherCandidates" id="{{allocstudent.StudentIID}}" ng-repeat="allocstudent in Students" ng-if="!allocstudent.IsSelected">
+                            <a href="#" class="menu-link px-3">
+                                    <div class="overlay overflow-hidden me-4" >
+                                        <div class="symbol symbol-60px overlay-wrapper badge-light-success rounded overflow-hidden ">
+                                            <img ng-src="/Content/ReadContentsByID?contentID={{allocstudent.StudentProfile}}" onerrorsrc="/Images/transparency-svg.svg"
+                                                 title="{{allocstudent.FirstName}}&nbsp;{{allocstudent.MiddleName}}&nbsp;{{allocstudent.LastName}}"
+                                                 class="object-fit-cover z-index-1 position-relative">
+                                            <span class="d-flex w-25px h-25px fs-2 flex-center position-absolute" style="  top: 50%;
+                                  left: 50%;
+                                  transform: translate(-50%, -50%);">
+                                                {{allocstudent.StudentInitials}}
+
+                                            </span>
+                                            <div class="overlay-layer  bg-light-info ">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#ffffff" class="bi bi-check2" viewBox="0 0 16 16">
+                                                    <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0" />
+                                                </svg>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                {{allocstudent.FirstName}}&nbsp;{{allocstudent.MiddleName}}&nbsp;{{allocstudent.LastName}}
+                            </a>
+                        </div>
+
+                    </div>
+                    <div class="tab-pane fade show active fontawesome-demo" id="StudentProfile">
+
+                        <div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6 tab-products-header">
+                            <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2 section-title">
+                                <h1 class="d-flex text-dark fw-bold m-0 fs-3">Student Profile</h1>
+                                <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+                                    <li class="breadcrumb-item text-gray-600">
+                                        <a class="text-gray-600 text-hover-primary">Home</a>
+                                    </li>
+                                    <li class="breadcrumb-item text-gray-600">Ward</li>
+                                    <li class="breadcrumb-item text-gray-500">Profile</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="flex-column-fluid">
+
+                            <div class="col-12 col-lg-6 mb-lg-10 mb-md-0 candidateProfile d-lg-none" id="{{allocstudent.StudentIID}}" ng-repeat="allocstudent in Students" ng-if="allocstudent.IsSelected">
+                                <!--begin::Statistics-->
+                                <div class="d-flex align-items-lg-end flex-column flex-lg-row bg-white rounded-3">
+                                    <!--begin::Avatar-->
+                                    <div class="symbol symbol-80px symbol-lg-150px me-lg-10  rounded-end-0">
+                                        <div id="profile-header" class=" w-100 header-wrapper fileOnlyHeader-23hdD">
+                                            <div class="header-wrapper-inner py-0">
+                                                <div class="resume-header-wrapper bg-transparent">
+                                                    <div class="resume-header grid-container p-0">
+                                                        <div class="grid-row  m-0">
+                                                            <div class="grid-col-md-8 grid-fill-height is-file-only-width overflow-auto">
+                                                                <div class="header-text  flex-column p-0 bg-transparent align-items-start align-items-lg-center">
+                                                                    <div class="avatar-outer fs-mask mb-3">
+                                                                        <div class="avatar-container justify-content-start justify-content-lg-center border-0 avatar-css horizontal position-relative overflow-hidden avatar-profile ">
+                                                                            <img ng-src="/Content/ReadContentsByID?contentID={{allocstudent.StudentProfile}}" onerrorsrc="/Images/profile-holder.svg"
+                                                                                 title="{{allocstudent.FirstName}}&nbsp;{{allocstudent.MiddleName}}&nbsp;{{allocstudent.LastName}}"
+                                                                                 style="background-size:cover;background-repeat:no-repeat;top:0;"
+                                                                                 class="position-absolute w-100" />
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center align-items-lg-start flex-wrap  mb-2 py-10 py-lg-0 px-lg-0">
+                                        <!--begin::User-->
+                                        <div class="d-flex flex-column">
+                                            <!--begin::Name-->
+                                            <div class="d-flex align-items-center mb-4">
+                                                <a href="#" class="text-gray-900 text-hover-primary fs-3 fw-bold me-1 mb-2"> {{StudentDetails.FirstName}}&nbsp;{{StudentDetails.MiddleName}}&nbsp;{{StudentDetails.LastName}}</a>
+
+                                                <a href="#" class="btn btn-sm btn-light-success fw-bold ms-2 fs-8 py-1 px-3" data-bs-toggle="modal" data-bs-target="#kt_modal_upgrade_plan" ng-bind="StudentDetails.AdmissionNumber"></a>
+                                            </div>
+                                            <div class="d-flex flex-column fw-semibold fs-6 mb-4 pe-2">
+                                                <a href="#" class="d-flex align-items-center text-gray-700 text-hover-primary me-5 mb-2">
+                                                    <span>Section -&nbsp; </span>
+                                                    <span ng-bind="StudentDetails.Section.Value"></span>
+                                                </a>
+                                                <a href="#" class="d-flex align-items-center text-gray-700 text-hover-primary me-5 mb-2">
+                                                    <span ng-bind="StudentDetails.StudentClass.Value"></span>
+                                                </a>
+                                                <a href="#" class="d-flex align-items-center text-gray-700 text-hover-primary mb-2">
+                                                    <span ng-bind="StudentDetails.School.Value"></span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        @*<div class="d-flex my-4">
+                                <a href="#" class="btn btn-sm btn-light me-2" id="kt_user_follow_button">
+                                    <span class="indicator-label">Follow</span>
+                                </a>
+                                <a href="#" class="btn btn-sm btn-primary me-2" data-bs-toggle="modal" data-bs-target="#kt_modal_offer_a_deal">Hire Me</a>
+                            </div>*@
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-5 g-lg-8 mb-5 mb-xl-0">
+
+                                <div class="col-xl-6 mb-xl-8">
+                                    <div class="card h-xl-100">
+                                        <div class="card-header align-items-center border-0 mt-4   justify-content-start">
+                                            <div class="symbol symbol-45px me-5 d-flex d-lg-none">
+                                                <div class="masthead-followup-icon d-inline-block mb-3" style="--bg-rgb: var(--bs-info-rgb);">
+                                                    <img class="bi fs-1" style="filter: invert(28%) sepia(96%) saturate(7193%) hue-rotate(260deg) brightness(100%) contrast(95%);" src="../Images/person-square.svg" />
+
+                                                </div>
+                                            </div>
+                                            <h3 class="card-title align-items-start flex-column">
+                                                <span class="fw-bold mb-2 text-dark">About me</span>
+                                                <span class="text-muted fw-semibold fs-7">Personal details</span>
+                                            </h3>
+                                        </div>
+                                        <div class="card-body pt-5">
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Gender</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.Gender.Value"></span>
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Date of Birth</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.DateOfBirthString"></span>
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Religion</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.Relegion.Value"></span>
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Caste</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.Cast.Value"></span>
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Community</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.Community.Value"></span>
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Blood Group</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.BloodGroup.Value"></span>
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">House</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.StudentHouse.Value"></span>
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Height</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.Height"></span>
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">As On Date</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.AsOnDateString"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-6 mb-xl-8">
+
+
+                                    <div class="card h-xl-100" id="TransportRoute">
+
+                                        <div class="card-header border-0 pt-5 justify-content-start">
+                                            <div class="symbol symbol-45px me-5 d-flex d-lg-none">
+                                                <div class="masthead-followup-icon d-inline-block mb-3" style="--bg-rgb: var(--bs-warning-rgb);">
+                                                    <img class="bi fs-1" style="filter: invert(82%) sepia(53%) saturate(5023%) hue-rotate(6deg) brightness(114%) contrast(100%); " src="../Images/truck-front.svg" />
+
+                                                </div>
+                                            </div>
+                                            <h3 class="card-title align-items-start flex-column">
+                                                <span class="card-label fw-bold text-dark">Transport route</span>
+                                                <span class="text-muted mt-1 fw-semibold fs-7">Transport details</span>
+                                            </h3>
+                                            <span style="text-align: right; margin-top: 10px">
+                                                <span ng-if="StudentTransportDetails.IsOneWay===false" class="label label-sm label-success">Two Way</span>
+                                                <span ng-if="StudentTransportDetails.IsOneWay===true" class="label label-sm label-warning right">One Way</span>
+                                            </span>
+
+                                        </div>
+                                        <div class="card-body pt-5">
+
+                                            <div class="d-flex align-items-stretch  mb-7 flex-column">
+                                                <a><img src="~/img/schoolbus.png" style="max-width:100%;" ng-click="myClickFunction()" /></a>
+                                                <div class="transport-route-mywards">
+                                                    <span class="transport-route-mywards-place text-warning" ng-if="isStudentTransport==false">No transport</span>
+                                                    <span class="transport-route-mywards-place" ng-if="StudentTransportDetails.PickupStopMapName!=''" ng-bind="StudentTransportDetails.PickupStopMapName"></span>
+                                                    <span class="transport-route-mywards-place" ng-if="StudentTransportDetails.PickupStopMapName==''">School</span>
+                                                    &nbsp;
+                                                    <span class="transport-route-mywards-arrow" ng-if="StudentTransportDetails.IsOneWay===false"><i class="fa fa-arrows-h text-success"></i></span>
+                                                    <span class="transport-route-mywards-arrow" ng-if="StudentTransportDetails.IsOneWay===true">
+                                                        <i class="fa fa-arrow-right text-warning" ng-if="StudentTransportDetails.PickupStopMapName!=''"></i>
+                                                        <i class="fa fa-arrow-left text-warning" ng-if="StudentTransportDetails.PickupStopMapName==''"></i>
+                                                    </span>
+                                                    &nbsp;
+                                                    <span class="transport-route-mywards-place" ng-if="StudentTransportDetails.DropStopMapName!=''" ng-bind="StudentTransportDetails.DropStopMapName"></span>
+                                                    <span class="transport-route-mywards-place" ng-if="StudentTransportDetails.DropStopMapName==''">School</span>
+                                                </div>
+                                                <div>
+                                                    <ul class="list-group list-group-unbordered" ng-if="isStudentTransport==true">
+                                                        <li class="list-group-item">
+                                                            <b>Pickup route code </b> <a class="pull-right" ng-bind="StudentTransportDetails.PickupRouteCode"> </a>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <b>Contact No </b> <a class="pull-right" ng-bind="StudentTransportDetails.PickupContactNo"> </a>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <b>Pickup Driver </b> <a class="pull-right" ng-bind="StudentTransportDetails.PickupStopDriverName"></a>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <b>Drop route code </b> <a class="pull-right" ng-bind="StudentTransportDetails.DropStopRouteCode"></a>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <b>Contact No </b> <a class="pull-right" ng-bind="StudentTransportDetails.DropContactNo"> </a>
+                                                        </li>
+                                                        <li class="list-group-item">
+                                                            <b>Drop Driver </b> <a class="pull-right" ng-bind="StudentTransportDetails.DropStopDriverName"></a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                            <!--end::Body-->
+                                        </div>
+                                        <!--end::List Widget 4-->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-5 g-lg-8 mb-5 mb-xl-0">
+                                <div class="col-xl-6 mb-xl-8">
+                                    <div class="card h-xl-100">
+                                        <div class="card-header align-items-center border-0 mt-4  justify-content-start">
+                                            <div class="symbol symbol-45px me-5 d-flex d-lg-none">
+                                                <div class="masthead-followup-icon d-inline-block mb-3" style="--bg-rgb: var(--bd-teal-rgb);">
+                                                    <img class="bi fs-1" style="filter: invert(59%) sepia(82%) saturate(344%) hue-rotate(111deg) brightness(90%) contrast(110%);" src="../Images/person-square.svg" />
+
+                                                </div>
+                                            </div>
+                                            <h3 class="card-title align-items-start flex-column">
+                                                <span class="fw-bold mb-2 text-dark">Document</span>
+                                                <span class="text-muted fw-semibold fs-7">Document Details</span>
+                                            </h3>
+                                        </div>
+                                        <div class="card-body pt-5">
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Aadhaar No.</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.AdhaarCardNo"></span>
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Passport No.</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.PassportNo"></span>
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Issue Date</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetailsFull.StudentPassportDetails.PassportNoIssueDate | filterdate | date:'dd/MM/yyyy'"></span>
+
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Expiry Date</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.PassportNoExpiryString"></span>
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Visa No.</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.VisaNo"></span>
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Expiry Date</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.VisaExpiryDateString "></span>
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">National ID</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.NationalIDNo"></span>
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Issue Date</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetailsFull.StudentNationalIDNoIssueDateString "></span>
+
+                                                </div>
+                                            </div>
+                                            <div class="separator separator-dashed my-3"></div>
+                                            <div class="d-flex flex-stack">
+                                                <div class="text-gray-700 fw-semibold fs-6 me-2">Expiry Date</div>
+                                                <div class="d-flex align-items-senter">
+                                                    <span class="text-gray-900 fw-bolder fs-6" ng-bind="StudentDetails.StudentNationalIDNoExpiryDateString "></span>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--end: List Widget 5-->
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="tab-pane fade fontawesome-demo" id="StudentMoreDetail">
+                        @await Html.PartialAsync("ParentMoreDetails")
+                    </div><!--MoreDetails-->
+                    <div id="Fees" class="tab-pane fade fontawesome-demo">
+                        <div class="tab-pane active fontawesome-demo" id="StudentProfile">
+                            <div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6 tab-products-header" id="kt_toolbar">
+                                <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2 section-title">
+                                    <h1 class="d-flex text-dark fw-bold m-0 fs-3">Fees</h1>
+                                    <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+                                        <li class="breadcrumb-item text-gray-600">
+                                            <a class="text-gray-600 text-hover-primary">Home</a>
+                                        </li>
+                                        <li class="breadcrumb-item text-gray-600">Ward</li>
+                                        <li class="breadcrumb-item text-gray-500">fees</li>
+                                    </ul>
+                                </div>
+
+                                <a class="btn btn-primary" ng-click="FeePaymentTabClick()">
+                                        Fee Payment
+                                </a>
+
+                            </div>
+                            <div class="flex-column-fluid">
+
+                                <div class="panel tab-border">
+                                    <header class="panel-heading panel-heading-gray custom-tab">
+                                        <ul class="nav nav-tabs">
+
+                                            <li class="nav-item">
+                                                <a href="#FeeDue01" data-bs-toggle="tab" class="active" title="Fee Due">
+                                                    <i class="fa fa-user"></i> Fee Due
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </header>
+                                    <div class="panel-body">
+                                        <div class="tab-content p-md-sm-0">
+                                            <div class="tab-pane active" id="FeeDue_01">
+                                                <div id="FeeListOverlay" class="preload-overlay center">
+                                                    <span id="FeeListOverlayButtonLoader" class="preloadImg">
+                                                        <img src="~/Images/preloaderWhite.GIF" alt="loader" />
+                                                    </span>
+                                                </div>
+                                                <div class="alert alert-info text-center" ng-if="!ShowPreLoader && (FeeTypes == null || FeeTypes.length == 0)">
+                                                    <b>There is no fee dues found!</b>
+                                                </div>
+                                                <div class="fullcolumn-layout" ng-if="FeeTypes != null && FeeTypes.length > 0">
+                                                    <div class="fullWidth displaylineBlock text-right">
+                                                        <div class="displaylineBlock totalAmount">
+                                                            <span class="label displaylineBlock"> Total amount to be paid:</span>
+                                                            <span class="displaylineBlock currSign" ng-bind="FeeDueDetails.NowPaying|number:2"></span>
+                                                        </div>
+                                                    </div><br />
+                                                    <div class="table-responsive table-responsive-custom">
+                                                        <table id="GridTable" class="table table-striped table-bordered table-hover table-checkable order-column valign-middle">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="medium-col-width">Invoice No</th>
+                                                                    <th>Invoice Date</th>
+                                                                    <th>Fee Type</th>
+                                                                    <th>Fee Period</th>
+                                                                    <th class="text-right">Amount</th>
+                                                                    <th class="w130 text-right"></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr ng-repeat-start="gridModel in FeeTypes track by $index" class="ng-scope" ng-if="gridModel.Amount != 0">
+                                                                    <td class="medium-col-width">
+                                                                        <span ng-bind="gridModel.InvoiceNo" class="ng-binding"></span>
+                                                                    </td>
+                                                                    <td class="medium-col-width">
+                                                                        <span ng-bind="gridModel.InvoiceStringDate" class="ng-binding"></span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span ng-bind="gridModel.FeeMaster.Value" class="ng-binding"></span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span ng-bind="gridModel.FeePeriod.Value" class="ng-binding"></span>
+                                                                    </td>
+                                                                    <td class="text-right">
+                                                                        <span ng-bind="gridModel.Amount|number:2" class="ng-binding currSign"></span>
+                                                                    </td>
+                                                                    <td class="text-right" ng-if="gridModel.FeeDueMonthlySplit.length > 0">
+                                                                        <div class="controls text-right" ng-click="ExpandCollapase($event, gridModel,'IsExpand')">
+                                                                            <span class="gridBtn pointer" ng-if="!gridModel.IsExpand"><i class="fa fa-eye" aria-hidden="true" title="View Details"></i></span>
+                                                                            <span class="gridBtn active pointer" ng-if="gridModel.IsExpand"><i class="fa fa-eye-slash" aria-hidden="true" title="Hide Details"></i></span>
+                                                                        </div><!--controls-->
+                                                                    </td>
+                                                                </tr>
+                                                                <tr class="toggleGrid" ng-show="gridModel.IsExpand" style="display:table-row">
+                                                                    <td colspan="6" ng-if="!gridModel.FeeDueMonthlySplit.length" class="noPaddingLeft noPaddingRight">
+                                                                        <span class="alert alert-info displayBlock noMarginBtm text-center">
+                                                                            <b>No details found!</b>
+                                                                        </span>
+                                                                    </td>
+                                                                    <td class="feeStructure noPadding" colspan="6" ng-if="gridModel.FeeDueMonthlySplit.length > 0">
+                                                                        <table class="table table-striped table-bordered table-hover table-checkable order-column valign-middle">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Month Year</th>
+                                                                                    <th class="text-right">Amount</th>
+                                                                                    <th class="text-right">Credit Note</th>
+                                                                                    <th class="text-right">Balance</th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr ng-repeat-start="gridModel in gridModel.FeeDueMonthlySplit track by $index" class="ng-scope">
+                                                                                    <td>
+                                                                                        <span ng-bind="gridModel.MonthName" class="ng-binding"></span>
+                                                                                        <span ng-bind="gridModel.Year" class="ng-binding"></span>
+                                                                                    </td>
+                                                                                    <td class="text-right">
+                                                                                        <span ng-bind="gridModel.TotalAmount|number:2" class="ng-binding currSign"></span>
+                                                                                    </td>
+                                                                                    <td class="text-right">
+                                                                                        <span ng-bind="gridModel.CreditNote|number:2" class="ng-binding currSign"></span>
+                                                                                    </td>
+                                                                                    <td class="text-right">
+                                                                                        <span ng-bind="gridModel.NowPaying|number:2" class="ng-binding currSign"></span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="tab-pane" id="FeeDue_02">
+                                                <div id="FeeHisListOverlay" class="preload-overlay center">
+                                                    <span id="FeeHisListOverlayButtonLoader" class="preloadImg">
+                                                        <img src="~/Images/preloaderWhite.GIF" alt="loader" />
+                                                    </span>
+                                                </div>
+                                                <div class="alert alert-info text-center" ng-if="!ShowPreLoader && (FeeTypeHis == null || FeeTypeHis.length == 0)">
+                                                    <b>There is no fee paid details found!</b>
+                                                </div>
+
+                                                <div class="fullcolumn-layout" ng-if="FeeTypeHis != null && FeeTypeHis.length > 0">
+                                                    <div class="table-responsive table-responsive-custom">
+                                                        <table id="GridTable1" class="table table-striped table-bordered table-hover table-checkable order-column valign-middle" ng-cloak>
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="medium-col-width">Receipt No</th>
+                                                                    <th>Collection Date</th>
+                                                                    <th>Fee Type</th>
+                                                                    <th>Fee Period</th>
+                                                                    <th class="text-right">Amount</th>
+                                                                    @*<th class="text-right"> </th>*@
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr ng-repeat-start="gridModel in FeeTypeHis track by $index" class="ng-scope">
+
+                                                                    <td class="medium-col-width">
+                                                                        <span ng-bind="gridModel.FeeReceiptNo" class="ng-binding"></span>
+                                                                    </td>
+                                                                    <td class="medium-col-width">
+                                                                        <span ng-bind="gridModel.CollectionDate" class="ng-binding"></span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span ng-bind="gridModel.FeeMaster.Value" class="ng-binding"></span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span ng-bind="gridModel.FeePeriod.Value" class="ng-binding"></span>
+                                                                    </td>
+                                                                    <td class="text-right">
+                                                                        <span ng-bind="gridModel.Amount|number:2" class="ng-binding currSign"></span>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade fontawesome-demo" id="Fines">
+
+                        <div class="panel tab-border">
+                            <header class="panel-heading panel-heading-gray custom-tab">
+                                <ul class="nav nav-tabs">
+
+                                    <li class="nav-item ">
+                                        <a href="#FineDue_01" data-bs-toggle="tab" class="active" title="Fine Due">
+                                            <i class="fa fa-user"></i> Fine Due
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#FineDue_02" data-bs-toggle="tab" title="History">
+                                            <i class="fa fa-envelope-o"></i> History
+                                        </a>
+                                    </li>
+                                </ul>
+                            </header>
+                            <div class="panel-body">
+                                <div class="tab-content p-md-sm-0">
+                                    <div class="tab-pane active" id="FineDue_01">
+
+                                        <div data-attr="FineDue" class="featureContent noPaddingLeft noPaddingRight active" ng-cloak>
+                                            <div class="alert alert-info text-center" ng-if="FineDues == null || FineDues.length == 0">
+                                                <b>There is no fine dues found!</b>
+                                            </div>
+                                            <div class="fullcolumn-layout" ng-if="FineDues != null && FineDues.length > 0">
+                                                <div class="fullWidth displaylineBlock text-right">
+                                                    <div class="displaylineBlock totalAmount">
+                                                        <span class="label displaylineBlock"> Total amount to be paid:</span>
+                                                        <span class="displaylineBlock currSign" ng-bind="GetTotalFeeAmount(FineDues)|number:2"></span>
+                                                    </div><br />
+                                                </div>
+                                                <div class="table-responsive table-responsive-custom">
+                                                    <table id="GridTable" class="table table-striped table-bordered table-hover table-checkable order-column valign-middle">
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="medium-col-width">Invoice No</th>
+                                                                <th>Invoice Date</th>
+                                                                <th>Fine Applied Date</th>
+                                                                <th>Fine Type</th>
+                                                                <th class="text-right">Amount</th>
+                                                                <th class="w130 text-right"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat-start="gridModel in FineDues track by $index" class="ng-scope">
+                                                                <td class="medium-col-width">
+                                                                    <span ng-bind="gridModel.InvoiceNo" class="ng-binding"></span>
+                                                                </td>
+                                                                <td class="medium-col-width">
+                                                                    <span ng-bind="gridModel.InvoiceDateString" class="ng-binding"></span>
+                                                                </td>
+                                                                <td class="medium-col-width">
+                                                                    <span ng-bind="gridModel.FineMapDateString" class="ng-binding"></span>
+                                                                </td>
+                                                                <td>
+                                                                    <span ng-bind="gridModel.Fine" class="ng-binding"></span>
+                                                                </td>
+
+                                                                <td class="text-right">
+                                                                    <span ng-bind="gridModel.Amount|number:2" class="ng-binding currSign"></span>
+                                                                </td>
+
+                                                            </tr>
+
+                                                            <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane " id="FineDue_02">
+                                        <div>
+                                            <div class="alert alert-info text-center" ng-if="FineHis == null || FineHis.length == 0">
+                                                <b> There is no fine paid details found!</b>
+                                            </div>
+                                            <div class="fullcolumn-layout" ng-if="FineHis != null && FineHis.length > 0">
+                                                <div class="fullWidth displaylineBlock text-right">
+                                                    <div class="displaylineBlock totalAmount">
+                                                        <span class="label displaylineBlock"> Total amount paid:</span>
+                                                        <span class="displaylineBlock currSign" ng-bind="GetTotalFeeAmount(FineHis)|number:2"></span>
+                                                    </div>
+                                                </div><br />
+                                                <div class="table-responsive table-responsive-custom">
+                                                    <table id="GridTable1" class="table table-striped table-bordered table-hover table-checkable order-column valign-middle" ng-cloak>
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="medium-col-width">Receipt No</th>
+                                                                <th>Collection Date</th>
+                                                                <th>Fine Applied Date</th>
+                                                                <th>Fine Type</th>
+                                                                <th class="text-right">Amount</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr ng-repeat-start="gridModel in FineHis track by $index" class="ng-scope">
+                                                                <td class="medium-col-width">
+                                                                    <span ng-bind="gridModel.InvoiceNo" class="ng-binding"></span>
+                                                                </td>
+                                                                <td class="medium-col-width">
+                                                                    <span ng-bind="gridModel.InvoiceDateString" class="ng-binding"></span>
+                                                                </td>
+                                                                <td class="medium-col-width">
+                                                                    <span ng-bind="gridModel.FineMapDateString" class="ng-binding"></span>
+                                                                </td>
+                                                                <td>
+                                                                    <span ng-bind="gridModel.Fine" class="ng-binding"></span>
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    <span ng-bind="gridModel.Amount|number:2" class="ng-binding currSign"></span>
+                                                                </td>
+                                                            </tr>
+
+                                                            <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade fontawesome-demo" id="TimeTable">
+                        @await Html.PartialAsync("ClassTimeTable")
+                    </div>
+
+                    <div class="tab-pane fade fontawesome-demo" id="Attendance">
+                        @await Html.PartialAsync("Attendance")
+                    </div>
+
+                    <div id="Assignments" class="tab-pane fade fontawesome-demo">
+                        <div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6 tab-products-header">
+                            <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2 section-title">
+                                <h1 class="d-flex text-dark fw-bold m-0 fs-3">Assignments</h1>
+                                <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+                                    <li class="breadcrumb-item text-gray-600">
+                                        <a class="text-gray-600 text-hover-primary">Home</a>
+                                    </li>
+                                    <li class="breadcrumb-item text-gray-600">Ward</li>
+                                    <li class="breadcrumb-item text-gray-500">Assignments</li>
+                                </ul>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 gap-lg-3">
+                                @*<select ng-model="myColor"
+                            ng-options="studentsubjectlist.Value in studentsubjectlist">
+                    </select>*@
+                                <select id="Select2" name="cmb_cur" class="form-control select2-sm  w-250px"
+                                        ng-change="getAssignments(activeStudentID ,edt.studentsubject)"
+                                        ng-model="edt.studentsubject"
+                                        ng-options=" studentsubject as  studentsubject.Value for  studentsubject in studentsubjectlist" ng-required="true" required="required">
+                                    <option value="" class="" selected="selected">Select subject</option>
+                                </select>
+                            </div>
+                        </div>
+                        <!--begin::Post-->
+                        <div class="flex-column-fluid">
+                            <div id="AssignmentListOverlay" class="preload-overlay center">
+                                <span id="AssignmentListOverlayButtonLoader" class="preloadImg">
+                                    <img src="~/Images/preloaderWhite.GIF" alt="loader" />
+                                </span>
+                            </div>
+
+                            <div class="panel-body">
+                                <div class="tab-content p-md-sm-0">
+                                    <div class="tab-pane active" id="Assignment_File">
+                                        @await Html.PartialAsync("AssignmentDocument")
+                                    </div>
+                                    <div class="tab-pane" id="Assignment_List">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="fullcolumn-layout" ng-if="AssignmentList != null && AssignmentList.length > 0">
+                                <div class="table-responsive table-responsive-custom">
+
+                                </div>
+                            </div>
+                            <div class="alert alert-info text-center" ng-if="!ShowPreLoader && (AssignmentList == null || AssignmentList.length == 0)">
+                                <b>There is no Assignment details found!</b>
+                            </div>
+                            <table id="myTable" class="display">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Created Date</th>
+                                        <th>Subject</th>
+                                        <th>Title</th>
+                                        <th class="min-w-150px">Description</th>
+                                        <th>Date of Submission</th>
+                                        <th>Assignment Type</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div><!--Assignments-->
+
+                    <div id="MarkList" class="tab-pane fade fontawesome-demo">
+                        <div class="alert alert-info text-center" ng-if="MarkLists == null || MarkLists.length == 0">
+                            <b>There is no mark details found!</b>
+                        </div>
+
+                        <div class="fullcolumn-layout" ng-if="MarkLists != null && MarkLists.length > 0">
+                            <div class="table-responsive table-responsive-custom">
+                                <table id="GridTable" class="fullcolumn-layout grid ">
+
+                                    <thead>
+                                        <tr>
+                                            <th class="textleft"> </th>
+                                            <th class="medium-col-width">Exam</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat-start="gridModel in MarkLists track by $index" class="ng-scope">
+                                            <td class="textleft">
+                                                <div class="controls text-center">
+                                                    <a small-col-width="" ng-click="ExpandCollapase($event, gridModel, 'IsExpand')">
+                                                        <i ng-if="gridModel.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                        <i ng-if="!gridModel.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                    </a>
+                                                </div>
+
+                                            </td>
+
+                                            <td class="medium-col-width">
+                                                <span ng-bind="gridModel.Exam.Value" class="ng-binding"></span>
+                                            </td>
+
+                                        </tr>
+                                        <tr class="ng-scope" ng-show=" gridModel.IsExpand && gridModel.MarkRegisterDetailsSplit.length > 0" style="display:table-row">
+                                            <td></td>
+                                            <td class="feeStructure" colspan="5">
+                                                <div class="table-responsive table-responsive-custom">
+                                                    <table class="fullcolumn-layout grid">
+
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Subject</th>
+                                                                <th class="text-right">Minimum Mark</th>
+                                                                <th class="text-right">Maximum Mark</th>
+                                                                <th class="text-right">Mark</th>
+                                                                <th class="textleft">Grade</th>
+                                                                <th class="textleft">Status</th>
+                                                                <th class="textleft">Absent</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                            <tr ng-repeat-start="gridModel in gridModel.MarkRegisterDetailsSplit track by $index" class="ng-scope">
+                                                                <td>
+                                                                    <span ng-bind="gridModel.Subject" class="ng-binding"></span>
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    <span ng-bind="gridModel.MinimumMark" class="ng-binding"></span>
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    <span ng-bind="gridModel.MaximumMark" class="ng-binding"></span>
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    <span ng-bind="gridModel.Mark" class="ng-binding"></span>
+                                                                </td>
+                                                                <td class="textleft">
+                                                                    <span ng-bind="gridModel.Grade" class="ng-binding"></span>
+                                                                </td>
+                                                                <td class="textleft">
+                                                                    <span ng-show="gridModel.IsPassed" class="ng-binding">Passed</span>
+                                                                </td>
+                                                                <td class="textleft">
+                                                                    <span ng-show="gridModel.IsAbsent" class="ng-binding">Absent</span>
+                                                                </td>
+                                                            </tr>
+                                                            <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr ng-repeat-end="" class="ng-scope"></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="Leave" class="tab-pane fade fontawesome-demo">
+                        <div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6 tab-products-header">
+                            <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2 section-title">
+                                <h1 class="d-flex text-dark fw-bold m-0 fs-3">Leave</h1>
+                                <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+                                    <li class="breadcrumb-item text-gray-600">
+                                        <a class="text-gray-600 text-hover-primary">Home</a>
+                                    </li>
+                                    <li class="breadcrumb-item text-gray-600">Ward</li>
+                                    <li class="breadcrumb-item text-gray-500">Leave</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!--begin::Post-->
+                        <div class="flex-column-fluid">
+                            <div class="panel tab-border">
+                                <header class="panel-heading panel-heading-gray custom-tab">
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item ">
+                                            <a href="#Leave_01" data-bs-toggle="tab" class="active" ng-click="LeaveApplicationListClick()" title="Application List">
+                                                <i class="fa fa-user"></i> Application List
+                                            </a>
+                                        </li>
+                                        <li class="nav-item ">
+                                            <a href="#Leave_02" data-bs-toggle="tab" ng-click="NewLeaveApplicationClick()" title="Apply Leave">
+                                                <i class="fa fa-envelope-o"></i> Apply Leave
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </header>
+                                <div class="panel-body">
+                                    <div class="tab-content p-md-sm-0">
+                                        <div class="tab-pane active" id="Leave_01">
+                                            @await Html.PartialAsync("StudentLeaveList")
+                                        </div>
+                                        <div class="tab-pane" id="Leave_02">
+                                            @await Html.PartialAsync("StudentLeaveApplication")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="TeacherDetails" class="tab-pane fade fontawesome-demo">
+                        @await Html.PartialAsync("ClassTeacherDetails")
+                    </div><!--TeacherDetails-->
+
+                    <div id="ExamList" class="tab-pane fade fontawesome-demo">
+                        @await Html.PartialAsync("ExamList")
+                    </div><!--ExamList-->
+                    @*<div id="FeePayment" class="tab-pane fade  fontawesome-demo">
+            @await Html.PartialAsync("_FeePaymentNew")
+        </div>*@<!--FeePayment-->
+                    <div id="Assessment" class="tab-pane fade fontawesome-demo">
+                        @await Html.PartialAsync("_Assessment_Parent")
+                    </div><!--Assessment-->
+                    <div id="TCRequest" class="tab-pane fade  fontawesome-demo">
+                        <div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6 tab-products-header">
+                            <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2 section-title">
+                                <h1 class="d-flex text-dark fw-bold m-0 fs-3">TC Request</h1>
+                                <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+                                    <li class="breadcrumb-item text-gray-600">
+                                        <a class="text-gray-600 text-hover-primary">Home</a>
+                                    </li>
+                                    <li class="breadcrumb-item text-gray-600">Ward</li>
+                                    <li class="breadcrumb-item text-gray-500">TC Request</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!--begin::Post-->
+                        <div class="flex-column-fluid">
+                            <div class="panel tab-border">
+                                <header class="panel-heading panel-heading-gray custom-tab">
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item ">
+                                            <a href="#TCRequest01" data-bs-toggle="tab" class="active" ng-click="TCRequestListClick()" title="TC Request List">
+                                                <i class="fa fa-user"></i> TC Request List
+                                            </a>
+                                        </li>
+                                        <li class="nav-item ">
+                                            <a href="#TCRequest02" data-bs-toggle="tab" ng-click="NewTCRequestApplicationClick()" title="Request for TC">
+                                                <i class="fa fa-envelope-o"></i> Request for TC
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </header>
+                                <div class="panel-body">
+                                    <div class="tab-content p-md-sm-0">
+                                        <div class="tab-pane active" id="TCRequest01">
+                                            @await Html.PartialAsync("StudentTCList")
+                                        </div>
+                                        <div class="tab-pane" id="TCRequest02">
+                                            @await Html.PartialAsync("StudentTCApplication")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div><!--TCRequest-->
+                    <div id="Topic" class="tab-pane fade  fontawesome-demo">
+                        @await Html.PartialAsync("_AgendaList_Parent")
+                    </div><!--Agenda-->
+
+                    <div id="LessonPlanParentPortal" class="tab-pane fade  fontawesome-demo">
+                        @await Html.PartialAsync("_LessonPlan_Parent")
+                    </div><!--LessonPlan-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style type="text/css">
+
+    .ng-show:not(.ng-show-animate) {
+        display: table-row !important;
+    }
+
+    ng-show {
+        display: table-row !important;
+    }
+
+    .ng-animate-shim {
+        visibility: hidden;
+    }
+
+    .ng-anchor {
+        position: absolute;
+    }
+</style>

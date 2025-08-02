@@ -1,0 +1,83 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_DirectorsDashBoard";
+    var documentTypeID = Model.GetParameterValue<string>("DocumentTypeID");
+    var title = Model.GetParameterValue<string>("Title");
+    var cultureTitle = Model.GetParameterValue<string>("Title_" + System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower());
+    if (!string.IsNullOrEmpty(cultureTitle))
+    {
+        title = cultureTitle;
+    }
+}
+
+<div class="card" id="@windowName" template="DirectorsDashBoardTable" ng-controller="DashboardController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <div>@title</div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th colspan="5"><h2 align="center">Podar Pearl School {{ResultData.Academic}}</h2></th>
+            </tr>
+        </thead>
+        <thead >
+            <tr>
+                <th scope="col"><h6>Details</h6></th>
+                <th scope="col" ng-repeat="scl in ResultData.Schools"><h6>{{scl.SchoolName}}</h6></th>
+                <th scope="col" ><h6>Total</h6></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row" ><h6>No. of Students</h6></th>
+                <td ng-repeat="stud in ResultData.Schools" ><h5>{{stud.StudentsCount}}</h5></td>
+                <td ><h5>{{ResultData.TotalStudents}}</h5></td>
+            </tr>
+            <tr>
+                <th scope="row" ><h6>No. of Teachers</h6></th>
+                <td ng-repeat="teacherDat in ResultData.Schools">
+                    <table class="table table-bordered">
+                        <thead >
+                            <tr>
+                                <th ng-repeat="tchr in TeacherTypes">{{tchr}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr >
+                                <td><h5>{{teacherDat.TeachersCountPermanant}}</h5></td>
+                                <td><h5>{{teacherDat.TeachersCountTemporary}}</h5></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <td ><h5>{{ResultData.TotalTeachers}}</h5></td>
+            </tr>
+            <tr>
+                <th scope="row" ><h6>Ratio</h6></th>
+                <td scope="row" ng-repeat="ratio in ResultData.Schools" ><h5>{{ratio.TeacherRatio}}</h5></td>
+                <td ></td>
+            </tr>
+            <tr>
+                <th scope="row" ><h6>Total Sections</h6></th>
+                <td scope="row" ng-repeat="section in ResultData.Schools" ><h5>{{section.SectionCount}}</h5></td>
+                <td scope="row" ><h5>{{ResultData.TotalSections}}</h5></td>
+            </tr>
+            <tr>
+                <th scope="row" ><h6>Total Admin</h6></th>
+                <td scope="row" ng-repeat="admin in ResultData.Schools" ><h5>{{admin.AdminsCount}}</h5></td>
+                <td scope="row" ><h5>{{ResultData.TotalAdmins}}</h5></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <style>
+        table, th, td, tr {
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+
+</div>
+    

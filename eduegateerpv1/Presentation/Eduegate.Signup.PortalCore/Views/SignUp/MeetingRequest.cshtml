@@ -1,0 +1,205 @@
+﻿@model Eduegate.Services.Contracts.SignUp.Meeting.MeetingRequestDTO
+@{
+    ViewBag.Title = "Meeting Request";
+}
+
+<div ng-controller="MeetingRequestController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+
+    <!--begin::Wrapper container-->
+    <div class="app-container py-20">
+
+        <!--begin::Main-->
+        <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+            <!--begin::Content wrapper-->
+            <div class="d-flex flex-column flex-column-fluid">
+
+
+                <!--begin::Content-->
+                <div id="kt_app_content" class="app-content flex-column-fluid">
+
+                    <!--begin::Row-->
+                    <div class="row g-5 g-xl-8">
+                        <!--begin::Col-->
+                        <div class="col-xl-8 ps-xl-12">
+                            <!--begin::Engage widget 12-->
+                            <div class="card card-custom bg-body border-0 h-md-100">
+                                <!--begin::Body-->
+                                <div class="card-body d-flex justify-content-center flex-wrap ps-xl-15 pe-0">
+                                    <!--begin::Wrapper-->
+                                    <div class="flex-grow-1 mt-2 me-9 me-md-0">
+                                        <!--begin::Title-->
+                                        <div class="position-relative fs-1 z-index-2 fw-bold mb-5 meeting-request-list-header">
+                                            <span>Meeting Requests</span>
+                                        </div>
+                                        <!--end::Title-->
+                                        <!--begin::Text-->
+                                        <span class="meeting-request-list-sub-header">
+                                            Streamline your communication with teachers. Use this form to manage your meeting
+                                            <br />
+                                            request and keep track of important discussions.
+                                        </span>
+                                        <!--end::Text-->
+                                    </div>
+                                    <!--begin::Wrapper-->
+                                    <!--begin::Illustration-->
+                                    <img src="~/Images/meeting-request.svg" class="h-175px me-15" alt="">
+                                    <!--end::Illustration-->
+                                </div>
+                                <!--end::Body-->
+                            </div>
+                            <!--end::Engage widget 12-->
+                        </div>
+                        <!--end::Col-->
+                        <!--begin::Col-->
+                        <div class="col-xl-8 ps-xl-12">
+
+                            <!--begin::Tables Widget 5-->
+                            <div class="card mb-5 mb-xl-8">
+                                <!--begin::Header-->
+                                <div class="card-header border-0 pt-5">
+                                </div>
+                                <!--end::Header-->
+                                <!--begin::Body-->
+                                <div class="card-body py-3">
+                                    <div class="tab-content">
+
+                                        <!-- Region 1: Table view Start -->
+                                        <div class="tab-pane fade show active" id="kt_table_widget_5_tab_1" role="tabpanel">
+
+                                            <div class="py-2">
+                                                <label class="signup-label">Student</label>
+                                            </div>
+                                            <!--begin::Row-->
+                                            <div class="row mb-5 mb-xl-8 g-5 g-xl-8">
+                                                <!--begin::Col-->
+                                                <div class="col-lg-6 mb-xl-0" ng-repeat="student in StudentDetails track by $index">
+                                                    <!--begin::Chart Widget 47-->
+
+                                                    <div class="card card-flush" style="background: #EAF7FF;" ng-click="StudentSelectionChange(student)">
+                                                        <!--begin::Header-->
+                                                        @* <div class="card-header align-items-center pt-6">
+
+                                                        </div> *@
+                                                        <!--end::Header-->
+                                                        <!--begin::Card body-->
+                                                        <div class="card-body d-flex align-items-center">
+                                                            <!--begin::Wrapper-->
+                                                            <div class="d-flex flex-stack flex-row-fluid">
+                                                                <!--begin::Block-->
+                                                                <div class="d-flex flex-column">
+                                                                    <!--begin::Stats-->
+                                                                    <div class="d-flex align-items-center mb-1">
+                                                                        <!--begin::Symbol-->
+                                                                        <div class="symbol symbol-50px me-4">
+                                                                            <input type="radio" id="student_{{student.StudentIID}}" name="student" value="{{student.StudentIID}}" ng-model="MeetingRequest.Student" />
+                                                                            @* <img src="student.StudentImages" alt="Profile icon" onerror="src='../Images/profile-icon.svg'" /> *@
+                                                                            <img ng-src="/Content/ReadContentsByID?contentID={{student.StudentProfile}}" onerrorsrc="/Images/profile-icon.svg" />
+                                                                        </div>
+                                                                        <!--end::Symbol-->
+                                                                        <!--begin::Info-->
+                                                                        <div class="card-title flex-column flex-grow-1 studentname-label">
+                                                                            <span ng-bind="student.StudentFullName"></span>
+                                                                        </div>
+                                                                        <!--end::Info-->
+                                                                    </div>
+                                                                    <!--end::Stats-->
+                                                                </div>
+                                                                <!--end::Block-->
+                                                            </div>
+                                                            <!--end::Wrapper-->
+                                                        </div>
+                                                        <!--end::Card body-->
+                                                    </div>
+                                                    <!--end::Chart Widget 47-->
+                                                </div>
+                                                <!--end::Col-->
+                                            </div>
+                                            <!--end::Row-->
+
+                                            <div class="row py-5">
+                                                <label class="signup-label">Faculty Type</label>
+                                                <div class="input-icon center-lg-1">
+                                                    <div class="col-sm-6 col-lg-6 mb-3 mb-sm-6">
+                                                        <select class="form-select signup-label" aria-label="Faculty Type" aria-required="true" name="FacultyType" id="FacultyType"
+                                                                ng-options="item as item.Value for item in FacultyTypes track by item.Key" ng-model="SelectedFacultyType" ng-change="OnFacultyTypeChanges()"
+                                                                style="background-color:#EAEAEA;">
+                                                            <option value="" selected>Select</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row py-5">
+                                                <label class="signup-label">Faculty</label>
+                                                <div class="input-icon center-lg-1">
+                                                    <div class="col-sm-6 col-lg-6 mb-3 mb-sm-6">
+                                                        <select class="form-select signup-label" aria-label="Faculty" aria-required="true" name="Faculty" id="Faculty"
+                                                                ng-options="item as item.Value for item in Employees track by item.Key" ng-model="MeetingRequest.Faculty" ng-change="OnEmployeeChanges()"
+                                                                style="background-color:#EAEAEA;">
+                                                            <option value="" selected>Select</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row py-5">
+                                                <label class="signup-label">Request Date</label>
+                                                <div class="input-icon center-lg-1">
+                                                    <div class="col-sm-6 col-lg-3 mb-3 mb-sm-6">
+                                                        <input type="date" required="" ng-model="MeetingRequest.RequestedDateString" id="RequestedDateString" name="RequestedDateString"
+                                                               class="form-control signup-label" ng-value="MeetingRequest.FormattedDateString" ng-change="OnRequestDateChanges()"
+                                                               style="background-color:#EAEAEA;" />
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row py-5">
+                                                <div class="col-sm-6 col-lg-6 mb-3 mb-sm-6">
+                                                    <label for="RequesterRemark" class="form-label signup-label">Note</label>
+                                                    <textarea class="form-control signup-label" rows="3" ng-model="MeetingRequest.RequesterRemark" id="RequesterRemark" name="RequesterRemark"
+                                                              style="background-color:#EAEAEA;"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="row py-10" ng-if="IsError">
+                                                <label ng-bind="ErrorMessage" style="color:red;"></label>
+                                            </div>
+                                            <div ng-if="IsShowSlotDetails && MeetingSlots.length > 0">
+
+                                                <label class="signup-label">Available Slots</label>
+                                                <!--begin::Row-->
+                                                <div class="row align-items-start" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button]">
+                                                    <div class="col-sm-6 col-lg-3 mb-3 mb-sm-6" ng-repeat="slot in MeetingSlots track by $index">
+                                                        <a class="btn btn-icon border-2 border-green btn-outline btn-flex flex-column flex-center h-lg-50px h-40px w-100" ng-click="SlotSelectionChange(slot)">
+                                                            <span class="slot-label-green">
+                                                                <input type="radio" id="slot_{{slot.SignupSlotMapIID}}" name="slot" value="{{slot.SignupSlotMapIID}}" ng-model="MeetingRequest.RequestedSignupSlotMapID" />
+                                                                <span ng-bind="slot.StartTimeString"></span> - <span ng-bind="slot.EndTimeString"></span>
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <!--end::Row-->
+                                            </div>
+                                            <div class="d-grid gap-2 d-md-flex justify-content-md-end py-10">
+                                                <button class="btn btn-primary me-md-2" type="button" ng-click="ConfirmAndRequestSlot()" id="SlotRequest">Submit</button>
+                                            </div>
+                                        </div>
+                                        <!-- Region 1: Table view End -->
+
+                                    </div>
+
+                                </div>
+                                <!--end::Body-->
+                            </div>
+                            <!--end::Tables Widget 5-->
+                        </div>
+                        <!--end::Col-->
+                    </div>
+                    <!--end::Row-->
+                </div>
+                <!--end::Content-->
+            </div>
+        </div>
+        <!--end:::Main-->
+    </div>
+    <!--end::Wrapper container-->
+
+</div>

@@ -1,0 +1,179 @@
+﻿@model Eduegate.Web.Library.ViewModels.Common.CRUDMasterDetailViewModel
+@using System.Reflection;
+@using Eduegate.Framework.Mvc.Attributes;
+@using Eduegate.Framework.Extensions;
+@{
+    if (Request.IsAjaxRequest())
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+    ViewBag.WindowName = windowName;
+}
+<style>
+    .menuinnertab_2 td, .menuinnertab_2 th {
+        width: 100% !important;
+    }
+    .menuinnertab_2 .x-small-col-width {
+        width: 60px !important;
+    }
+   
+</style>
+<div @Html.Raw(Model.HasWindowContainer ? "class='windowcontainer'" : string.Empty) id="@(Model.IID == 0 ? "Create" : "Edit")@(Model.Name)">
+    <div id="@windowName">
+        @*TODO: Javascript should move to angular binding or Javascript*@
+        <script>
+    $(document).ready(function () {
+        $('.summaryheader-blk', '#@windowName').on('click', '.remove', function () {
+            $('.summaryheader-blk', '#@windowName').slideUp('fast');
+            $('.viewsummary', '#@windowName').removeClass('active');
+        });
+        $('.pageheadername', '#@windowName').on('click', '.viewsummary', function () {
+            $('.summaryheader-blk', '#@windowName').slideToggle('fast');
+            $(this).toggleClass('active');
+        });
+
+        $('.pagecontent', '#@windowName').on('click', '.menuinnertab li', function (e) {
+            if ($(this).hasClass('active')) return;
+            var menuattr = $(this).attr('data-target');
+            $('.menuinnertab li', '#@windowName').removeClass('active');
+            $(this).addClass('active');
+            $('.innertab', '#@windowName').slideUp('fast');
+            $('.innertab.' + menuattr, '#@windowName').slideDown('fast');;
+        });
+
+        $(document).on('focus', '.serialnum-wrap input[type="text"]', function (e) {
+            $('.serialnum-wrap div.serialfields').fadeIn();
+        });
+
+        $(document).on('click', '.gridfield-popupwrap .save', function (e) {
+            $(this).closest('.gridfield-popupwrap').find('.popupwindow').fadeIn(100);
+        });
+
+        $(document).on('click', '.popupwindow .fa-close', function (e) {
+            $(this).parents('.gridfield-popupwrap').find('.popupwindow').fadeOut(100);
+        });
+
+        $(window).on("scroll", function () {
+            var windowContainer = $('#@windowName').closest(".windowcontainer");
+            var offset = $(".stickygrid", '#@windowName').offset();
+            var gridoffset@(windowName) = offset != null ? offset.top : 0;
+
+            if (!$(windowContainer).is(":visible"))
+                return;
+
+            var gridwrapwidth = $(".pagecontent", windowContainer).find("table.listing.currentsale").width();
+
+            if ($(this).scrollTop() > gridoffset@(windowName)) {
+                $(".tabletop-section", windowContainer).addClass("fixedtop");
+                $(".fixedtop", windowContainer).css("max-width", gridwrapwidth);
+                $('.toggle-wrapper', windowContainer).addClass("stickwrap");
+            }
+            else {
+                $(".fixedtop", windowContainer).css("max-width", "");
+                $(".tabletop-section", windowContainer).removeClass("fixedtop");
+                $('.toggle-wrapper', windowContainer).removeClass("stickwrap");
+                //gridoffset@(windowName) = $(".stickygrid", windowContainer).offset().top;
+            }
+        });
+    });
+        </script>
+
+        <form id="crud@(Model.Name)_form">
+            <div id="crud@(Model.Name)" ng-app="CRUDAPP" ng-controller="@(string.IsNullOrEmpty(Model.JsControllerName) ? "CRUDController" : Model.JsControllerName) as CRUD" 
+                 data-ng-init="Init('@windowName', @Newtonsoft.Json.JsonConvert.SerializeObject(Model), '@Model.Name', @Model.IID)">
+
+                <div class="window-tab preload-overlay" style="display:block;"><div class="preloader"><img src="~/Images/preloader.gif" width="32" height="32" alt="Loading" /></div></div>
+
+                @{
+                    Html.RenderPartial("~/Areas/Frameworks/Views/CRUD/MasterDetailHeader.cshtml", Model);
+
+
+                    if (Model.SummaryViewModel != null)
+                    {
+                        Html.Partial("~/Views/Shared/_BuildSummaryFields.cshtml", Model.SummaryViewModel);
+                    }
+                }
+                <center> <span id="Load" class="fa fa-circle-o-notch fa-pulse waypoint" style="font-size:20px; display:none"></span></center>
+
+                @*TODO: Javascript should move to angular binding or Javascript*@
+                <script>
+                    $(function () {
+                        $('body').on('click', function (e) {
+                            if ($(e.target).closest('.quickviewpanel').length === 0 && $(e.target).closest('ul.squick-view li').length === 0 && $(e.target).closest('.detailviews').length === 0) {
+                                $('.quickviewpanel').removeClass('slide');
+                                $('ul.squick-view li').removeClass('active');
+                            }
+                            if ($(e.target).closest('.gridfield-popupwrap .save').length === 0 && $(e.target).closest('.popupwindow').length === 0) {
+                                $('.gridfield-popupwrap .popupwindow').fadeOut(100);
+                            }
+                        });
+                    });
+                </script>
+
+                @{
+                    Html.RenderPartial("~/Areas/Frameworks/Views/CRUD/QuickSmartViewTemplate.cshtml");
+                }
+
+                <div class="pagecontent" ng-class="{'quick-summary-wrap' : QuickSmartView.length > 0}">
+
+                    @Html.Partial("~/Views/Shared/_InfoMessage.cshtml")
+                    @{
+                        ViewBag.Parameters = Model.ClientParameters;
+                        ViewBag.Claims = Model.Claims;
+                    }
+
+                    @Html.Partial("~/Views/Shared/_BuildTabAndFields.cshtml", Model.MasterViewModel)
+
+                    <div class="toggle-wrapper">
+                        <div class="table-wrap menuinnertab_2">
+                            <div class="stickygrid"></div>
+                            @Html.Partial("~/Areas/Frameworks/Views/CRUD/MasterDetailDetailHeader.cshtml", Model)
+
+                            @if (Model.DetailViewModel != null)
+                            {
+                                <table cellpadding="0" cellspacing="0" class="listing currentsale stickparentgrid sortablegrid">
+                                    <thead>
+                                        @Html.Partial("~/Areas/Frameworks/Views/CRUD/MasterDetailGridHeader.cshtml", Model)
+                                    </thead>
+
+                                    <tbody>
+                                        @Html.Partial("~/Views/Shared/_BuildGridRows.cshtml", Model.DetailViewModel)
+
+                                        @Html.Partial("~/Areas/Frameworks/Views/CRUD/MasterDetailGridFooter.cshtml", Model)
+                                    </tbody>
+                                </table>
+                            }
+                        </div>
+                        <div class="extra-height"></div>
+                    </div><!--toggle-wrapper-->
+                    @*<div id="advanceSearch" class="popup fl-advsearch" data-popup-type="flowlayout-advsearch"></div>*@
+                    <div id="advanceSearchForCRUD" class="popup fl-advsearch" data-popup-type="flowlayout-advsearch"></div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@*<script type="text/javascript">
+    $(document).ready(function () {
+        $(".sortablegrid").rowSorter({
+            tbody: true,
+            tableClass: 'sorting-table',
+            dragClass: 'sorting-row',
+            stickTopRows: 0,
+            stickBottomRows: 0,
+            onDragStart: null,
+            onDrop: null
+        });
+    });
+</script>*@
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.popup.fl-advsearch').draggable({
+            handle: ".productcreteheader"
+        });
+    });
+</script>

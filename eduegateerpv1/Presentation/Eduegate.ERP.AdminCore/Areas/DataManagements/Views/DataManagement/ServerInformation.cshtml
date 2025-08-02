@@ -1,0 +1,48 @@
+﻿@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+
+    ViewData["Title"] = "Table Information";
+    // var tables = ViewBag.Tables;
+}
+
+<div id="ServerInformation" class="container" ng-controller="DataManagementController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName', 'ServerInformation')">
+    <h3>Server Information</h3>
+
+    <div class="row">
+@*         <div id="piechart" class="col-md-6 charts-grids widget">
+            <canvas id="pieChart" height="300" width="400"></canvas>
+        </div> *@
+        <div class="col-md-6">
+            <ul>
+                <li ng-repeat="(key, value) in FormattedServerSize">
+                    {{ key }}: {{ value }}
+                </li>
+            </ul>
+            <button class="btn btn-primary" ng-click="DeleteTempFiles()">Clear Temp Storage</button>
+        </div>
+    </div>
+    <div id="globalPopup" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Modify Server</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="CancelModify()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete the temporary files?</p>
+                    <button class="btn btn-primary" ng-click="ConfirmDelete()">Confirm</button>
+                    <button class="btn btn-secondary" ng-click="CancelModify()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>

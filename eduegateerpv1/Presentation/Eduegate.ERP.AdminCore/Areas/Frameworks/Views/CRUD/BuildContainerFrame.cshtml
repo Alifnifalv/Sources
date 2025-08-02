@@ -1,0 +1,91 @@
+﻿@model Eduegate.Web.Library.ViewModels.CRUDViewModel
+@using Eduegate.Framework.Mvc.Attributes
+@using System.Reflection;
+@using System.Linq;
+@using Eduegate.Frameworks.Mvc.Attributes;
+
+@{
+    var roles = (ViewModelRoleAttribute)Model.ViewModel.GetType().GetCustomAttributes(typeof(ViewModelRoleAttribute)).FirstOrDefault();
+
+    if (roles != null)
+    {
+        if (!Model.UserRoles.Any(a => roles.UserRoles.Contains(a.Role)))
+        {
+            return;
+        }
+    }
+
+    var claimType = (HasClaimAttribute)Model.ViewModel.GetType().GetCustomAttributes(typeof(HasClaimAttribute)).FirstOrDefault();
+
+    if (claimType != null)
+    {
+        var allClaims = (ViewBag.Claims as List<Eduegate.Web.Library.ViewModels.Security.ClaimViewModel>);
+        var allClaimNames = allClaims.Select(a => a.ResourceName).ToList();
+        if (!claimType.HasAccess(allClaimNames))
+        {
+            return;
+        }
+    }
+}
+
+<div class="pagecontent-column columnleft">
+    <div class="productcreateleftnav productcreateleftrightmaxheight1">
+        <div class="producttab-space">
+
+            <ul class="nav nav-tabs nav-tabsmobile" id="myTab">
+                @{
+                    var title = (System.ComponentModel.DisplayNameAttribute)Model.ViewModel.GetType().GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+
+                    <li class="tab-header active" ng-class="{active: SelectTabItem(CRUDModel.ViewModel,'_TABINDEX',0)}" navbarid="_TABINDEX_0">
+                        <a href="" ng-click="ClickTabItem(CRUDModel.ViewModel, '_TABINDEX',0)">
+                            @title.DisplayName
+                            <span class="toggle-arrow"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
+                        </a>
+                    </li>
+                }
+
+                @{
+                    var props = Model.ViewModel.GetType().GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(ContainerTypeAttribute)));
+                    var count = 1;
+
+                    foreach (var prop in props)
+                    {
+                        var title2 = (System.ComponentModel.DisplayNameAttribute)prop.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+
+                        roles = (ViewModelRoleAttribute)prop.GetCustomAttributes(typeof(ViewModelRoleAttribute)).FirstOrDefault();
+
+                        if (roles != null)
+                        {
+                            if (!Model.UserRoles.Any(a => roles.UserRoles.Contains(a.Role)))
+                            {
+                                continue;
+                            }
+                        }
+
+                        if (title2 != null)
+                        {
+                            var containerAttribute2 = (ContainerTypeAttribute)prop.GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+                            var lazyLoadAttribute2 = (LazyLoadAttribute)prop.GetCustomAttributes(typeof(LazyLoadAttribute)).FirstOrDefault();
+
+                            var lazyLoadDataUrl = "";
+                            if (lazyLoadAttribute2 != null)
+                            {
+                                lazyLoadDataUrl = lazyLoadAttribute2.DataUrl;
+                            }
+
+                            <li class="tab-header" ng-class="{active: SelectTabItem(CRUDModel.ViewModel,'_TABINDEX',@count,'@lazyLoadDataUrl')}" navbarid="_TABINDEX_@count">
+                                <a href="" ng-click="ClickTabItem(CRUDModel.ViewModel, '_TABINDEX',@count, '@lazyLoadDataUrl')">
+                                    @title2.DisplayName
+                                    <span class="toggle-arrow"><i class="fa fa-angle-right" aria-hidden="true"></i></span>
+                                </a>
+                            </li>
+                        }
+
+                        count++;
+                    }
+                }
+            </ul>
+
+        </div>
+    </div>
+</div>

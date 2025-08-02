@@ -1,0 +1,121 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@*@model Eduegate.Web.Library.ViewModels.SearchListViewModel*@
+@using Eduegate.Framework.Extensions;
+@{
+    Random rnd = new Random();
+    var window = "window_GridList";
+    var documentTypeID = Model.GetParameterValue<string>("DocumentTypeID");
+    var title = Model.GetParameterValue<string>("Title");
+    var viewID = Model.GetParameterValue<string>("ViewID");
+    var cultureTitle = Model.GetParameterValue<string>("Title_" + System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower());
+    if (!string.IsNullOrEmpty(cultureTitle))
+    {
+        title = cultureTitle;
+    }
+    var metadata = await Eduegate.Services.Client.Factory.ClientFactory.SearchServiceClient(new Eduegate.Framework.CallContext()
+    { LanguageCode = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower(),
+        CompanyID = 1
+    }).SearchList((Eduegate.Services.Contracts.Enums.SearchView) int.Parse(viewID)); 
+    var viewFullPath = metadata?.ViewFullPath;
+    var viewName = (Eduegate.Services.Contracts.Enums.SearchView)int.Parse(viewID); //metadata?.ViewName;
+}
+
+<div class="card card-flush h-xl-100">
+    <div id="@window" template="_DashBoard_Grid" ng-controller="DashboardController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@window','@viewName')">
+        @* <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">*@
+        <div>
+            <div class="card-header border-0 pt-5">
+                <h3 class="card-title align-items-start flex-column">
+                    <span class="card-label fw-bold text-dark">@title</span>
+
+                    @*<span class="text-muted mt-1 fw-semibold fs-7">8k social visitors</span>*@
+                </h3>
+
+                <!--begin::Toolbar-->
+                <div class="card-toolbar">
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            ...
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" ng-click="refreshGrid(5)">refresh</a>
+                            <a class="dropdown-item" ng-click="viewMoreDatas(gridPageNo)"> list more</a>
+                            <a class="dropdown-item" ng-click="ClickFireEvent($event,'@viewFullPath','@title')"> view more</a>
+                        </div>
+                    </div>
+                </div>
+                <!--end::Toolbar-->
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="table1" class="table table-striped table-bordered table-hover table-checkable order-column valign-middle">
+                        <thead>
+                            <tr>
+                                @if (metadata.Columns != null)
+                                {
+                                    <th></th>
+                                    <th>SI No.</th>
+                                    foreach (var col in metadata.Columns.Where(x => x.ColumnName != "RowCategory" && x.IsVisible && x.ColumnName != ""))
+                                    {
+                                        <th>
+                                            @col.Header
+                                        </th>
+                                    }
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="data in DataResults">
+                                @if (metadata.RowCategoryEnabled)
+                                {
+                                    <td class="statuscolumn status-color ng-class:Row.RowCategory"
+                                        style="border-bottom-width: 0px;
+                                                border-bottom: solid;
+                                                border-bottom-color: var(--bs-body-bg);
+                                                border-top-width: 0px;
+                                                border-top: solid;
+                                                border-top-color: var(--bs-body-bg);
+                                                width:5px;">
+                                        <label class="">&nbsp;</label>
+                                    </td>
+                                }
+                                <td>{{$index + 1}}</td>
+                                @foreach (var col in metadata.Columns.Where(x => x.ColumnName != "RowCategory" && x.IsVisible && x.ColumnName != ""))
+                                {
+                                    @*<td ng-bind="data.@col.ColumnName">
+                                </td>*@
+                                    switch (@col.DataType.ToLower().Trim())
+                                    {
+                                        case "datetime":
+                                            <td ng-bind="data.@col.ColumnName | date:@(col).DateTimeFormat">
+                                            </td>
+                                            break;
+                                        case "date":
+                                            <td ng-bind="data.@col.ColumnName | date:@(col).DateFormat">
+                                            </td>
+                                            break;
+                                        default:
+                                            if (@col.ColumnName == "Amount" || @col.ColumnName == "PayableAmount" || @col.ColumnName == "Balance" || @col.ColumnName == "RouteFareOneWay" || @col.ColumnName == "DueAmount" || @col.ColumnName == "CollectedAmount" || @col.ColumnName == "BalanceDue" || @col.ColumnName == "RefundAmount" || @col.ColumnName == "TotalAmount" || @col.ColumnName == "LastCost" || @col.ColumnName == "BookPrice" || @col.ColumnName == "PostPrice" || @col.ColumnName == "CreditNote" || @col.ColumnName == "PrvCollect" || @col.ColumnName == "NowPaying" || @col.ColumnName == "CollAmount" || @col.ColumnName == "CrDrAmount" || @col.ColumnName == "Earnings" || @col.ColumnName == "Deductions")
+                                            {
+                                                <td ng-bind="data.@col.ColumnName | number:@ViewBag.DefaultDecimalPoints">
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td ng-bind="data.@col.ColumnName">
+                                                </td>
+                                            }
+                                            break;
+                                    }
+                                }
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+            </div>
+        </div>
+    </div>
+</div>

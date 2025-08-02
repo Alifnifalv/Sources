@@ -1,0 +1,66 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+<tr>
+    <th class="toggleContainer">
+        <table class="mainGrid">
+            <thead>
+                <tr>
+                    <th style="width:2px;"></th>
+
+                    @if (Model.IsCategoryColumnEnabled)
+                    {
+                        if (Model.HasChild)
+                        {
+                            <th class="treeview statuscolumn" align="left"><span>&nbsp;</span></th>
+                        }
+
+                        <th class="statuscolumn" align="left"><span>&nbsp;</span></th>
+                    }
+
+                    @if (Model.IsMultilineEnabled)
+                    {
+                        <th class="check-box">
+                            <label class="checkboxwrap">
+                                <input type="checkbox" data-role="none" ng-click="RowModel.SelectAllHeader($event, RowModel.rows)"
+                                       ng-model="RowModel.SelectAll"><span class="checkboxinner">&nbsp;</span>
+                            </label>
+                        </th>
+                    }
+                    <th style="width:50px;">Sl.No</th>
+                    @if (@Model.HeaderList != null)
+                    {
+                        foreach (var header in @Model.HeaderList)
+                        {
+                            if (header.IsVisible && (header.ColumnName == null || !header.ColumnName.ToLower().Equals("rowcategory")))
+                            {
+                                <th title="@header.Header" @Html.Raw(header.DataType.ToLower().Equals("imageicon") ? " class='icon-column'" : header.DataType.ToLower().Trim().Equals("currency") ? "class=textright" : string.Empty)>
+                                    <span>
+                                        @if (Model.SortColumns.FirstOrDefault(a => a.Key == header.ColumnName) != null)
+                                        {
+                                            <a ng-click="RowModel.SortClick($event, '@header.ColumnName')">
+                                                @header.Header
+                                                <span class="colmn-sort">
+                                                    <i class="colmn-sort-asc fa fa-sort-asc asc"></i>
+                                                </span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a>
+                                                @header.Header
+                                            </a>
+                                        }
+                                    </span>
+                                </th>
+                            }
+                        }
+                    }
+
+                    <th class="last-col" align="right">
+                        @*<span>
+                <i class="fa fa-gear zoomin" ng-click="RowModel.CustomizeUserView($event,'@Model.ViewName')"></i>
+            </span> </th>*@
+                </tr>
+            </thead>
+        </table>
+</th>
+</tr>

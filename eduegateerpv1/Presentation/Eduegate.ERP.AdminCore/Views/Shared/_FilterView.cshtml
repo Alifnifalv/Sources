@@ -1,0 +1,69 @@
+﻿@{
+    Layout = null;
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<script>
+    $(document).ready(function () {
+        $('.filter-arrow', '#@windowName').on('click', function () {
+            $(this).toggleClass('show');
+            if ($(this).hasClass('show')) {
+                $('.filterwrap').slideDown(200);
+            }
+            else {
+                $('.filterwrap').slideUp(200);
+            }
+        });
+    });
+
+    $('.filterdropdown').draggable({
+        handle: '.filterheader',
+        containment: ".main-body",
+    });
+
+
+    $(".filterheader .close-pin").click(function () {
+        var elem = $(this).closest(".filterdropdown");
+         $(this).toggleClass("setpin");
+        if ($(this).hasClass('setpin')) {
+            debugger;
+            var rect = elem[0].getBoundingClientRect();
+            elem.css({ 'position': 'fixed', 'top': rect.top + 'px', 'left': rect.left + 'px' });
+            console.log(rect.top, rect.left)
+            elem.draggable({ disabled: true });
+        }
+
+        else {
+            var prodtabypos = $(this).closest(".producttab").offset().top,
+            prodtabxpos = $(this).closest(".producttab").offset().left,
+            filterypos = $(this).closest(".filterdropdown").offset().top,
+            filterxpos = $(this).closest(".filterdropdown").offset().left,
+            filterdivTopPos = filterypos - prodtabypos,
+            filterdivLeftPos = filterxpos - prodtabxpos;
+            elem.draggable({ disabled: false });
+            elem.attr({ 'style': '' });
+            elem.css({ 'position': 'absolute', 'top': filterdivTopPos + 'px', 'left': filterdivLeftPos + 'px', 'right': 'auto'});
+
+        }
+    });
+</script>
+
+<div id="@windowName">
+    <div ng-show="RowModel.IsShowFilterView" class="filterdropdown ui-draggable-handle" id="filterview">
+        <div class="filterheader">
+            <span>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Filter")</span>
+            <button id="close-filter" value="Submit" form="nameform" type="submit" class="close-filter alignright" ng-click="RowModel.CloseFilterView();">
+                <i class="fa fa-close"></i>
+            </button>
+            <button value="Submit" form="nameform" type="submit" class="close-pin alignright" id="close-pin"><i class="pin fa"></i></button>
+            <div class="filter-arrow alignright show"><i class="fa fa-caret-up"></i></div>
+            @*<button class="filter-settings alignright"><i class="fa fa-gear"></i></button>*@
+        </div>
+        <div class="filterwrap">
+            <div class="preload-overlay"></div>
+            <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+            <div id="filterContent"></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,260 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_StudentAttendance";
+    var documentTypeID = Model.GetParameterValue<string>("DocumentTypeID");
+}
+<div id="@windowName" class="card h-100 rounded-2" template="_SK_StudentAttendance" ng-controller="DashboardController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+    <script src="javascript/main.js"></script>
+    <div id="StudentAttendence">
+
+        <div class="card-header border-0 pt-5">
+
+            <h3 class="card-title align-items-start flex-column">
+                <span class="card-label text-dark">Attendance Details</span>
+            </h3>
+            <div class="card-header border-0 pt-5">
+
+                <div class="col-md-3 text-center">
+
+                    <span class="editcolor" ng-click="$root.FireEvent($event, 'Load,Schools/Attendence/StudentAttendence,$event,StudentAttendence,Class Wise Attendance' ,'Class Wise Attendance');">
+                        <i class="fa fa-edit" aria-hidden="true" title="View/Edit Attendance"></i>
+                    </span>
+                    <span class="editcolor" ng-click="LoadData();">
+                        <i class="fa fa-refresh" aria-hidden="true" title="Refresh Attendance"></i>
+                    </span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-3">
+                    <label>Month</label>
+                    <select id="attendanceMonth" ng-change="getStudentAttendance()"
+                            ng-model="SelectedDate.SelectedMonth" class="form-control">
+                        <option value="0">Jan</option>
+                        <option value="1">Feb</option>
+                        <option value="2">Mar</option>
+                        <option value="3">Apr</option>
+                        <option value="4">May</option>
+                        <option value="5">Jun</option>
+                        <option value="6">Jul</option>
+                        <option value="7">Aug</option>
+                        <option value="8">Sep</option>
+                        <option value="9">Oct</option>
+                        <option value="10">Nov</option>
+                        <option value="11">Dec</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label>Year</label>
+                    <select id="attendanceYear" ng-change="getStudentAttendance()" ng-model="SelectedDate.SelectedYear" class="form-control">
+                        <option ng-repeat="year in Years" value="{{year}}">{{year}}</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class=" col-12 ">
+                    <div id='calendar'></div>
+                </div>
+
+
+                <div class="mt-5">
+                    <div class="card shadow-none rounded-2 p-3 bg-light flex-grow-1">
+                        <div class="row g-4">
+                            <div class="col-4">
+                                <div class="d-flex align-items-center me-2">
+                                    <div class="symbol symbol-30px me-3">
+                                        <div class="symbol-label " style="background-color: #81c784;">
+                                            <span class="text-white ">
+                                                p
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fs-7 text-dark fw-bold">Present</div>
+                                        <div class="fs-8 text-muted fw-bold"> P (Present)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="d-flex align-items-center me-2">
+                                    <div class="symbol symbol-30px me-3">
+                                        <div class="symbol-label" style="background-color: #ef5350;">
+                                            <span class="text-white">
+                                                A
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fs-7 text-dark fw-bold">Absent</div>
+                                        <div class="fs-8 text-muted fw-bold">A (Absent)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="d-flex align-items-center me-2">
+                                    <div class="symbol symbol-30px me-3">
+                                        <div class="symbol-label" style=" background-color: #e57373;">
+                                            <span class="text-white">
+                                                AE
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fs-7 text-dark fw-bold">Absent excused</div>
+                                        <div class="fs-8 text-muted fw-bold">  AE (Absent excused)</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="d-flex align-items-center me-2">
+                                    <div class="symbol symbol-30px me-3">
+                                        <div class="symbol-label " style="background-color: #f8bbd0;">
+                                            <span class="text-white ">
+                                                H
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fs-7 text-dark fw-bold">Holiday</div>
+                                        <div class="fs-8 text-muted fw-bold">  H (Holiday)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="d-flex align-items-center me-2">
+                                    <div class="symbol symbol-30px me-3">
+                                        <div class="symbol-label " style="background-color: #ce93d8;">
+                                            <span class="text-white">
+                                                L
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fs-7 text-dark fw-bold">Late</div>
+                                        <div class="fs-8 text-muted fw-bold"> L (Late)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="d-flex align-items-center me-2">
+                                    <div class="symbol symbol-30px me-3">
+                                        <div class="symbol-label" style="background-color: #b2ebf2;">
+                                            <span class="text-white ">
+                                                T
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fs-7 text-dark fw-bold">Tardy</div>
+                                        <div class="fs-8 text-muted fw-bold">   T (Tardy)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="d-flex align-items-center me-2">
+                                    <div class="symbol symbol-30px me-3">
+                                        <div class="symbol-label" style=" background-color: #b2dfdb;">
+                                            <span class="text-white">
+                                                TE
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fs-7 text-dark fw-bold">Tardy excused</div>
+                                        <div class="fs-8 text-muted fw-bold">TE (Tardy excused)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="d-flex align-items-center me-2">
+                                    <div class="symbol symbol-30px me-3">
+                                        <div class="symbol-label " style=" background-color: #90a4ae;">
+                                            <span class="text-white">
+                                                UM
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fs-7 text-dark fw-bold">Unmarked</div>
+                                        <div class="fs-8 text-muted fw-bold"> UM (Unmarked)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="d-flex align-items-center me-2">
+                                    <div class="symbol symbol-30px me-3">
+                                        <div class="symbol-label" style="background-color: #c5cae9; ">
+                                            <span class="text-white">
+                                                W
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fs-7 text-dark fw-bold">Weekend</div>
+                                        <div class="fs-8 text-muted fw-bold">  W (Weekend)</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <div class="d-flex align-items-center me-2">
+                                    <div class="symbol symbol-30px me-3">
+                                        <div class="symbol-label" style="background-color: #e0e0e0; ">
+                                            <span class="text-white">
+                                                NA
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fs-7 text-dark fw-bold">Not applicable</div>
+                                        <div class="fs-8 text-muted fw-bold"> NA (Not applicable)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+
+                                <div class="d-flex align-items-center me-2">
+                                    <div class="symbol symbol-30px me-3">
+                                        <div class="symbol-label" style="background-color: blue; ">
+                                            <span class="text-white">
+                                                LA
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fs-7 text-dark fw-bold">Leave Applied</div>
+                                        <div class="fs-8 text-muted fw-bold"> LA (Leave Applied)</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+
+                                <div class="d-flex align-items-center me-2">
+                                    <div class="symbol symbol-30px me-3">
+                                        <div class="symbol-label" style="background-color: black ">
+                                            <span class="text-white">
+                                                CL
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="fs-7 text-dark fw-bold">Class Leave</div>
+                                        <div class="fs-8 text-muted fw-bold"> CL (Class Leave)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

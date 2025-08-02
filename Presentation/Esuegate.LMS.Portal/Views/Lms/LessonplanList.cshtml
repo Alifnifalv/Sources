@@ -1,0 +1,163 @@
+﻿@{
+    ViewBag.Title = "Meeting Request List";
+    var clientname = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENTINSTANCE");
+
+}
+
+<div class="app-main flex-column flex-row-fluid " ng-controller="LessonplanListController">
+    <!--begin::Content wrapper-->
+    <div class="d-flex flex-column flex-column-fluid">
+
+        <!--begin::Toolbar-->
+        <!--begin::Content-->
+        <div id="kt_app_content" class="app-content  flex-column-fluid ">
+
+
+            <!--begin::Content container-->
+            <div id="kt_app_content_container" class="app-container  container-fluid ">
+
+                <!--begin::Row-->
+                <div class="row g-5 g-xl-10">
+                    <!--begin::Col-->
+                    <div class="col mb-5 mb-xl-10">
+                        <!--begin::Timeline Widget 1-->
+                        <div class="card card-flush h-xl-100">
+                            <!--begin::Card header-->
+                            <div class="card-header pt-5">
+                                <!--begin::Card title-->
+                                <h3 class="card-title align-items-start flex-column">
+                                    <span class="card-label fw-bold text-gray-900">Lesson</span>
+                                </h3>
+                                <!--end::Card title-->
+                                <!--begin::Card toolbar-->
+                                <div class="card-toolbar">
+                                    <span> see all</span>
+                                </div>
+                                <!--end::Card toolbar-->
+                            </div>
+                            <!--end::Card header-->
+                            <!--begin::Body-->
+                            <div class="card-body py-3">
+
+                                <div class="row g-5 g-lg-8 mb-5 mb-xl-0">
+
+                                    <div class="">
+                                        <div class="accordion accordion-flush" id="accordionExample{{subjectKey}}">
+                                            <div class="accordion-item mb-3"
+                                                 ng-repeat="(subjectKey, lessonsGroup) in GroupedLessonPlanList">
+                                                <h2 class="accordion-header" id="heading{{subjectKey}}">
+                                                    <button class="accordion-button rounded-4 fs-2 h-70px  fw-bold" ng-style="{'background-color': getBackgroundColor($index)}"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#collapse{{subjectKey}}"
+                                                            aria-expanded="false"
+                                                            aria-controls="collapse{{subjectKey}}">
+                                                        <div class="border-0 border-white border-dashed min-w-125px py-3 me-7 d-none d-md-flex">
+                                                            <div class="fs-6 text-white fw-bold" ng-bind="lessonsGroup.Subject.Value"></div>
+                                                        </div>
+                                                        <div class="d-flex w-100 justify-content-end gap-12">
+                                                        <div class="d-flex flex-column  me-2">
+                                                            <div class="d-flex flex-stack mb-2">
+                                                                <span class="text-white me-2 fs-7 fw-bold">
+                                                                        Units
+                                                                </span>
+                                                            </div>
+
+                                                            <div class="w-100 text-white d-flex ">
+                                                                <img src="~/Images/Units.png" class="me-2"/>
+                                                                <span>5</span>
+                                                              </div>
+                                                        </div>
+                                                        <div class="d-flex flex-column me-2">
+                                                            <div class="d-flex flex-stack mb-2">
+                                                                <span class="text-white me-2 fs-7 fw-bold">
+                                                                        Tasks
+                                                                </span>
+                                                            </div>
+
+                                                                <div class="w-100 text-white d-flex">
+                                                                    <img src="~/Images/Tasks.png" class="me-2" />
+
+                                                                2
+                                                            </div>
+                                                        </div>
+                                                        <div class="d-flex flex-column  me-2">
+                                                            <div class="d-flex flex-stack mb-2">
+                                                                    <span class="text-white me-2 fs-7 fw-bold">
+                                                                        Discussion
+                                                                </span>
+                                                            </div>
+
+                                                                <div class="w-100 text-white d-flex">
+                                                                    <img src="~/Images/Discussion.png" class="me-2" />
+
+                                                                0
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                    </button>
+                                                </h2>
+                                                <div id="collapse{{subjectKey}}"
+                                                     class="accordion-collapse collapse show "
+                                                     aria-labelledby="heading{{subjectKey}}"
+                                                     data-bs-parent="#accordionExample{{subjectKey}}">
+                                                    <div class="accordion-body p-0">
+                                                        <div class="mt-n1">
+                                                            <div class="table-responsive">
+                                                                <table id="datatable_complex_header"
+                                                                       class="table table-hover table-striped align-start gs-4 gy-4">
+                                                                 
+                                                                    <tbody>
+                                                                        <tr class="table-text"
+                                                                            ng-repeat="lessonPlan in lessonsGroup.LessonPlans">
+                                                                            <td class="rounded-cell rounded-4 rounded-end-0 text-center">
+                                                                                {{$index + 1}}
+                                                                            </td>
+                                                                            <td>
+                                                                                <a href="#"
+                                                                                   class="text-dark fw-bold text-hover-primary mb-1 fs-6">
+                                                                                    {{lessonPlan.Title}}
+                                                                                </a>
+                                                                            </td>
+                                                                            <td>{{lessonPlan.StartDate}}</td>
+                                                                            <td>{{lessonPlan.EndDate}}</td>
+                                                                            <td>{{lessonPlan.ActionPlan || 'N/A'}}</td>
+                                                                            <td class="rounded-4 rounded-start-0">
+                                                                                <button class="btn btn-primary btn-sm"
+                                                                                        type="button"
+                                                                                        ng-click="LessonPlanViewClick(lessonPlan)">
+                                                                                    View
+                                                                                </button>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                                <div class="alert alert-info text-center"
+                                                                     ng-if="!lessonsGroup.LessonPlans.length">
+                                                                    <label>There are no details found!</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-350px mb-xl-10">
+                        <div class="card h-xl-100">
+                            <div class="card-header border-0 pt-5">
+                            </div>
+                            <div class="card-body pt-6">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

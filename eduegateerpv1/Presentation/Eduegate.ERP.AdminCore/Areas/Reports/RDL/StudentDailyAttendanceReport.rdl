@@ -1,0 +1,1177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily" xmlns:am="http://schemas.microsoft.com/sqlserver/reporting/authoringmetadata">
+  <rd:ReportUnitType>Inch</rd:ReportUnitType>
+  <rd:ReportID>a712bf77-3ce1-4819-9e9f-621c686a98b0</rd:ReportID>
+  <am:AuthoringMetadata>
+    <am:CreatedBy>
+      <am:Name>PBIRB</am:Name>
+      <am:Version>15.7.1801.18</am:Version>
+    </am:CreatedBy>
+    <am:UpdatedBy>
+      <am:Name>PBIRB</am:Name>
+      <am:Version>15.7.1810.53</am:Version>
+    </am:UpdatedBy>
+    <am:LastModifiedTimestamp>2024-07-01T03:24:37.6422789Z</am:LastModifiedTimestamp>
+  </am:AuthoringMetadata>
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="DataSource1">
+      <rd:SecurityType>DataBase</rd:SecurityType>
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=20.205.112.183;Initial Catalog=EduEgate_2022</ConnectString>
+        <Prompt>Specify a user name and password for data source DataSource1:</Prompt>
+      </ConnectionProperties>
+      <rd:DataSourceID>cdfdedd8-0ec7-45a6-ada4-a005cd2116d6</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="StudentAttendance">
+      <Query>
+        <DataSourceName>DataSource1</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@ADate">
+            <Value>=Parameters!ADate.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+        <CommandText>--DECLARE @ADate DATETIME = '6/05/2024'
+
+;WITH DATA AS 
+(
+	SELECT COUNT(stud.StudentIID) AS TotalCount, stud.SchoolID, stud.ClassID, stud.SectionID, 
+	scl.SchoolName AS SchoolName, cls.ClassDescription, sct.SectionName, cls.ORDERNO
+    FROM schools.Students stud
+    INNER JOIN schools.Schools scl ON scl.SchoolID = stud.SchoolID
+    INNER JOIN schools.Classes cls ON cls.ClassID = stud.ClassID
+    INNER JOIN schools.Sections sct ON sct.SectionID = stud.SectionID
+    WHERE stud.IsActive = 1 AND stud.Status = 1
+    GROUP BY stud.ClassID, stud.SectionID, cls.ClassDescription, sct.SectionName, stud.SchoolID, cls.ORDERNO, scl.SchoolName
+
+	UNION ALL
+
+	SELECT COUNT(stud.StudentIID) AS TotalCount, stud.SchoolID, stud.ClassID * -1 AS ClassID, -1 AS SectionID, 
+	scl.SchoolName AS SchoolName,cls.ClassDescription,'ALL', cls.ORDERNO -1 AS ORDERNO
+    FROM schools.Students stud
+    INNER JOIN schools.Classes cls ON cls.ClassID = stud.ClassID
+    INNER JOIN schools.Schools scl ON scl.SchoolID = stud.SchoolID
+    WHERE stud.IsActive = 1 AND stud.Status = 1
+    GROUP BY stud.ClassID, stud.SchoolID, scl.SchoolName,cls.ClassDescription, cls.ORDERNO
+),
+PRSNT AS
+(
+    SELECT COUNT(stud.StudentAttendenceIID) AS PresentCount,stud.ClassID,stud.SectionID,stud.SchoolID
+    FROM schools.StudentAttendences stud
+    WHERE stud.AttendenceDate = @ADate AND stud.PresentStatusID = 6
+    GROUP BY stud.ClassID,stud.SectionID,stud.SchoolID
+
+	UNION ALL 
+
+	SELECT COUNT(stud.StudentAttendenceIID) AS PresentCount,stud.ClassID * -1 AS ClassID,-1 AS SectionID,stud.SchoolID
+	FROM schools.StudentAttendences stud
+	WHERE stud.AttendenceDate = @ADate AND stud.PresentStatusID = 6
+	GROUP BY stud.ClassID,stud.SchoolID
+),
+LEAVE AS
+(
+    SELECT COUNT(stud.StudentAttendenceIID) AS LeaveCount,stud.ClassID,stud.SectionID,stud.SchoolID 
+    FROM schools.StudentAttendences stud
+    WHERE stud.AttendenceDate = @ADate AND stud.PresentStatusID = 2
+    GROUP BY stud.ClassID,stud.SectionID,stud.SchoolID
+
+	UNION ALL
+
+	SELECT COUNT(stud.StudentAttendenceIID) AS LeaveCount,ClassID * -1 AS ClassID,-1 AS SectionID,stud.SchoolID
+    FROM schools.StudentAttendences stud
+    WHERE stud.AttendenceDate = @ADate AND stud.PresentStatusID = 2
+    GROUP BY stud.ClassID,stud.SchoolID
+)
+SELECT dt.SchoolID,dt.ClassID,dt.SectionID,dt.SchoolName,dt.ClassDescription,dt.SectionName,dt.ORDERNO,dt.TotalCount,
+ISNULL(pr.PresentCount, 0) AS PresentCount,ISNULL(lv.LeaveCount, 0) AS LeaveCount,
+CAST(ROUND(CAST(ISNULL(pr.PresentCount, 0) AS DECIMAL(10,2)) * 100.0 / CAST(dt.TotalCount AS DECIMAL(10,2)), 2) AS DECIMAL(10,2)) AS Percentage
+FROM DATA dt
+LEFT JOIN PRSNT pr ON pr.ClassID = dt.ClassID AND pr.SectionID = dt.SectionID AND pr.SchoolID = dt.SchoolID
+LEFT JOIN LEAVE lv ON lv.ClassID = dt.ClassID AND lv.SectionID = dt.SectionID AND lv.SchoolID = dt.SchoolID
+ORDER BY dt.SchoolID,dt.ORDERNO</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="SchoolID">
+          <rd:TypeName>System.Byte</rd:TypeName>
+          <DataField>SchoolID</DataField>
+        </Field>
+        <Field Name="SchoolName">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>SchoolName</DataField>
+        </Field>
+        <Field Name="ClassDescription">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>ClassDescription</DataField>
+        </Field>
+        <Field Name="ClassID">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>ClassID</DataField>
+        </Field>
+        <Field Name="ORDERNO">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>ORDERNO</DataField>
+        </Field>
+        <Field Name="TotalCount">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>TotalCount</DataField>
+        </Field>
+        <Field Name="SectionID">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>SectionID</DataField>
+        </Field>
+        <Field Name="PresentCount">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>PresentCount</DataField>
+        </Field>
+        <Field Name="LeaveCount">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>LeaveCount</DataField>
+        </Field>
+        <Field Name="SectionName">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>SectionName</DataField>
+        </Field>
+        <Field Name="Percentage">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>Percentage</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="Tablix1">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>0.67708in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.8525in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>1.03656in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.64583in</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>0.98958in</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.44271in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox29">
+                          <rd:DefaultName>Textbox29</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Section</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Silver</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox8">
+                          <rd:DefaultName>Textbox8</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>No of Students Present</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Silver</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox11">
+                          <rd:DefaultName>Textbox11</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>No of Students Absent</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Silver</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox13">
+                          <rd:DefaultName>Textbox13</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Total</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Silver</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox15">
+                          <rd:DefaultName>Textbox15</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Attendance
+Percentage</Value>
+                                  <Style>
+                                    <FontStyle>Normal</FontStyle>
+                                    <FontFamily>Arial</FontFamily>
+                                    <FontSize>12pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <TextDecoration>None</TextDecoration>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Silver</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.44271in</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="SectionName">
+                          <rd:DefaultName>SectionName</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!SectionName.Value</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="PresentCount">
+                          <rd:DefaultName>PresentCount</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!PresentCount.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="LeaveCount">
+                          <rd:DefaultName>LeaveCount</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!LeaveCount.Value</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="TotalCount">
+                          <rd:DefaultName>TotalCount</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!TotalCount.Value</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Percentage">
+                          <rd:DefaultName>Percentage</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Percentage.Value</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value> %</Value>
+                                  <Style>
+                                    <FontFamily>Arial</FontFamily>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>2.25234in</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox19">
+                        <rd:DefaultName>Textbox19</rd:DefaultName>
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Campus</Value>
+                                <Style>
+                                  <FontStyle>Normal</FontStyle>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontSize>12pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                  <TextDecoration>None</TextDecoration>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Silver</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember>
+                      <TablixHeader>
+                        <Size>1.32292in</Size>
+                        <CellContents>
+                          <Textbox Name="Textbox21">
+                            <rd:DefaultName>Textbox21</rd:DefaultName>
+                            <CanGrow>true</CanGrow>
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value>Class </Value>
+                                    <Style>
+                                      <FontStyle>Normal</FontStyle>
+                                      <FontFamily>Arial</FontFamily>
+                                      <FontSize>12pt</FontSize>
+                                      <FontWeight>Bold</FontWeight>
+                                      <TextDecoration>None</TextDecoration>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style />
+                              </Paragraph>
+                            </Paragraphs>
+                            <Style>
+                              <Border>
+                                <Color>LightGrey</Color>
+                                <Style>Solid</Style>
+                              </Border>
+                              <BackgroundColor>Silver</BackgroundColor>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                      <TablixMembers>
+                        <TablixMember />
+                      </TablixMembers>
+                    </TablixMember>
+                  </TablixMembers>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="SchoolName">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!SchoolName.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!SchoolID.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixHeader>
+                    <Size>2.25234in</Size>
+                    <CellContents>
+                      <Textbox Name="SchoolName">
+                        <rd:DefaultName>SchoolName</rd:DefaultName>
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!SchoolName.Value</Value>
+                                <Style>
+                                  <FontFamily>Arial</FontFamily>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Color>LightGrey</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember>
+                      <Group Name="ClassDescription">
+                        <GroupExpressions>
+                          <GroupExpression>=Fields!ClassDescription.Value</GroupExpression>
+                        </GroupExpressions>
+                      </Group>
+                      <SortExpressions>
+                        <SortExpression>
+                          <Value>=Fields!ORDERNO.Value</Value>
+                        </SortExpression>
+                      </SortExpressions>
+                      <TablixHeader>
+                        <Size>1.32292in</Size>
+                        <CellContents>
+                          <Textbox Name="ClassDescription1">
+                            <rd:DefaultName>ClassDescription1</rd:DefaultName>
+                            <CanGrow>true</CanGrow>
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value>=Fields!ClassDescription.Value</Value>
+                                    <Style>
+                                      <FontFamily>Arial</FontFamily>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style />
+                              </Paragraph>
+                            </Paragraphs>
+                            <Style>
+                              <Border>
+                                <Color>LightGrey</Color>
+                                <Style>Solid</Style>
+                              </Border>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                      <TablixMembers>
+                        <TablixMember>
+                          <Group Name="Details" />
+                          <Visibility>
+                            <Hidden>true</Hidden>
+                            <ToggleItem>ClassDescription1</ToggleItem>
+                          </Visibility>
+                        </TablixMember>
+                      </TablixMembers>
+                    </TablixMember>
+                  </TablixMembers>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>StudentAttendance</DataSetName>
+            <Top>0.36649in</Top>
+            <Left>0in</Left>
+            <Height>0.88542in</Height>
+            <Width>7.77682in</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Textbox Name="Textbox5">
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Date: </Value>
+                    <Style>
+                      <FontWeight>Bold</FontWeight>
+                      <Format>dd-MM-yyyy</Format>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=Parameters!ADate.Value</Value>
+                    <Style>
+                      <Format>dd-MM-yyyy</Format>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Right</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>1.41111mm</Top>
+            <Left>131.38678mm</Left>
+            <Height>6.08542mm</Height>
+            <Width>62.96936mm</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+        </ReportItems>
+        <Height>1.55139in</Height>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Body>
+      <Width>7.77682in</Width>
+      <Page>
+        <PageHeader>
+          <Height>0.75726in</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="Textbox4">
+              <rd:DefaultName>Textbox2</rd:DefaultName>
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Page " &amp; Globals!PageNumber &amp; " of " &amp; Globals!TotalPages</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>7.53416mm</Top>
+              <Left>151.63279mm</Left>
+              <Height>6.08542mm</Height>
+              <Width>37.14916mm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox3">
+              <rd:DefaultName>Textbox2</rd:DefaultName>
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Date: </Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Value>=Format(Globals!ExecutionTime,"dd/MM/yyyy hh:mm tt")</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0mm</Top>
+              <Left>125.81259mm</Left>
+              <Height>6.08542mm</Height>
+              <Width>62.96936mm</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox9">
+              <rd:DefaultName>Textbox9</rd:DefaultName>
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>STUDENT DAILY ATTENDANCE</Value>
+                      <Style>
+                        <FontSize>16pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                        <Color>Brown</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>9.1485mm</Top>
+              <Left>38.1mm</Left>
+              <Height>10.0859mm</Height>
+              <Width>114.39247mm</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Image Name="Image2">
+              <Source>External</Source>
+              <Value>=Parameters!RootUrl.Value + Parameters!Logo.Value</Value>
+              <Sizing>FitProportional</Sizing>
+              <Top>0.39041mm</Top>
+              <Left>0mm</Left>
+              <Height>13.94028mm</Height>
+              <Width>57.2095mm</Width>
+              <ZIndex>3</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+              </Style>
+            </Image>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <BottomBorder>
+              <Color>Gray</Color>
+              <Style>Solid</Style>
+              <Width>1pt</Width>
+            </BottomBorder>
+          </Style>
+        </PageHeader>
+        <PageFooter>
+          <Height>0.45in</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="ExecutionTime">
+              <rd:DefaultName>ExecutionTime</rd:DefaultName>
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Parameters!ReportFooter.Value</Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>1.02035mm</Top>
+              <Left>0mm</Left>
+              <Height>9.3893mm</Height>
+              <Width>188.78195mm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <TopBorder>
+              <Color>Gray</Color>
+              <Style>Solid</Style>
+              <Width>1pt</Width>
+            </TopBorder>
+          </Style>
+        </PageFooter>
+        <LeftMargin>0.25in</LeftMargin>
+        <RightMargin>0.25in</RightMargin>
+        <TopMargin>0.25in</TopMargin>
+        <BottomMargin>0.25in</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="SchoolID">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>30</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>SchoolID</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="ADate">
+      <DataType>DateTime</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>=Today()</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Attendance Date</Prompt>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="CurrentAcademicYearID">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>CurrentAcademicYearID</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="HeaderForeColor">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HeaderForeColor</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="RootUrl">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>RootUrl</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="Logo">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Logo</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="ReportFooter">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportFooter</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="Signature">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Signature</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="SchoolSeal">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>SchoolSeal</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="HeaderBGColor">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HeaderBGColor</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>3</NumberOfColumns>
+      <NumberOfRows>7</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>SchoolID</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>3</RowIndex>
+          <ParameterName>ADate</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>5</RowIndex>
+          <ParameterName>RootUrl</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>5</RowIndex>
+          <ParameterName>Logo</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>5</RowIndex>
+          <ParameterName>ReportFooter</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>3</RowIndex>
+          <ParameterName>CurrentAcademicYearID</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>6</RowIndex>
+          <ParameterName>Signature</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>6</RowIndex>
+          <ParameterName>SchoolSeal</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>6</RowIndex>
+          <ParameterName>HeaderBGColor</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>4</RowIndex>
+          <ParameterName>HeaderForeColor</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <ConsumeContainerWhitespace>true</ConsumeContainerWhitespace>
+</Report>

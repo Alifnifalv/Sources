@@ -1,0 +1,256 @@
+﻿@model Eduegate.Web.Library.ViewModels.Common.CRUDMasterDetailViewModel
+@using Eduegate.Framework.Helper.Enums
+
+@{
+    var headSpan = ViewContext.Controller.ViewBag.HeaderCount - 2;
+
+    if (Model.MasterViewModel.IsSummaryPanel)
+    {
+        switch (Model.MasterViewModel.ToString())
+        {
+            case "Eduegate.Web.Library.ViewModels.Inventory.BranchTransferRequestMasterViewModel":
+            case "Eduegate.Web.Library.ViewModels.Inventory.BranchTransferMasterViewModel":
+                <tr class="subtotal">
+                    <td colspan="5" class="textright"><span class="caption">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Total"):</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Quantity')}}</span></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                break;
+            case "Eduegate.Web.Library.ViewModels.Accounts.AssetMasterViewModel":
+                break;
+            case "Eduegate.Web.Library.ViewModels.Accounts.AssetEntryMasterViewModel":
+                <tr class="subtotal">
+                    <td colspan="7" class="textright">
+                        <span class="capti
+                                                            on">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Total"):</span>
+                                                        </td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Credit'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Debit'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    break;
+                                                case "Eduegate.Web.Library.ViewModels.AccountTransactions.PVRegularPaymentMasterViewModel":
+                                                    <tr class="subtotal">
+                                                        <td colspan="4" class="textright"><span class="caption">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Total"):</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Debit'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Credit'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    break;
+                                                case "Eduegate.Web.Library.ViewModels.AccountTransactions.DebitProductMasterViewModel":
+                                                    <tr class="subtotal">
+                                                        <td colspan="6" class="textright"><span class="caption">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Total"):</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Amount'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    break;
+                                                case "Eduegate.Web.Library.ViewModels.AccountTransactions.PVInvoiceMasterViewModel":
+                                                    <tr class="subtotal">
+                                                        <td colspan="4" class="textright"><span class="caption">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Total"):</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'InvoiceAmount'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'ReturnAmount'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td class="textright" colspan="2"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'PaidAmount'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'UnPaidAmount'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Amount'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    break;
+                                                case "Eduegate.Web.Library.ViewModels.AccountTransactions.RVMissionMasterViewModel":
+                                                    <tr class="subtotal">
+                                                        <td colspan="8" class="textright"><span class="caption">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Total"):</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'PaidAmount'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'UnPaidAmount'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Amount'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    break;
+                                                case "Eduegate.Web.Library.ViewModels.AccountTransactions.RVInvoiceMasterViewModel":
+                                                    <tr class="subtotal">
+                                                        <td colspan="@(headSpan-4)" class="textright"><span class="caption">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Total"):</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'PaidAmount'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'UnPaidAmount'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Amount'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    break;
+                                                case "Eduegate.Web.Library.ViewModels.AccountTransactions.RVReceiptsMasterViewModel":
+                                                case "Eduegate.Web.Library.ViewModels.AccountTransactions.RVRegularReceiptMasterViewModel":
+                                                case "Eduegate.Web.Library.ViewModels.AccountTransactions.JVMasterViewModel":
+                                                    <tr class="subtotal">
+                                                        <td colspan="4" class="textright"><span class="caption">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Total"):</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Debit'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Credit'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    break;
+                                                case "Eduegate.Web.Library.ViewModels.AccountTransactions.RegularDebitMasterViewModel":
+                                                case "Eduegate.Web.Library.ViewModels.AccountTransactions.RegularCreditMasterViewModel":
+                                                    <tr class="subtotal">
+                                                        <td colspan="3" class="textright"><span class="caption">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Total"):</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Debit'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Credit'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    break;
+                                                case "Eduegate.Web.Library.ViewModels.Accounts.ExpenseEntryHeadViewModel":
+                                                    <tr class="subtotal">
+                                                        <td colspan="@(headSpan - 1)" class="textright"><span>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("SubTotal")</span></td>
+
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'DebitAmount'| number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+
+                                                    @Html.Partial("~/Areas/Frameworks/Views/CRUD/TaxTemplate.cshtml", Model)
+
+                                                    <tr class="subtotal">
+                                                        <td colspan="@(headSpan)" class="textright">
+                                                            <span class="caption">
+                                                                @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Discount")
+                                                                <input class="discount percentage" ng-disabled="CRUDModel.Model.MasterViewModel.Discount > 0" ng-blur="TotalDiscountByPercentage('DebitAmount')" ng-model="CRUDModel.Model.MasterViewModel.DiscountPercentage" type="text" value="{{CRUDModel.Model.MasterViewModel.DiscountPercentage}}" ng-p ng-pattern="/^([0-9]{1,2}([\.][0-9]{1,2})?$|100([\.][0]{1,})?)$/">&nbsp;&nbsp;% or
+                                                                <input class="discount" ng-blur="TotalDiscountByAmount('DebitAmount')" ng-model="CRUDModel.Model.MasterViewModel.Discount" type="text" value="{{CRUDModel.Model.MasterViewModel.Discount | number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints}}" ng-p ng-pattern="/^[0-9]*\d{0,9}(\.?\d{1,3})?%?$/"><span>
+                                                                </span>
+                                                            </span>
+                                                        </td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr class="subtotal">
+                                                        <td colspan="@(headSpan - 1)" class="textright"><span class="caption">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("GrandTotal")</span></td>
+                                                        <td class="textright"><span class="value">{{((CRUDModel.Model.DetailViewModel|sumByKey:'DebitAmount') + CRUDModel.Model.MasterViewModel.ExclusiveTaxAmount - CRUDModel.Model.MasterViewModel.Discount | number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    break;
+                                                default:
+                                                    if (Model.UserRoles.Exists(a => a.RoleName == HasClaims.HASDELIVERY.ToString()))
+                                                    {
+                                                        if (!Model.MasterViewModel.ToString().Contains(".Accounts."))
+                                                        {
+                                                            if (Model.MasterViewModel.ToString() != "Eduegate.Web.Library.ViewModels.Inventory.PurchaseOrderMasterViewModel")
+                                                            {
+                                                                <tr class="subtotal">
+                                                                    <td colspan="@(headSpan - 1)" class="textright"><span class="caption">Delivery Charge:</span></td>
+                                                                    <td><input class="value discount" type="text" ng-model="CRUDModel.Model.MasterViewModel.DeliveryCharge" value="{{CRUDModel.Model.MasterViewModel.DeliveryCharge}}" /></td>
+                                                                    <td></td>
+                                                                    <td></td>
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    }
+
+                                                    <tr class="subtotal">
+                                                        <td colspan="@(headSpan - 1)" class="textright"><span class="caption">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("SubTotal")</span></td>
+                                                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Amount': CRUDModel.Model.MasterViewModel.DeliveryCharge == null || CRUDModel.Model.MasterViewModel.DeliveryCharge == undefined ? 0 : CRUDModel.Model.MasterViewModel.DeliveryCharge | number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+
+                                                    @Html.Partial("~/Areas/Frameworks/Views/CRUD/TaxTemplate.cshtml", Model)
+
+                                                    if (Model.MasterViewModel.ToString() != "Eduegate.Web.Library.ViewModels.ShoppingCart.CartMasterViewModel")
+                                                    {
+                                                        <tr class="subtotal">
+                                                            <td colspan="@(headSpan)" class="textright">
+                                                                <span class="caption">
+                                                                    @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Discount"): <input class="discount percentage" ng-disabled="CRUDModel.Model.MasterViewModel.Discount > 0" ng-blur="TotalDiscountByPercentage()" ng-model="CRUDModel.Model.MasterViewModel.DiscountPercentage" type="text" value="{{CRUDModel.Model.MasterViewModel.DiscountPercentage}}" ng-p ng-pattern="/^([0-9]{1,2}([\.][0-9]{1,2})?$|100([\.][0]{1,})?)$/">&nbsp;&nbsp;%
+                                                                    or<input class="discount" ng-blur="TotalDiscountByAmount()" ng-model="CRUDModel.Model.MasterViewModel.Discount" type="text" value="{{CRUDModel.Model.MasterViewModel.Discount | number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints}}" ng-p ng-pattern="/^[0-9]*\d{0,9}(\.?\d{1,3})?%?$/"><span>
+                                                                    </span>
+                                                                </span>
+                                                            </td>
+                                                            <td></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    }
+
+
+                                                    <tr class="subtotal">
+                                                        <td colspan="@(headSpan - 1)" class="textright"><span class="caption">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("GrandTotal")</span></td>
+                                                        <td class="textright"><span class="value">{{((CRUDModel.Model.DetailViewModel|sumByKey:'Amount': CRUDModel.Model.MasterViewModel.DeliveryCharge == null || CRUDModel.Model.MasterViewModel.DeliveryCharge == undefined  ? 0 : CRUDModel.Model.MasterViewModel.DeliveryCharge) + CRUDModel.Model.MasterViewModel.ExclusiveTaxAmount - CRUDModel.Model.MasterViewModel.Discount | number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+
+                                                    var entitlement = Model.MasterViewModel.GetType().GetProperty("TransactionHeadEntitlementMaps");
+                                                    if (entitlement != null && entitlement.GetValue(Model.MasterViewModel, null) != null)
+                                                    {
+                                                        <tr class="subtotal">
+                                                            <td colspan="5" class="textright"><span class="caption">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Payments")</span></td>
+                                                            <td class="textright" colspan="@(headSpan - 3)">
+                                                                @{
+                                                                    ViewBag.GridBinding = "gridModel";
+                                                                }
+                                                                <div class="controls fullcolumn-layout">
+                                                                    <table id="GridTable" class="fullcolumn-layout grid">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th  data-toggle="tooltip" data-placement="top" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Type")">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Type")</th>
+                                                                                <th  data-toggle="tooltip" data-placement="top" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("ReferenceNo")">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("ReferenceNo")</th>
+                                                                                <th  data-toggle="tooltip" data-placement="top" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Amount")">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Amount")</th>
+                                                                                @*<th>Voucher Code</th>*@
+                                                                                <th class="x-small-col-width"></th>
+                                                                                <th class="x-small-col-width"></th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        @Html.Partial("~/Views/Shared/_BuildGridRows.cshtml", (entitlement.GetValue(Model.MasterViewModel, null) as System.Collections.IList)[0])
+                                                                    </table>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    }
+
+                                                    var additionalExpense = Model.MasterViewModel.GetType().GetProperty("AdditionalExpTransMaps");
+                                                    if (additionalExpense != null && additionalExpense.GetValue(Model.MasterViewModel, null) != null)
+                                                    {
+                                                        <tr class="subtotal">
+                                                            <td colspan="6" class="textright"><span class="caption">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("AdditionalExpenses")</span></td>
+                                                            <td class="textright" colspan="@(headSpan - 2)">
+                                                                @{
+                                                                    ViewBag.GridBinding = "gridModel";
+                                                                }
+                                                                <div class="controls fullcolumn-layout">
+                                                                    <table id="GridTable" class="fullcolumn-layout grid">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th  data-toggle="tooltip" data-placement="top" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("IsAffectSupplier")">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("IsAffectSupplier")</th>
+                                                                                <th  data-toggle="tooltip" data-placement="top" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("AdditionalExpense")">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("AdditionalExpense")</th>
+                                                                                <th  data-toggle="tooltip" data-placement="top" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("ProvisionalAccount")">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("ProvisionalAccount")</th>
+                                                                                <th  data-toggle="tooltip" data-placement="top" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Currency")">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Currency")</th>
+                                                                                <th  data-toggle="tooltip" data-placement="top" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("ExchangeRate")">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("ExchangeRate")</th>
+                                                                                <th  data-toggle="tooltip" data-placement="top" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("ForeignAmount")">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("ForeignAmount")</th>
+                                                                                <th  data-toggle="tooltip" data-placement="top" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("LocalAmount")">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("LocalAmount")</th>
+                                                                                @*<th>Voucher Code</th>*@
+                                                                                <th class="x-small-col-width"></th>
+                                                                                <th class="x-small-col-width"></th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        @Html.Partial("~/Views/Shared/_BuildGridRows.cshtml", (additionalExpense.GetValue(Model.MasterViewModel, null) as System.Collections.IList)[0])
+                                                                    </table>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr class="subtotal">
+                                                            <td colspan="@(headSpan - 1)" class="textright"><span class="caption">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("TotalAdditionalExpense")</span></td>
+                                                            <td class="textright"><span class="value">{{(CRUDModel.Model.MasterViewModel.AdditionalExpTransMaps|sumByKey:'LocalAmount': CRUDModel.Model.MasterViewModel.AdditionalExpTransMaps.LocalAmount | number : @ViewContext.Controller.ViewBag.DefaultDecimalPoints)}}</span></td>
+                                                            
+                                                            <td></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    }
+                                                    break;
+                                            }
+                                        }
+}

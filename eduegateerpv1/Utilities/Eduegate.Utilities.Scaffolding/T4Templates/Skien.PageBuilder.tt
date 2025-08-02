@@ -1,0 +1,695 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ include file="TemplateFileManagerV21.ttinlcude" #>
+
+<#@ assembly name="System.Core" #>
+<#@ assembly name="System.Xml" #>
+<#@ assembly name="System.IO" #>
+<#@ assembly name="System.Data" #>
+<#@ assembly name="System.Configuration" #>
+<#@ assembly name="Microsoft.SqlServer.ConnectionInfo" #>
+<#@ assembly name="Microsoft.SqlServer.Smo" #>
+<#@ assembly name="Microsoft.SqlServer.Management.Sdk.Sfc" #>
+<#@ assembly name="EnvDTE" #>
+
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Data" #>
+<#@ import namespace="System.Data.SqlClient" #>
+<#@ import namespace="System.Configuration" #>
+<#@ import namespace="System.Collections" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="Microsoft.SqlServer.Management.Smo" #>
+<#@ import namespace="Microsoft.SqlServer.Management.Common" #>
+<#@ import namespace="System.Xml" #>
+<#@ import namespace="Microsoft.VisualStudio.Shell" #>
+<#@ import namespace="Microsoft.VisualStudio.Shell.Interop" #>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
+<#@ import namespace="EnvDTE" #>
+
+<#@ output extension=".cs" #>
+
+<#
+    string appConfig = this.Host.ResolvePath("../App.config");
+    if(!File.Exists(appConfig))
+    {
+	    Error("App.config not exists");
+    }
+
+    ExeConfigurationFileMap configFile = new ExeConfigurationFileMap();
+    configFile.ExeConfigFilename = appConfig;
+    var configuration = System.Configuration.ConfigurationManager.OpenMappedExeConfiguration(configFile, ConfigurationUserLevel.None);
+    var connectionString = configuration.ConnectionStrings.ConnectionStrings["dbEduegateERPContext"].ConnectionString;
+    SqlConnection sqlConnection = new SqlConnection(connectionString);
+    ServerConnection serverConnection = new ServerConnection(sqlConnection);
+    Server server = new Server(serverConnection);
+    var database = server.Databases[server.ConnectionContext.DatabaseName];
+    var tables = database.Tables;
+    var manager = TemplateFileManager.Create(this);
+    Table selectedTable = null;
+    AppSettingsSection section = (configuration.GetSection("appSettings") as AppSettingsSection);
+    var tableName = section.Settings["tablename"].Value;
+    var entityname = section.Settings["entityname"].Value;
+    var module = section.Settings["module"].Value;
+    var submodule = section.Settings["submodule"].Value;
+    var subsubmodule = section.Settings["subsubmodule"].Value;
+    var idField = section.Settings["IDField"].Value;
+
+    foreach(Table table in tables)
+    {
+        if(table.Name == tableName) 
+        {
+            selectedTable = table;
+            break;
+        }
+    }
+
+    var hostServiceProvider = (IServiceProvider)this.Host;
+    var dte = (DTE)hostServiceProvider.GetService(typeof(DTE));
+#>
+
+
+<#
+manager.StartNewFile(entityname + ".cs", "", "", null);
+#>
+
+<#
+    manager.StartNewFile(entityname + "Mapper.cs", "", "", null);
+#>
+using Newtonsoft.Json;
+using Eduegate.Domain.Entity.<#=module#>.Models;
+using Eduegate.Domain.Entity.<#=module#>.Models.<#=module#>;
+using Eduegate.Domain.Repository.Frameworks;
+using Eduegate.Frameworks.DynamicEntityMapper.Mappers;
+using Eduegate.Services.Contracts;
+using Eduegate.Services.Contracts.<#=module#>.<#=subsubmodule#>;
+using Eduegate.Framework;
+using System;
+
+
+namespace Eduegate.Domain.Mappers.<#=module#>.<#=submodule#>
+{
+    public class <#=entityname#>Mapper : DTOEntityDynamicMapper
+    {   
+        public static  <#=entityname#>Mapper Mapper(CallContext context)
+        {
+            var mapper = new  <#=entityname#>Mapper();
+            mapper._context = context;
+            return mapper;
+        }
+
+        public override BaseMasterDTO ToDTO(string entity)
+        {
+            return JsonConvert.DeserializeObject<<#=entityname#>DTO>(entity);
+        }
+
+        public override string ToDTOString(BaseMasterDTO dto)
+        {
+            return dto == null ? null : JsonConvert.SerializeObject(dto);
+        }
+
+        public override string GetEntity(long IID)
+        {
+             return ToDTOString(ToDTO(IID));
+        }
+
+        private <#=entityname#>DTO ToDTO(long IID)
+        {
+            using (dbEduegateSchoolContext dbContext = new dbEduegateSchoolContext())
+            {
+                var repository = new EntiyRepository<<#=entityname#>, dbEduegateSchoolContext>(dbContext);
+                var entity = repository.GetById(IID);
+
+                return new <#=entityname#>DTO()
+                {
+<#       
+            foreach(Column column in selectedTable.Columns)
+            {
+#>
+<#        if(column.Name.Equals("TimeStamps"))
+            {
+         #>
+                    //TimeStamps = Convert.ToBase64String(entity.TimeStamps),
+<#
+        } else {
+  #>
+                    <#=column.Name#> = entity.<#=column.Name #>,
+<#
+        }
+            }
+#>
+                };
+            }
+        }
+
+        public override string SaveEntity(BaseMasterDTO dto)
+        {
+            var toDto = dto as <#=entityname#>DTO;
+            //convert the dto to entity and pass to the repository.
+            var entity = new <#=entityname#>()
+            {
+<#       
+            foreach(Column column in selectedTable.Columns)
+    {
+        if(column.Name.Equals("TimeStamps"))
+        {
+#>
+                TimeStamps = Convert.FromBase64String(toDto.TimeStamps),
+<#
+        }
+        else{
+#>
+                <#=                column.Name #> = toDto.<#=                column.Name #>,
+<#
+        }
+    }
+#>
+            };
+
+            using (dbEduegate<#=module#>Context dbContext = new dbEduegate<#=module#>Context())
+            {
+                var repository = new EntiyRepository<<#=entityname#>, dbEduegate<#=module#>Context>(dbContext);
+
+                if (entity.<#=entityname#><#=idField#> == 0)
+                {
+                    var maxGroupID = repository.GetMaxID(a => a.<#=entityname#><#=idField#>);
+                    entity.<#=entityname#><#=idField#> = maxGroupID == null ? 1 : int.Parse(maxGroupID.ToString()) + 1;
+                    entity = repository.Insert(entity);
+                }
+                else
+                {
+                    entity = repository.Update(entity);
+                }
+            }
+
+            return ToDTOString(ToDTO(entity.<#=entityname#><#=idField#> ));
+        }       
+    }
+}
+
+
+
+
+<#
+  
+manager.StartNewFile(entityname + "DTO.cs", "", "", null);
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Eduegate.Services.Contracts.<#=module#>.<#=subsubmodule#>
+{
+    [DataContract]
+    public class <#=entityname#>DTO : Eduegate.Framework.Contracts.Common.BaseMasterDTO
+    {
+ <#       
+                foreach(Column column in selectedTable.Columns)
+    {
+        if(!(column.Name.Equals("TimeStamps") || column.Name.Equals("CreatedBy") || column.Name.Equals("UpdatedBy") 
+                || column.Name.Equals("CreatedDate") || column.Name.Equals("UpdatedDate")))
+        {
+         #>
+        [DataMember]
+        public <#=                ToClrType(column.DataType, column.Nullable)#>  <#=                column.Name #> { get; set; }
+<#
+        }
+    }
+#>
+    }
+}
+
+
+<#  
+manager.StartNewFile(entityname + "ViewModel.cs", "", "", null);
+#>
+using Newtonsoft.Json;
+using Eduegate.Framework.Mvc.Attributes;
+using Eduegate.Framework.Translator;
+using Eduegate.Services.Contracts;
+using Eduegate.Services.Contracts.<#=module#>.<#=submodule#>;
+using Eduegate.Web.Library.ViewModels;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace Eduegate.Web.Library.<#=module#>.<#=submodule#>
+{
+    public class <#=entityname#>ViewModel : BaseMasterViewModel
+    {
+<#       
+                foreach(Column column in selectedTable.Columns)
+                {
+#>
+        [Required]
+        [ControlType(Framework.Enums.ControlTypes.TextBox)]
+        [DisplayName("<#=column.Name#>")]
+        public <#=ToClrType(column.DataType, column.Nullable)#>  <#=column.Name#> { get; set; }
+<#
+                }
+#>     
+        public override string AsDTOString(BaseMasterDTO vm)
+        {
+            return JsonConvert.SerializeObject(vm as <#=entityname#>DTO);
+        }
+
+        public override BaseMasterViewModel ToVM(string jsonString)
+        {
+            return JsonConvert.DeserializeObject<<#=entityname#>ViewModel>(jsonString);
+        }
+
+        public override BaseMasterViewModel ToVM(BaseMasterDTO dto)
+        {
+            Mapper<<#=entityname#>DTO, <#=entityname#>ViewModel>.CreateMap();
+            var vm = Mapper<<#=entityname#>DTO, <#=entityname#>ViewModel>.Map(dto as <#=entityname#>DTO);
+            return vm;
+        }
+
+        public override BaseMasterDTO ToDTO()
+        {
+            Mapper<<#=entityname#>ViewModel, <#=entityname#>DTO>.CreateMap();
+            var dto = Mapper<<#=entityname#>ViewModel, <#=entityname#>DTO>.Map(this);
+            return dto;
+        }
+
+        public override BaseMasterDTO ToDTO(string jsonString)
+        {
+            return JsonConvert.DeserializeObject<<#=entityname#>DTO>(jsonString);
+        }
+    }
+}
+
+<#
+    manager.StartNewFile("Search.cs", "", "", null);
+    var viewsData = database.ExecuteWithResults("Select ViewID,ViewName FROM setting.Views");
+#>
+namespace Eduegate.Framework.Enums
+{
+    public enum SearchView : long
+    {
+<#       
+                foreach(DataRow row in viewsData.Tables[0].Rows)
+                {
+#>
+        <#=FixViewName(row["ViewName"].ToString())#> = <#=row["ViewID"]#>,
+<#
+                }
+#>     
+    }
+}
+<#
+    manager.StartNewFile("Screens.cs", "", "", null);   
+#>
+namespace Eduegate.Frameworks.Enums
+{
+    public enum Screens : long
+    {
+        None = 0,
+<#       
+                foreach(DataRow row in viewsData.Tables[0].Rows)
+                {
+#>
+        <#=FixViewName(row["ViewName"].ToString())#> = <#=row["ViewID"]#>,
+<#
+                }
+#>     
+    }
+}
+
+<#
+    manager.StartNewFile("SearchView.cs", "", "", null);   
+#>
+using System.Runtime.Serialization;
+namespace Eduegate.Services.Contracts.Enums
+{
+    [DataContract(Name = "SearchView")]
+    public enum SearchView
+    {
+<#       
+                foreach(DataRow row in viewsData.Tables[0].Rows)
+                {
+#>
+        [EnumMember]
+        <#=FixViewName(row["ViewName"].ToString())#> = <#=row["ViewID"]#>,
+<#
+                }
+#>     
+    }
+}
+//
+//<#
+//manager.StartNewFile("Projects.cs", "", "", null); 
+//
+//#>
+
+<#
+    
+    manager.Process(true);
+//
+    File.Copy(GetSolutionDirectory() + "\\Utilities\\Eduegate.Utilities.Scaffolding\\T4Templates\\"  + entityname + "ViewModel.cs",
+        GetSolutionDirectory() + "\\Presentation\\Eduegate.Web.Library." + module +"\\" + subsubmodule + "\\" + entityname + "ViewModel.cs", true);  
+
+    File.Copy(GetSolutionDirectory() + "\\Utilities\\Eduegate.Utilities.Scaffolding\\T4Templates\\"  + entityname + "DTO.cs",
+        GetSolutionDirectory() + "\\Services\\Eduegate.Services.Contracts." + module +"\\" + subsubmodule + "\\" + entityname + "DTO.cs", true);  
+
+    File.Copy(GetSolutionDirectory() + "\\Utilities\\Eduegate.Utilities.Scaffolding\\T4Templates\\"  + entityname + "Mapper.cs",
+        GetSolutionDirectory() + "\\Domain\\Eduegate.Domain.Mappers." + module +"\\" + subsubmodule + "\\" + entityname + "Mapper.cs", true);   
+
+
+      File.Copy(GetSolutionDirectory() + "\\Utilities\\Eduegate.Utilities.Scaffolding\\T4Templates\\Search.cs",
+        GetSolutionDirectory() + "\\Platforms\\Eduegate.Frameworks\\Enums\\Search.cs", true);   
+
+       File.Copy(GetSolutionDirectory() + "\\Utilities\\Eduegate.Utilities.Scaffolding\\T4Templates\\Screens.cs",
+        GetSolutionDirectory() + "\\Platforms\\Eduegate.Frameworks\\Enums\\Screens.cs", true);   
+
+    File.Copy(GetSolutionDirectory() + "\\Utilities\\Eduegate.Utilities.Scaffolding\\T4Templates\\SearchView.cs",
+        GetSolutionDirectory() + "\\Services\\Eduegate.Services.Contracts\\Enums\\SearchView.cs", true);   
+#>
+
+
+
+
+<#
+    try{
+        ProjectItem vmProjectItem= GetProjectItem("Eduegate.Web.Library." + module);
+        vmProjectItem.SubProject.ProjectItems.AddFromFile(GetSolutionDirectory() + "\\Presentation\\Eduegate.Web.Library." + module +"\\" + subsubmodule + "\\" + entityname + "ViewModel.cs"); 
+    }catch{
+    }
+
+    try{
+        ProjectItem vmProjectItem= GetProjectItem("Eduegate.Services.Contracts." + module);
+        vmProjectItem.SubProject.ProjectItems.AddFromFile(GetSolutionDirectory() + "\\Services\\Eduegate.Services.Contracts." + module +"\\" + subsubmodule + "\\" + entityname + "DTO.cs"); 
+    }catch{
+    }
+
+    try{
+        ProjectItem vmProjectItem= GetProjectItem("Eduegate.Domain.Mappers." + module);
+        vmProjectItem.SubProject.ProjectItems.AddFromFile(GetSolutionDirectory() + "\\Domain\\Eduegate.Domain.Mappers." + module +"\\" + subsubmodule + "\\" + entityname + "Mapper.cs"); 
+    }catch{
+    }
+#>
+   
+
+<#  
+    var viewID = GenerateView(connectionString, entityname, module, submodule, subsubmodule, tableName);
+    if(viewID != 0 ) {
+        GenerateViewColumn(connectionString, viewID, selectedTable);
+    }
+#>
+<#  
+    GenerateScreenMeatadata(connectionString, viewID, entityname, module, submodule);   
+#>
+<# 
+    GenerateFilterColumn(connectionString, viewID, selectedTable, entityname);
+#>
+
+
+<#+
+
+private long GenerateView(string connectionString, string entityname, string module, string submodule, string subsubmodule, string tablename) {
+    SqlConnection conn = new SqlConnection(connectionString);
+    conn.Open();
+    SqlCommand cmd = new SqlCommand("select Max(ViewID) + 1 from setting.Views", conn);
+    var viewID = cmd.ExecuteScalar().ToString();
+    cmd = new SqlCommand("select Count(*) from [setting].[Views] where ViewName='" + entityname + "'", conn);
+    string existsViewID = cmd.ExecuteScalar().ToString();
+    
+    if(existsViewID != "0"){
+        return long.Parse(existsViewID);
+    };
+
+    cmd = new SqlCommand("INSERT INTO [setting].[Views]" +
+           "([ViewID],[ViewTypeID],[ViewName],[ViewFullPath],[IsMultiLine],[IsRowCategory],[PhysicalSchemaName]" +
+           ",[HasChild],[IsRowClickForMultiSelect],[ChildViewID],[ChildFilterField],[ControllerName],[IsMasterDetail]" +
+           ",[IsEditable],[IsGenericCRUDSave],[IsReloadSummarySmartViewAlways],[JsControllerName]) VALUES ("+ viewID +
+           ",1" +
+           ",'" + entityname + "'" +
+           ",'" + module + "/" + submodule + "/" + subsubmodule + "'" +
+           ",0" +
+           ",1 " + 
+           ",'" + tablename + "'" + 
+           ",0" + 
+           ",0" +
+           ",NULL" +
+           ",NULL" +
+           ",NULL" +
+           ",0" +
+           ",1" +
+           ",1" +
+           ",1" +
+           ",NULL)", conn);
+    cmd.ExecuteNonQuery();
+
+    cmd = new SqlCommand("INSERT INTO [setting].[Views]" +
+           "([ViewID],[ViewTypeID],[ViewName],[ViewFullPath],[IsMultiLine],[IsRowCategory],[PhysicalSchemaName]" +
+           ",[HasChild],[IsRowClickForMultiSelect],[ChildViewID],[ChildFilterField],[ControllerName],[IsMasterDetail]" +
+           ",[IsEditable],[IsGenericCRUDSave],[IsReloadSummarySmartViewAlways],[JsControllerName]) VALUES ("+ (int.Parse(viewID) + 1) +
+           ",2" +
+           ",'" + entityname + "Summary'" +
+           ",'" + module + "/" + submodule + "/" + subsubmodule + "'" +
+           ",0" +
+           ",1 " + 
+           ",'" + tablename + "'" + 
+           ",0" + 
+           ",0" +
+           ",NULL" +
+           ",NULL" +
+           ",NULL" +
+           ",0" +
+           ",1" +
+           ",1" +
+           ",1" +
+           ",NULL)", conn);
+    cmd.ExecuteNonQuery();
+
+    conn.Close();
+    return long.Parse(viewID);
+}
+
+private void GenerateViewColumn(string connectionString, long viewID, Table selectedTable) 
+{
+    SqlConnection conn = new SqlConnection(connectionString);
+    conn.Open();
+    foreach(Column column in selectedTable.Columns)
+    {
+        SqlCommand cmd = new SqlCommand("select Max(ViewColumnID) + 1 from setting.ViewColumns", conn);
+        var viewColumnID= cmd.ExecuteScalar().ToString();
+
+        cmd = new SqlCommand("INSERT INTO [setting].[ViewColumns]([ViewColumnID],[ViewID],[ColumnName],[DataType]" +
+           ",[PhysicalColumnName],[IsDefault],[IsVisible],[IsSortable],[IsQuickSearchable],[SortOrder],[IsExpression],[Expression]" +
+           ",[FilterValue]) VALUES(" + viewColumnID + "," + viewID + ",'" + column.Name + "','" + column.DataType + "'" +
+           ",'" + column.Name + "'" +
+           ",1" +
+           ",1" +
+           ",1" +
+           ",0" +
+           ",NULL" +
+           ",NULL" +
+           ",NULL" +
+           ",NULL)", conn);
+        cmd.ExecuteNonQuery();
+    }
+
+    conn.Close();
+}
+
+
+private void GenerateScreenMeatadata(string connectionString, long viewID, string entityname, string module, string submodule) {
+    SqlConnection conn = new SqlConnection(connectionString);
+    conn.Open();
+
+    var cmd = new SqlCommand("select Count(*) from [setting].[ScreenMetadatas] where ViewID=" + viewID, conn);
+    string viewExists = cmd.ExecuteScalar().ToString();
+    
+    if(viewExists != "0"){
+        return;
+    };
+
+    cmd = new SqlCommand("INSERT INTO [setting].[ScreenMetadatas]([ScreenID],[ViewID],[Name],[ListActionName],[ListButtonDisplayName],[ModelAssembly]" +
+           ",[ModelNamespace],[ModelViewModel],[MasterViewModel],[DetailViewModel],[SummaryViewModel],[DisplayName],[JsControllerName],[IsCacheable]" +
+           ",[IsSavePanelRequired],[IsGenericCRUDSave],[EntityMapperAssembly],[EntityMapperViewModel],[SaveCRUDMethod],[ScreenTypeID]) VALUES " +
+           "(" + viewID +
+           "," + viewID +
+           ",'" + entityname +
+           "','"  + entityname +
+           "','"  + entityname +
+           "','Eduegate.Web.Library." + module + ".dll'" +
+           ",'Eduegate.Web.Library." + module + "." + submodule + "'" +
+           ",'Eduegate.Web.Library." + module + "." + submodule + "." + entityname + "ViewModel'" +
+           ",NULL" +
+           ",NULL" +
+           ",NULL" +
+           ",'" + entityname + "'" +
+           ",NULL" +
+           ",0" +
+           ",1" +
+           ",1" +
+           ",'Eduegate.Domain.Mappers." + module + ".dll'" +
+           ",'Eduegate.Domain.Mappers." + module + "." + submodule + "." + entityname + "Mapper'" +
+           ",'SaveMaster'" +
+           ",1)", conn);
+    cmd.ExecuteNonQuery();
+    conn.Close();
+}
+
+
+
+private void GenerateFilterColumn(string connectionString, long? viewID, Table selectedTable, string entityname) {
+    SqlConnection conn = new SqlConnection(connectionString);
+    conn.Open();
+    var cmd = new SqlCommand("select Count(*) from [setting].[FilterColumns] where ViewID=" + viewID, conn);
+    string viewExists = cmd.ExecuteScalar().ToString();
+    
+    if(viewExists != "0"){
+        return;
+    };
+
+    int sequence = 1;
+    foreach(Column column in selectedTable.Columns)
+    {
+        cmd = new SqlCommand("select Max(FilterColumnID) + 1 from setting.FilterColumns", conn);
+        var filterColumnID= cmd.ExecuteScalar().ToString();
+
+        cmd = new SqlCommand("INSERT INTO [setting].[FilterColumns]([FilterColumnID],[SequenceNo],[ViewID],[ColumnCaption],[ColumnName]" +
+           ",[DataTypeID],[UIControlTypeID],[DefaultValues],[IsQuickFilter],[LookupID],[Attribute1],[Attribute2],[IsLookupLazyLoad]) VALUES " +
+           "(" + filterColumnID +
+           "," + sequence +
+           "," + viewID +
+           ",'" + column.Name + "'" +
+           ",'" + column.Name + "'" +
+           ",1" +
+           ",1" +
+           ",NULL" +
+           ",NULL" +
+           ",NULL" +
+           ",NULL" +
+           ",NULL" +
+           ",0)", conn);
+        cmd.ExecuteNonQuery();
+            sequence++;
+    }
+
+    conn.Close();
+}
+
+private ProjectItem GetProjectItem(string projectName) 
+{
+    var serviceProvider = this.Host as IServiceProvider;
+    var dte = serviceProvider.GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
+
+    foreach (Project project in dte.Solution)
+    {
+        foreach (ProjectItem pr in project.ProjectItems)
+        {
+                if(pr.Name == projectName) {
+                    return pr;
+                }
+                
+                if(pr.SubProject != null) {
+                    foreach (ProjectItem pr2 in pr.SubProject.ProjectItems)
+                    {
+                        if(pr2.Name == projectName) {
+                            return pr2;
+                        }
+                    }
+                }
+        }
+    }
+    
+    return null;
+}
+
+private string GetSolutionDirectory()
+{
+    var serviceProvider = this.Host as IServiceProvider;
+    var dte = serviceProvider.GetService(typeof(EnvDTE.DTE)) as EnvDTE.DTE;
+    return System.IO.Path.GetDirectoryName(dte.Solution.FullName);
+}
+
+private string FixViewName(string viewName)
+{
+    //viewName = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(viewName);
+	viewName = viewName.Replace(" ","");
+    viewName = viewName.Replace("-","");
+	return viewName;
+}
+
+
+private string FixTableName(string tableName)
+{
+	var result = tableName.Replace(" ","_");
+	return System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(result);
+}
+
+private string ToClrType(DataType dataType, bool isNullable)
+{
+	string returnType = string.Empty;
+	switch (dataType.SqlDataType)
+    {
+        case SqlDataType.BigInt:
+            returnType = string.Format("{0}{1}","long", isNullable ? "?":"");
+			break;
+        case SqlDataType.Binary:
+        case SqlDataType.Image:
+        case SqlDataType.Timestamp:
+        case SqlDataType.VarBinary:
+            returnType = "byte[]";
+			break;
+        case SqlDataType.Bit:
+			returnType = string.Format("{0}{1}","bool", isNullable ? "?":"");
+			break;
+        case SqlDataType.Char:
+        case SqlDataType.NChar:
+        case SqlDataType.NText:
+        case SqlDataType.NVarChar:
+        case SqlDataType.Text:
+        case SqlDataType.VarChar:
+        case SqlDataType.Xml:
+            returnType = string.Format("{0}{1}","string", "");
+			break;
+        case SqlDataType.DateTime:
+        case SqlDataType.SmallDateTime:
+        case SqlDataType.Date:
+        case SqlDataType.Time:
+        case SqlDataType.DateTime2:
+			returnType = string.Format("{0}{1}","System.DateTime", isNullable ? "?":"");
+			break;
+        case SqlDataType.Decimal:
+        case SqlDataType.Money:
+        case SqlDataType.SmallMoney:
+			returnType = string.Format("{0}{1}","decimal", isNullable ? "?":"");
+			break;
+        case SqlDataType.Float:
+			returnType = string.Format("{0}{1}","double", isNullable ? "?":"");
+			break;
+        case SqlDataType.Int:
+			returnType = string.Format("{0}{1}","int", isNullable ? "?":"");
+			break;
+        case SqlDataType.Real:
+			returnType = string.Format("{0}{1}","float", isNullable ? "?":"");
+			break;
+        case SqlDataType.UniqueIdentifier:
+			returnType = string.Format("{0}{1}","Guid", isNullable ? "?":"");
+			break;
+        case SqlDataType.SmallInt:
+            returnType = string.Format("{0}{1}","short", isNullable ? "?":"");
+			break;
+        case SqlDataType.TinyInt:
+            returnType = string.Format("{0}{1}","byte", isNullable ? "?":"");
+			break;
+        case SqlDataType.Variant:
+            returnType = string.Format("{0}{1}","object", "");
+			break;
+        case SqlDataType.DateTimeOffset:
+            returnType = string.Format("{0}{1}","DateTimeOffset", isNullable ? "?":"");
+			break;
+		}
+
+		return returnType;
+}
+
+
+#>

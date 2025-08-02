@@ -1,0 +1,29 @@
+﻿<div class="productcreteheader">Upload Product Images<button value="Submit" type="button" class="submitcreateform-style">Next</button></div>
+<div class="panel-body">
+    <div class="upload-preview">
+        <form method="post" ng-click="TriggerUploadFile($event);" action="Catalogs/Product/UploadProductImages" enctype="multipart/form-data" id="mydropzone" class="dropzone" style="cursor: pointer;">
+            <div class="fallback">
+                <input type="file" ng-model="uploadedImageNames" onchange="angular.element(this).scope().UploadImageFiles(this)" id="UploadFile" multiple accept="image/*" />
+            </div>
+        </form>
+        <span class="cufon" style="color:red" ng-show="submitted && IsProductImageRequired">Minimum one image is required</span>
+        <div class="imgsuploaded">
+            <h2>Preview</h2>
+            <div class="upload-imgwrap dropzone-previews" id="previews">
+                <div class="dz-preview dz-processing dz-image-preview" ng-repeat="imageInfo in uploadedImagesInfo">
+                    <div class="dz-image"> <img data-dz-thumbnail="" ng-src="{{imageInfo.FilePath}}"></div>
+                    <a href="" class="dz-remove" ng-click="DeleteUploadedImages(imageInfo);">Cancel upload</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="imgsuploaded uploaded">
+        <h2>Uploaded Images</h2>
+        <div class="upload-imgwrap dropzone-previews" id="previews">
+            <div class="dz-preview dz-processing dz-image-preview" ng-repeat="uploadedImage in ProductModel.UploadedFiles">
+                <div class="dz-image"> <img data-dz-thumbnail="" ng-src="{{uploadedImage.FilePath}}"> </div>
+                <a href=""  class="dz-remove" ng-click="DeleteUploadedImages(uploadedImage);">Cancel upload</a>
+            </div>
+        </div>
+    </div>
+</div>

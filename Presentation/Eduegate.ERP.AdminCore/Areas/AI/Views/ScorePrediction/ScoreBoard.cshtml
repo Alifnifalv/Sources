@@ -1,0 +1,223 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+
+    ViewBag.Title = "Score Board";
+    var imagePath = string.Format("{0}/{1}", new Eduegate.Domain.Setting.SettingBL().GetSettingValue<string>("ImageHostUrl"), "StudentProfile");
+
+}
+
+<div id="ScoreBoard" class="windowcontainer " ng-controller="ScorePredictionController">
+
+    <div class="app-container  container-fluid d-flex position-relative vh-100">
+        <div class="PageLoaderBG_v02" ng-if="IsScorePredictionLoading">
+            <ul class="loadingclass" >
+                <li>
+                    <div>
+                        <div class=" frontPanel"></div>
+                        <img class="loaderimage" src="../Images/eduegateAI_logo.svg">
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="app-main flex-column flex-row-fluid ">
+            <div class="d-flex flex-column flex-column-fluid">
+                <div class="app-content pt-5">
+                    <div class="row g-3 g-xxl-5">
+                        <div class="col mb-5 mb-xl-5">
+                            <div class="card border-0 rounded-3 mb-5 mb-xl-5 min-h-250px" style="background: linear-gradient(264deg, #663C71 2.06%, #546387 70.05%);">
+                                <div class="card-header border-0 min-h-auto">
+                                    <dic class="card-title fw-semibold text-white">Student Details</dic>
+                                </div>
+                                <div class="card-body ">
+                                    <img src="../Images/profile-bg.svg" class="position-absolute end-0 top-0 h-100"/>
+
+                                    <div class="d-flex lh-1 h-100">
+                                        <div class="me-5 ">
+                                            <div class="symbol symbol-100px symbol-circle symbol-lg-150px symbol-fixed position-relative">
+                                            <img  ng-src="@imagePath//{{StudentDetails.StudentIID}}//Thumbnail//{{StudentDetails.StudentProfile}}"
+                                                     onerrorsrc="../Images/avatar.svg" class="mx-10 my-5" alt="" style="    object-fit: cover;     object-position: right top;">
+                                            </div>
+                                        </div>
+                                        <div class="">
+                                            <div class="col">
+                                                <span class="form-group">
+                                                    <span class="controls w-100 d-flex flex-column">
+                                                        <span class="mb-2 text-white">Select Student</span>
+                                                        <span class="controls brand w-250px" >
+                                                            <ui-select style="width: 100%;" ng-model="SelectedEmployee" ng-change="StudentChanges($select.selected)"
+                                                                       theme="select2" class="pos-txt rounded-2 min-w-250px" sortable="true" name="SelectedEmployee" id="SelectedEmployee">
+                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                <ui-select-choices repeat="data in Students | filter:$select.search">{{data.Value}}</ui-select-choices>
+                                                            </ui-select>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <!--begin::Title-->
+                                            <div class="fs-3 fw-semibold text-white mt-6">
+                                                {{ScorePredictionData.StudentName}}
+                                                
+                                            </div>
+                                            <span class="badge badge-primary mt-2">{{ScorePredictionData.AdmissionNumber}}</span>
+                                            <!--end::Title-->
+                                            <!--begin::Text-->
+                                            <span class="fw-semibold text-white fs-6 d-block opacity-75 mt-6">
+                                                {{StudentDetails.StudentClass.Value}}
+                                                {{StudentDetails.Section.Value}}
+
+
+                                            </span>
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card card-flush border-0 bg-light overflow-hidden rounded-4" ng-if="IsScorePredictionLoaded">
+                                <!--begin::Header-->
+                                <div class="card-header pt-5 min-h-auto">
+                                    <h3 class="card-title align-items-start flex-column">
+                                        <span class="card-label fs-4 fw-bold text-gray-800">Subject Wise Prediction</span>
+
+                                    </h3>
+                                </div>
+
+                                <div class="card-body">
+                                    <div class="table-responsive grid-table ">
+                                        <table class="table table-rounded  table-bordered align-middle gs-3 gy-2 bg-body">
+                                            <thead>
+                                                <tr class="fs-5 fw-bold text-gray-800">
+                                                    <th class="min-w-300px w-150px text-start">Subject</th>
+                                                    <th class=" min-w-100px mw-150px text-center">Score</th>
+                                                    <th class=" min-w-100px mw-150px text-center">Grade</th>
+                                                    <th class="  min-w-100px mw-200px text-center">Indicator</th>
+                                                    <th class=" w-250px text-center">Progress</th>
+                                                </tr>
+                                            </thead>
+                                            <!--end::Table head-->
+                                            <!--begin::Table body-->
+                                            <tbody style="border-top: 0">
+                                                <tr ng-repeat="(key, score) in ScorePredictionData.predicted_score">
+                                                    <td class="text-gray-700 fw-semibold fs-6 align-middle">
+                                                        <div class="symbol symbol-25px symbol-circle me-2" data-bs-toggle="tooltip" data-bs-original-title="Alan Warden" data-kt-initialized="1">
+                                                            <span class="symbol-label bg-primary text-inverse-warning fw-bold fs-9"> {{ SubjectNameMap[key] ? SubjectNameMap[key].substring(0,3) : '' }}</span>
+                                                        </div> 
+                                                        {{SubjectNameMap[key] }}
+                                                    </td>
+
+                                                    <td class=" text-center align-middle">
+                                                        <span class="text-gray-700 fw-semibold fs-6">{{score| number:0}}/100</span>
+                                                    </td>
+
+
+                                                    <td class="text-center align-middle">
+                                                        <span class="text-gray-700 fw-semibold fs-6">Grade: {{ScorePredictionData.grade_indicators[key]}}</span>
+                                                    </td>
+
+                                                    <td class="text-start align-middle">
+                                                        <span class="text-gray-700 fw-semibold fs-6 d-flex align-items-center">
+                                                            <span class="bullet bullet-dot h-15px w-15px me-3"
+                                                                  ng-class="{' bg-success': ScorePredictionData.grade_descriptions[key] === 'Outstanding'  || ScorePredictionData.grade_descriptions[key] === 'Excellent',
+                                                                   'bg-primary': ScorePredictionData.grade_descriptions[key] === 'Very Good' || ScorePredictionData.grade_descriptions[key] === 'Good',
+                                                                   'bg-warning': ScorePredictionData.grade_descriptions[key] === 'Average' || ScorePredictionData.grade_descriptions[key] === 'Below Average',
+                                                                    ' bg-danger': ScorePredictionData.grade_descriptions[key] === 'Weak' || ScorePredictionData.grade_descriptions[key] === 'Poor'}
+
+                                                                    "> </span>
+                                                            
+                                                            {{ScorePredictionData.grade_descriptions[key]}}
+                                                        </span>
+                                                    </td>
+
+                                                    <td class="align-middle">
+                                                        <div class="text-end">{{score  | number:0}}% </div>
+                                                        <div class="progress bg-light-primary rounded">
+                                                            <div class="progress-bar bg-primary rounded m-0" role="progressbar" style="height: 12px; width:{{score}}% " aria-valuenow="{{score}}" aria-valuemin="0" aria-valuemax="100px"></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                            <!--end::Table body-->
+                                        </table>
+
+                                    </div>
+                                </div>
+                                <!--end: Card Body-->
+                            </div>
+                            <!--end::Table widget 17-->
+                        </div>
+                        <!--end::Col-->
+                        <!--begin::Col-->
+                        <div class="mw-400px mb-xxl-5" >
+                            <div class="card bg-light border-0 rounded-4 h-100 overflow-hidden" ng-class="{'visibility-hidden': IsScorePredictionLoaded}">
+                            @*     <div class="intelligence-glow " ng-if="IsScorePredictionLoaded"></div>
+                                <div class="intelligence-glow intelligence-glow-2"  ng-if="IsScorePredictionLoaded"></div> *@
+                                <div class="card-body pt-5">
+                                    <div class="d-flex flex-stack">
+                                        <h4 class="fw-normal text-gray-800 m-0">Score Predict Overview</h4>
+                                    </div>
+                                    <div class="d-flex flex-center w-100 position-relative">
+                                        <canvas id="myChart" width="400" height="0"></canvas>
+                                     
+                                        </div>
+                                    <!--begin::Content-->
+                                    <div class="w-100 position-relative z-index-1">
+                                        <!--begin::Text-->
+                                        <div class="alert alert-warning d-flex align-items-center p-5 my-5 border-1">
+                                                   <div class="d-flex flex-column">
+                                                <h4 class="mb-1 text-gray-700 fs-7">Disclaimer</h4>
+                                                <span class="text-gray-700 fs-8">
+                                                    Please note that the Predicted Score is generated using machine learning models based on historical data. While we strive for accuracy, predictions are not guaranteed and may contain errors. Future behavior and external factors can impact the actual outcome. Please use this prediction as a reference only. Provider is not responsible for its contents and stake holders are advised to make informed decisions.
+
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="performance-analysis">
+                                            <div class="Strength" ng-repeat="strength in ScorePredictionData.performance_analysis.Strength">
+                                                <div class="d-flex flex-column text-start mb-3">
+                                                    <span class="text-success fs-5  fw-normal mb-2">Strength</span>
+                                                    <span class="text-gray-700 fs-7" ng-bind-html="trustHtml(strength)"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="Weakness" ng-repeat="weakness in ScorePredictionData.performance_analysis.Weakness">
+                                                <div class="d-flex flex-column text-start mb-3">
+                                                    
+                                                    <span class="text-danger fs-5  fw-semibold mb-2">Weakness </span>
+                                                    <span class="text-gray-700 fs-7" ng-bind-html="trustHtml(weakness)"> </span>
+                                                </div>
+                                            </div>
+
+                                            <div class="Suggestion" ng-repeat="suggestion in ScorePredictionData.performance_analysis.Suggestion">
+                                                <div class="d-flex flex-column text-start mb-3">
+                                                    <span class="text-primary fs-5 fw-normal mb-2">Suggestion </span>
+
+                                                    <span class="text-gray-700 fs-7" ng-bind-html="trustHtml(suggestion)"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <!--end::Content-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .app-container {
+        text-shadow: none;
+    }
+
+</style>

@@ -1,0 +1,208 @@
+﻿@using Eduegate.Services.Contracts.Enums
+@{
+    Layout = null;
+    var viewIID =Eduegate.Services.Contracts.Enums.SearchView.Category;
+    var windowName = "window_" + Guid.NewGuid();
+    var imagePath = string.Format("{0}/{1}/",Eduegate.Framework.Extensions.ConfigurationExtensions.GetAppConfigValue("ImageHostUrl"),Eduegate.Framework.Enums.WBImageTypes.Category.ToString());
+}
+
+<div id="@windowName" class="summary-wrap" ng-controller="SummaryViewController" ng-init="SummaryViewInit('@windowName', '@viewIID', @ViewBag.IID,'@DynamicViews.Category');">
+    <div class="preload-overlay" style="display:block;">
+        @{
+            Html.RenderPartial("_PreLoader");
+        }
+    </div>
+    <div class="summary-header">
+        <div class="summary-controls">
+            <ul class="summary-tab">
+                <li class="summary-tab-list active" title="Category Details" content-tab="Category"><i class="fa fa-file-text"></i></li>
+                <li class="summary-tab-list" title="CategoryWise Sales" content-tab="SalesDetails"><i class="fa fa-bar-chart"></i></li>
+            </ul>
+            <div class="alignright panelcontrols">
+                <span class="remove" ng-click="CloseSummaryPanel($event);">x</span>
+                <span class="minmax"></span>
+            </div>
+        </div>
+    </div>
+    <div class="quickviewwrap">
+        <div id="Category" class="summarytab-content first">
+            <h4>Category Details</h4>
+            <div class="summary-tab-inner">
+                <div class="summary-content">
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">ID</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Category).CategoryIID"></span>
+
+                            <i class="fa fa-pencil" title="Edit" ng-click="Edit('Category', ViewModels.@(DynamicViews.Category).CategoryIID)"></i>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Name</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Category).CategoryName"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Parent category</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Category).ParentCategoryName"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Category Code</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Category).CategoryCode"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Active</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Category).IsActive"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Image</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Category).ImageName"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Created</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Category).Created"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Updated</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Category).Updated"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" ng-click="GetDynamicViewGrid('@DynamicViews.CategorySKUMaps', ViewModels.@(DynamicViews.Category).CategoryIID, false, $event)">Associated Products</div>
+                    <div class="sum_togglecontent">
+                        <table class="data-grid">
+                            <thead>
+                                <tr>
+                                    @*<th>Sequence</th>*@
+                                    <th>SKU ID</th>
+                                    <th>Product Name</th>
+                                    <th>Barcode</th>
+                                    <th>Part Number</th>
+                                    @*<th>Variants Map</th>
+                                        <th>Created</th>
+                                        <th>Updated</th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr ng-repeat="grid in ViewModels.@(DynamicViews.CategorySKUMaps)">
+                                    @*<td ng-bind="grid.Sequence"> </td>*@
+                                    <td> <span ng-bind="grid.ProductSKUMapIID"></span> </td>
+                                    <td><span ng-bind="grid.ProductName"></span> </td>
+                                    <td><span ng-bind="grid.BarCode"></span></td>
+                                    <td> <span ng-bind="grid.PartNo"></span> </td>
+
+                                    @*<td > <span ng-bind="grid.VariantsMap"></span>  </td>
+                                        <td > <span ng-bind="grid.CreatedDate"></span> </td>
+                                        <td ><span ng-bind="grid.UpdatedDate"></span> </td>*@
+                                </tr>
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" ng-click="GetDynamicViewGrid('@DynamicViews.CategoryImageMaps', ViewModels.@(DynamicViews.Category).CategoryIID, false, $event)">Images</div>
+                    <div class="sum_togglecontent">
+                        <table class="data-grid">
+                            <thead>
+                                <tr>
+                                    <th>Image Map ID</th>
+                                    <th>Image Title</th>
+                                    <th>Image Type</th>
+                                    <th>Image</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr ng-repeat="grid in ViewModels.@(DynamicViews.CategoryImageMaps)">
+                                    <td> <span ng-bind="grid.CategoryImageMapIID"></span> </td>
+                                    <td><span ng-bind="grid.ImageTitle"></span> </td>
+                                    <td><span ng-bind="grid.ImageType"></span></td>
+                                    <td>
+                                        <a prettyp class="lightbox" href="@imagePath{{ViewModels.@(DynamicViews.CategoryImageMaps).ImageType}}//{{ViewModels.@(DynamicViews.CategoryImageMaps).ImageFile}}" rel="prettyPhoto[]">
+                                            <img id="imageViewer" src="@imagePath{{ViewModels.@(DynamicViews.CategoryImageMaps).ImageType}}//{{ViewModels.@(DynamicViews.CategoryImageMaps).ImageFile}}"
+                                                 style="width:120px;height:90px;">
+                                        </a>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader">Market Place</div>
+                    <div class="sum_togglecontent">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Profit</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Category).Profit"></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div id="SalesDetails" class="summarytab-content">
+            <h4>Sales Details</h4>
+            <div class="summary-tab-inner">
+                <div class="summary-content">
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Last three months sales</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Last month sales</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Profit three months</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        //Cosing the summary view
+        $('#@windowName .summary-panel .remove').on('click', function () {
+            $('.pagecontent', '#@windowName').removeClass('summaryview');
+        });
+
+        //Details summary view active on click
+        $('#@windowName .summary-toggle .sum_toggleheader').on('click', function () {
+            $(this).parent().toggleClass('show');
+
+            if ($(this).parent().hasClass('show')) {
+                $(this).parent().addClass('show');
+                $(this).parent().find('.sum_togglecontent').slideDown('fast');
+            }
+            else {
+                $(this).parent().removeClass('show');
+                $(this).parent().find('.sum_togglecontent').slideUp('fast');
+            }
+        });
+
+        $('#@windowName .summarytab-content.first').show();
+
+        $('#@windowName .summary-tab .summary-tab-list').on('click', function () {
+            $('.summary-tab-list', '#@windowName').removeClass('active');
+            $('.summarytab-content', '#@windowName').hide();
+            $(this).addClass('active');
+            $('#' + $(this).attr('content-tab'), '#@windowName').fadeIn('medium');
+        });
+    });
+</script>
+

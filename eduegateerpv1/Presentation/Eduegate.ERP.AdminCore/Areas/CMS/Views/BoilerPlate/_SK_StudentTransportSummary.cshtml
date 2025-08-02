@@ -1,0 +1,102 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_StudentTransportSummary";
+    var documentTypeID = Model.GetParameterValue<string>("DocumentTypeID");
+}
+<div id="@windowName" class="card h-xl-100 rounded-2" template="_SK_StudentTransportSummary" ng-controller="DashboardController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+    <script src="javascript/main.js"></script>
+
+
+        <div  id="TransportRoute">
+
+            <div class="card-header border-0 pt-5 ">
+                <h3 class="card-title align-items-start flex-column">
+                    <span class="card-label text-dark">Transport Route</span>
+                    <span class="text-muted mt-1  fs-8">Transport Details</span>
+                </h3>
+            <span class="card-toolbar">
+                    <span ng-if="StudentTransportDetails.IsOneWay===false" class="badge badge-success p-2">Two Way</span>
+                <span ng-if="StudentTransportDetails.IsOneWay===true" class="badge badge-success p-2 ">One Way</span>
+                </span>
+
+            </div>
+
+        <div class="card-header border-0 pt-5 ">
+            <h3 class="card-title align-items-start flex-column">
+              
+            </h3>
+            <span class="card-toolbar">
+                <span class="editcolor" ng-click="FillTransportInfo(StudentTransportDetails.StudentRouteStopMapIID);">
+                    <i class="fa fa-edit" aria-hidden="true" title="View/Edit Transport Info"></i>
+                </span>
+                <span class="editcolor" ng-click="LoadStudentTransportDetails();">
+                    <i class="fa fa-refresh" aria-hidden="true" title="Refresh Transport Info"></i>
+                </span>
+            </span>
+
+        </div>
+            <div class="card-body pt-5">
+
+            <div class="d-flex align-items-stretch  mb-7 flex-column">
+                <a class="d-flex flex-center"><img src="~/Images/schoolbus.jpg" ng-click="myClickFunction()" /></a>
+                <div class="transport-route-mywards d-flex flex-center">
+                    <span class="transport-route-mywards-place text-warning" ng-if="isStudentTransport==false">No transport</span>
+                    <span class="transport-route-mywards-place" ng-if="StudentTransportDetails.PickupStopMapName!=''" ng-bind="StudentTransportDetails.PickupStopMapName"></span>
+                    <span class="transport-route-mywards-place" ng-if="StudentTransportDetails.PickupStopMapName==''">School</span>
+                    &nbsp;
+                    <span class="transport-route-mywards-arrow" ng-if="StudentTransportDetails.IsOneWay===false"><i class="fa fa-arrows-h text-success"></i></span>
+                    <span class="transport-route-mywards-arrow" ng-if="StudentTransportDetails.IsOneWay===true">
+                        <i class="fa fa-arrow-right text-warning" ng-if="StudentTransportDetails.PickupStopMapName!=''"></i>
+                        <i class="fa fa-arrow-left text-warning" ng-if="StudentTransportDetails.PickupStopMapName==''"></i>
+                    </span>
+                    &nbsp;
+                    <span class="transport-route-mywards-place" ng-if="StudentTransportDetails.DropStopMapName!=''" ng-bind="StudentTransportDetails.DropStopMapName"></span>
+                    <span class="transport-route-mywards-place" ng-if="StudentTransportDetails.DropStopMapName==''">School</span>
+                </div>
+            </div>
+            <div class="d-flex">
+                <div class="  rounded min-w-100px w-100 py-2 px-4 me-3 mb-3 bg-light-primary">
+                    <span class="fs-8 text-gray-600 fw-normal">Pickup route code</span>
+                    <div class="fw-semibold text-gray-900" ng-bind="StudentTransportDetails.PickupRouteCode"> </div>
+                </div>
+                <div class="  rounded min-w-100px w-100 py-2 px-4    bg-light-primary mb-3">
+                    <span class="fs-8 text-gray-600 fw-normal">Drop route code</span>
+                    <div class="fw-semibold text-gray-900" ng-bind="StudentTransportDetails.DropStopRouteCode"></div>
+                </div>
+            </div>
+            <div class="d-flex">
+                <div class="rounded min-w-100px w-100 py-2 px-4 mb-3 bg-light-primary">
+                    <span class="fs-8 text-gray-600 fw-normal">Pickup Driver</span>
+                    <div class="fw-semibold text-gray-900" ng-bind="StudentTransportDetails.PickupStopDriverName"></div>
+                </div>
+            </div>
+            <div class="d-flex">
+                <div class="rounded min-w-100px w-100 py-2 px-4 mb-3 bg-light-primary">
+                    <span class="fs-8 text-gray-600 fw-normal">Contact No</span>
+                    <div class="fw-semibold text-gray-900" ng-bind="StudentTransportDetails.PickupContactNo"></div>
+                </div>
+            </div>
+                <div class="d-flex">
+                <div class="rounded min-w-100px w-100 py-2 px-4 mb-3 bg-light-primary">
+                    <span class="fs-8 text-gray-600 fw-normal">Drop Driver </span>
+                    <div class="fw-semibold text-gray-900" ng-bind="StudentTransportDetails.DropStopDriverName"></div>
+                </div>
+
+            </div>
+            <div class="d-flex">
+                <div class="rounded min-w-100px w-100 py-2 px-4 mb-3 bg-light-primary">
+                    <span class="fs-8 text-gray-600 fw-normal">Contact No</span>
+                    <div class="fw-semibold text-gray-900" ng-bind="StudentTransportDetails.DropContactNo"></div>
+                </div>
+
+            </div>
+ 
+           
+                <!--end::Body-->
+            </div>
+            <!--end::List Widget 4-->
+        </div>
+
+    </div>

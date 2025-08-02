@@ -1,0 +1,170 @@
+﻿@model SkienSuite.Services.Contracts.Catalog.TransactionDTO
+@{
+    Layout = null;
+    decimal totalAmount = 0;
+    decimal toalTaxAmount = 0;
+    string printSetting = ViewBag.PRINTSETTING;
+    int printerWidth;
+    int printTitleFontSize;
+    int printBodyFontSize;
+
+    if (printSetting == null)
+    {
+        printSetting = "300,16,14";
+    }
+
+    var splittedSetting = printSetting.Split(',');
+
+    if (splittedSetting.Length >= 1)
+    {
+        int.TryParse(splittedSetting[0], out printerWidth);
+
+        if(printerWidth == 0)
+        {
+            printerWidth = 300;
+        }
+    }
+    else
+    {
+        printerWidth = 300;
+    }
+
+    if (splittedSetting.Length >= 2)
+    {
+        int.TryParse(splittedSetting[1], out printTitleFontSize);
+
+        if (printTitleFontSize == 0)
+        {
+            printTitleFontSize = 16;
+        }
+    }
+    else
+    {
+        printTitleFontSize = 16;
+    }
+
+    if (splittedSetting.Length >= 3)
+    {
+        int.TryParse(splittedSetting[2], out printBodyFontSize);
+
+        if(printBodyFontSize == 0)
+        {
+            printBodyFontSize = 14;
+        }
+    }
+    else
+    {
+        printBodyFontSize = 14;
+    }
+}
+
+<!DOCTYPE html>
+<html class="no-js" lang="">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { margin:0; padding:0; font-family: Calibri; width:100%; height:100%; color:#000000; text-align:center; line-height: 16px; }
+		*, *:before, *:after {   background: transparent !important;  color: #000 !important;  box-shadow: none !important;  text-shadow: none !important;  }
+		* { box-sizing:border-box; }
+		a, a:visited { text-decoration: underline; }
+		a[href]:after { content: " (" attr(href) ")"; }
+		abbr[title]:after {	content: " (" attr(title) ")";	}
+		a[href^="#"]:after, a[href^="javascript:"]:after {	content: ""; }
+		pre, blockquote {border: 1px solid #999;page-break-inside: avoid;}
+		thead {	display: table-header-group;}
+		tr,	img {page-break-inside: avoid; }
+		img {max-width: 100% !important; }
+		p, h2, h3 {	orphans: 3;	widows: 3; margin:0; padding:0; line-height:normal;	word-break: break-all; }
+		h2,	h3 { page-break-after: avoid;}
+		.bodyFont {font-size:12px !important; }
+		.titleFont { font-size:12px !important; }
+
+		.noPaddingRight { padding-right:0 !important;}
+		.fullWidth { float:left; width:100%;  }
+		.printWrapper { margin:0 auto; padding:0; width:95%; text-align:left; }
+		.printHead { text-align:center; border-bottom: 1px dashed #000; line-height:20px; padding: 10px 0 5px; }
+		.billingInfo table { width:100%; table-layout:fixed; border-collapse:collapse; }
+		.billingInfo table tr th, .billingInfo table tr td { font-weight:normal; padding:5px 10px; word-break: break-all; }
+		.billingInfo table tr th { padding:5px 10px; border-bottom:1px solid #000; word-break: break-all;}
+		.billingInfo table tr.vat td, .billingInfo table tr.cashAmnt td { padding:6px 10px; word-break: break-all; }
+		.billingInfo table tr.vat td { border-top:1px solid #000; }
+		.billingInfo table tr.cashAmnt td  { border-top:1px dashed #000; }
+		.billingInfo table tr.cashAmnt td { border-bottom:1px solid #000; }
+		.smallerColumn { width:40px; max-width:40px; min-width:40px; }
+		.smallColumn { width:60px; max-width:60px; min-width:60px; }
+		.minimumColumn { width:80px; max-width:80px; min-width:80px;}
+		.mediumColumn { width:110px; max-width:110px; min-width:110px; }
+		.leftAlign { float:left; }
+		.rightAlign { float:right; }
+		.otherInfo { padding:8px 10px; line-height:19px; }
+		.billFooter { padding: 8px 0 5px; text-align: center;  border-top: 1px dashed #000000;  border-bottom: 1px dashed #000000; line-height: 18px; }
+    </style>
+</head>
+<body class="bodyFont">
+    <div class="printWrapper">
+        <div class="printHead fullWidth">
+            @Html.Raw(ViewBag.PRINTTITLE)
+        </div>
+        <div class="billingInfo fullWidth">
+            <table class="bodyFont" width="100%">
+                <thead>
+                    <tr>
+                        <th class="mediumColumn">Item</th>
+                        <th class="smallColumn" align="right">Qty</th>
+                        <th class="minimumColumn" align="right">Unit Price</th>
+                        <th class="mediumColumn" align="right">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var detail in Model.TransactionDetails)
+                    {
+                        totalAmount = totalAmount + detail.Amount.Value;                        
+
+                        <tr>
+                            <td class="mediumColumn">@detail.SKU</td>
+                            <td class="smallColumn" align="right">@detail.Quantity</td>
+                            <td class="minimumColumn" align="right">@detail.UnitPrice</td>
+                            <td class="mediumColumn" align="right">@detail.Amount</td>
+                        </tr>
+                    }
+
+                </tbody>
+                <tfoot>
+                     @foreach (var detail in Model.TransactionHead.TaxDetails)
+                     {
+                         toalTaxAmount = toalTaxAmount + (detail.Amount.HasValue ? detail.Amount.Value : 0);
+
+                        <tr class="vat">
+                            <td colspan="4"><span class="leftAlign"><strong>@detail.TaxName &nbsp;&nbsp;</strong></span> <span class="rightAlign"><strong>@detail.Amount</strong></span></td>
+                        </tr>
+                     }
+
+                    <tr class="totalAmnt">
+                        <td colspan="4"><span class="leftAlign"><strong>TOTAL</strong></span> <span class="rightAlign"><strong>@(totalAmount + toalTaxAmount)</strong></span></td>
+                    </tr>
+                     @foreach (var entitlement in Model.TransactionHead.TransactionHeadEntitlementMaps)
+                     {
+                        <tr class="cashAmnt">
+                            <td>@entitlement.EntitlementName</td>
+                            <td colspan="3" align="right">@entitlement.Amount</td>
+                        </tr>
+                    }
+                </tfoot>
+            </table>
+        </div>
+        <div class="otherInfo fullWidth">
+            <p>TOTAL NO. OF ITEMS SOLD:&nbsp;&nbsp; @Model.TransactionDetails.Count</p>
+            <p><strong>@Model.TransactionHead.TransactionNo</strong>&nbsp;&nbsp;&nbsp;&nbsp;@Model.TransactionHead.CreatedBy</p>
+            <p> @Model.TransactionHead.TransactionDate.Value.ToShortDateString() &nbsp;&nbsp;&nbsp;&nbsp; @Model.TransactionHead.TransactionDate.Value.ToShortTimeString()</p>
+        </div>
+        <div class="billFooter fullWidth">
+          @Html.Raw(ViewBag.PRINTFOOTER)
+        </div>
+    </div>
+
+</body>
+</html>
+

@@ -1,0 +1,367 @@
+﻿@using Eduegate.Services.Contracts.Enums
+
+@{
+    Layout = null;
+    var viewIID = Eduegate.Services.Contracts.Enums.SearchView.ShoppingCart;
+    var windowName = "window_" + Guid.NewGuid().ToString();
+    
+}
+
+<div id="@windowName" class="summary-wrap" ng-controller="SummaryViewShoppingCartController" ng-init="SummaryViewInitChild('@windowName', '@viewIID', @ViewBag.IID,'@DynamicViews.ShoppingCart');">
+    <div class="preload-overlay" style="display:block;">
+        @Html.Partial("~/Views/Shared/_PreLoader.cshtml")
+    </div>
+
+    <div class="summary-header">
+        <div class="summary-controls">
+            @*<ul class="summary-tab">
+                    <li class="summary-tab-list active" title="Product Detail" content-tab="productdetail"><i class="fa fa-file-text"></i></li>
+                    <li class="summary-tab-list" title="Sales" content-tab="sales"><i class="fa fa-bar-chart"></i></li>
+                            <li class="summary-tab-list" title="Purchase" content-tab="purchase"><i class="fa fa-shopping-cart"></i></li>
+                            <li class="summary-tab-list" title="Inventory" content-tab="inventory"><i class="fa fa-cube"></i></li>
+                            <li class="summary-tab-list" title="Operation" content-tab="operation"><i class="fa fa-cogs"></i></li>
+                        <li class="summary-tab-list" title="Accounts" content-tab="accounts"><i class="fa fa-list-alt"></i></li>
+                </ul>*@
+            <div class="alignright panelcontrols">
+                <span class="remove" ng-click="CloseSummaryPanel($event);">x</span>
+                <span class="minmax"></span>
+            </div>
+        </div>
+    </div>
+    <div class="quickviewwrap">
+        <div class="summarytab-content show">
+            <h4>Shopping Cart Details</h4>
+            <div class="summary-tab-inner">
+                <div class="summary-content">
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Cart ID</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ShoppingCart).ShoppingCartIID"></span>
+                            <i class="fa fa-pencil" title="Edit" ng-click="Edit('SalesReturn', ViewModels.@(DynamicViews.ShoppingCart).ShoppingCartIID)"></i>
+                            <i class="fa fa-file-text" title="Report" ng-click="Print($event,'@viewIID','@viewIID Print Preview','%2fEduegate.Inventory.Reports%2f@(DynamicViews.ShoppingCart)', @ViewBag.IID);"></i>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Customer ID</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ShoppingCart).CartID"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Payment Method</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ShoppingCart).PaymentMethod"></span>
+                        </div>
+                        @*<div class="label-value-box-inner">
+                                <span class="label-style">Cart Status ID</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ShoppingCart).CartStatusID"></span>
+                            </div>*@
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Cart Status ID</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ShoppingCart).CartStatusID"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Cart Status </span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ShoppingCart).CartStatus"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Created By</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ShoppingCart).CreatedBy"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Created</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ShoppingCart).CreatedDate"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Updated</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ShoppingCart).UpdatedDate"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" ng-click="GetDynamicView('@DynamicViews.Customer', ViewModels.@(DynamicViews.ShoppingCart).CartID, false, $event)">
+                        Customer Details
+                    </div>
+
+                    @{
+                        Html.RenderPartial("_CustomerDetails");
+                    }
+                </div>
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" ng-click="GetDynamicViewGrid('@DynamicViews.ShoppingCartItems', ViewModels.@(DynamicViews.ShoppingCart).ShoppingCartIID, false, $event)">Product Details</div>
+                    <div class="sum_togglecontent">
+                        <table class="data-grid">
+                            <thead>
+                                <tr>
+                                    <th>SKU</th>
+                                    <th>Qty</th>
+                                    <th>Prod Price</th>
+                                    <th>Disc Price</th>
+                                    <th>BarCode</th>
+                                    <th>PartNo</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr ng-repeat="grid in ViewModels.@(DynamicViews.ShoppingCartItems)">
+                                    <td><span ng-bind="grid.SKU"></span></td>
+                                    <td><span ng-bind="grid.Quantity"></span></td>
+                                    <td><span ng-bind="grid.ProductPrice"></span></td>
+                                    <td><span ng-bind="grid.ProductDiscountPrice"></span></td>
+                                    <td><span ng-bind="grid.Barcode"></span></td>
+                                    <td><span ng-bind="grid.PartNo"></span></td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" ng-click="ShowDeliveryDetails('@DynamicViews.CartDeliveryDetails', ViewModels.@(DynamicViews.ShoppingCart).ShoppingCartIID, 'googleMapDiv', false, $event)">Delivery Details</div>
+                    <div class="sum_togglecontent">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Contact Person</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.CartDeliveryDetails).FirstName"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Phone Number</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.CartDeliveryDetails).MobileNo1"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Billing Address</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.CartDeliveryDetails).IsBillingAddress"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Shipping Address</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.CartDeliveryDetails).IsShippingAddress"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">AWB No</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.CartDeliveryDetails).AWBNo"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Service Provider</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.CartDeliveryDetails).ProviderName"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Delivery Status</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.CartDeliveryDetails).DeliveryStatus"></span>
+                        </div>
+                        <div id="googleMapDiv" style="height: 350px;"></div>
+                    </div>
+                </div>
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader">Payment Logs</div>
+                    <div class="sum_togglecontent">
+                        <div class="innertoggle ng-scope">
+                            <div class="sum_innerheader ng-binding" ng-click="GetDynamicView('@DynamicViews.PaymentFort', ViewModels.@(DynamicViews.ShoppingCart).ShoppingCartIID);ToggleInnerGroup($event)">PayFort Details</div>
+                            <div class="sum_innercontent fullwidth">
+                                <div class="label-value-box" ng-show="ViewModels.@(DynamicViews.PaymentFort).TrackID.length >
+                                    0">
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">Cart ID</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).CartID"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">Track ID</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).TrackID"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">Track Key</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).TrackKey"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">Customer ID</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).CustomerID"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">Payment ID</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).PaymentID"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">Init On</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).InitOn"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">Init IP</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).InitIP"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">Init Location</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).InitLocation"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">Init Amount</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).InitAmount"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">PCustomer Email</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).PCustomerEmail"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">PMerchant Reference</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).PMerchantReference"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">PSignature Text</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).PSignatureText"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">PAmount</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).PAmount"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">Trans ID</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).TransID"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">PTrans Merchant Reference</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).PTransMerchantReference"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">PTrans Amount</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).PTransAmount"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">PTrans Payment Option</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).PTransPaymentOption"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">Response Message</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).PTransResponseMessage"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">Response Code</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).PTransResponseCode"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">PTrans Customer IP</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).PTransCustomerIP"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">PTrans Customer Name</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).PTransCustomerName"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style">Order ID</span>
+                                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.PaymentFort).OrderID"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="innertoggle ng-scope">
+                            <div class="sum_innerheader ng-binding" ng-click="GetDynamicViewGrid('@DynamicViews.PaymentVoucher', ViewModels.@(DynamicViews.ShoppingCart).ShoppingCartIID);ToggleInnerGroup($event)">Payment Voucher Details</div>
+                            <div class="sum_innercontent fullwidth">
+                                <table class="data-grid">
+                                    <thead>
+                                        <tr>
+                                            <th>Cart ID</th>
+                                            <th>Voucher ID</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="grid in ViewModels.@(DynamicViews.PaymentVoucher)">
+                                            <td><span ng-bind="grid.CartID"></span></td>
+                                            <td><span ng-bind="grid.VoucherID"></span></td>
+                                            <td><span ng-bind="grid.Amount"></span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (ViewBag.HasCartAdminAccess) {
+                    <div class="summary-toggle" ng-show="ViewModels.@(DynamicViews.ShoppingCart).CartStatusID == 5" ng-click="GetDynamicViewGrid('@DynamicViews.OrderProcessing', ViewModels.@(DynamicViews.ShoppingCart).ShoppingCartIID);ToggleInnerGroup($event)">
+                        <div class="sum_toggleheader">
+                            Order Process
+                        </div>
+                        <div class="sum_togglecontent">
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Cart Description</span>
+                                <textarea placeholder="Enter Comments" ng-model="ViewModels.@(DynamicViews.ShoppingCart).Description" style="margin: 0px; height: 150px; width: 175px;"></textarea>
+                            </div>
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Payment Method</span>
+                                <span class="link-content">
+                                    <select ng-model="ViewModels.@(DynamicViews.ShoppingCart).PaymentMethod">
+                                        <option ng-repeat="data in ViewModels.@(DynamicViews.OrderProcessing)" value={{data.PaymentMethodID}}>{{data.MethodName}}</option>
+                                    </select>
+                                </span>
+                            </div>
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Generate without validation</span>
+                                <span class="link-content"><input type="checkbox" ng-model="ViewModels.@(DynamicViews.ShoppingCart).IsForceCreation"></span>
+                            </div>
+                            <div ng-bind="ViewModels.@(DynamicViews.ShoppingCart).Message" class="field-validation-error">
+                            </div>
+                            <div class="newcomnt-btns alignright">
+                                <input type="button" value="Process Order" class="button-orange" ng-click="ProcessOrder($event)" />
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                @if (ViewBag.HasCartAdminAccess) { 
+                    <div class="summary-toggle" ng-click="GetDynamicView('@DynamicViews.ModifyShoppingCarts', ViewModels.@(DynamicViews.ShoppingCart).ShoppingCartIID, null, $event, SetUpdateCartDefault);ToggleInnerGroup($event);">
+                        <div class="sum_toggleheader">
+                            Modify Carts
+                        </div>
+                        <div class="sum_togglecontent">
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Customer ID</span>
+                                <input ng-model="ViewModels.ModifyShoppingCarts.CustomerID" />
+                            </div>
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Cart Status</span>
+                                <span class="link-content">
+                                    <select ng-model="ViewModels.ModifyShoppingCarts.CartStatus">
+                                        @foreach (var status in Enum.GetNames(typeof(Eduegate.Framework.Helper.Enums.ShoppingCartStatus)))
+                                        {
+                                            <option value="@status">@status</option>
+                                        }
+                                    </select>
+                                </span>
+                            </div>
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Payment Method</span>
+                                <span class="link-content">
+                                    <select ng-model="ViewModels.ModifyShoppingCarts.PaymentMethod">
+                                        @foreach (var payment in Enum.GetNames(typeof(Eduegate.Services.Contracts.Enums.PaymentMethods)))
+                                        {
+                                            <option value="@payment">@payment</option>
+                                        }
+                                    </select>
+                                </span>
+                            </div>
+                            <div ng-bind="ViewModels.@(DynamicViews.ModifyShoppingCarts).Message" class="field-validation-error">
+                            </div>
+                            <div class="newcomnt-btns alignright">
+                                <input type="button" value="Update Cart" class="button-orange" ng-click="UpdateCart(ViewModels.@(DynamicViews.ModifyShoppingCarts), $event)" />
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+        $('#@windowName .summary-panel .remove').on('click', function () {
+            $('.pagecontent', '#@windowName').removeClass('summaryview');
+        });
+
+        $('#@windowName .summary-toggle .sum_toggleheader').on('click', function () {
+            $(this).parent().toggleClass('show');
+
+            if ($(this).parent().hasClass('show')) {
+                $(this).parent().addClass('show');
+                $(this).parent().find('.sum_togglecontent').slideDown('fast');
+            }
+            else {
+                $(this).parent().removeClass('show');
+                $(this).parent().find('.sum_togglecontent').slideUp('fast');
+            }
+        });
+    });
+</script>

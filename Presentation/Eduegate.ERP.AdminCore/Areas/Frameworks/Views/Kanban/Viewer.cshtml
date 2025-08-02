@@ -1,0 +1,105 @@
+﻿@model Eduegate.Services.Contracts.Enums.KanbanTypes
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    var windowName = "window_" + Guid.NewGuid().ToString();
+    var pageName = Model.ToString() + "Kanban";
+}
+
+
+<div id="@pageName" class="DashbaordWindow windowcontainer" style="display:block" ng-controller="@(Model.ToString())KanbanController">
+
+    <style>
+
+        #myKanban {
+            padding: 20px 0;
+        }
+
+        .success {
+            background: #00b961;
+        }
+
+        .info {
+            background: #2a92bf;
+        }
+
+        .warning {
+            background: #f4ce46;
+        }
+
+        .error {
+            background: #fb7d44;
+        }
+
+        .custom-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 7px 15px;
+            margin: 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+        }
+    </style>
+
+
+    <div class="prod-tab-wrap" style="min-height:0px !important; height:auto;">
+        <!---->
+        <div class="form-horizontal panel-body">
+            <div class="scheduleWrapper innertab subject first">
+                <div class="field-row">
+                    <span class="form-group">
+                        <span class="controls">
+                            <label>Class</label>
+                            <ui-select style="width: 100%;" name="Class" ng-model="selectedClass"
+                                       theme="select2" class="pos-txt"
+                                       ng-change="GetStudentsForShifting($select)">
+                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                <ui-select-choices repeat="class in Class | filter:$select.search">{{class.Value}}</ui-select-choices>
+                            </ui-select>
+                        </span>
+                    </span>
+                    <span class="form-group"> 
+
+                        <span class="controls">
+                            <label>Shift From Section</label>
+                            <ui-select name="Section" ng-model="selectedSection" theme="select2" class="pos-txt" style="width: 100%;" ng-change="GetStudentsForShifting($select)">
+                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                <ui-select-choices repeat="section in FromSection | filter:$select.search">
+                                    {{section.Value}}
+                                </ui-select-choices>
+                            </ui-select>
+                        </span>
+                    </span>
+
+                    <span class="form-group">
+                        <span class="controls">
+                            <label>Shift To Section</label>
+                            <ui-select name="ToSection" ng-model="selectedToSection" theme="select2" class="pos-txt" style="width: 100%;" multiple ng-change="GetStudentsForShifting($select)">
+                                <ui-select-match placeholder="Search">{{$item.Value}}</ui-select-match>
+                                <ui-select-choices repeat="section in ToSection | filter:$select.search">
+                                    {{section.Value}}
+                                </ui-select-choices>
+                            </ui-select>
+
+                        </span>
+                    </span>
+                </div>
+
+            </div>
+        </div>
+        <!---->
+
+
+    </div>
+    <!-- myKanban -->
+    <div id="myKanban" ng-init="Init()"></div>
+    <!--end myKanban -->
+    <div></div>
+
+</div>

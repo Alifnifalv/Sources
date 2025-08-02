@@ -1,0 +1,127 @@
+﻿@model Eduegate.Web.Library.ViewModels.CRUDViewModel
+@using Eduegate.Framework.Mvc.Attributes
+@using System.Reflection;
+@using Eduegate.Framework.Mvc.Attributes;
+@using Eduegate.Framework.Extensions;
+
+@{
+    var container = (ContainerTypeAttribute)Model.ViewModel.GetType().GetCustomAttribute(typeof(ContainerTypeAttribute));
+
+    var roles = (ViewModelRoleAttribute)Model.ViewModel.GetType().GetCustomAttributes(typeof(ViewModelRoleAttribute)).FirstOrDefault();
+
+    if (roles != null)
+    {
+        if (!Model.UserRoles.Any(a => roles.UserRoles.Contains(a.Role)))
+        {
+            return;
+        }
+    }
+}
+
+<div class="pagecontent-column">
+    <div class="productcreaterightnav productcreateleftrightmaxheight">
+        <div class="producttab-space">
+            <div class="">
+                <div class="tab-content form-horizontal">
+
+                    <div class="panel-body">
+
+                        @if (Model != null)
+                        {
+
+                            if (container != null)
+                            {
+                                <div class="tab-pane" ng-class="{show: SelectTabItem(CRUDModel.ViewModel, '_TABINDEX',0)}" id="@container.ContainerName" refnavbarid="_TABINDEX_0">
+                                    <div @(Html.Raw(!string.IsNullOrEmpty(container.Attributes) ? container.Attributes : "class='container-left alignleft'"))>
+                                        @await Html.PartialAsync("_BuildField", Model.ViewModel)
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                var css = (CssAttribute)Model.ViewModel.GetType().GetCustomAttribute(typeof(CssAttribute));
+
+                                <div class="@(css==null ? "container-left alignleft" : css.Css)">
+                                    @await Html.PartialAsync("_BuildField", Model.ViewModel)
+                                </div>
+                            }
+
+                            var props = Model.ViewModel.GetType().GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(ContainerTypeAttribute)));
+                            int count = 1;
+                            foreach (var prop in props)
+                            {
+                                var containerAttribute = (ContainerTypeAttribute)prop.GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+                                var lazyLoadAttribute = (LazyLoadAttribute)prop.GetCustomAttributes(typeof(LazyLoadAttribute)).FirstOrDefault();
+                                roles = (ViewModelRoleAttribute)prop.GetCustomAttributes(typeof(ViewModelRoleAttribute)).FirstOrDefault();
+
+                                if (roles != null)
+                                {
+                                    if (!Model.UserRoles.Any(a => roles.UserRoles.Contains(a.Role)))
+                                    {
+                                        continue;
+                                    }
+                                }
+
+                                if (typeof(System.Collections.IEnumerable).IsAssignableFrom(prop.PropertyType))
+                                {
+                                    var modelCollection = prop.GetValue(Model.ViewModel, null) as System.Collections.IList;
+
+                                    <div class="tab-pane" ng-class="{show: SelectTabItem(CRUDModel.ViewModel, '_TABINDEX',@count)}" id="@containerAttribute.ContainerName" refnavbarid="_TABINDEX_@count">
+
+                                        @{
+                                            await Html.RenderPartialAsync("_BuildFields", modelCollection.Cast<Eduegate.Web.Library.ViewModels.BaseMasterViewModel>().ToList());
+
+                                            if (modelCollection.Count > 0)
+                                            {
+                                                List<PropertyInfo> innerProperty = modelCollection[0].GetType().GetProperties().Where(p => Attribute.IsDefined(p, typeof(ContainerTypeAttribute))).ToList(); //Collection inside collection
+
+                                                if (innerProperty.Count > 0)
+                                                {
+                                                    foreach (var p in innerProperty)
+                                                    {
+                                                        var innerContainer = (ContainerTypeAttribute)p.GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+
+                                                        if (typeof(System.Collections.IEnumerable).IsAssignableFrom(p.PropertyType))
+                                                        {
+                                                            var innerCollection = p.GetValue(modelCollection[0], null) as System.Collections.IList;
+                                                            await Html.RenderPartialAsync("_BuildFields", innerCollection.Cast<Eduegate.Web.Library.ViewModels.BaseMasterViewModel>().ToList());
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="tab-pane" ng-class="{show: SelectTabItem(CRUDModel.ViewModel, '_TABINDEX',@count)}" id="@containerAttribute.ContainerName" refnavbarid="_TABINDEX_@count">
+
+
+                                        @if (lazyLoadAttribute != null)
+                                        {
+                                            if (lazyLoadAttribute.ViewUrl != "" && lazyLoadAttribute.ViewUrl != null)
+                                            {
+                                                var splittedUrl = lazyLoadAttribute.ViewUrl.Split('/');
+                                                @Html.ActionLink(splittedUrl[1], splittedUrl[0]);
+                                            }
+                                        }
+                                        else
+                                        { <div @(Html.Raw(!string.IsNullOrEmpty(container.Attributes) ? container.Attributes : "class='container-left alignleft'"))>
+                                            @await Html.PartialAsync("_BuildField", prop.GetValue(Model.ViewModel, null))
+                                        </div>
+                                        }
+                                    </div>
+                                }
+
+                                count++;
+                            }
+                        }
+                        <div class="container-right options alignleft">
+                            <div id="PropertyType"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

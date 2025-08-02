@@ -1,0 +1,344 @@
+﻿@model Eduegate.Web.Library.School.Fees.FeePaymentViewModel
+
+@{
+    ViewBag.Title = "FeePayment";
+}
+
+@* <link href="~/Content/style.bundle.css" rel="stylesheet" type="text/css" /> *@
+
+<div class="d-flex flex-column-reverse flex-lg-row">
+    <div class="flex-lg-row-fluid mb-10 mb-lg-0 me-lg-7 me-xl-10">
+        <div class="content">
+            <div id="FeePaymentOverlay" class="preload-overlay center">
+                <span id="FeePaymentOverlay" class="preloadImg">
+                    <img src="~/Images/preloaderWhite.GIF" alt="loader" />
+                </span>
+            </div>
+            <div class="dataTables_wrapper dt-bootstrap4 no-footer">
+                <div class="table-responsive" ng-if="!ShowPreLoader">
+                    <table style="width:100%" class="table align-middle table-hover table-row-dashed fs-6 gy-3 dataTable no-footer">
+
+                        <thead>
+                        </thead>
+                        <tbody>
+
+                            <tr ng-focus="FocusGrid($event,'feePays')" ng-repeat-start="gridModel in feePays track by $index" class="ng-scope"
+                                ng-init="current1 = $parent.start; $parent.start=$parent.start+1;">
+
+
+                                <td class="text-start align-middle">
+
+                                    <span class=" fw-bold text-gray-800" ng-bind="gridModel.Student"></span>
+
+                                </td>
+                                <td class="text-end min-w-100px">
+
+                                    <div class="text-gray-800 fs-7">Total amount</div>
+                                    <span ng-bind="gridModel.TotalAmount|number:2" class="text-green currSign fs-5 fw-bold"></span><span class="redcolor"></span>
+
+                                </td>
+                                <td class="text-end w-100px">
+
+                                    <div class="text-gray-800 fs-7">Pay</div>
+                                    <span ng-bind="gridModel.NowPaying|number:2" class="text-green currSign fs-5 fw-bold"></span><span class="redcolor"></span>
+
+                                </td>
+                                <td class="text-end w-10px  text-center align-middle">
+                                    <button data-bs-toggle="collapse" data-bs-target="#collapseExample{{current1}}" aria-expanded="false" aria-controls="collapseExample1{{current1}}"
+                                            type="button" class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                            ng-click="ExpandCollapase($event, gridModel, 'IsExpand')">
+
+                                        <i ng-if="gridModel.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                        <i ng-if="!gridModel.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                        <!--end::Svg Icon-->
+                                    </button>
+
+                                </td>
+                            </tr>
+                            <tr class=" text-center collapse" ng-if="gridModel.FeeTypes.length == 0" colspan="100%" id="collapseExample{{current1}}">
+                                <td colspan="100%">
+                                    <div class="alert alert-primary d-flex align-items-center p-5">
+                                        There is no dues found!
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="collapse" ng-if="gridModel.FeeTypes.length > 0" id="collapseExample{{current1}}">
+                                <td class="feeStructure py-0" colspan="5">
+                                    <div class="table-responsive">
+                                        <table id="GridTable" class="table align-middle  table-row-dashed fs-6 gy-3 dataTable no-footer mb-0">
+
+                                            <thead>
+                                                <tr class="text-start ">
+                                                    <th class="text-start min-w-20px">
+                                                        <input type="checkbox" ng-model="gridModel.IsSelected" ng-change="UpdateStudentFee(gridModel)">
+                                                        <!--<div class="form-check form-check-custom form-check-solid">
+                                                        <input type="checkbox" ng-model="gridModel.IsSelected" ng-change="UpdateParentFee(gridTypeModel)">-->
+                                                        @*<input class="form-check-input" type="checkbox" value="1" disabled id="flexCheckDisabled" />
+                                                        <label class="form-check-label" for="flexCheckDisabled">
+                                                        </label>*@
+                                                        <!--</div>-->
+                                                    </th>
+                                                    <th class="text-start min-w-125px ">Invoice No</th>
+                                                    <th class="text-start min-w-125px">Invoice Date</th>
+                                                    <th class="text-start min-w-100px">Fee Master</th>
+                                                    <th class="text-start min-w-100px">Fee Period</th>
+                                                    <th class="text-end min-w-100px">Amount</th>
+                                                    <th class="text-end min-w-100px">Now Paying</th>
+                                                    <th class="text-end" rowspan="1" colspan="1"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+
+                                                <tr ng-focus="FocusGrid($event,'gridModel.FeeTypes')" ng-repeat-start="gridTypeModel in gridModel.FeeTypes track by $index" class="ng-scope"
+                                                    ng-init="current = $parent.start; $parent.start=$parent.start+1;">
+
+                                                    <td class="text-start">
+                                                        <input type="checkbox" ng-model="gridTypeModel.IsPayingNow" ng-change="UpdateTypeFee(gridTypeModel, gridModel)" ng-disabled="gridTypeModel.disable">
+                                                    </td>
+
+                                                    <td class="text-start text-gray-800 text-hover-primary">
+                                                        <span ng-bind="gridTypeModel.InvoiceNo" class="ng-binding"></span>
+                                                    </td>
+
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridTypeModel.InvoiceDateString" class="ng-binding"></span>
+                                                    </td>
+
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridTypeModel.FeeMaster" class="text-gray-600 text-hover-primary"></span>
+                                                    </td>
+
+                                                    <td class="text-start" ng-if="gridTypeModel.FeePeriod">
+                                                        <span ng-bind="gridTypeModel.FeePeriod" class="text-gray-600 text-hover-primary"></span>
+                                                    </td>
+
+                                                    <td class="text-start" ng-if="!gridTypeModel.FeePeriod">
+                                                        <span ng-bind="gridModel.AcademicYear" class="text-gray-600 text-hover-primary"></span>
+                                                    </td>
+
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridTypeModel.Amount|number:2" class="text-gray-800 currSign fw-bolder"></span>
+                                                    </td>
+
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridTypeModel.NowPaying|number:2" class="text-gray-800 currSign fw-bolder"></span>
+                                                    </td>
+
+                                                    <td class="text-end">
+                                                        <div class="controls text-center">
+                                                            <button data-bs-toggle="collapse" ng-if="gridTypeModel.FeeMonthly.length > 0" href="#collapseExample{{current.toString()+ current1.toString()}}" role="button" aria-expanded="false" aria-controls="collapseExample{{current.toString()+ current1.toString()}}"
+                                                                    ng-click="ExpandCollapase($event, gridTypeModel, 'IsExpand')"
+                                                                    class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px">
+                                                                <span class="svg-icon svg-icon-3 m-0" ng-if="gridTypeModel.IsExpand">
+                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        <rect x="6" y="11" width="12" height="2" rx="1" fill="currentColor"></rect>
+                                                                    </svg>
+                                                                </span>
+                                                                <span class="svg-icon svg-icon-3 m-0" ng-if="!gridTypeModel.IsExpand">
+                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                        <rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)" fill="currentColor"></rect>
+                                                                        <rect x="6" y="11" width="12" height="2" rx="1" fill="currentColor"></rect>
+                                                                    </svg>
+
+                                                                </span>
+                                                                <!--end::Svg Icon-->
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                @*<tr class="alert alert-info text-center" ng-if="gridModel.FeeMonthly.length == 0">
+
+                                                <td><div>No month wise dues found!</div></td>
+                                                </tr>*@
+
+
+
+                                                @*<thead>
+                                                <tr>
+                                                <th class="text-end">Month</th>
+                                                <th class="text-end">Amount</th>
+                                                <th class="text-end">Credit Note</th>
+                                                <th class="text-end">Now Paying</th>
+                                                <th class="text-end">Balance</th>
+                                                <th class="text-end">Is Paying Now</th>
+                                                </tr>
+                                                </thead>*@
+
+
+
+                                                <tr class="collapse" id="collapseExample{{current.toString()+ current1.toString()}}"
+                                                    ng-repeat-start="gridModelMonth in gridTypeModel.FeeMonthly track by $index">
+                                                    @*<td class="text-start">
+                                                    <input type="checkbox" ng-model="gridModelMonth.IsRowSelected" ng-change="UpdateTypeFeeMonthWise(gridTypeModel, gridModel, $index)">
+                                                    </td>*@
+                                                    <td class="text-start">
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <div class="text-gray-800 fs-7">Month Year</div>
+                                                        <span ng-bind="gridModelMonth.MonthName" class="text-muted fs-7 fw-bold"></span><span class="redcolor"></span>
+                                                        <span ng-bind="gridModelMonth.Year" class="text-muted fs-7 fw-bold"></span><span class="redcolor"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                    </td>
+                                                    <td class="text-end">
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <div class="text-gray-800 fs-7">Amount</div>
+                                                        <span ng-bind="gridModelMonth.TotalAmount|number:2" class="text-muted fs-7 currSign fw-bold"></span><span class="redcolor"></span>
+                                                    </td>
+
+                                                    <td class="text-end">
+                                                        <div class="text-gray-800 fs-7">Credit Note</div>
+                                                        <span ng-bind="gridModelMonth.CreditNote|number:2" class="text-muted currSign fs-7 fw-bold"></span><span class="redcolor"></span>
+                                                    </td>
+
+                                                    <td class="text-end">
+                                                        <div class="text-gray-800 fs-7">Now Paying</div>
+                                                        <span ng-bind="gridModelMonth.NowPaying|number:2" class="text-muted currSign fs-7 fw-bold"></span><span class="redcolor"></span>
+                                                    </td>
+
+                                                    @*<td class="text-end">
+                                                    <div class="text-gray-800 fs-7">Balance</div>
+                                                    <span ng-bind="gridModelMonth.Balance|number:2" class="ng-binding currSign"></span><span class="redcolor"></span>
+                                                    </td>*@
+                                                    <td class="text-end">
+                                                    </td>
+
+
+
+                                                </tr>
+
+                                                <tr ng-repeat-end="" class="ng-scope"></tr>
+
+                                                <tr ng-repeat-end="" class="ng-scope"></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr ng-repeat-end="" class="ng-scope"></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-lg-auto min-w-lg-325px mb-3">
+        <div class="content p-0">
+            <div class="card-header p-4 bg-white d-flex align-items-center">
+                <h2 class="fs-4 fw-semibold">Student Fee Detail</h2>
+
+            </div>
+            <!--begin::Card body-->
+            <div class="card-body p-4">
+
+                <div class="">
+                    <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-3">
+                        <h4 class="fw-semibold fs-5 text-gray-900">Total amount :</h4>
+
+                        <span>
+                            <span class="displaylineBlock currSign"></span>
+
+                            <span ng-bind="GetTotalFeePayAmount(feePays)|number:2"></span>
+                        </span>
+                    </label>
+                </div>
+                <div class="form-group ">
+                    <div class="d-flex flex-column mb-4">
+                        <h4 class="fw-semibold fs-5 text-gray-900">Payment Methods</h4>
+                    </div>
+                    <div class="d-flex flex-stack gap-3 ">
+                        <div class="w-100" data-kt-buttons="true">
+                            <label class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex flex-stack text-start p-3 mb-5 active">
+                                <div class="d-flex align-items-center me-2">
+                                    <div class="d-flex align-items-center">
+                                        <a class="symbol symbol-50px">
+                                            <span class="symbol-label">
+
+                                                <svg width="40" height="26" viewBox="0 0 20 13" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                                    <rect width="20" height="13" fill="url(#pattern0)" />
+                                                    <defs>
+                                                        <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+                                                            <use xlink:href="#image0_1_108" transform="matrix(0.0024858 0 0 0.00364583 -0.136364 -0.466667)" />
+                                                        </pattern>
+                                                        <image id="image0_1_108" width="512" height="512" xlink:href="data:image/png;base64,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" />
+                                                    </defs>
+                                                </svg>
+                                            </span>
+                                        </a>
+                                        <div class="ms-5">
+                                            <div class="text-gray-800 text-hover-primary fs-5 fw-bold">Debit card</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-check-custom form-check-solid form-check-primary me-6">
+                                    <input class="form-check-input" type="radio" id="Debit" name="PaymentMethod" value="Debit" checked ng-click="ChangePaymentMethod('DebitCard')" />
+                                </div>
+                            </label>
+                            <label class="btn btn-outline btn-outline-dashed  btn-active-light-primary d-flex flex-stack text-start p-3 mb-5 w-100">
+                                <div class="d-flex align-items-center me-2">
+                                    <div class="d-flex align-items-center">
+                                        <a class="symbol symbol-50px">
+                                            <span class="symbol-label">
+                                                <svg width="40" height="26" viewBox="0 0 20 13" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                                    <rect y="-6.10352e-05" width="20" height="12.9231" fill="url(#pattern0)" />
+                                                    <defs>
+                                                        <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+                                                            <use xlink:href="#image0_1_113" transform="matrix(0.00246582 0 0 0.0034608 -0.1375 -0.385965)" />
+                                                        </pattern>
+                                                        <image id="image0_1_113" width="512" height="512" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAACXBIWXMAAAsTAAALEwEAmpwYAAAgAElEQVR4nO3dCZgU1bnG8Rs1JjcaTUziTTQxuW4k6AzOys6wg4CyyCAgqICgLCoGUODKphD2NQIqgiQCgnoTFEFUUEQQFEFQREUFkX2RffOaeG59jT1Wn+ptZnrOqan5/57nfVCK6qW6qs7b1dVd//EfAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAKG3y8vJ+nJaW9nNCCAli8vPzz7a9nwWsysjIuKRChQq3XHfddX91/nzVyTYn/3L+XxFCSJDj7OtOOX9+4vz5vJPhThqXK1fup7b3y0CJueaaa37nrPT9nHxgewMkhBA/xSkB3zhZlp6e3jE3N/cC2/trICWclTrXyXxnJf+37Y2MEEL8Hmd/ecLJJHnTZHv/DRSJsyJf5azEi2xvTIQQUkrz9XVnPib9me39OZCUrKysHzor7BBnxT3tgw2IEEJKdZz96e709PSbbe/bgbi++5x/he0NhhBCghanCPzdKQLn2d7PAx7OilnNWUm/sr2REEJIUOOUgA1OLrW9vwcKOIP/Dc5KedL2xkEIIUGPs6/9Ii0trZzt/T4QHvy/KerKXLNmTdW5c2c1dOhQ9cgjj6hp06YRQkggM2nSJDVw4EDVvn17VbFixeIUgT1ZWVlX2N7/owxzBv6qRXnn37hx49Bgv3HjRnXq1Cn19ddfE0JImcqxY8fUqlWr1EMPPaRq1KhRlCMBn1177bX/ZXscQBmUlpb2W2cF3F+YFbZly5Zq8eLFDPqEEOLK4cOH1cyZM1Xt2rULWwRW5OXlnWN7PEAZIiucs+ItT3YlrVKlipo1axYDPyGExMmBAwdCH4dmZGQUpgSMsD0moAxxVrj+hXnXv3nzZusbFiGElJa8/vrrKi8vL9kC8G1aWlp12+MCyoCsrKzLnBXueDIrZseOHdVXX31lfWMihJDSli1btoTOl0qyBGyUH2GzPT4g4JwV7R/JDv5ykovtjYgQQkprtm3bpurVq5dsCbjX9viAAEtzyOGmRCtiixYt1MGDB61vPIQQUtrz4YcfqsqVKyfzrYBdeXl5P7Y9TiCgnBVsTqKVUFbUjz/+2PpGQwghQcn8+fOTPQrQ1fY4gQByVqxfOQXg/xKtgDNmzLC+sRBCSNBy9913J3UugO2xAgHkrFj3JFr5mjZtqk6cOGF9QyGEkKBl69atKicnJ5mPAq6zPV4gYJwVa3WiFU8OU9neSAghJKgZPHhwMkcBRtoeLxAgWVlZFzqt8l/xVro6deqokydPWt9ACCEkqJHfVEmiAKy1PWYgQOSCP4lWutGjR1vfOAghJOhp27ZtogLw75ycnF/YHjcQEM4KNTRRAXj77betbxiEEBL0PProowmPAjhv2hrYHjcQEBUqVHg23spWqVIldfz4cesbBiGEBD3vvvtuMh8D8KNASA1nZXo/3srWpk0b6xsFIYSUhRw5ckRlZmYm+ibAZNvjBgLCWaH2xlvZ+vbta32jIISQspIGDRokOgLwv7bHDQSE0yZPxlvZhg8fbn2DIISQspLWrVsnKgAv2x43EAD5+flnJ/q8acKECdY3CEIIKSuRi60l+Ahgle2xAwFQvnz5cxMVgL/+9a/WNwhCCCkrueOOOxIVgHdsjx0IAAoAIYT4KxQAGEEBIIQQf4UCACMoAIQQ4q9QAGAEBYAQQvwVCgCMoAAQQoi/QgGAERQAQgjxVygAMIICQAgh/goFAEZQAAghxF+hAMCI0lwATp06Fbpy1pw5c0KP8aGHHlJDhgxJmMGDB4d+aatFixaqU6dOof9PZr5Y6dWrl8rPzw/9fOcDDzyQ8N/L45THO3v2bLVmzZrQ87C9LAkh/gkFAEaUxgLw5ZdfqqFDh6ratWvHfdylJbVq1QqVgi+++ML6siWE2A8FAEaUpgJw7NgxNWbMGJWbm2t90C6JyPMaNWpU6HKgtpc1IcReKAAworQUgJ07d6p27dpZH6RNRD5K2L59u/VlTgixEwoAjCgNBWDHjh3JXB87UKlbt27oow7bOyKSOLt37w6dzzFu3DhSSiNXPF24cGHoKKPt9UlCAYARfi8AR48eVW3atIn7+HKzK6iWjf6outx8pbqz9RUx07zhH6PO36pxubjzxUvnm69QOc7967dZvUpazHm6OPPI483NTo/7vFq1aqUOHz5sfWdEYmfBggWqUqVK1gsjSU1uvPFG9emnn1pfrygAMMLvBWDYsGExH1ezBn9SCydcpE68frZSb/0gYTq2vNJzG/XyrlH/XnlWUvPHytjel3puNzPzOrV74Y/iznfSedwvTbooZjGRyMmBtndGJHo2bNigsrKyrA9aJLWREnD8+HGr6xYFAEb4uQB89tlnKjs7O+pjGnr3b9U3byY/cB985YehQVm/nbG9LinW4C/ZNPcnUR/jnL9cnNT8/1pxlhrZ01siJDLAfPLJJ9YHO+JN//79rQ9WpGSyePFiq+sWBQBG+LkAxNrBjuj520IP0gvG/yLqbcngXdwCIGnWwPsuvlvbK4p9JEHSp08f64Md8UZO1rQ9UJGSyZQpU6yuWxQAGOHXAiCH4KpWrep5LPmNy4XeMRd2gH7gjj94bksO/3+7sviDv2R8n0s8ty/nJiT78YREPopoc2M5z+1Urlw5dC6E7QGPFG4nTUpvZs2a5et1iwKAlPBrAXjjjTeiPpbXpv6sSAN0rWrXem7r4R6/S8ngL1kz86dRH++q6RcU6nbenHZh1NtZunSp9QGPREbO/Lc9UJHURz523Lp1q9V1iwIAI/xaAB577DHP48jNqeC8075UTbz/kkJl6N2XRX1eSyYXrUxEi5yPULmi96z+ji2vKtRjnXD/papirvdbBZMnT7Y+4JHInDhxIvRT0rYHLJLaTJ8+3fq6RQGAEX4tAH379i3xDX3fS+emrABI7mjl/ZZBqtK7d2/rOyXijXxvXD4vvuGGG1RmZqb1wYsUPhkZGapGjRrq1ltvVS+//LL1dUpCAYARfi0ATZo0KdGNvkql9JQO/pIH7/x9iT3ehg0bWt8pEULMhAIAI/xaAEr6l/8a1iqf8gIwud9vSuzxyi8D2t4pEULMhAIAI/xaAORwXEkWgH6df5/yArBp3nkl9njl1xBt75QIIWZCAYARfi0A9957r+dx1KhyrWpz49WFSusbrnbm9Z5UN3/sL1JeAE6/cXbUHxtqXKd8oR5zXlXvNxa6du1qfadECDETCgCMKE0FoCjv2ne88KOoz2nt389PeQGQNKh1jee+nhj460LdxqCu3m8tUAAIKTuhAMCIoBeATXOjH5bf/sKPS6QAtL3xas99jetduJ8bpgAQUrZDAYARQS8Abz8Z/Qd6Dr3ywxIpAHKlP/2+HupeuB8cogAQUrZDAYARQS8A8mM/0Z7T/y0v3hUAY6VXh//23Nf9nf5AASCEJB0KAIwIegGIdhGg3OzU/wZAvMG7W9vLKQCEkKRDAYARQS8AL04wWwAG3OUdvO9uRwEghCQfCgCMCHoBWDzp557bka/qlVQB6HuH99cA5WMBCgAhJNlQAGBE0AuAXD0w2nMqyiWFk0mv272XHX6gU+EeNwWAkLIdCgCMCHoBWBHj8ronXj+7RArAPe0v99zXg3deRgEghCQdCgCMCHoB2DD7/KjPqaR+B6BdM+/vAIzseSkFgBCSdCgAMKI0FYAuN1+pVs+4oFB5Kco5AJI1M39aIgWgTg3vLwE+3OOyQj3mbm29vyVAASCk7IQCACP8WgB69OgR9zEVNy+M/2XKB/9v3jxLZWSUzOPt0qWL9Z0SIcRMKAAwwq8FoGnTpiVaAAp7Zn4y+fS5n5TY423SpIn1nRIhxEwoADDCrwWgfv36JVoAbrq+XMoLwDMjfllij7dOnTrWd0qEEDOhAMAIvxaA/Pz8Ei0A19e+JuUFYOr//LrEHm/z5s2t75QIIWZCAYARfi0A0U4CTGXkx4BS/VXA+27zXgcgVeEkQELKTigAMKI0FYDeHf6gjiw5p9B5Z2b0KwKu/fv5KS0ADWp5vwEw/J5LC/14+3f2/pogBYCQshMKAIwoTQWgKL8DIPl6+VkqJ7uC5/bkkH2qBv+t//zPqMvupUkXFfq2+B0AQsp2KAAwoiwUAEmn/Cs9t9e+2VUpKwCzh13suX35SuD+xedSAAghhQoFAEaUlQIwfZD3BL3MjArq8KvnpKQAdL/F+xPArRoX7ZsGFABCynYoADCirBSAj+ZF/47+wgmFP0SvR04mrJSb7rntCfdfQgEghBQ6FAAYUVYKwLcr5Wd6r/XcZre2lxe7ACwY/4uoy+3tJy+gABBCCh0KAIwoKwVAMuye33puMyuzgjpQhM/p3elys/e3+2tVuzb008AUAEJIYUMBgBFlqQDEujLgUw9fXOTb3PfSuaFzCfTbLOwVACkAhJBwKAAwoiwVAPkY4IZ6f/Lc7k3X/zE0rSi3+fiA30RdZhufPo8CQAgpUigAMKIsFQDJozF+rvfNaRcW+rbk9wWiXf73xvp/KtZjpAAQUrZDAYARpakAdLn5SrV6xgXFyqKJF6nMTO8h+5ublCv0bY3t5T2nQPJwj8uK9Ri7tfWeU0ABIKTshAIAI/xaALp37x73MZW1dO7c2fpOiRBiJhQAGOHXAtCsWTPrg66f0rhxY+s7JUKImVAAYIRfC0D9+vWtD7p+Sp06dazvlAghZkIBgBF+LQBt2rSxPuj6Kfn5+dZ3SoQQM6EAwAi/FoCRI0daH3T9lKFDh1rfKRFCzIQCACP8WgCefPJJz+PIzq6gdr/4I3VkyTkpy6FXzlH7F/+wyPPLxYTkin+pejx7F56rcrK91xWYNm2a9Z0SIcRMKAAwwq8FYN26dVEfy7Mjf1Xs3wLwc/45JsZ1Bd5+2/pOiRBiJhQAGOHXAnD69GlVt25dz2Opl3dN6J2y7YG6JHJs6TmqYW3vDwvVqlVLnTp1yvpOiRBiJhQAGOHXAiAZO3Zs1MdzZ+srQr/CZ3vATmXkwkE9brk86vMdMWKE9R0SIcRcKAAwws8FYN++fap69epRH9PtN12l9iws3lX8/BK5oFCn/CujPs+qVauqPXv2WN8hEULMhQIAI/xcACQzZ86M+bgq5qSr0X++NHSVv6+Xn219IC9M5PG+P+d8Nbb3papSrvekv3CeeOIJ6zsjQojZUABghN8LgJwL0KdPn7iPL5xqldNUjSr+jzzOZJ5Pz549Q8/f9s6IEGI2FAAY4fcCIDly5Ijq0KFDUoNmUNK+fXt16NAh6zsiQoj5UABgRGkoAJLjx4+rgQMHWh+YTaR///7q2LFj1pc5IcROKAAworQUgHAWLVqkmjRpYn2QLok0atRILViwwPoyJoTYDQUARpS2AiA5ceKEeu6551S3bt1Ubm6u9YG7OJHHf9ddd6lnnnkmdJTD9rIlhNgPBQBGlMYC4I58Tr5hwwa1ZMmS0CA6d+5c32fevHmhx/vee++pgwcPWl+GhBB/hQIAI0p7ASCEkKCFAgAjKACEEOKvUABgBAWAEEL8FQoAjKAAEEKIv0IBgBEUAEII8VcoADCCAkAIIf4KBQBGUAAIIcRfoQDACAoAIYT4KxQAGEEBIIQQf4UCACMoAIQQ4q9QAGAEBYAQQvwVCgCMoAAQQoi/QgGAERQAQgjxVygAMIICQAgh/goFAEZQAAghxF+hAMAICgAhhPgrFAAYQQEghBB/hQIAIygAhBDir1AAYAQFgBBC/BUKAIygABBCiL9CAYARFABCCPFXKAAwwq8F4NSpU+qjjz5Sr732mlqyZIlav369On78eFLzHjt2TK1bt069+uqr6vXXX1effPJJ6PaSmffAgQNq9erVavHixWrFihVq+/btST9m+bcyj8wrtyG3VdLLSZ7re++9F1pGsqxkmSX7XL/66quC57p8+XL15ZdfJn2/O3fuVCtXrlQvvfSSWrVqldq3b19S850+fVp9+umnatmyZeqVV15Ra9euVUeOHCnx5XTw4EH1zjvvhJ7rG2+8obZu3Zr0vLt371ZvvfWWWrRoUei57tmzJ+l5P//884Ln+u6776rDhw8nNd/JkyfVBx98EHpdly5dGvpv+buSXk7y3OQ5ynOV5yzPPdl5ZZnKsn355ZdDy1qWebLP9cMPPww9T3m+GzZsUCdOnEhqXll3ZB2S5SvLWdYtWcdKejmVdCgAMMJvBUAG+ccff1zVqVPH8ziqVq2qhg0bFnOwkZ3XkCFDVJUqVTzzNmjQQD355JMxd6KyA+revbvKzMz0zNu6devQjinWY5ZpN998s2c+uS25TbntVC8nWQayLGSZ6Pdbt25dNW3atJiFafPmzeqee+5RWVlZnnlbtmwZGtRj3a/s4G+55Zaoz/XOO+8M7byjzSelZNasWer666/3zFuxYkU1YMCAUKlI9XKSAfjPf/6zysnJ8dxvs2bN1Pz582POKwPgbbfd5pkvIyNDderUKTSgR5tPBqB58+apJk2aeObNzc1V/fr1i1m2Dh06pMaPH6/y8vI888rfTZgwIekSUZjIgN2xY8fQc9Of6+233x4qirHm/cc//qGaNm3qebyyzPv06aO2bNkSdb6jR4+G9i21atXyzFujRg01evTomCVix44d6sEHHwytO/q8jRo1UrNnz066CPsxFAAY4acCIO9mZSeU6PHIjlUfLOTdhwzyieaVAVkvAfLOQXbMieadOnWq5zHL3yWaT3ZSch+pWk6y82vcuHHC+5WdiCxT97zy7i5aQdIzbtw4z/1KgdIHiGg7fXkH6J5PdsT33XdfwvuU0iflJFXLSQboatWqJbxfKVL6vE8//XTUMuiOFKgXXnghYj4Z/GWAT3SfNWvW9BRDOWLUqlWrhPNKIZWjN6laTv/85z8TPleZ/swzz3jmfeihhxI+XhnM5Yicez4pOu3atUs4b4sWLdTevXsj5pUjerVr1044b+/evUttCaAAwAg/FQC5n2g7O3kHkp2dHfH3d999d9wNRgaiDh06RN2hzpgxo2A+eYeRp73bkv+X29Pfrcrg537XJ/+tD4gyj8yr36bsBJM9JJooPXr0iLhtWTayjGRZ6c/1kUceKZhPyoB+ZKV69eqhd7PRCoUc4g/Pu3HjRs8gIYVLnqsMZu6/l4LhPkozZ84cz23LkQZ5ffTiJUcXUrGMpOTpr58cLZGCeeONN3oej/sIjxxG1tc3Oaoiz1UfeOTxSyELzyuDqX7bzZs3D91v5cqVPYOb+3D1oEGDPIOuDJISfdnLwJuK5SRHIvTXQJ6jPFd9XZFl4n43Lx+n6M9VjgTIc9WPTMn65R6MR4wY4dm25LW/9dZbPc9VCpX7Mbdp0yZiuhRsWZduuukmz+ORImdq0E5lKAAwwk8FQD+M6N545XM+fecY/uxYDv3r09zvrmTAd09v27ZtzJ2Y7KjCn93LDqtnz54R00eNGhVzJyb/NryTk9uQQ5Hu6fo746JE3jm5d5Cy45RlE54uy0wffMLT5PC9e1q9evUK3l3J4+7bt2/EdPk4JTzvpEmTIqbdddddBUdS5DHJ4XT3dPehdf2ojruUyDt+fQD64osvir2c5JC2+zblMPOuXbtC02TQlefmni7PPTyvfHziniaDS/jjFDlsrX/c415Pu3XrFjFNDmOHp8lRKn1glHM2wtP1ae5SIuuOe1qeUzBTsc3JxzL6thE+aiR/yoDsni5HgcLzyjts97ShQ4cWFBopRXlaCXYfBdDLxYIFCwqmvfnmmxHTZP0Ib1dSQPTB/7PPPou5nspAamLflepQAGCEnwqAvEt236/+Oam+Q9m2bVvo7zdt2hTx9/LO1D3fxx9/HHO6/u70gQceiJhXH1Dd0++///6YA4FEH1Dlvoq7jGQQiTcQyDKLNV1/dyrnAbjnff755yOmu4+yDB48OOZAINEPBbuPsujlQD8cLCXFPd1daIoavdh17tw5YrqcNBZrul7spkyZEjGvlED39MmTJxdM09+duo+iSPTzJ8LTpVjo2537RDgpIPr0ZE+KjZeJEydG3OaYMWMipusDqnu6Xuz082TkyFKs6fq7fP2EWf0IzP79+0N/v2bNmoi/l3f97vn0Nwr69NISCgCM8FMBkMPR8QqAfqg5/E5R3u27/14O/brnk88MYxUAOVnIPU0/3Dh37twiFwD9s2C5r+IuI/0dkCwT9/R4BUBO1nJPkyMW7nnl8+yiFoCHH344Yvr06dMLpulHduRbC+559UO3JVEA5ARF93T5hoh7uvudol4A9HM/5F29e7r7iIb+MYycSOieV//cW741In8vR7P07c59roqUAX26fn5HUaIXAP3cD3luyRYAOYvfPa8+iMkyD0/TC4B+ToN+0mb4IyX9yI58lOSeTy8A8jFLcZeRjVAAYAQFgAIQDgXgzDQKwPfTKQB2QgGAERQACkA4FIAz0ygA30+nANgJBQBGUAAoAOFQAM5MowB8P50CYCcUABhBAaAAhEMBODONAvD9dAqAnVAAYAQFgAIQDgXgzDQKwPfTKQB2QgGAERQACkA4FIAz0ygA30+nANgJBQBGUAAoAOFQAM5MowB8P50CYCcUABhBAaAAhEMBODONAvD9dAqAnVAAYAQFgAIQDgXgzDQKwPfTKQB2QgGAERQACkA4FIAz0ygA30+nANgJBQBG+KkA5Gm/9a9fFCbWtQLkgiqxBniJfq2Ahg0bFkzTf+tfBnX3vPq1AtwXjZEyEG+AT1QQihJZJu7blGUSb7q7IMgFemIN8NGmu68VoF88xz3AS+IVhES/9Z/oWgFFiX7xHP2iMPGuFTBy5MiYA7wk3rUC9GsBhAf4WNPD1wKQwTzeAB9tuvtaAUWN/lv/7otdSfSCMHbs2IJpegFwD/DRpruvBSCXUo42wEvkwj/69PC1AuQKnPEG+ETXCigtoQDACD8VAGnz7vuVi6yEry6mX7xFLhYS3kHKzkO/Qt7y5csLdib6O7bbbrut4D5lp+SeJlcpkwvuyDS5yp1+QRP3OyTZGbqnyb+VeWSaDMT6Fc9ee+21Yi8juWiMvnMM73hlWenv2ORyyOF5ZbBxT8tzCpdc+lamyTtQ/Up2w4YNK5hXBjn3tPbt2xe8a5Mrv0mpck9fuHBhwbxdunSJmCZXjQu/u129erXn+ezcubPYy0lKhPs25Up7UgRlmqw39913X8T0AQMGFMwr5cU9Ta7+Fx6gdu/e7bmc8LPPPlsw77333hsx7cEHHywYqOXIh37lQ/eV7PK0AuwujPqRKrlkbyq2Ob0ASxmTq2uGtyt9m5SrB4bn1Y9w9enTp2CblKNy+tUNP/jgg4J59fXFXRj1i1bJ7YT3A/oRLtkPyFEBmSbrlH5Rqq5duxrZd6U6FAAY4acCoO94wwNytGvV64fq9R2vlIAmTZqELgOrzztv3ryC+WSHJZfF1Xcqctha34HJQOW+zLD8tz54yTwyr341M7mPVByylehXGZTIMtKvVS+ZOXNmwXyyg5Rloj8nebzVqlWL+HspVO534p9//rln8KpSpUpoXv3vZZkfPHiwYF79owWJHJmQgVReJ/ffS1lIxTKS4qd/tCDPSR6v/lGTPIZVq1YVzCuDTKVKlSL+jfx/tOcqt+V+96p/tCDJcwZ2ea76YW8pUe7HrF9lUCJHsyT637vfiRcnMtjrr71cYleeq74M5PV2lzM5uqG/fnJESubVn2t+fn7BIC7Ri2p4G9GLgUQKY7zBUR6DLF/9I0LJiy++aGTflepQAGCEnwqA7LTlXUSixyPXLNcvHyo7Mv3dSrQMHDgwYkckkUPSedq7Lz2yQ3vmmWc8j1nKhL6zizYApOJz7XBkwNEPJUeLLMvwddTDkXdh0UqR/lyfeuopz/3K5YL1YqNHCpC8q9fnlaMJiR6vDBxyNCFVy0nO/ahbt27c+5TBY9q0aZ555SMCfbDXU7ly5YIjTe7IUaJEz1UKW/hIUzhydEc+ikg0r5zPkKoyKVm2bJlnsNcjy0I/xC+R8yMSPV4pMJs3b46YTy5l3KNHj4TzdujQQR0+fDhiXilo+lGYaBk+fLiR/VZJhAIAI/xUACQyOMtn0XIylf7uQnaa8tlzrJ2fHMaWHZL+LkJuR06+WrRoUcz7lYFHDh/q7w7lZCT5rHz9+vUx55VDu/Jv9BOX5LbkNlM5qIUjy+CJJ57wHB2R5yrlQAZrveiEI4exZUDO00qPDO7yMYB8jhrrfqVAyOFzfXCUgV/K1bZt22LOKwOIfPyiF6b69euH1rHwxyepzN69e0Of6eulR458yEDqfuev5+OPPw6VKHlHrA/8/fv3Dx0ViTWvDKryGbj+XOWI1vjx4z0nvYUjR2nkcL98tq1vh/J3csjefXJgqiIfRchRNXlu7vuUYiDnsugDuDvy0ZIUF/1omCxz+fjNfYTEHSmnUqqjFXcpg1JCY53nIEeY5PwF/eidLO/bb7894nyD0hgKAIzwWwFwR97ly4CzYcOG0KBVmHl37VceIJ8AABRzSURBVNoVmm/jxo0Rh6MTRXZKcqa9zCsnF8o7lWTnlX8r88i8chv6u++SiiwbuU9ZVvqRkXiRghB+rvL5eGHeVcqOWQZImVcGj8I8V3k95OMTmbckylGsyHkZ4ecq77YL81xlAJR55ZyJwjxXKTXh56p/qyVRpLzIfO+//37MQTTVkXIRfq7yZ2HKhhTw8HPVT+BNFHl+8jxl3vA5CMlm+/btofnkvguzrfs5FAAY4ecCQAghZTEUABhBASCEEH+FAgAjKACEEOKvUABgBAWAEEL8FQoAjKAAEEKIv0IBgBEUAEII8VcoADCCAkAIIf4KBQBGUAAIIcRfoQDACAoAIYT4KxQAGEEBIIQQf4UCACMoAIQQ4q9QAGAEBYAQQvwVCgCMoAAQQoi/QgGAERQAQgjxVygAMIICQAgh/goFAEZQAAghxF+hAMAICgAhhPgrFAAYQQEghJSm7N+/X+3YsUNt2bJFbd26NfT/x48ft/64UhkKAIygABBC/JhTp06pDz74QD311FOqT58+qlWrVqpy5cpR91EZGRmqQYMGqkuXLmrEiBHq1VdfVQcOHLD+HIoaCgCMoAAQQvyU9evXhwbxunXrxt0vJUpmZqbq2LGjeu6559TBgwetP6/ChAIAIygAhBA9+/btUy+//LIaN26c6tmzp2rRooWqU6eOqlatWmhgrVGjRmiAvvXWW1W/fv3UzJkz1Zo1a9TJkyeLdH/ybl/u77bbbivWoB8rcuRg1KhRaufOndaXbTKhAMAICgAhRLJ37141a9Ys1a5du9AgX5SBVopB37591fLly0ODejL3K8Whbdu2JTLw68nNzVWjR49Whw4dsr6844UCACMoAISU7Xz22Wdq4MCBKicnJ6WDbaNGjdScOXPUsWPHot6vHJYfNGhQ6PP7eLeTlVlBtWt2tRp+72/V03+5WC1//EK1ZuZP1aa556n355yvVs+4QC2ccJGa3O83qtftf1C1q1+b8LHVr19fLVmyxPqyjxUKAIygABBSNiOH+YcMGVLkd/vJRk7OW7RoUcR9r1u3TjVu3DjmPDnZFdSfb/9v9cojP1cnXj9bqbd+kHS+XfkDtfnZ/1RT+v9aNa5bPu5jGzZsWMyCYjMUABjhxwKwZ88eNXXqVNW9e3fVuXNnUkYinyUvXrxYnT592voOOOh58cUXVc2aNRMP3s67816ZGWpSVqb63+ws9VJOtlrm5FUnLzj/P83JQGdaK+ffZCa4rW7duqldu3apBQsWhA7FR/s3VSqmq4n3X6L2Ljq3UIN+vDKw7NELVfvmV8d8XLfcckton2P7NXGHAgAj/FYANmzYoGrVqlWi70iIv9OrV68in0xG4ufo0aOhd/3xln9TZ9Cf6gzsn+TmqOMVk8+u3OxQSeiSmRmzDFStWjXqIf+MjOvU4G6Xqf2LUzPwR8uSKT9XDWtfE/Vx3XDDDaHfFLD9+oRDAYARfioA8mMe8Q4LkrKTGTNmWN8JBy3ygznxzrJv77yLX+K8sy/MoB8rHzll4H+yMlVWEq91g1rXqFXTLyixgd+dk6+frR7q/ruoj0POC/jyyy+tv04SCgCM8FMBWLZsmfWBh/gjTZs2tb4TDlLkEHfLli2jLus6TubnZKVk4NfzQcUsdVeVCqqGpFqOqlG9qpMqqrrz/3LfHVteqQ698kMjg787iyZepCrmpHuWRbNmzULnRth+vSgAMMJPBWD27NnWBx7ij8gZ6bZ3wkGJnG3funXrqMu5e2am2lUCA39EKjmvZe/LlHrzrIhBeOPT56n/W36W8cE/nHV/P98pJmmeZdKpU6ekv8JYUqEAwAg/FQD5Wo7tgYf4I/JRkO2BMwiRgSzWYDIxK1MdK+nB35VT7cqpb187x9qAHy0fzfuJqlrJWwJsf/OJAgAj/FQA5ASl4v78JwlGJk+ebH3wDEImTZrkWbYZTv6WXTKH/BPlZItr1LcWDvnHyzszf6pysytELCP5auS7775r7XWjAMAIPxUAyapVq1SVKlWsD0DEXuQrgX78bnZpi2xL0b7jP9XS4F9QAvLLq2+XFe67/SWdp//yK89ykosP2foogAIAI/xWACTydZzhw4eHfpJUPrskZSNdu3ZV8+bNs/75axAi36iRE9r0bbl/VqbVwT+cVbUrqLtaX6HudOXZkb+0WgLkh4f05SXnJdl4/SgAMMKPBYAQUrxMnz7dsx03y8hQB3ww+IczNCvy6IT8CNC+l0rudwASRX6DQD8foF69elaORlEAYAQFgJBg5fDhw54f05LP/Vel6Dv+qcpXThppPwokv/dv8yjArKEXe/Z/Tz/9tPHXkAIAIygAhAQrf/vb33x76F/P8rzrVJsbry7I7TddFfqxHlsF4OvlZ6u6NSJ/LbB58+bGX0MKAIygABASrMiPKLm3X/lZ3sL+rK/J/Hve+Vbf9ev5+8P/5dkHyk+Um3wNKQAwggJASHCydu1az/bbOzPD+iAfL6fvusL6oO+O/DJhjva1wBEjRhh9HSkAMIICQEhwMmrUKM/2u8xnn/17UjVbffuqv34boOetkd8IkG9UmHwdKQAwggJASHCSn58fse3K7/wftT3AJ5Fvxl1sfdB35x+jf+nZD+7YscPY60gBgBEUAEKCEbmIjf7DPw/49OQ/PUuqZqgmdcsXxPa3AXa88CPPfnDRokXGXksKAIygABASjMgv/+nb7hzLv/qXbLbnZkc87laNy1k/ClBH+zbA1KlTjb2WFAAYQQEgJBiR76vr2+7qXJ9//u9KzYzvH3dudrr690p7VwqUdMq/MmJZ9u3b19hrSQGAERQAQoKRcePGebbdnT4Y2JPNpNZXqj4d/1CQw5ZPDBzS/XcRy7Jjx47GXksKAIygABASjAwdOjRiu5Xv/5u83G9x86/HLrJ+2N+d8X0uiViecr0KU68lBQBGUAAICUb69esXsd1WyfD39//1fDPxV9YHfXceH/CbiOXZpEkTY68lBQBGUAAICUb69+9fugvAJLtXA9Tz2IORBeCGG24w9lpSAGAEBYCQYCTaRwCl4TcA/PoRwLjefASAgKMAEBKMjB8/3rPt7vDxNQD03FWlgqpRJa0gNi8NLBncjZMAEXAUAEKCkXnz5nm2Xb9dAjhe8lyPu1Juuvp2pd0jAB1bXhWxLOUcC1OvJQUARlAACAlGVq9e7dl2Z5WSHwL60on7cef74IeAale/NuIxPfroo8ZeSwoAjKAAEBKM7N+/3/NTwH6/EmA4axtdqx7u8buCzB1u9xsBXz7/Y89+cPHixcZeSwoAjKAAEBKcyIlq7m23VkaGOuKDAT5Rvpngr68APjsy8mJAGc5y3L17t7HXkQIAIygAhAQnY8eO9Wy/S/1+HkDVLPXt0nOsD/ru9Ljl8ohleNNNNxl9HSkAMIICQEhwsmHDBs/229PnHwOc7na59QHfnQOLf6iyMitELMMxY8YYfR0pADCCAkBIsNKiRYuI7Vd+D2CTXy8KVClHHZl9vjqy5JyCfPOm3YsATR/0a88+8MMPPzT6GlIAYAQFgJBgZfbs2Z5t2K8nAz6fE3kZ4MoV061eBOjUsrM9Z//n5+cbfw0pADCCAkBIsHLs2DFVu3Ztz3b8Ro6/vhK4Lzdb1cvIiHiMo/98qdV3/zMGe9/9P/fcc8ZfQwoAjKAAEBK8PPXUU57tuHHGdWqfDwb+cAZmRX5lsVrlNHXwFXvv/ncv/FHoCIT7MTVs2FCdOHHC+OtHAYARFABCgpeTJ0+GDl3r23KvzAxfXCJ4U/Pyzrvt/4rIimkXWhv85VcHu2tn/kueffZZK68fBQBGUAAICWbeffddlZWV5dmeJ1j+dcCTrf6k1LKzrR7q1/OkU0D05dSuXTt16tQpK68dBQBGUAAICW4ee+yxqNv0Y9mZlgb/8urbpfYO80fLm9Mu9HztT4qTfKXS1utGAYARFABCght5B9ujR4+o2/WIrEyjlws+1fEqpV731zv/9+ec7/ncX/LEE09Yfd0oADCCAkBIsHPkyJHQ4exo23aHzAy1rYQH/mOVctSOvg3UxsVtnbRUm577tdo097xQTlgsBKumX6CqVvIO/t27d1enT5+2+ppRAGAEBYCQ4Gffvn2qTZs2Ubfv6hkZamZ2VokcDVibk61uycyIuW9p3/xqtWfhucYH/+dG/VLlZFfwPJ5WrVqpgwcPWn+9KAAwggJASNnIoUOHVOfOnWNu5/lOEXjRGbBTUQTW52ar+zIzQ79CmGj/Uqvater1R39mZOCXXxrse8fvoz6Oxo0bG73gT7xQAGAEBYCQshP5TvuoUaNCV7eLtb03zDjzTYH3nEG8MF8Z3Or8+1k5Waq9844/I8Zt5+Xlxbzv3h3+oHYu+FGJDPz/XvED9cK4X3h+5S8cudjPjh07rL8+4VAAYAQFgJCyl6VLl6p69eolfHee56RHVqYanZWlZjml4AUnS3Ky1QJnoJ/n/PcjTvo47/RvjFMowunTp0/oo4jFixerypUrR/03clh+RM/fqi+f/3FqBv6VZ6mXJl2kWjb6Y8zH1bFjR3XgwAHrr4k7FAAYQQEgpGxGPuuWowE5OTkJB+/ipGnTpuqNN96IuO/3338/9Pex5snMvE51a3uF+ueYXxb61wH/teIstX7W+WpMr0tVnRrXxLmPTDVhwoTQjybZfi30UABgBAWAkLKd7du3q7/85S+qUqVKKR345bD6/PnzYw6w8u2EYcOGhQbieLeTkXGdanH9H9WgrpeFfqt/0cSL1FvTL1Br/36+Wj3jArV0ys9CJ/WN7XWJUxouj3pmv54mTZqoFStWWF/2sUIBgClnOSvUt/FWtvHjx1vfIAghJRs5IiAXvpHBp6hHBerUqaMGDx6s3nnnnaTvV35wp0OHDiV6FCKcqlWrqqlTp4YumGR7ecdLouXhFICVtgcOBISzMp2It7JJS7e9QRBCzEXenS9fvjw0WPbt2zf0OwJylnytWrVUjRo1QgO9HMLv0qWLGjJkiJo7d6768MMPi/X9efmYIN63FIoTecxyJFPOQbC9bJOJfB0xQQF4yfa4gYBwVqg98Va2Xr16Wd8gCCFlI5s2bQoddWzUqFGxBv3c3NzQryAuXLjQ9+/49UjBSlAAnrU9biAgnBVqbbyVrWXLltY3CEJI2cvmzZvVvHnz1IABA1T79u1VzZo1o+6jsrOzQ0ck7r33XjVx4kS1cuVKdfToUeuPvyj56quvkik4422PGwgIp03OibeyycZ1+PBh6xsGIYTISYX79+9X27ZtU3v27Al9XGH7MaUycnJiogKQkZFxl+1xAwHhrFADEq1w+td4CCGEpD7y1cRE+2PnTVtN2+MGAsJpk3USrXByZq/tDYMQQoKeeL+P8F2+Tk9PP8/2uIGAqFSp0n86K9XpeCtdtWrV+BiAEEJKMGvXrk3m8//ltscMBEyFChVeSbTizZw50/oGQgghQY2cxJjE4f//sT1eIGCcFevWRCuefDXFD5fKJISQoGX9+vVxL9L0Xb5NT0//b9vjBQKmfPny5zsr1/FEJWDkyJHWNxRCCAlSTp06pdq2bZvM4f83bY8VCChn5fprohVQfrfbz7+hTQghpS1TpkxJZvCX5NseJxBQWVlZl8kZpolWwtq1a4e+g2t7oyGEkNIe+Yp1ogsifffZ/0fObvos2+MEAsxZyaYk00TlqyryIxy2Nx5CCCmtWbdunapSpUpS7/4zMjJa2x4fEHBpaWk/d1a2vcmskHJxkC1btljfiAghpLTlrbfeCl2dMJl9rfPG7A1n9/wD2+MDyoBkvhEQjlwdTK4aZntjIoSQ0hC5YuKTTz4Z+on1JAf/U867/z/ZHhdQhjgr3dPJlgD5/Orhhx8O/T637Y2LEEL8Grm40R133JHsCX/hdLU9HqCMKVeu3E+dFe+TwqyoeXl5oeuHUwQIIeT7yEel8nPqOTk5hR3859keC1BGZWVlXeGsgHsKucKGrsPdu3dv9eKLL6rdu3db3/gIIcR05N3+7NmzVYcOHZL5gZ9oh/5XOvvgn9geB1CGpaenZzgr4uHCrrzu1K9fP3TYq0+fPmrIkCGEEBK4DBo0SPXq1Uu1b99e5eXlFXl/+V02li9f/iLb+39ASsC1zgq5o5grNCGEkARx3nC94/z5K9v7faBAWlra5c6Kucn2xkEIIUGNs4+dz6V+4UvfXTb4cdsbCSGEBCnOwP+Nk8H/wS/9we+chnqzs7LutL3REEJIaY+zL12TmZmZZXu/DiQtNzf3AmfFHePkhO0NiBBCSlucfeeu6858x593/Sid0tPTL3ZW5OFODtjeoAghxO9x9pWbnT+75uXl/dj2/htIifLly5/rrNRNnTzj5CvbGxkhhPglzqD/xXcXWqtie18NlLSz0tLSMp2VvZuTvzor/ivOn+872eLkICGEBC3Ofm6/8+fnTtbJ2fzOnyOdP2+Xb1DZ3iEDAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAg0v8DBpOQHUJx7toAAAAASUVORK5CYII=" />
+                                                    </defs>
+                                                </svg>
+
+                                            </span>
+                                        </a>
+                                        <div class="ms-5">
+                                            <div class="text-gray-800 text-hover-primary fs-5 fw-bold">Credit card</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-check form-check-custom form-check-solid form-check-primary me-6">
+                                    <input class="form-check-input" type="radio" id="Credit" name="PaymentMethod" value="Credit" ng-click="ChangePaymentMethod('CreditCard')" />
+                                </div>
+                            </label>
+
+                        </div>
+
+
+                    </div>
+                </div>
+                @*          <div class="mb-8">
+                <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">Card type:</span>
+                <span>
+                <input type="radio" id="Debit" name="PaymentMethod" value="Debit" checked ng-click="ChangePaymentMethod('DebitCard')">
+                <label for="Debit">Debit card</label><br>
+                <input type="radio" id="Credit" name="PaymentMethod" value="Credit" ng-click="ChangePaymentMethod('CreditCard')">
+                <label for="Credit">Credit card</label><br>
+                </span>
+                </label>
+                </div> *@
+                <div class="mb-0">
+                    <button class="btn btn-primary w-100" type="submit" ng-click="FeePaymentClick()" ng-disabled="IsClickToPay">
+                        <span class="me-3">
+                            <svg width="30" height="21" viewBox="0 0 30 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M-5.46391e-07 8.50003L-1.09279e-07 18.5C-4.90216e-08 19.8785 1.12148 21 2.50002 21L20.5 21C21.8785 21 23 19.8785 23 18.5L23 9.49999L22 9.49999L22 18.5C22 19.327 21.327 20 20.5 20L2.50002 20C1.67303 20 1.00002 19.327 1.00002 18.5L1.00002 8.49997C1.00002 7.67297 1.67303 6.99997 2.50002 6.99997L17 6.99997L17 6.00001L2.50002 6.00001C1.12148 6.00001 -6.06649e-07 7.12149 -5.46391e-07 8.50003Z" fill="white" />
+                                <path d="M13.3181 1.20448L7.18811 6.10947L7.81313 6.891L13.9426 1.986C14.7376 1.3495 15.7366 0.999516 16.7551 0.999985L29.0001 0.999985L29.0001 8.31494C29.0001 10.8979 26.8986 12.9999 24.3151 12.9999L22.5001 12.9999L22.5001 13.9999L24.3151 13.9999C27.4496 13.9999 30.0001 11.4494 30.0001 8.31494L30.0001 0.499946C30.0001 0.223442 29.7766 -3.53197e-05 29.5001 -3.53076e-05L16.7556 -3.47505e-05C15.5116 -0.000562078 14.2906 0.426938 13.3181 1.20448Z" fill="white" />
+                                <path d="M11.7918 12.5018C11.8018 12.1509 11.9478 11.8243 12.2028 11.5838L19.3427 4.86431L18.6573 4.13582L11.5167 10.8563C11.0672 11.2809 10.8097 11.8554 10.7922 12.4734C10.7712 13.0978 10.9987 13.6793 11.4182 14.1233C11.4237 14.1289 11.4617 14.1689 11.4672 14.1739C12.3242 15.0283 13.6692 15.0859 14.5982 14.3063L19.6832 9.99982L21.2302 9.99982C23.9932 10.0003 26.4997 8.26281 27.4687 5.67531L26.5322 5.32433C25.7087 7.52335 23.5782 9.00032 21.2302 8.99986L19.5002 8.99986C19.3822 8.99986 19.2672 9.04187 19.1768 9.11833L13.9532 13.5418C13.4262 13.9843 12.6607 13.9518 12.1503 13.4418C11.9093 13.1868 11.7897 12.8539 11.7918 12.5018Z" fill="white" />
+                                <path d="M0.999878 8.99967L0.999878 9.99969L13.4999 9.99969L13.4999 8.99967L0.999878 8.99967Z" fill="white" />
+                                <path d="M16.5002 11.5001L16.5002 12.5002L22.501 12.5002L22.501 11.5001L16.5002 11.5001Z" fill="white" />
+                                <path d="M0.500366 11.5002L0.500366 12.5002L11.5003 12.5002L11.5003 11.5002L0.500366 11.5002Z" fill="white" />
+                                <path d="M2.50012 17.4998L2.50012 18.4999L9.00089 18.4999L9.00089 17.4998L2.50012 17.4998Z" fill="white" />
+                                <path d="M2.50012 14.9999L2.50012 16L6.50062 16L6.50062 14.9999L2.50012 14.9999Z" fill="white" />
+                                <path d="M16.5002 14.9995L16.5002 17.9999C16.5002 18.2759 16.7237 18.4999 17.0003 18.4999L20.0006 18.4999C20.2772 18.4999 20.5007 18.2759 20.5007 17.9999L20.5007 14.9995C20.5007 14.7235 20.2772 14.4995 20.0006 14.4995L17.0003 14.4995C16.7237 14.4995 16.5002 14.7235 16.5002 14.9995ZM19.5006 15.4996L19.5006 17.4998L17.5004 17.4998L17.5004 15.4996L19.5006 15.4996Z" fill="white" />
+                            </svg>
+                        </span>
+                        Proceed to Pay
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

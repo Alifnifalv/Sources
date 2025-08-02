@@ -1,0 +1,243 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+
+@{ 
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+    //ViewBag.WindowName = windowName;
+    var settingBL = new Eduegate.Domain.Setting.SettingBL(null);
+    var imageHostURL = settingBL.GetSettingValue<string>("ImageHostUrl");
+}
+<script type="text/javascript">
+    
+    utility.ImageUrl = "@imageHostURL";
+</script>
+<style>
+
+    .schedulerTable th {
+        background: #2194c1;
+        background: -moz-linear-gradient(top, #2194c1 0%, #252d47 100%);
+        background: -webkit-linear-gradient(top, #2194c1 0%,#252d47 100%);
+        background: linear-gradient(to bottom, #2194c1 0%,#252d47 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2194c1', endColorstr='#252d47',GradientType=0 );
+        border-bottom: 1px solid #2d5074;
+        border-top: 1px solid #2d5074;
+    }
+
+    .monthPicker .ui-datepicker-calendar {
+        display: none;
+    }
+
+    .Pressent_A {
+        color: rgb(243, 125, 26) !important;
+    }
+
+    .Pressent_AE {
+        color: rgb(245, 66, 19) !important;
+    }
+
+    .Pressent_H {
+        color: rgb(234, 43, 21) !important;
+    }
+
+    .Pressent_L {
+        color: rgb(250, 6, 224) !important;
+    }
+
+    .Pressent_NA {
+        color: rgb(142 13 13) !important;
+    }
+
+    .Pressent_P {
+        color: rgb(14, 173, 31) !important;
+    }
+
+    .Pressent_T {
+        color: rgb(133, 86, 73) !important;
+    }
+
+    .Pressent_TE {
+        color: rgb(179, 143, 134) !important;
+    }
+
+    .Pressent_UM {
+        color: rgb(76 70 70) !important;
+    }
+
+    .Pressent_W {
+        color: rgb(149, 179, 215) !important;
+    }
+
+    .Pressent_LE {
+        color: rgb(14, 174, 199) !important;
+    }
+</style>
+<div id="StudentAttendence" class="windowcontainer" ng-controller="AttendenceController"
+     ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName', 'student')">
+    <div id="@windowName">
+
+        @*@await Html.PartialAsync("_ListFilter", Model)*@
+        <div class="window-tab preload-overlay" style="display:none;">
+            <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+        </div>
+        <div class="prod-tab-wrap">
+            <div class="form-horizontal panel-body">
+                <div class="scheduleWrapper innertab subject first">
+                    <div class="field-row">
+                        <span class="form-group">
+                            <span class="controls">
+                                <label>Class</label>
+                                <ui-select style="width: 100%;" name="Class" ng-model="selectedClass"
+                                           theme="select2" class="pos-txt"
+                                           ng-change="ClassSectionChange($select)">
+                                    <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                    <ui-select-choices repeat="class in Class | filter:$select.search">{{class.Value}}</ui-select-choices>
+                                </ui-select>
+                            </span>
+                        </span>
+                        <span class="form-group">
+
+                            <span class="controls">
+                                <label>Section</label>
+                                <ui-select name="Section" ng-model="selectedSection" theme="select2" class="pos-txt" style="width: 100%;" ng-change="ClassSectionChange($select)">
+                                    <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                    <ui-select-choices repeat="section in Section | filter:$select.search">
+                                        {{section.Value}}
+                                    </ui-select-choices>
+                                </ui-select>
+
+                            </span>
+                        </span>
+                        <span><input type="button" value="Refresh" class="button-orange" ng-click="LoadData()" /></span>
+                    </div>
+
+                </div>
+            </div>
+            <div class="PresentStatus">
+                <div class="PresentStatusbtn" ng-repeat="status in AttendanceStatuses">
+                    <div class="ui form">
+                        <div class="inline fields">
+                            <div class="field">
+                                <div class="ui radio checkbox">
+                                    <input type="radio" id="{{status.PresentStatusID}}" name="radio" ng-click="changePresentStatus(status.PresentStatusID)" ng-model="PresentStatus" ng-value="status.PresentStatusID">
+                                    <label ng-bind="status.StatusDescription" for="{{status.PresentStatusID}}"</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @*<span ng-if="status.StatusTitle!='P'">
+                            <input type="radio" id="radio" name="radio" ng-click="changePresentStatus(status.PresentStatusID)" /><label ng-bind="status.StatusDescription"></label>
+                        </span>*@
+                </div>
+
+            </div>
+
+            <div class="attendanceCalendar text-center">
+                <div id="monthPicker" class="monthPicker"></div>
+            </div>
+            <div class="text-center" style="margin-bottom: 11px">
+                <input id="markallButton" type="button" value="{{ButtonText}}" class="button-orange" ng-click="UpdateAllStudentAttendence();" />
+            </div>
+            <span class="text-center" style="margin-bottom: 11px">
+                <input id="notificationButtonforParent" type="button" value="{{NotificationButton}}" class="button-orange pull-right mb-3" ng-click="SendAttendanceNotificationsToParents();" />
+            </span>
+            <div id="showLoader" class="preload-overlay center">
+                <span id="showLoaderButtonLoader" class="preloadImg" colspan="12">
+                    <img src="images/preloader.GIF" alt="loader" />
+                    <br /><label>Loading...</label>
+                </span>
+            </div>
+
+            @*<span class="text-center" style="margin-bottom: 11px">
+                    <input id="notificationButton" type="button" value="Send today's attendance notification" class="button-orange pull-right" ng-click="SendAttendancePushNotification();" />
+                </span>*@
+
+            <div class="scheduleWrapper innertab subject first">
+                <div class="schedulerTable">
+
+                    <table class=" grid-table mainGrid" style=" height: 27vw; overflow-y: auto; width: 100%; clear: both; display: inline-block; vertical-align: top; position: relative; border-collapse: separate;   border-spacing: 0;">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="noBorderBtm" ng-repeat="i in [].constructor(SelectedMonthDate) track by $index" style="cursor: pointer;">
+                                    <div class="attendanceStatus" ng-click="MarkDay($index);">
+                                        <i class="attendanceStatus" aria-hidden="true">
+                                            <span>{{$index != 0 ? $index : null}}</span>
+                                        </i>
+                                    </div>
+                                </th>
+                                @*<th class="noBorderBtm" ng-repeat="i in [].constructor(SelectedMonthDate) track by $index">{{$index != 0 ? $index : null}}</th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+
+
+                            <tr class="content" ng-repeat="student in Students ">
+                                <td><img class="attendanceProfile" src=  "{{GetStudentImage(student.StudentIID,student.StudentProfileName)}}" onerrorsrc="/Images/studentavatar.png" /></td>
+                                <td class="columnHeaderAttendance">
+                                    <b>{{student.AdmissionNumber}}</b> - {{student.StudentFullName}}
+                                </td>
+
+                                <td class="attendanceStatus" ng-repeat="attendence in student.attendances track by $index " title="{{attendence.reason}}"
+                                    ng-class="{Today: attendence.day == CurrentDate.getDate() && attendence.year == CurrentDate.getFullYear() && attendence.month == CurrentDate.getMonth()}">
+                                    @*,disabledColumns: (!((attendence.year == CurrentDate.getFullYear() && attendence.month == CurrentDate.getMonth() || attendence.month == CurrentDate.getMonth()-1) ||attendence.reason ==null)) }">*@
+                                    <div ng-if="(attendence.actualDate <= CurrentDate && attendence.actualDate >= attendence.feeStartDate)" title="{{attendence.reason}}">
+                                        <div class="attendanceMore" ng-click="SetAttendenceStatus('.gridItemPopupAttendence',$event, attendence, student);">...</div>
+                                        <a class="attendanceStatus" ng-click="MarkAsPresent(attendence, student);">
+                                            @*ng-if="attendence.status === true"*@
+                                            @*style="color: #7f272f;"*@
+                                            <i class="attendanceStatus" aria-hidden="true"
+                                               ng-class="{'Pressent_A': attendence.statusTitle==='A' , 'Pressent_AE': attendence.statusTitle==='AE',  'Pressent_L': attendence.statusTitle==='L',
+                                               'Pressent_NA': attendence.statusTitle==='NA', 'Pressent_P': attendence.statusTitle==='P', 'Pressent_T': attendence.statusTitle==='T', 'Pressent_TE': attendence.statusTitle==='TE', 'Pressent_UM': attendence.statusTitle==='UM', 'Pressent_W': attendence.statusTitle==='W', 'Pressent_H': attendence.statusTitle==='H','Pressent_LE': attendence.statusTitle==='LA'}">
+                                                @*ng-style="{'color': attendence.ColorCode;}">*@
+                                                <span ng-bind="attendence.statusTitle"></span>
+                                            </i>
+
+                                        </a>
+                                        <!--<a class="attendanceStatus" ng-if="attendence.status === false" ng-click="MarkAsPresent(attendence, student);">-->
+                                        @*<i class="fa fa-2x fa-times attendanceStatus" aria-hidden="true" style="color:red"></i>*@
+                                        <!--<i class="attendanceStatus" aria-hidden="true" style="color:red">
+                                                <span ng-bind="attendence.statusTitle" style="color:red"></span>
+                                            </i>
+
+                                        </a>-->
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="attendents_Status gridItemPopupAttendence">
+            <span class="tooltipArrow"></span>
+            <div class="gridItemPopupInner">
+                <div class="rejectContent gridItemContent" data-attr="rejectStatus">
+                    <p class="noMarginBtm">Present Status</p>
+                    <div class="controlsAttendence brand">
+                        <select class="validate" required="" aria-required="true" name="PresentStatus" id="PresentStatus"
+                                ng-options="item as item.Value for item in PresentStatusData track by item.Key" ng-model="PresentStatus"></select>
+                        <i class="dropdownarrow fa fa-caret-down"></i>
+                    </div>
+                    <p class="noMarginBtm">Reason</p>
+                    <div class="controlsAttendence brand">
+                        <select class="validate" name="AttendenceReason" id="AttendenceReason"
+                                ng-options="item as item.Value for item in AttendenceReasons track by item.Key" ng-model="AttendenceReason"></select>
+                        <i class="dropdownarrow fa fa-caret-down"></i>
+                    </div>
+                    <p class="noMarginBtm">Notes</p>
+                    <div class="controlsAttendence">
+                        <input type="text" ng-model="Reason" />
+                    </div><br />
+                    <input type="button" value="Submit" class="button-orange" ng-click="MarkAsAbsent('.gridItemPopupAttendence');" />
+                </div><!--rejectContent-->
+
+            </div>
+        </div>
+    </div>
+</div>

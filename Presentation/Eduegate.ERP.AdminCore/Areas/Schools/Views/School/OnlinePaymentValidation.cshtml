@@ -1,0 +1,94 @@
+﻿
+@{
+    Layout = null;
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div id="PaymentValidation" ng-controller="PaymentValidationController" ng-init="FillData(@Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag))">
+    <div>
+        <div class="card card-flush h-xl-100">
+
+            <span id="PaymentValidationOverlay">
+                <span class="spinner-border spinner-border-sm" role="status"></span>
+            </span>
+
+            <div class="card-body">
+                <div class="hover-scroll-overlay-y pe-6 me-n6">
+
+                    <div class="card-header">
+                        <h3 class="card-title align-items-start flex-column">
+                            <span class="card-label fw-bold text-dark">Payment related</span>
+                        </h3>
+                        <div class="card-toolbar" ng-if="FeeCollectionStatusID == PendingCollectionStatusID && PaymentValidationStatus.toLowerCase()=='success' && IsEnableLoader == false">
+                            <a class="btn btn-sm btn-light" ng-click="CheckAndUpdateFeeCollectionStatus()">Complete payment</a>
+                        </div>
+                    </div>
+
+                    <div class="text-gray-400 fw-bold" ng-if="FeeCollectionStatusID == PendingCollectionStatusID">
+                        Validation status from bank:
+                        <span class="text-gray-800 fw-bold">
+                            {{PaymentValidationStatus}}
+                        </span>
+                    </div>
+
+                    <div class="text-gray-400 fw-bold">
+                        Transaction no:
+                        <span class="text-gray-800 fw-bold">
+                            {{TransactionNumber}}
+                        </span>
+                    </div>
+
+                    <div class="text-gray-400 fw-bold">
+                        Total amount:
+                        <span class="text-gray-800 fw-bold">
+                            {{BankCollectedAmount}}
+                        </span>
+                    </div>
+
+                    <div class="text-gray-400 fw-bold">
+                        Payment mode:
+                        <span class="text-gray-800 fw-bold">
+                            {{PaymentModeName}}
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+        </div><br />
+
+        <div class="card card-flush h-xl-100">
+
+            <div class="card-body">
+                <div class="hover-scroll-overlay-y pe-6 me-n6" @*style="height: 415px"*@>
+                    <div><span class="text-gray-800 fw-bold">Fee payment collection details</span></div>
+                    <div class="border border-dashed border-gray-300 rounded px-7 py-3 mb-6" ng-repeat="coln in FeeCollections">
+                        <div class="d-flex flex-stack">
+                            <span class="text-gray-400 fw-bold">
+                                Admission No <br />
+                                <span class="text-gray-800 fw-bold">
+                                    {{coln.AdmissionNo}}
+                                </span>
+                            </span>
+
+                            <span class="text-gray-400 fw-bold">
+                                Fee Receipt <br />
+                                <span class="text-gray-800 fw-bold">
+                                    {{coln.FeeReceiptNo}}
+                                </span>
+                            </span>
+
+                            <span class="text-gray-400 fw-bold">
+                                Amount Paid <br />
+                                <span class="text-gray-800 fw-bold">
+                                    {{coln.Amount}}
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,526 @@
+﻿@using Eduegate.Web.Library.ViewModels
+@using Eduegate.Services.Contracts.Enums
+
+@{
+    if (Request.IsAjaxRequest())
+    {
+        Layout = null;
+    }
+
+    var viewIID = Eduegate.Services.Contracts.Enums.SearchView.ProductSKU;
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+<div id="@windowName" class="summary-wrap" ng-controller="SummaryViewSKUController" ng-init="SummaryViewInitChild('@windowName', '@viewIID',@ViewBag.IID,'@DynamicViews.ProductSKUDetails', @Newtonsoft.Json.JsonConvert.SerializeObject(new TagViewModel()));">
+    <div class="preload-overlay" style="display:block;">
+        @{
+            Html.RenderPartial("_PreLoader");
+        }
+    </div>
+
+    <div class="summary-header">
+        <div class="summary-controls">
+            <ul class="summary-tab">
+                @*<li class="summary-tab-list active" title="SKU Settings" content-tab="productinventory"><i class="fa fa-edit"></i></li>*@
+                @*<li class="summary-tab-list" title="SKU Detail" content-tab="SKUdetail"><i class="fa fa-file-text"></i></li>*@
+                @*<li class="summary-tab-list" title="Purchase" content-tab="purchase"><i class="fa fa-shopping-cart"></i></li>*@
+                @*<li class="summary-tab-list" title="Sales" content-tab="sales"><i class="fa fa-bar-chart"></i></li>
+                <li class="summary-tab-list" title="Inventory" content-tab="inventory"><i class="fa fa-cube"></i></li>
+                <li class="summary-tab-list" title="Operation" content-tab="operation"><i class="fa fa-cogs"></i></li>
+                <li class="summary-tab-list" title="Accounts" content-tab="accounts"><i class="fa fa-list-alt"></i></li>*@
+            </ul>
+            <div class="alignright panelcontrols">
+                <span class="remove" ng-click="CloseSummaryPanel($event);">x</span>
+                @*<span class="minmax"></span>*@
+            </div>
+        </div>
+    </div>
+    <div class="quickviewwrap">
+        <div id="SKUdetail" class="summarytab-content">
+            <h4>SKU Details</h4>
+            <div class="summary-tab-inner">
+                <div class="summary-content">
+                    @Html.Partial("~/Views/Shared/_InfoMessage.cshtml")
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">SKU ID</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUDetails).ProductSKUMapIID"></span>
+                            @*<i class="fa fa-pencil" title="Edit" ng-click="Edit('Product', ViewModels.@(DynamicViews.ProductSKUDetails).ProductID)"></i>*@
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">SKU Name</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUDetails).SKUName"></span>
+                        </div>
+                        @*<div class="label-value-box-inner">
+                            <span class="label-style">Created</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUDetails).CreatedDate"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Updated</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUDetails).UpdatedDate"></span>
+                        </div>*@
+                    </div>
+                </div>
+                @*<div class="summary-toggle">
+                    <div class="sum_toggleheader" ng-click="GetDynamicView('@DynamicViews.Brand', ViewModels.@(DynamicViews.ProductSKUDetails).BrandID, false, $event)">Brand Details</div>
+                    <div class="sum_togglecontent">
+                        <div class="label-value-box">
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Brand id</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Brand).BrandIID"></span>
+                                <i class="fa fa-pencil" title="Edit" ng-click="Edit('Brand', ViewModels.@(DynamicViews.ProductSKUDetails).BrandID)"></i>
+                            </div>
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Brand name</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Brand).BrandName"></span>
+                            </div>
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Brand code</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Brand).BrandCode"></span>
+                            </div>
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Description</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Brand).Description"></span>
+                            </div>
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Include homepage</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Brand).IsIncludeHomePage"></span>
+                            </div>
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Logo</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Brand).LogoFile"></span>
+                            </div>
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Created</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Brand).Created"></span>
+                            </div>
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Updated</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.Brand).Updated"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" ng-click="GetDynamicView('@DynamicViews.ProductSKUSettings', ViewModels.@(DynamicViews.ProductSKUDetails).ProductSKUMapIID, false, $event)">Settings</div>
+                    <div class="sum_togglecontent">
+                        <div class="label-value-box">
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Notify on quantity</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUSettings).NotifyQuantity"></span>
+                            </div>
+
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Minimum quantity</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUSettings).MinimumQuantity"></span>
+                            </div>
+
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Maximum quantity</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUSettings).MaximumQuantity"></span>
+                            </div>
+
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Minimum quanity in cart</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUSettings).MinimumQuanityInCart"></span>
+                            </div>
+
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Maximum quantity in cart</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUSettings).MaximumQuantityInCart"></span>
+                            </div>
+
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Delivery method</span>
+                                <span class="link-content"></span>
+                            </div>
+
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Product weight</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUSettings).ProductWeight"></span>
+                            </div>
+
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Length</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUSettings).ProductLength"></span>
+                            </div>
+
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Width</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUSettings).ProductWidth"></span>
+                            </div>
+
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Height</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUSettings).ProductHeight"></span>
+                            </div>
+
+                            <div class="label-value-box-inner">
+                                <span class="label-style">Dimension height</span>
+                                <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUSettings).DimensionalWeight"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sum_togglecontent"></div>*@
+
+                    @Html.Partial("_ProductBundleDetails")
+
+                @*<div class="summary-toggle">
+                    <div class="sum_toggleheader">Images</div>
+                    <div class="sum_togglecontent">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus egestas sagittis felis, in aliquet augue fringilla ac </div>
+                </div>
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader">Videos</div>
+                    <div class="sum_togglecontent">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus egestas sagittis felis, in aliquet augue fringilla ac </div>
+                </div>
+
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader">Relations</div>
+                    <div class="sum_togglecontent">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus egestas sagittis felis, in aliquet augue fringilla ac </div>
+                </div>
+
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader">Recent Activities</div>
+                    <div class="sum_togglecontent">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus egestas sagittis felis, in aliquet augue fringilla ac </div>
+                </div>
+
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader">Stock Details</div>
+                    <div class="sum_togglecontent">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus egestas sagittis felis, in aliquet augue fringilla ac </div>
+                </div>
+
+
+
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader">Recent transactions</div>
+                    <div class="sum_togglecontent">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus egestas sagittis felis, in aliquet augue fringilla ac </div>
+                </div>*@
+
+
+            </div>
+        </div>
+
+        <!--<div id="productinventory" class="summarytab-content  first">-->
+            @*<h4>Update Inventory</h4>
+                @Html.Partial("_UpdateInventory", windowName)*@
+
+            <!--<div class="summary-toggle">
+                <div class="sum_toggleheader" ng-click="GetProductSKUTagMaps(ViewModels.@(DynamicViews.ProductSKUDetails).ProductSKUMapIID)">SKU Tags</div>
+                <div class="sum_togglecontent">
+                    <div class="fullwidth alignleft textright paddingbtm5">
+
+                        <ui-select multiple tagging="tagTransformV2" style="width: 100%;" on-select="UniqueTagV2($item)" ng-model="TagModel.SelectedTags"
+                                   theme="select2" class="pos-txt" ng-disabled="disabled">
+                            <ui-select-match placeholder="Select New/Exist tag...">{{$item.Value}}</ui-select-match>
+                            <ui-select-choices repeat="tag in TagModel.AvailableTags | propsFilter: {Value: $select.search}">
+                                <div ng-bind-html="tag.Value | highlight: $select.search"></div>
+                            </ui-select-choices>
+                        </ui-select>
+
+                        <input type="button" value="Save" class="button-orange" ng-click="SaveProductSKUTags();" />-->
+                        @*<input type="button" value="Cancel" class="button-orange" ng-click="ResetPriceSettingCustomerGroups(true, '@DynamicViews.CustomerGroup', ViewModels.@(DynamicViews.ProductDetails).ProductIID);" />*@
+                    <!--</div>
+
+                </div>
+            </div>-->
+
+            <!--@Html.Partial("_UpdateDeliverySettings")
+
+            @Html.Partial("_UpdateSKUPriceSettings")-->
+
+            <!-- SKU Edit Panel -->
+            <!--@Html.Partial("_UpdateProductSKUDetail")-->
+            @*<div class="summary-toggle" ng-controller="SummaryViewProductSKUController">
+                <div class="sum_toggleheader" ng-click="Init(ViewModels.@(DynamicViews.ProductSKUDetails).ProductSKUMapIID)">SKU Movement</div>
+                <div class="sum_togglecontent">
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Product ID</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUDetails).ProductID"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Product Name</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUDetails).ProductName"></span>
+                        </div>
+                        <div class="label-value-box">
+                            <span class="label-style">To Product</span>
+                            <span id="spanProductList" class="inputwrap">
+                                <ui-select id="ProductLists" theme="select2" class="pos-txt" style="width:400px; height:26px;" ng-model="ProductMapViewModel" ng-change="SelectProductList(ProductMapViewModel);">
+                                    <ui-select-match placeholder="Search ProductLists">{{$select.selected.ProductName}}</ui-select-match>
+                                    <ui-select-choices repeat="product in ProductLists | filter:$select.search">{{product.ProductName}}</ui-select-choices>
+                                </ui-select>
+                            </span>
+                        </div>
+                    </div>
+                    <input type="button" value="Save" class="button-orange" ng-click="SaveSKUProductMap(ViewModels.@(DynamicViews.ProductSKUDetails).ProductSKUMapIID);" />
+                </div>
+            </div>
+            <div class="summary-toggle" ng-controller="SummaryViewProductSKUController">
+                <div class="sum_toggleheader" ng-click="Init(ViewModels.@(DynamicViews.ProductSKUDetails).ProductSKUMapIID,@Newtonsoft.Json.JsonConvert.SerializeObject(new AddProductViewModel()))">Product Manager</div>
+                <div class="sum_togglecontent">
+                    <div class="label-value-box-inner">
+                        <span class="label-style">SKU ID</span>
+                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductSKUDetails).ProductSKUMapIID"></span>
+                    </div>
+                    <div class="label-value-box">
+                        <span class="label-style">ToManager</span>
+                        <span id="spanProductList" class="inputwrap">
+                            <ui-select id="spanEmployeeList" theme="select2" class="pos-txt" style="width:400px; height:26px;"  ng-model="ProductModel.KeyValueOwners" ng-change="SelectEmployeeList(ProductModel.KeyValueOwners);">
+                                <ui-select-match placeholder="Search EmployeeList">{{$select.selected.Value}}</ui-select-match>
+                                <ui-select-choices repeat="employee in employees | filter:$select.search">{{employee.Value}}</ui-select-choices>
+                            </ui-select>
+                        </span>
+                    </div>
+                    <input type="button" value="Save" class="button-orange" ng-click="SaveSKUManager(ViewModels.@(DynamicViews.ProductSKUDetails).ProductSKUMapIID,ProductModel.KeyValueOwners.Key);" />
+                </div>
+            </div>
+            @Html.Partial("_UpdateInventory", windowName)
+
+               
+
+        </div>
+
+        <div id="sales" class="summarytab-content">
+            <h4>SKU - Sales Details</h4>
+            <div class="summary-tab-inner">
+                <div class="summary-content">
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Last three months sales</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Last month sales</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Profit three months</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Profit/month</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Profit last week</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="summary-toggle">
+                        <div class="sum_toggleheader">Price lists</div>
+                        <div class="sum_togglecontent">
+                            <table class="data-grid">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Start</th>
+                                        <th>End</th>
+                                        <th>Price</th>
+                                        <th>Discount</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="summary-toggle">
+                        <div class="sum_toggleheader">Sales chart</div>
+                        <div class="sum_togglecontent">
+                            <div id="barchart">
+                                <h4 class="title">Bar Chart Example</h4>
+                                <canvas id="bar" height="300" width="400"> </canvas>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="operation" class="summarytab-content">
+            <h4>SKU - Operation Details</h4>
+            <div class="summary-tab-inner">
+                <div class="summary-content">
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Bar Code</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Weight</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Dimentions</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">HS Code</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Serial#</span>
+                            <span class="link-content">NA<i class="fa fa-info-circle" title="Edit"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Type of packing</span>
+                            <span class="link-content">NA<i class="fa fa-info-circle" title="Edit"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="purchase" class="summarytab-content">
+            <h4>SKU - Purchase</h4>
+            <div class="summary-tab-inner">
+                <div class="summary-content">
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Last three months purchase</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Last month purchase</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Last week purchase</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Cost three months</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Cost/Month</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Cost last week</span>
+                            <span class="link-content">NA<i class="fa fa-ellipsis-h" title="Detail info"></i></span>
+                        </div>
+                    </div>
+
+                    <div class="summary-toggle">
+                        <div class="sum_toggleheader">Suppliers</div>
+                        <div class="sum_togglecontent">
+                            <table class="data-grid">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Contact</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="inventory" class="summarytab-content">
+            <h4>SKU - Inventory</h4>
+            <div class="summary-tab-inner">
+                <div class="summary-content">
+                    <div class="summary-toggle">
+                        <div class="sum_toggleheader">Inventory Movement</div>
+                        <div class="sum_togglecontent">
+                            <table class="data-grid">
+                                <thead>
+                                    <tr></tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="summary-toggle">
+                        <div class="sum_toggleheader">Brachwise quantity</div>
+                        <div class="sum_togglecontent">
+                            <table class="data-grid">
+                                <thead>
+                                    <tr></tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="summary-toggle">
+                        <div class="sum_toggleheader">Aging/Slow moving report</div>
+                        <div class="sum_togglecontent">
+                            <table class="data-grid">
+                                <thead>
+                                    <tr></tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#@windowName .summary-panel .remove').on('click', function () {
+            $('.pagecontent', '#@windowName').removeClass('summaryview');
+        });
+
+        $('#@windowName .summary-toggle .sum_toggleheader').on('click', function () {
+            $(this).parent().toggleClass('show');
+
+            if ($(this).parent().hasClass('show')) {
+                $(this).parent().addClass('show');
+                $(this).parent().find('.sum_togglecontent').slideDown('fast');
+            }
+            else {
+                $(this).parent().removeClass('show');
+                $(this).parent().find('.sum_togglecontent').slideUp('fast');
+            }
+        });
+
+        $('#@windowName .summarytab-content.first').show();
+
+        $('#@windowName .summary-tab .summary-tab-list').on('click', function () {
+            $('.summary-tab-list', '#@windowName').removeClass('active');
+            $('.summarytab-content', '#@windowName').hide();
+            $(this).addClass('active');
+            $('#' + $(this).attr('content-tab'), '#@windowName').fadeIn('medium');
+        });
+        $('#@windowName').parents('.pagecontent').addClass("minimize-fields priceview"); //Added one class to increase width for the smart view
+    });
+</script>

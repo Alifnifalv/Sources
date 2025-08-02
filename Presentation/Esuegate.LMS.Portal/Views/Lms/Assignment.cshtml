@@ -1,0 +1,110 @@
+﻿@model Eduegate.Services.Contracts.School.Academics.StudentAssignmentDTO
+
+@{
+    ViewBag.Title = "Assignments";
+    var clientname = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENTINSTANCE");
+    var AssignmentID = ViewBag.AssignmentID;
+
+}
+<div class="app-main flex-column flex-row-fluid " ng-controller="MyAssignmentsController" ng-init="Init('@Newtonsoft.Json.JsonConvert.SerializeObject(Model)' , 'AssignmentDetails', @AssignmentID)">
+        <div class="d-flex flex-column flex-column-fluid">
+            <div id="kt_app_content" class="app-content  flex-column-fluid ">
+                <div id="kt_app_content_container" class="app-container  container-fluid ">
+                    <div class="row g-5 g-xxl-10">
+                        <div class="col-xxl-8 mb-5 mb-xxl-10">
+                        <div class="card card-flush h-xl-100">
+                            <!--begin::Card header-->
+                            <div class="card-header pt-5">
+                                <!--begin::Card title-->
+                                <h3 class="card-title align-items-start flex-column">
+                                    <span class="card-label fw-bold text-gray-900">Assignments</span>
+                                </h3>
+                                <!--end::Card title-->
+                                <!--begin::Card toolbar-->
+                                <div class="card-toolbar">
+                                    <span> see all</span>
+                                </div>
+                                <!--end::Card toolbar-->
+                            </div>
+                            <!--end::Card header-->
+                            <!--begin::Body-->
+                            <div class="card-body py-3">
+                                <div class="card card-flush h-xl-100">
+                                    <div class="card-header min-h-auto bg-primary">
+                                        <h3 class="card-title align-items-start flex-column">
+                                            <div class="page-title d-flex flex-column justify-content-center gap-1 me-3">
+                                                <h1 class="page-heading d-flex flex-column justify-content-center text-white 0 fw-bold fs-3 m-0">
+                                                    {{ Assignments.Title }}
+                                                </h1>
+                                            </div>
+                                        </h3>
+                                    </div>
+                                    <div class="card-body bg-primary-light py-3">
+                                        <div class="overflow-auto pb-5">
+                                            <!--begin::Notice-->
+                                            <div class="notice d-flex  rounded border-gray-400 border border-solid min-w-lg-600px flex-shrink-0 p-6">
+                                                <time datetime="{{Assignments.StartDate}}" class="icon me-4">
+                                                    <strong>{{ getMonth(Assignments.StartDate) }}</strong>
+                                                    <span>{{ getDayOfMonth(Assignments.StartDate) }}</span>
+                                                </time>
+                                                <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+                                                    <div class="mb-3 mb-md-0 fw-semibold">
+                                                        <h4 class="text-gray-900 fw-bold">{{ Assignments.Title }}</h4>
+
+                                                        <div class="fs-7 text-gray-700 pe-7"> {{ Assignments.StartDate }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="overflow-auto pb-5">
+                                            <!--begin::Notice-->
+                                            <div class="notice d-flex  rounded border-gray-400 border border-solid min-w-lg-600px flex-shrink-0 p-6">
+                                                <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+                                                    <div class="mb-3 mb-md-0 fw-semibold">
+                                                        <h5 class="text-gray-900 fw-bold">Description</h5>
+
+                                                        <div class="fs-7 text-gray-700 pe-7"> {{ Assignments.Description }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="overflow-auto pb-5">
+                                            <!--begin::Notice-->
+                                            <div class="notice d-flex  rounded border-gray-400 border border-solid min-w-lg-600px flex-shrink-0 p-6">
+                                                <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+                                                    <div class="mb-3 mb-md-0 fw-semibold">
+                                                        <h5 class="text-gray-900 fw-bold">Upload Requirements</h5>
+
+                                                        <div class="fs-7 text-gray-700 pe-7"> {{ Assignments.requiremnt }}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <label class="" for="remarks">Remarks:</label>
+                                        <input type="text" id="remarks" ng-model="AssignmentRemarks" class="form-control mb-5" placeholder="Enter remarks">
+                                        <form action="/fake-url"
+                                              class=" border border-dashed border-gray-400 rounded-4 flex-row flex-stack flex-wrap p-6 w-50"
+                                              id="my-dropzone">
+                                            <div class="dz-message"><span>Drag and drop files here or click to browse.</span></div>
+                                        </form>
+                                        <div id="uploaded-file-info" class="mt-4"></div>
+
+                                        <button class="btn btn-primary btn-sm" ng-click="saveAssignment()">save</button>
+
+                                    </div>
+                                 
+
+                                </div>
+
+                            </div>
+                        </div>
+                           </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+

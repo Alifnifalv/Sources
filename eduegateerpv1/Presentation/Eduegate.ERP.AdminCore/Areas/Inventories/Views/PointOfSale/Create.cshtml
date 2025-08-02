@@ -1,0 +1,563 @@
+﻿@using Eduegate.Domain;
+@model Eduegate.Web.Library.ViewModels.TransactionViewModel
+
+@{
+    Layout = null;
+    var windowName = "window_" + Guid.NewGuid().ToString();
+    var currencyCode = new Eduegate.Domain.Setting.SettingBL().GetSettingValue<string>("DEFAUTCURRENCY");
+    string decimalPlaces = ViewBag.DefaultDecimalPoints;
+    string printSetting = ViewBag.PRINTSETTING;
+    int printerWidth;
+    int printTitleFontSize;
+    int printBodyFontSize;
+
+    if (printSetting == null)
+    {
+        printSetting = "300,16,14";
+    }
+
+    var splittedSetting = printSetting.Split(',');
+
+    if (splittedSetting.Length >= 1)
+    {
+        int.TryParse(splittedSetting[0], out printerWidth);
+
+        if (printerWidth == 0)
+        {
+            printerWidth = 300;
+        }
+    }
+    else
+    {
+        printerWidth = 300;
+    }
+
+    if (splittedSetting.Length >= 2)
+    {
+        int.TryParse(splittedSetting[1], out printBodyFontSize);
+
+        if (printBodyFontSize == 0)
+        {
+            printBodyFontSize = 14;
+        }
+    }
+    else
+    {
+        printBodyFontSize = 14;
+    }
+
+    if (splittedSetting.Length >= 3)
+    {
+        int.TryParse(splittedSetting[2], out printTitleFontSize);
+
+        if (printTitleFontSize == 0)
+        {
+            printTitleFontSize = 16;
+        }
+    }
+    else
+    {
+        printTitleFontSize = 16;
+    }
+}
+
+<div class="windowcontainer" id="@(Model.HeadIID == 0 ? "Create" : "Edit")PointOfSale" ng-controller="PointOfSaleController">
+    <div id="@windowName" >
+        <div class="window-tab preload-overlay" style="display:block;">
+            <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+        </div>
+        <div class="pageheader stickdiv">
+            <span>@Model.DocumentName</span>
+
+            <div class="alignright menugroup">
+                <div class="button-orange alignright" ng-click="CloseWindow()">
+                    <a href="" title="Close">
+                        <i class="fa fa-close"></i>
+                        <span>
+                            Close
+                        </span>
+                    </a>
+                </div>
+
+                <div class="button-orange alignright" data-popup-type="PaymentMethodSummary" ng-click="GlobalPopupWindow($event);">
+                    <a href="">
+                        <i class="fa fa-paypal"></i>
+                        Payment Summary</a>
+                </div>
+
+                <div ng-if="PosModel.HeadIID > 0" class="button-green popupbtn alignright" ng-click="Print(PosModel.HeadIID,true);">
+                    <a href="">
+                    <i class="fa fa-print"></i>
+                    Print</a>
+                </div>
+
+                <div id="paymentpopup" class="button-orange alignright" data-popup-type="payment" ng-click="VerifyTransactionAndLoadPayment(false,$event);">
+                    <a href="">
+                        <i class="fa fa-paypal"></i>
+                        Pay
+                    </a>
+                </div>
+                <div class="button-orange alignright" data-popup-type="payment" ng-click="VerifyTransactionAndLoadPayment(true,$event );">
+                    <a href="">
+                        <i class="fa fa-print"></i>
+                        Pay & Print
+                    </a>
+                </div>
+				<div class="alignright listing topTotalValue">
+					<span class="caption">Total:</span><span class="value"> {{GrandTotal.toFixed(@decimalPlaces)}} </span>
+				</div>
+            </div>
+            </div>
+        <div class="fluid-container">
+            <form name="POSForm" method="post">
+                <div ng-model="PosModel" ng-init="Init('@windowName',@Newtonsoft.Json.JsonConvert.SerializeObject(Model), @printerWidth, @Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.ModelStructure));">
+                    <div class="menuinnertab rightSideMenu">
+                        <ul>
+                            <li data-target="currentSale" class="active">Current Sale</li>
+                            <li data-target="retrieveSale">Retrieve Sale</li>
+                            @*<li data-target="registerClose">Close Register</li>*@
+                        </ul>
+                    </div>
+                    <div class="col-xs-12 subheader">
+                        <div class="switch-user">
+                            <a class="active"><i class="fa fa-cog"></i> Admin</a>|
+                            <a><i class="fa fa-user"></i> Operator</a>
+                        </div>
+                    </div>
+
+                    <div class="pagecontent innertab currentSale first">
+                        <div class="fullwidth alignleft paddingbtm10">
+                            <div class="pos-options alignleft minimize">
+
+                                <div class="search-section customer">
+                                    <span>Select Customer</span>
+                                    <ui-select id="POSCustomer" ng-model="PosModel.Customer.Customer" theme="select2" class="pos-txt"
+                                               ng-change="OnChangeCustomerSelect2(PosModel.Customer, $select)"
+                                               on-select="CustomerFreeSelect($select)" tagging="tagTransformV2" tagging-label="false">
+                                        <ui-select-match placeholder="Search Customer">{{$select.selected.Value}}</ui-select-match>
+                                        <ui-select-choices repeat="customer in Customers | filter: $select.search">
+                                            {{customer.Value | highlight: $select.search}}
+                                        </ui-select-choices>
+                                    </ui-select>
+                                    <div id="customerCreation" class="button-orange noText popupbtn" data-popup-type="dynamicPopover" title="Add Customer" ng-click="ShowCustomerCreation($event);">
+                                        <a href=""><i class="fa fa-plus"></i></a>
+                                    </div>
+                                </div>
+
+                                @*Currently creating the new customer in POS screen is not supported, So the below code is commented*@
+                                @*<div class="search-section button">
+                                <div class="button-orange addoption addcustomer" ng-click="CreateCustomer();">
+                                    <a><i class="fa fa-plus"></i> Add New Customer</a>
+                                </div>
+                            </div>*@
+                                @*<div class="touchview" ng-click="TouchView();"><i class="fa fa-th-list"></i> Touch View</div>*@
+                                <div class="search-section date-picker">
+                                    <span>Date</span>
+                                    <div class="transaction-date">
+                                        <div class="datetime_picker">
+                                            <input type="text" id="POSDatePicker" ng-model="PosModel.TransactionDate" class="dpicker form-control" datetimepicker />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="search-section">
+                                    <span>Bar code</span>
+                                    <input type="text" placeholder="Barcode" ng-keypress="BarCodeKeyPress($event)" id="ProductSearchByBarCode" name="ProductSearchByBarCode" @*ng-blur="RefreshProductSelect2($event)"*@ />
+                                </div>
+                                <div class="search-section product">
+                                    <span>Select Product</span>
+                                    <div>
+                                        <ui-select ng-init="InitializeProductSelect2cntrl($select)" id="POSProduct" ng-model="PosModel.Product" theme="select2" class="pos-txt" ng-change="OnChangeProductSelect2(PosModel.Product, $select);">
+                                            <ui-select-match placeholder="Search Product">{{$select.selected.Name}}</ui-select-match>
+                                            <ui-select-choices repeat="product in Products">{{product.ProductSKU}}</ui-select-choices>
+                                        </ui-select>
+                                        <div id="productCreation" class="button-orange noText popupbtn" data-popup-type="dynamicPopover" ng-click="ShowProductCreation($event)">
+                                            <a href=""><i class="fa fa-plus"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="status" ng-if="PosModel.POSStatus">
+                                    <label>Status: </label> {{PosModel.POSStatus}} <i class="fa fa-exclamation-circle"></i>
+                                </div>
+
+                                <div class="search-section button options remarks">
+                                    <div class="form-group">
+                                        <div class="controls alignright">
+                                            <textarea rows="5" ng-model="PosModel.Description" placeholder="Remarks..."></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--pos-options-->
+
+                        </div>
+
+                        <div class="toggle-wrapper" style="min-height: 40px;">
+                            <div class="table-wrap">
+                                <div class="alignleft col-xs-6 noPaddingLeft">
+                                    <div class="address-total">
+                                        <div class="ship-address columns" ng-if="PosModel.BillingContact.ContactID">
+                                            <div class="columns-inner">
+                                                <div class="columnsheader">Billing Address:</div>
+                                                <div class="columns-content">
+                                                    <b>
+                                                        {{PosModel.BillingContact.FirstName}}
+                                                        {{PosModel.BillingContact.LastName}}
+                                                    </b><br>
+                                                    {{PosModel.BillingContact.AddressLine1}} {{PosModel.BillingContact.AddressLine2}}
+                                                    {{PosModel.BillingContact.City}} {{PosModel.BillingContact.State}}
+                                                    {{PosModel.BillingContact.PostalCode}}  {{PosModel.BillingContact.CountryName }}<br><br>
+                                                    <b ng-if="PosModel.BillingContact.AlternateEmailID1">Email:</b>{{PosModel.BillingContact.AlternateEmailID1}}<br>
+                                                    <b>Phone:</b>{{PosModel.BillingContact.TelephoneCode}} {{PosModel.BillingContact.PhoneNo1}}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="ship-address columns" ng-if="PosModel.ShippingContact.ContactID">
+                                            <div class="columns-inner">
+                                                <div class="columnsheader">Shipping Address:</div>
+                                                <div class="columns-content">
+                                                    <b ng-bind="PosModel.Customer.CustomerName">
+                                                        @*{{PosModel.ShippingContact.FirstName}}
+                                                    {{PosModel.ShippingContact.LastName}}*@
+                                                    </b><br>
+                                                    {{PosModel.ShippingContact.AddressLine1}} {{PosModel.ShippingContact.AddressLine2}}
+                                                    {{PosModel.ShippingContact.City}} {{PosModel.ShippingContact.State}}
+                                                    {{PosModel.ShippingContact.PostalCode}}  {{PosModel.ShippingContact.CountryName }}<br><br>
+                                                    <b ng-if="PosModel.ShippingContact.AlternateEmailID1">Email:</b>{{PosModel.ShippingContact.AlternateEmailID1}}<br>
+                                                    <b>Phone:</b>{{PosModel.ShippingContact.TelephoneCode}} {{PosModel.ShippingContact.PhoneNo1}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="fullwidth alignleft paddingbtm10">
+                                        <table cellpadding="0" cellspacing="0" class="listing currentsale pos">
+                                            <thead>
+                                                <tr>
+                                                    <th class="large-col-width">Product Name</th>
+                                                    @*<th class="large-col-width">Bar Code</th>
+                                                <th class="medium-col-width">Available Qty</th>*@
+                                                    <th class="large-col-width">Quantity</th>
+                                                    <th class="medium-col-width">Unit Price</th>
+                                                    @*<th class="medium-col-width">Discount (%)</th>*@
+                                                    <th class="medium-col-width text-right">Amount</th>
+                                                    <th class="medium-col-width text-right">Tax</th>
+                                                    <th class=""></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <tr ng-click="RowSelected($event);" class="product-list" ng-repeat="posProduct in PosModel.TransactionDetails">
+
+                                                    <td class="product-name">
+                                                        <!--span class="prod-thumb"><img ng-src="{{posProduct.ImageFile}}" /></span-->
+                                                        <a><input type="text" ng-model="posProduct.ProductName" /></a>
+                                                    </td>
+                                                    @*<td>{{ posProduct.BarCode }}</td>
+                                                <td>{{ posProduct.Quantity }}</td>*@
+                                                    <td>
+                                                        <span class="quantitywrap">
+                                                            <span class="btns minus" title="Avilable Quantity : {{posProduct.Quantity}}" ng-click="DecreseQuantity(posProduct);">-</span>
+                                                            <input type="text" style="text-align:center" ng-model="posProduct.QuantityText" numbers-only="numbers-only">
+                                                            <span class="btns plus" title="Avilable Quantity : {{posProduct.Quantity}}" ng-click="IncreaseQuantity(posProduct);">+</span>
+                                                        </span>
+                                                    </td>
+                                                    <td class="fieldWithIcon">
+                                                        <input type="text" class="text-right" ng-model="posProduct.UnitPrice" numbers-only="numbers-only">
+                                                        <a data-popup-type="PriceSelection" href="" ng-click="PickProductPrice($event, posProduct);">
+                                                            <i class="fa fa-tags fa-lg"></i>
+                                                        </a>
+                                                    </td>
+                                                    <td class="text-right">
+                                                        <span class="total">{{ (posProduct.QuantityText * posProduct.UnitPrice).toFixed(@decimalPlaces) }}</span>
+                                                        <input type="hidden" value="{{posProduct.Amount = (posProduct.QuantityText * posProduct.UnitPrice)}}" />
+                                                    </td>
+                                                    <td class="text-right">
+                                                        @*{{ posProduct.TaxAmount.toFixed(@decimalPlaces) }} {{posProduct.TaxPercentage}}*@
+                                                        <!--span class="total">{{ posProduct.TaxAmount.toFixed(@decimalPlaces) }}</span>
+                                                <input type="hidden" value="{{posProduct.TaxPercentage = posProduct.TaxPercentage ? posProduct.TaxPercentage : 0}}" />
+                                                <input type="hidden" value="{{posProduct.TaxAmount = (posProduct.QuantityText * posProduct.UnitPrice) / posProduct.TaxPercentage}}" /-->
+                                                        <input type="hidden" value="{{posProduct.TaxAmount = (posProduct.TaxPercentage == 0 || posProduct.TaxPercentage == null  ? 0 : ((posProduct.QuantityText * posProduct.UnitPrice) * (posProduct.TaxPercentage/100)))}}">
+                                                        <input type="hidden" value="{{posProduct.InclusiveTaxAmount = (posProduct.HasTaxInclusive == false ? 0 : (posProduct.TaxPercentage == 0 || posProduct.TaxPercentage == null  ? 0 : ((posProduct.QuantityText * posProduct.UnitPrice) * (posProduct.TaxPercentage/100)).toFixed(@decimalPlaces)))}}">
+                                                        <input type="hidden" value="{{posProduct.ExclusiveTaxAmount = (posProduct.HasTaxInclusive == true ? 0 : (posProduct.TaxPercentage == 0 || posProduct.TaxPercentage == null  ? 0 : ((posProduct.QuantityText * posProduct.UnitPrice) * (posProduct.TaxPercentage/100)).toFixed(@decimalPlaces)))}}">
+                                                        @*{{posProduct.InclusiveTaxAmount}}
+                                                    {{posProduct.ExclusiveTaxAmount}}
+                                                    {{posProduct.HasTaxInclusive }}*@
+                                                        <select class="selectTax" ng-model="posProduct.TaxTemplate" ng-change="GetTaxTemplateItem(posProduct)">
+                                                            <option ng-repeat="taxTemplate in TaxTemplates" value="{{taxTemplate.Key}}">{{taxTemplate.Value}}</option>
+                                                        </select>
+                                                    </td>
+                                                    <td><i class="fa fa-trash delete" title="Remove" ng-click="RemoveItemFromPOSGrid($index,posProduct);"></i></td>
+                                                </tr>
+                                                <tr class="subtotal">
+                                                    <td></td>
+                                                    <td colspan="3">
+                                                        <input type="hidden" value="{{SubTotal = (PosModel.TransactionDetails|sumByKey:'Amount')}}" />
+                                                        <span class="caption">Subtotal:</span><span class="value">{{SubTotal.toFixed(@decimalPlaces)}}</span>
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+
+                                                @if (Model.TaxDetails != null)
+                                                {
+                                                    <tr class="subtotal" ng-repeat="tax in PosModel.TaxDetails.Taxes">
+                                                        <td></td>
+                                                        <td></td>
+                                                        <td class="textright">
+                                                            <span class="caption">{{tax.TaxName}} - excl.</span>
+                                                        </td>
+                                                        <td class="textright">
+                                                            <input type="hidden" value="{{tax.ExclusiveTaxAmount = (PosModel.TransactionDetails|sumByKey:'ExclusiveTaxAmount')}}" />
+                                                            <span>{{(tax.ExclusiveTaxAmount).toFixed(@decimalPlaces)}}</span>
+                                                        </td>
+                                                        <td colspan="2">
+                                                            <span class="caption">Incl.</span>
+                                                            <input type="hidden" value="{{tax.InclusiveTaxAmount = (PosModel.TransactionDetails|sumByKey:'InclusiveTaxAmount')}}" />
+                                                            <span>{{(tax.InclusiveTaxAmount).toFixed(@decimalPlaces)}}</span>
+                                                        </td>
+                                                    </tr>
+
+                                                    if (Model.TaxDetails.Taxes.Count > 1)
+                                                    {
+                                                        <tr class="subtotal">
+                                                            <td></td>
+                                                            <td colspan="3">
+                                                                <span class="caption">Total Taxes</span><span class="value">{{TotalTaxes.toFixed(@decimalPlaces)}}</span>
+                                                            </td>
+                                                            <td></td>
+                                                            <td></td>
+                                                        </tr>
+                                                    }
+                                                }
+
+                                                <tr class="subtotal">
+                                                    <td></td>
+                                                    <td colspan="3">
+                                                        <span class="caption">
+                                                            Discount:
+                                                            <input ng-disabled="PosModel.TotalDiscount > 0"
+                                                                   ng-blur="PosModel.TotalDiscount = (((PosModel.TotalDiscountPercentage * SubTotal / 100) * 100)/ 100).toFixed(@decimalPlaces)" ng-model="PosModel.TotalDiscountPercentage" class="discount percentage" type="text" value="{{PosModel.TotalDiscountPercentage.toFixed(@decimalPlaces)}}" ng-pattern="/^([0-9]{1,2}([\.][0-9]{1,2})?$|100([\.][0]{1,})?)$/">&nbsp;&nbsp;%
+                                                            <span>
+                                                                or
+                                                            </span>
+                                                            <input ng-blur="PosModel.TotalDiscountPercentage = ((PosModel.TotalDiscount / SubTotal * 100 *100) / 100).toFixed(@decimalPlaces)" ng-model="PosModel.TotalDiscount" class="discount" type="text" value="{{PosModel.TotalDiscount.toFixed(@decimalPlaces)}}" ng-pattern="/^[0-9]*\d{0,9}(\.?\d{1,3})?%?$/">
+                                                        </span>
+                                                        <span span class="cufon" style="color:red" ng-show="POSForm.DiscountByPercentage.$error.pattern">Please enter a valid percentage </span>
+                                                        <span span class="cufon" style="color:red" ng-show="POSForm.DiscountByAmount.$error.pattern">Please enter a valid amount </span>
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+                                                <!--tr class="subtotal">
+                                            <td></td>
+                                            <td colspan="3"><span class="caption">Delivery Charge</span><span class="value">{{PosModel.DeliveryCharge.toFixed(@decimalPlaces)}}</span></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr-->
+
+                                                <tr class="grandtotal">
+                                                    <td>
+                                                        @*<span class="caption">PaymentMethod :</span><span class="value">{{PosModel.PaymentMethod}}</span>*@
+                                                    </td>
+                                                    <td colspan="3">
+                                                        <input type="hidden" value="{{ ExclusiveTaxes = (PosModel.TaxDetails.Taxes|sumByKey:'ExclusiveTaxAmount')}}" />
+                                                        <input type="hidden" value="{{PosModel.Payment.Amount = GrandTotal = ((SubTotal - PosModel.TotalDiscount - PosModel.TotalProductDiscount - PosModel.DeliveryCharge) + ExclusiveTaxes)}}" />
+                                                        <span class="caption">Total</span><span class="value"> {{GrandTotal.toFixed(@decimalPlaces)}} </span>
+                                                    </td>
+                                                    <td></td>
+                                                    <td></td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="fullwidth alignleft paddingbtm10">
+                                        <div class="pull-left">
+                                            <button class="button-orange button" ng-click="CloseWindow()">
+                                                <i class="fa fa-times"></i> Cancel
+                                            </button>
+                                            <button class="button-green button" ng-disabled="IsParkedDisabled();" ng-click="UpdateStatus(1)">Save Draft</button>
+                                        </div>
+                                        <div class="pull-right">
+                                            <div ng- class="button-green popupbtn button" data-popup-type="PaymentMethodSummary" ng-click="GlobalPopupWindow($event);">
+                                                <a href="">Payment Summary</a>
+                                            </div>
+
+                                            <div ng-if="PosModel.HeadIID > 0" ng- class="button-green popupbtn alignright" ng-click="Print(PosModel.HeadIID,true);">
+                                                <a href="">Print</a>
+                                            </div>
+
+                                            <div ng- class="button-green popupbtn button" data-popup-type="payment" ng-click="VerifyTransactionAndLoadPayment(false,$event);">
+                                                <a href="">Pay</a>
+                                            </div>
+                                            <div ng- class="button-green paybtn button popupbtn" data-popup-type="payment" ng-click="VerifyTransactionAndLoadPayment(true,$event );">
+                                                <a href="">Pay & Print</a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="alignleft col-xs-6 POSListingItems">
+                                    <div class="categorylisting listColumn" ng-if="Categories.length > 0">
+                                        <div class="posmenu">
+                                            <ul>
+                                                <li ng-repeat="cat in Categories" ng-click="ReloadProduct(cat)">
+                                                    <span class="pos-quickIcons twocolumnicon">
+                                                        <span class="editIcon" ng-click="EditCategory($event,cat);"><i class="fa fa-edit fa-lg" aria-hidden="true" title="Edit Category"></i></span>
+                                                        <span class="favIcon" ng-click="SetOrUnSetFavouriteCategory($event,prd);"><i class="fa fa-bookmark fa-lg" aria-hidden="true" title="Favourites"></i></span>
+                                                    </span>
+                                                    <span><img src="/Images/POS.png" /><span ng-bind="cat.CategoryName.Text"></span></span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="ProductItems listColumn">
+                                        <div class="productlist" style="display:block">
+                                            <ul>
+                                                <li ng-repeat="prd in Products" ng-click="AddProcuctItem(prd)">
+                                                    <span class="posItems">
+                                                        <span class="pos-quickIcons threecolumnicon">
+                                                            <span class="editIcon" data-popup-type="dynamicPopover" ng-click="EditProduct($event,prd);"><i class="fa fa-edit fa-lg" aria-hidden="true" title="Edit Product"></i></span>
+                                                            <span class="favIcon" ng-click="SetOrUnSetFavouriteProduct($event,prd);"><i class="fa fa-bookmark fa-lg" aria-hidden="true" title="Favourites"></i></span>
+                                                            <span data-popup-type="productprice" ng-click="EditProductPrice($event,prd);"><i class="fa fa-tags fa-lg" aria-hidden="true" title="Price"></i></span>
+                                                        </span>
+                                                        <span ng-bind="prd.ProductSKU"></span>
+                                                    </span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div><!--toggle-wrapper-->
+                        @await Html.PartialAsync("CreateCustomer")
+
+                        @await Html.PartialAsync("POSComment")
+
+                        @*@await Html.PartialAsync("Payment")*@
+
+                    </div><!--pagecontent-->
+                    <div class="pagecontent innertab retrieveSale" style="display: none;">
+                        @await Html.PartialAsync("_RecentSales")
+                    </div>
+                    @*<div class="pagecontent innertab registerClose">
+                    @await Html.PartialAsync("_CloseRegister")
+                </div>*@
+                </div>
+            </form>
+
+            @await Html.PartialAsync("~/Views/Shared/_InfoMessage.cshtml")
+
+            @*<div class="popup" data-popup-type="quickCustomer">
+            <div class="popup-wrap">
+                <span class="close">X</span>
+                @await Html.PartialAsync("_QuickCustomer")
+            </div>
+        </div>add-np-section*@
+
+
+            <div class="popup payment titleText" data-popup-type="payment">
+                <div class="popup-wrap">
+                    @await Html.PartialAsync("Payment")
+                </div>
+            </div>
+
+            <div class="popup payment titleText" data-popup-type="PaymentMethodSummary">
+                <div class="popup-wrap">
+                    @await Html.PartialAsync("_PaymentMethodSummary")
+                </div>
+            </div>
+            <div class="dynamicPopoverOverlay"></div>
+            <div class="popup pagePopup" data-popup-type="dynamicPopover" id="dynamicPopover">
+                <div class="popup-wrap">
+                    <span class="close">X</span>
+                    <div id="dynamicPopoverContainer"></div>
+                </div>
+            </div><!--add-np-section-->
+
+            <div class="popup payment titleText" data-popup-type="PriceSelection">
+                <div class="popup-wrap">
+                    <span class="close">X</span>
+                    <div class="popup-title">Price Selection</div>
+
+                    <div class="listColumn">
+                        <div class="priceselectionlists">
+                            <ul>
+                                <li ng-repeat="price in ProductPrice" ng-click="SetProductPrice($event, price)">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <span style="display: flex;">
+                                                    <span ng-click="EditCategory($event,price);"><i class="fa fa-edit fa-lg" aria-hidden="true" title="Edit Product"></i></span>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <span>
+                                                    <img src="/Images/POS.png" />
+                                                    <span ng-bind="price.PriceDescription"></span>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Product Price :
+                                                <span ng-bind="price.Price"></span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                Discounted Price :
+                                                <span ng-bind="price.Discount"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="popup productprice titleText" data-popup-type="productprice">
+                <div class="popup-wrap">
+                    <span class="close">X</span>
+                    <div class="popup-title">Product Price</div>
+
+                    <div id="divProductPrice" class="fullwidth alignleft paddingbtm10">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <script>
+            $(function () {
+                $('.popup.productprice').draggable({
+                    handle: '.popup-title',
+                    containment: ".main-body"
+                });
+
+                $('body').on('click', function (e) {
+                    if ($(e.target).closest('.quickviewpanel').length === 0 && $(e.target).closest('ul.squick-view li').length === 0 && $(e.target).closest('.detailviews').length === 0) {
+                        $('.quickviewpanel').removeClass('slide');
+                        $('ul.squick-view li').removeClass('active');
+                    }
+                });
+
+				$('#CreatePointOfSale').on('click', '.menuinnertab li', function (e) {
+					var menuattr = $(this).attr('data-target');
+					$('.menuinnertab li', '#CreatePointOfSale').removeClass('active');
+					$(this).addClass('active');
+					$('.innertab', '#CreatePointOfSale').slideUp('fast');
+					$('.innertab.' + menuattr, '#CreatePointOfSale').slideDown('fast');
+                });
+            });
+            </script>
+
+        </div>
+
+    @await Html.PartialAsync("_ShortCutKeyPanel")
+</div>

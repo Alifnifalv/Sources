@@ -1,0 +1,180 @@
+﻿@model Eduegate.Web.Library.ViewModels.CRUDViewModel
+@using Eduegate.Framework.Mvc.Attributes
+@using System.Reflection;
+@using Eduegate.Frameworks.Mvc.Attributes;
+
+@{
+    var container = (ContainerTypeAttribute)Model.ViewModel.GetType().GetCustomAttribute(typeof(ContainerTypeAttribute));
+
+    var roles = (ViewModelRoleAttribute)Model.ViewModel.GetType().GetCustomAttributes(typeof(ViewModelRoleAttribute)).FirstOrDefault();
+
+    if (roles != null)
+    {
+        if (!Model.UserRoles.Any(a => roles.UserRoles.Contains(a.Role)))
+        {
+            return;
+        }
+    }
+
+    var claimType = (HasClaimAttribute)Model.ViewModel.GetType().GetCustomAttributes(typeof(HasClaimAttribute)).FirstOrDefault();
+
+    if (claimType != null)
+    {
+        var allClaims = (ViewBag.Claims as List<Eduegate.Web.Library.ViewModels.Security.ClaimViewModel>);
+        var allClaimNames = allClaims.Select(a => a.ResourceName).ToList();
+        if (!claimType.HasAccess(allClaimNames))
+        {
+            return;
+        }
+    }
+
+    ViewBag.FieldSettings = Model.FieldSettings;
+}
+
+<div class="panel-group" id="crudaccordion" style="width:100%">
+
+    @if (Model != null)
+    {
+        var title = (System.ComponentModel.DisplayNameAttribute)Model.ViewModel.GetType().GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+
+        if (container != null)
+        {
+            <div class="panel-body panel">
+                <div class="page_subtitles">
+                    <h4>
+                        <a role="button" aria-expanded="false" data-toggle="collapse" data-parent="#crudaccordion" data-target="#@(container.ContainerName)" navbarid="_TABINDEX_0">
+                            General
+                            <span class="toggle-arrow"><i class="fa  fa fa-angle-double-down"></i></span>
+                        </a>
+                    </h4>
+                </div>
+
+                <div class="panel-collapse collapse show" id="@container.ContainerName" refnavbarid="_TABINDEX_0">
+                    <div class="panel-body form-horizontal">
+                        <div @(Html.Raw(!string.IsNullOrEmpty(container.Attributes) ? container.Attributes : "class='container-left alignleft'"))>
+                            @await Html.PartialAsync("_BuildViewField", Model.ViewModel)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            var css = (CssAttribute)Model.ViewModel.GetType().GetCustomAttribute(typeof(CssAttribute));
+            <div class="panel-group">
+                <div class="panel-body form-horizontal">
+                    <div class="page_subtitles">
+                        <h4>
+                            <a data-bs-toggle="collapse" role="button" aria-expanded="false">
+                                General
+                            </a>
+                        </h4>
+                    </div>
+                    <div class="@(css == null ? "container-left alignleft" : css.Css)">
+                        @await Html.PartialAsync("_BuildViewField", Model.ViewModel)
+                    </div>
+                </div>
+            </div>
+        }
+
+        var props = Model.ViewModel.GetType().GetProperties().Where(prop => Attribute.IsDefined(prop, typeof(ContainerTypeAttribute)));
+        int count = 1;
+
+        foreach (var prop in props)
+        {
+            var containerAttribute = (ContainerTypeAttribute)prop.GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+            var lazyLoadAttribute = (LazyLoadAttribute)prop.GetCustomAttributes(typeof(LazyLoadAttribute)).FirstOrDefault();
+            roles = (ViewModelRoleAttribute)prop.GetCustomAttributes(typeof(ViewModelRoleAttribute)).FirstOrDefault();
+            title = (System.ComponentModel.DisplayNameAttribute)prop.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+
+            if (roles != null)
+            {
+                if (!Model.UserRoles.Any(a => roles.UserRoles.Contains(a.Role)))
+                {
+                    continue;
+                }
+            }
+
+            claimType = (HasClaimAttribute)prop.GetCustomAttributes(typeof(HasClaimAttribute)).FirstOrDefault();
+
+            if (claimType != null)
+            {
+                List<Eduegate.Web.Library.ViewModels.Security.ClaimViewModel> allClaims = (ViewBag.Claims as List<Eduegate.Web.Library.ViewModels.Security.ClaimViewModel>);
+                var allClaimNames = allClaims.Select(a => a.ResourceName).ToList();
+                if (!claimType.HasAccess(allClaimNames))
+                {
+                    continue;
+                }
+            }
+
+            <div class="panel-body panel">
+                <div class="page_subtitles">
+                    <h4>
+                        <a class="collapse" role="button" aria-expanded="false" data-toggle="collapse" data-parent="#crudaccordion" data-target="#@(containerAttribute.ContainerName + "_TABINDEX_" + count)" navbarid=@("_TABINDEX_" + count)>
+                            @title.DisplayName
+                            <span class="toggle-arrow"><i class="fa  fa fa-angle-double-down"></i></span>
+                        </a>
+                    </h4>
+                </div>
+                @if (typeof(System.Collections.IEnumerable).IsAssignableFrom(prop.PropertyType))
+                {
+                    var modelCollection = prop.GetValue(Model.ViewModel, null) as System.Collections.IList;
+
+                    <div class="panel-collapse collapse show" id="@(containerAttribute.ContainerName + "_TABINDEX_" + count)" refnavbarid="_TABINDEX_@count">
+                        <div class="panel-body">
+                            @{
+                                await Html.RenderPartialAsync("_BuildViewFields", modelCollection.Cast<Eduegate.Web.Library.ViewModels.BaseMasterViewModel>().ToList());
+
+                                if (modelCollection.Count > 0)
+                                {
+                                    List<PropertyInfo> innerProperty = modelCollection[0].GetType().GetProperties().Where(p => Attribute.IsDefined(p, typeof(ContainerTypeAttribute))).ToList(); //Collection inside collection
+
+                                    if (innerProperty.Count > 0)
+                                    {
+                                        foreach (var p in innerProperty)
+                                        {
+                                            var innerContainer = (ContainerTypeAttribute)p.GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+
+                                            if (typeof(System.Collections.IEnumerable).IsAssignableFrom(p.PropertyType))
+                                            {
+                                                var innerCollection = p.GetValue(modelCollection[0], null) as System.Collections.IList;
+                                                await Html.RenderPartialAsync("_BuildViewFields", innerCollection.Cast<Eduegate.Web.Library.ViewModels.BaseMasterViewModel>().ToList());
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+
+                    <div class="panel-collapse collapse show" id="@(containerAttribute.ContainerName + "_TABINDEX_" + count)" refnavbarid="_TABINDEX_@count">
+                        <div class="panel-body form-horizontal">
+
+                            @if (lazyLoadAttribute != null)
+                            {
+                                if (lazyLoadAttribute.ViewUrl != "" && lazyLoadAttribute.ViewUrl != null)
+                                {
+                                    var splittedUrl = lazyLoadAttribute.ViewUrl.Split('/');
+                                    //@Html.Action(splittedUrl[1], splittedUrl[0]);
+                                }
+                            }
+                            else
+                            {
+                                <div @(Html.Raw(container != null && !string.IsNullOrEmpty(container.Attributes) ? container.Attributes : "class='container-left alignleft'"))>
+                                    @await Html.PartialAsync("_BuildViewField", prop.GetValue(Model.ViewModel, null))
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            count++;
+        }
+        <div class="container-right options alignleft">
+            <div id="PropertyType"></div>
+        </div>
+    }
+</div>

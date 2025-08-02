@@ -1,0 +1,162 @@
+﻿@{
+    ViewData["Title"] = "Bid Opening";
+    var settingBL = new Eduegate.Domain.Setting.SettingBL(null);
+    var clientName = settingBL.GetSettingValue<string>("CLIENTINSTANCE");
+    var clientFullName = settingBL.GetSettingValue<string>("CLIENT_FULL_NAME");
+}
+
+<!DOCTYPE html>
+<html ng-app="Eduegate.Vendor.Portal">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="~/Content/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/Content/font-awesome.css" />
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/Site.css" />
+    <link rel="stylesheet" href="~/Content/jquery-ui.css">
+
+    <link href="~/Content/dashboard/dashboard.css" rel="stylesheet" />
+    <link href="~/Content/dashboard/docs.css" rel="stylesheet" />
+    <link href="~/Content/dashboard/style.bundle.css" rel="stylesheet" />
+    <link href="~/Content/plugins.bundle.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/Style.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+
+    <!-- Scripts -->
+    <script src="~/Scripts/jquery-3.4.1.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery-ui.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.ui.touch-punch.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.prettyPhoto.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.custom.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.waypoints.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.signature.js" asp-append-version="true"></script>
+    <script src="~/Scripts/moment.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-route.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-animate.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-sanitize.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-moment.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-filter.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/ng-map.min.js" asp-append-version="true"></script>
+    <script src="~/app/Services/app.js" asp-append-version="true"></script>
+
+    <script src="~/app/Directives/Datetimepicker.js?v=1.0"></script>
+
+    <script src="~/app/Services/commonService.js" asp-append-version="true"></script>
+    <script src="~/app/schedule.js" asp-append-version="true"></script>
+    <script src="~/app/util.js" asp-append-version="true"></script>
+    <script src="~/Scripts/bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/respond.js" asp-append-version="true"></script>
+    <script src="~/Scripts/JSLINQ.js" asp-append-version="true"></script>
+    <script src="~/Scripts/Custom.js" asp-append-version="true"></script>
+    <script src="~/app/utility.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/BidOpeningController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/BidController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/DataListController.js" asp-append-version="true"></script>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700,900|Ubuntu:400,500,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700,900|Ubuntu:400,500,700" rel="stylesheet">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+    <div style="text-align:center;" class="pt-1">
+        @await Html.PartialAsync("_ToastMessage")
+    </div>
+    <div id="layout" ng-controller="BidOpeningController" ng-init="Init()">
+        <div class="row pb-5 pt-3 sticky-div">
+            <div class="col-3"></div>
+            <div class="col"></div>
+            <div class="col-3 pe-20 me-5 d-flex justify-content-end">
+                <div class="profileTabHeader p-2">
+                    <svg class="profilePhoto" width="41" height="41" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <circle id="Ellipse" cx="20.5" cy="20.5" r="20.5" fill="url(#pattern0_145_139)" />
+                        <defs>
+                            <pattern id="pattern0_145_139" patternContentUnits="objectBoundingBox" width="1" height="1">
+                                <use xlink:href="#image0_145_139" transform="translate(-0.00251256) scale(0.00502513)" />
+                            </pattern>
+                            <image id="image0_145_139" width="200" height="199" xlink:href="data:image/png;base64,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" />
+                        </defs>
+                    </svg>
+                    <div class="profileInfo">
+                        <label class="pt-4">{{BidUserDetails.UserID}}</label>
+                        <p class="headerMail">{{BidUserDetails.EmailID}}</p>
+                    </div>
+                    <ul style="list-style-type: none;" class="pt-3">
+                        <li class="dropdown">
+                            <a class="nav-link" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="8" viewBox="0 0 16 8" fill="none">
+                                    <path d="M15.8045 0.180451C15.5439 -0.0601503 15.1225 -0.0601503 14.8619 0.180451L7.99998 6.51448L1.13812 0.180451C0.877474 -0.0601503 0.456139 -0.0601503 0.195488 0.180451C-0.0651627 0.421052 -0.0651627 0.809977 0.195488 1.05058L7.52868 7.81969C7.65868 7.93968 7.82933 8 8.00001 8C8.1707 8 8.34135 7.93968 8.47135 7.81969L15.8045 1.05058C16.0652 0.809977 16.0652 0.421052 15.8045 0.180451Z" fill="#515151" />
+                                </svg>
+                            </a>
+                            <ul class="dropdown-menu profileDropdown">
+                                <li class="m-3">
+                                    <a class="dropdown-item" href="~/bid/BidLogin" style="color: #8E3131;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="15" viewBox="0 0 12 15" fill="none">
+                                            <path d="M8.97875 4.87418C9.21488 4.87418 9.40631 4.68275 9.40631 4.44662V1.28268C9.40631 0.57541 8.8309 0 8.12363 0H1.28268C0.57541 0 0 0.57541 0 1.28268V13.3114C0 14.0186 0.57541 14.594 1.28268 14.594H8.12363C8.8309 14.594 9.40631 14.0186 9.40631 13.3114V10.1474C9.40631 9.91129 9.21491 9.71986 8.97875 9.71986C8.74262 9.71986 8.55119 9.91129 8.55119 10.1474V13.3114C8.55119 13.5471 8.35939 13.7389 8.12363 13.7389H1.28268C1.04692 13.7389 0.855119 13.5471 0.855119 13.3114V1.28268C0.855119 1.04692 1.04692 0.855119 1.28268 0.855119H8.12363C8.35939 0.855119 8.55119 1.04692 8.55119 1.28268V4.44662C8.55119 4.68275 8.74262 4.87418 8.97875 4.87418Z" fill="#8E3131" />
+                                            <path d="M8.82444 6.86938H3.63435C3.39822 6.86938 3.20679 7.06082 3.20679 7.29694C3.20679 7.53307 3.39822 7.7245 3.63435 7.7245H8.82444C8.96242 7.55439 9.07222 7.49037 9.3466 7.29694C9.07248 7.10366 8.96211 7.03907 8.82444 6.86938Z" fill="#8E3131" />
+                                            <path d="M11.819 6.9474L10.0682 5.71315C9.87523 5.57708 9.60852 5.62328 9.47244 5.81625C9.33639 6.00925 9.38254 6.27599 9.57554 6.41207L10.8306 7.29686L9.57554 8.18168C9.38254 8.31773 9.33636 8.5845 9.47244 8.7775C9.60857 8.97059 9.87534 9.01662 10.0682 8.8806L11.819 7.64635C12.06 7.47641 12.0607 7.11777 11.819 6.9474Z" fill="#8E3131" />
+                                        </svg> Log out
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar">
+            @* <img class="vendorIcon" src="~/Images/bid.png" /> *@
+            <div class="pt-10">
+                <a href="~/bid/BidHome" class="menu-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house-door svgMenulink" viewBox="0 0 16 16">
+                        <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4z" />
+                    </svg> &ensp; Dashboard
+                </a>
+                @* <a href="~/home/DataListView?listName=BidTenderList" class="menu-link"> *@
+                <a href="~/bid/BidUsersList" class="menu-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-lines-fill svgMenulink" viewBox="0 0 16 16">
+                        <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z" />
+                    </svg>
+                    &ensp; Tender List
+                </a>
+                <a href="~/home/DataListView?listName=BidApprovalList" class="menu-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-boxes svgMenulink" viewBox="0 0 16 16">
+                        <path d="M7.752.066a.5.5 0 0 1 .496 0l3.75 2.143a.5.5 0 0 1 .252.434v3.995l3.498 2A.5.5 0 0 1 16 9.07v4.286a.5.5 0 0 1-.252.434l-3.75 2.143a.5.5 0 0 1-.496 0l-3.502-2-3.502 2.001a.5.5 0 0 1-.496 0l-3.75-2.143A.5.5 0 0 1 0 13.357V9.071a.5.5 0 0 1 .252-.434L3.75 6.638V2.643a.5.5 0 0 1 .252-.434zM4.25 7.504 1.508 9.071l2.742 1.567 2.742-1.567zM7.5 9.933l-2.75 1.571v3.134l2.75-1.571zm1 3.134 2.75 1.571v-3.134L8.5 9.933zm.508-3.996 2.742 1.567 2.742-1.567-2.742-1.567zm2.242-2.433V3.504L8.5 5.076V8.21zM7.5 8.21V5.076L4.75 3.504v3.134zM5.258 2.643 8 4.21l2.742-1.567L8 1.076zM15 9.933l-2.75 1.571v3.134L15 13.067zM3.75 14.638v-3.134L1 9.933v3.134z" />
+                    </svg>
+                    &ensp; Approved Bids
+                </a>
+                <a href="~/home/DataListView?listName=AwardedBidList" class="menu-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-award-fill svgMenulink" viewBox="0 0 16 16">
+                            <path d="m8 0 1.669.864 1.858.282.842 1.68 1.337 1.32L13.4 6l.306 1.854-1.337 1.32-.842 1.68-1.858.282L8 12l-1.669-.864-1.858-.282-.842-1.68-1.337-1.32L2.6 6l-.306-1.854 1.337-1.32.842-1.68L6.331.864z" />
+                            <path d="M4 11.794V16l4-1 4 1v-4.206l-2.018.306L8 13.126 6.018 12.1z" />
+                        </svg>
+                    &ensp; Awarded Bids
+                </a>
+                <div style="padding-top: 30rem !important;">
+                    <a href="~/bid/BidLogin" class="menu-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right svgMenulink" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
+                            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+                        </svg>
+                        &ensp; Log out
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            @RenderBody()
+        </div>
+        <div class="footer">
+            &copy; @clientFullName
+        </div>
+    </div>
+</body>
+</html>

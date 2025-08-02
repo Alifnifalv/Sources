@@ -1,0 +1,38 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Eduegate.Domain.Entity.Models
+{
+    [Table("ViewColumns", Schema = "setting")]
+    public partial class ViewColumn
+    {
+        public ViewColumn()
+        {
+            this.UserViewColumnMaps = new List<UserViewColumnMap>();
+            IsExpression = false;
+            ViewColumnCultureDatas = new HashSet<ViewColumnCultureData>();
+        }
+
+        [Key]
+        public long ViewColumnID { get; set; }
+        public Nullable<long> ViewID { get; set; }
+        public string ColumnName { get; set; }
+        public string DataType { get; set; }
+        public string PhysicalColumnName { get; set; }
+        public Nullable<bool> IsDefault { get; set; }
+        public Nullable<bool> IsExcludeForExport { get; set; }
+        public Nullable<bool> IsVisible { get; set; }
+        public Nullable<bool> IsSortable { get; set; }
+        public Nullable<int> SortOrder { get; set; }
+        public Nullable<bool> IsExpression { get; set; }
+        public string Expression { get; set; }
+        public string FilterValue { get; set; }
+
+        //public Nullable<bool> IsQuickSearchable { get; set; }
+        public virtual ICollection<UserViewColumnMap> UserViewColumnMaps { get; set; }
+        public virtual ICollection<ViewColumnCultureData> ViewColumnCultureDatas { get; set; }
+        public virtual View View { get; set; }
+    }
+}

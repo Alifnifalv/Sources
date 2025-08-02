@@ -1,0 +1,132 @@
+﻿@using Eduegate.Services.Contracts.Enums
+
+@{
+    Layout = null;
+    var viewIID = Eduegate.Services.Contracts.Enums.SearchView.JobProfile;
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+
+}
+
+<div id="@windowName" class="summary-wrap" ng-controller="SummaryViewController" ng-init="SummaryViewInit('@windowName', '@viewIID', '@ViewBag.IID','@DynamicViews.JobProfile');">
+    <div class="preload-overlay" style="display:block;">
+        <div class="preloader">
+            <img src="~/Images/preloader.gif" width="32" height="32" alt="Loading" />
+            <div class="loadertextwrap">
+                <div id="Loadertext">
+                    <div id="fadetext_1" class="loadingtext">L</div>
+                    <div id="fadetext_2" class="loadingtext">o</div>
+                    <div id="fadetext_3" class="loadingtext">a</div>
+                    <div id="fadetext_4" class="loadingtext">d</div>
+                    <div id="fadetext_5" class="loadingtext">i</div>
+                    <div id="fadetext_6" class="loadingtext">n</div>
+                    <div id="fadetext_7" class="loadingtext">g</div>
+                    <div id="fadetext_8" class="loadingtext">.</div>
+                    <div id="fadetext_9" class="loadingtext">.</div>
+                    <div id="fadetext_10" class="loadingtext">.</div>
+                </div>
+                <span class="canceloperation" ng-click="CloseSummaryPanel($event);">Cancel</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="summary-header">
+    <div class="summary-controls">
+        @*<ul class="summary-tab">
+                <li class="summary-tab-list active" title="Product Detail" content-tab="productdetail"><i class="fa fa-file-text"></i></li>
+                    <li class="summary-tab-list" title="Sales" content-tab="sales"><i class="fa fa-bar-chart"></i></li>
+                    <li class="summary-tab-list" title="Purchase" content-tab="purchase"><i class="fa fa-shopping-cart"></i></li>
+                    <li class="summary-tab-list" title="Inventory" content-tab="inventory"><i class="fa fa-cube"></i></li>
+                    <li class="summary-tab-list" title="Operation" content-tab="operation"><i class="fa fa-cogs"></i></li>
+                    <li class="summary-tab-list" title="Accounts" content-tab="accounts"><i class="fa fa-list-alt"></i></li>
+            </ul>*@
+            <div class="alignright panelcontrols">
+                <span class="remove" ng-click="CloseSummaryPanel($event);">x</span>
+                @*<span class="minmax"></span>*@
+            </div>
+        </div>
+    </div>
+    <div class="quickviewwrap">
+        <div class="summarytab-content show">
+            <h4>Job Profile Details</h4>
+            <div class="summary-tab-inner">
+                <div class="summary-content">
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">ID:</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.JobProfile).ID"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Email</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.JobProfile).Email"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Contact No</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.JobProfile).ContactNo"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Country Of Residence</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.JobProfile).CountryOfResidence"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Years Of Experience</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.JobProfile).YearsOfExperience"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Position Applied For</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.JobProfile).PositionAppliedFor"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Nationality</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.JobProfile).Nationality"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Date Of Birth</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.JobProfile).DateOfBirth"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Gender</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.JobProfile).Gender"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Qualification</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.JobProfile).Qualification"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Attachment</span>
+                            <span class="link-content">
+                                <a target="_blank" href="http://168.187.102.242:9094/media/{{ViewModels.@(DynamicViews.JobProfile).CV}}/">Download</a>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        $('#@windowName .summary-panel .remove').on('click', function () {
+            $('.pagecontent', '#@windowName').removeClass('summaryview');
+        });
+
+        $('#@windowName .summary-toggle .sum_toggleheader').on('click', function () {
+            $(this).parent().toggleClass('show');
+
+            if ($(this).parent().hasClass('show')) {
+                $(this).parent().addClass('show');
+                $(this).parent().find('.sum_togglecontent').slideDown('fast');
+            }
+            else {
+                $(this).parent().removeClass('show');
+                $(this).parent().find('.sum_togglecontent').slideUp('fast');
+            }
+        });
+    });
+</script>

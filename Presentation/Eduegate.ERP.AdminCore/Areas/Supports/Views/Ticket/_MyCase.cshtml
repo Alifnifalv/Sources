@@ -1,0 +1,41 @@
+﻿@{
+    bool isSortableList = false;
+    string parameters = null;
+
+    var metadata = await Eduegate.Services.Client.Factory.ClientFactory.SearchServiceClient(ViewBag.CallContext).SearchList((Eduegate.Services.Contracts.Enums.SearchView)(int)Eduegate.Infrastructure.Enums.SearchView.MyCaseAdvancedSearch);
+    var vm = new Eduegate.Web.Library.ViewModels.SearchListViewModel
+            {
+                ControllerName = "Frameworks/Search",
+                ViewName = Eduegate.Infrastructure.Enums.SearchView.MyCaseAdvancedSearch,
+                ViewTitle = string.IsNullOrEmpty(metadata.ViewTitle) ? metadata.ViewName : metadata.ViewTitle,
+                HeaderList = metadata.Columns,
+                SummaryHeaderList = metadata.SummaryColumns,
+                SortColumns = metadata.SortColumns,
+                UserViews = metadata.UserViews,
+                IsMultilineEnabled = metadata.MultilineEnabled,
+                IsCategoryColumnEnabled = metadata.RowCategoryEnabled,
+                FilterColumns = metadata.QuickFilterColumns,
+                HasFilters = metadata.HasFilters,
+                UserValues = metadata.UserValues,
+                EnabledSortableGrid = isSortableList,
+                ViewFullPath = metadata.ViewFullPath,
+                ViewActions = metadata.ViewActions,
+
+                HasChild = metadata.HasChild,
+                ChildView = metadata.ChildView,
+                ChildFilterField = metadata.ChildFilterField,
+                ActualControllerName = metadata.ControllerName,
+                IsRowClickForMultiSelect = metadata.IsRowClickForMultiSelect,
+                IsMasterDetail = metadata.IsMasterDetail,
+                IsEditableLink = metadata.IsEditable,
+                IsGenericCRUDSave = metadata.IsGenericCRUDSave,
+                IsReloadSummarySmartViewAlways = metadata.IsReloadSummarySmartViewAlways,
+                JsControllerName = metadata.JsControllerName,
+                RuntimeFilter = parameters
+            };
+}
+
+<div>
+    @await Html.PartialAsync("~/Areas/Frameworks/Views/Shared/_SummaryHeader.cshtml", vm)
+    @await Html.PartialAsync("~/Areas/Frameworks/Views/Shared/_List.cshtml", vm)
+</div>

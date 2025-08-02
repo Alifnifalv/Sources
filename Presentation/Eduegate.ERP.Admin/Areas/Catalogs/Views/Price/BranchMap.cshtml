@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.Title = "BranchMap";
+}
+
+<div class="pos-options">
+    <div class="order-details">
+        <div>
+            <label>Branches</label>
+            <span id="spanBranchName" class="inputwrap">
+                <ui-select ng-model="BranchMaps" theme="select2" style="width:400px;height:26px;" ng-change="SelectItemFromSelect2Ctrl(BranchMaps, $select, 'branch');">
+                    <ui-select-match placeholder="Select Branch">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="branch in BranchMaps| filter:$select.search">{{branch.Value}}</ui-select-choices>
+                </ui-select>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="panel-body">
+    <table class="listing tablegrid" border="0">
+        <thead>
+            <tr>
+                <th class="textleft">Branch ID</th>
+                <th class="textleft">Branch Name</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr class="toggleparentrow" ng-repeat="branch in ProductPriceModel.BranchMaps">
+                <td colspan="3" class="nopadding">
+                    <table cellpadding="0" cellspacing="0" class="listing tablegrid">
+                        <tr>
+                            <td ng-model="branch.BranchID" class="textleft">{{branch.BranchID}}</td>
+                            <td ng-model="branch.BranchName" class="textleft">{{branch.BranchName}}</td>
+                            <td class="textright">
+                                <i class="fa fa-trash delete" title="delete" ng-click="RemoveProductPriceBranchMap($index);"></i>
+                            </td>
+                        </tr>
+                    </table>
+                 </td>
+            </tr>
+        </tbody>
+    </table>
+</div>

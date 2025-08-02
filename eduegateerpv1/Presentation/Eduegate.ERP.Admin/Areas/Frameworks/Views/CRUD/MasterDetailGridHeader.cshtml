@@ -1,0 +1,50 @@
+﻿@model Eduegate.Web.Library.ViewModels.Common.CRUDMasterDetailViewModel
+@using System.Reflection;
+@using Eduegate.Framework.Mvc.Attributes;
+@using Eduegate.Frameworks.Mvc.Attributes;
+@using Eduegate.Framework.Extensions;
+@using Eduegate.Framework.Mvc.HtmlHelpers;
+
+@{
+    var headerCount = 0;
+}
+<tr>
+    @foreach (var property in Model.DetailViewModel.GetType().GetProperties())
+    {
+        var title = (System.ComponentModel.DisplayNameAttribute)property.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+        var controlType = (ControlTypeAttribute)property.GetCustomAttributes(typeof(ControlTypeAttribute)).FirstOrDefault();
+
+        var claimType = (HasClaimAttribute)property.GetCustomAttributes(typeof(HasClaimAttribute)).FirstOrDefault();
+
+        if (claimType != null)
+        {
+            var allClaims = (ViewBag.Claims as List<Eduegate.Web.Library.ViewModels.Security.ClaimViewModel>);
+            var allClaimNames = allClaims.Select(a => a.ResourceName).ToList();
+            if (!claimType.HasAccess(allClaimNames))
+            {
+                continue;
+            }
+        }
+
+        if (controlType != null && controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.CheckBox)
+        {
+            headerCount++;
+            <th @Html.Raw((string.IsNullOrEmpty(controlType.Css) ? string.Empty : "class=\"" + controlType.Css + "\""))>
+                <label class="checkboxwrap">
+                    <input type="checkbox" class="zoomin" ng-model="CRUDModel.Model.SelectAll" ng-click="SelectAllHeader($event,CRUDModel.Model.DetailViewModel, CRUDModel.Model.SelectAll)" />
+                    <span class="checkboxinner">&nbsp;</span>
+                </label>
+            </th>
+        }
+        else if (title != null && controlType != null)
+        {
+            headerCount++;
+            <th @Html.Raw((string.IsNullOrEmpty(controlType.Css) ? string.Empty : "class=\"" + controlType.Css + "\""))  data-toggle="tooltip" data-placement="top" title="@title.DisplayName">@title.DisplayName</th>
+        }
+    }
+
+    @{
+        ViewContext.Controller.ViewBag.HeaderCount = headerCount;
+    }
+</tr>
+

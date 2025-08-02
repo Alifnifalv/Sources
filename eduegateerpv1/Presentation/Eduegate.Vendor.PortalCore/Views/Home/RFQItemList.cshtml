@@ -1,0 +1,104 @@
+﻿@model Eduegate.Web.Library.ViewModels.Inventory.Purchase.PurchaseQuotationMasterViewModel;
+
+@{
+    ViewData["Title"] = @Model.Screen;
+}
+<title>@Model.Screen</title>
+
+<div id="RFQItemList" ng-controller="VendorController" ng-init="Init('RFQItemList',@Model.TransactionHeadIID)">
+    <h3 class="pb-5">@Model.Screen</h3>
+    <div class="listPage p-5 mb-15">
+        <div class="pb-10 pt-5 px-15">
+            <h3>
+                <a href="/home/DataListView?listName=@Model.Window" title="back">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="20" viewBox="0 0 26 20" fill="none">
+                        <path d="M25 9.03287H2.96065L10.4803 1.54212C10.8335 1.18893 10.8335 0.617178 10.4803 0.264891C10.1271 -0.0882969 9.55537 -0.0882969 9.20308 0.264891L0.260836 9.20631C-0.0869455 9.55409 -0.0869455 10.1358 0.260836 10.4835L9.20316 19.4259C9.55634 19.779 10.1281 19.779 10.4804 19.4259C10.8336 19.0727 10.8336 18.5009 10.4804 18.1486L2.96065 10.8394H25C25.4986 10.8394 25.5 10.4985 25.5 10C25.5 9.50145 25.4985 9.03287 25 9.03287Z" fill="#515151" />
+                    </svg>
+                </a>
+            </h3>
+        </div>
+
+        <div class="pt-5 px-15 pb-10">
+            <span class="labelBadge">Transaction No : {{RFQ.TransactionHead.TransactionNo}}</span>
+            <span class="labelBadge">Validity : {{RFQ.TransactionHead.Validity}}</span>
+            <span class="labelBadge">Status : {{RFQ.TransactionHead.DocumentStatusName}}</span>
+        </div>
+        <div class="p-5 px-15">
+            <table class="table">
+                <thead class="tableHeader">
+                    <tr>
+                        <th><b>Sr No.</b></th>
+                        <th><b>Product</b></th>
+                        <th><b>Product Code</b></th>
+                        <th><b>Quantity</b></th>
+                        <th><b>Unit</b></th>
+                        <th><b>Price</b></th>
+                        <th><b>Amount</b></th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="item in RFQ.TransactionDetails" class="tableRow">
+                    <tr>
+                        <td>{{$index + 1}}</td>
+                        <td>{{item.ProductName}}</td>
+                        <td>{{item.ProductCode}}</td>
+                        <td>
+                            <input type="number" ng-model="item.Quantity" ng-change="QtyChanges(item)" min="0">
+                        </td>
+                        <td>{{item.Unit}}</td>
+                        <td>
+                            <input type="number" ng-model="item.UnitPrice" ng-change="PriceChanges(item)" min="0">
+                        </td>
+                        <td hidden>
+                            <input type="number" ng-model="item.Fraction" min="0">
+                        </td>
+                        <td hidden>
+                            <input type="number" ng-model="item.ForeignRate" min="0">
+                        </td>
+                        <td>
+                            <input type="number" ng-model="item.Amount" min="0" disabled style="font-weight:700;">
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr style="background-color:lightgrey;">
+                        <td></td>
+                        <td colspan="2" class="text-center"><b>Total</b></td>
+                        <td><b id="totalQuantity" ng-model="TotalQuantity">{{TotalQuantity}}</b></td>
+                        <td></td>
+                        <td><b id="totalPrice" ng-model="TotalPrice">{{TotalPrice}}</b></td>
+                        <td></td>
+                    </tr>
+                    <tr class="subtotal">
+                        <td colspan="5"></td>
+                        <td><b>Sub total :</b></td>
+                        <td style="text-align:left; font-size:16px;"><b>{{TotalAmount}}</b></td>
+                    </tr>
+
+                    <tr class="subtotal">
+                        <td colspan="3"></td>
+                        <td><b>Discount % : </b> </td>
+                        <td><input type="text" ng-model="RFQ.TransactionHead.DiscountPercentage" /></td>
+                        <td><b>or </b></td>
+                        <td><input type="text" ng-model="RFQ.TransactionHead.DiscountAmount" /></td>
+                    </tr>
+
+                    <tr class ="subtotal">
+                        <td colspan="5"></td>
+                        <td><b>Grant total :</b></td>
+                        <td style="text-align:left; font-size:16px;"><b>{{GrantTotal}}</b></td>
+                    </tr>
+
+                </tfoot>
+            </table>
+        </div>
+
+        <div ng-show="@Model.ShowSaveButtons">
+            <div style="text-align:right;" class="pb-15" ng-hide="HideSaveButtons">
+                <button id="saveBtn" type="button" class="reset" ng-click="SaveQuotation('Save',RFQ)">Save</button>
+                <button id="submitBtn" type="button" class="normal" ng-click="SaveQuotation('Submit',RFQ)">Submit</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+

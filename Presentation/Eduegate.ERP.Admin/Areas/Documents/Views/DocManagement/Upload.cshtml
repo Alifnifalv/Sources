@@ -1,0 +1,56 @@
+﻿@model Eduegate.Web.Library.ViewModels.UploadedFileDetailsViewModel
+@{
+    if (Request.IsAjaxRequest())
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div class="msg-comments comments" ng-controller="UploadFileController" ng-init="Init('@windowName', @Newtonsoft.Json.JsonConvert.SerializeObject(Model))" id="@windowName">
+    <div class="inner-title">Upload your files</div>
+
+    <div class="newcomnt-btns alignright">
+        <span class="alignleft"><a href="#" ng-click="CloseUploadWindow($event);"><i class="fa fa-close"></i></a></span>
+    </div>
+
+    <div id="dropDiv" class="dropDivClass">
+        <form id="fileuploaddropzone" ng-click="TriggerUploadFile($event);" method="post" action="~/Documents/DocManagement/UploadDocument" enctype="multipart/form-data" class="dropzone uploadWidgetForm"
+              style="height:80%">
+            <div class="dz-message dz-message-continer" data-dz-message>
+                <div class="dz-message-title">
+                    Drag and drop or browse your files into the grid.
+                </div>
+            </div>
+            <div class="fallback">
+                <input ng-model="uploadedDocuments" onchange="angular.element(this).scope().UploadDocumentFiles(this)" name="file" type="file" multiple />
+            </div>
+        </form>
+        <div class="imgsuploaded">
+            <h2>Preview</h2>
+            @*<input type="submit" value="Upload" class="upload-button button-blue">*@
+            <div class="upload-imgwrap dropzone-previews" id="previews">
+                <div class="dz-preview dz-processing dz-image-preview" ng-repeat="docInfo in uploadedDocInfo">
+                    <div>
+                        <input name="filename" />
+                        <select name="filetype"></select>
+                    </div>
+                    <div class="dz-image">
+
+                        <img data-dz-thumbnail="" ng-src="{{docInfo.FilePath}}" />
+                    </div>
+                    <a data-dz-remove="" class="dz-remove" ng-click="DeleteUploadedDcuments(docInfo);">Cancel upload</a>
+
+                </div>
+            </div>
+        </div>
+        <div style="float: right; padding-top: 10px;">
+            <input id="uploadCancel" type="button" style="width: 75px;" class="btn btn-primary privilege" value="Cancel" ng-click="CloseUploadWindow($event);"/>
+            <input id="postUploads" type="button" style="width: 75px;" ng-disabled='uploadedDocInfo.length > 0' class="btn btn-primary" value="Upload" 
+                   ng-click="SaveUploadedFiles($event);"/>
+        </div>
+    </div>
+
+</div>

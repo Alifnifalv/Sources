@@ -1,0 +1,281 @@
+﻿@{
+    ViewBag.Title = "Event Details";
+    Layout = "~/Views/Shared/_Layout_Event.cshtml";
+    var signupGroupID = ViewBag.SignUpGroupID;
+}
+
+
+<div ng-controller="SignupController" ng-init="Init('eventDetails', @signupGroupID)">
+
+    <!--begin::Wrapper container-->
+    <div class="app-container  container-xxl ">
+
+        <!--begin::Main-->
+        <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+            <!--begin::Content wrapper-->
+            <div class="d-flex flex-column flex-column-fluid">
+
+
+                <!--begin::Content-->
+                <div id="kt_app_content" class="app-content  flex-column-fluid ">
+
+                    <!--begin::Row-->
+                    <div class="row g-5 g-xl-8">
+                        <!--begin::Col-->
+                        <div class="col-xl-8 ps-xl-12">
+                            <!--begin::Engage widget 1-->
+                            <div class="card bgi-position-y-bottom bgi-position-x-end bgi-no-repeat bgi-size-cover min-h-250px bg-body mb-5 mb-xl-8" style="background-position: 100% 50px;background-size: 500px auto;background-image:url('/metronic8/demo34/assets/media/misc/city.png')" dir="ltr">
+                                <!--begin::Body-->
+                                <div class="card-body d-flex flex-column justify-content-center ps-lg-12">
+                                    <!--begin::Title-->
+                                    <h3 class="text-dark fs-2qx fw-bold mb-7">
+                                        <span ng-bind="SelectedSignUpDetail.SignupName"></span>
+                                        @* Third grade <br>
+                                        Online conference *@
+                                    </h3>
+                                    <!--end::Title-->
+                                    <!--begin::Action-->
+                                    <div class="m-0">
+                                        <a href="#" class="btn btn-dark fw-semibold px-6 py-3" data-bs-toggle="modal" data-bs-target="#kt_modal_create_app">Change sign up</a>
+                                    </div>
+                                    <!--begin::Action-->
+                                </div>
+                                <!--end::Body-->
+                            </div>
+                            <!--begin::Tables Widget 5-->
+                            <div class="card mb-5 mb-xl-8">
+                                <!--begin::Header-->
+                                <div class="card-header border-0 pt-5">
+                                    <h3 class="card-title align-items-start flex-column">
+                                        <span class="card-label fw-bold fs-3 mb-1">Available slots</span>
+
+                                        <span class="text-muted mt-1 fw-semibold fs-7" ng-if="FreeSlotCount == 0">Sorry no slotes avaliable</span>
+                                        <span class="text-muted mt-1 fw-semibold fs-7" ng-if="FreeSlotCount > 0">
+                                            <span ng-bind="FreeSlotCount"></span> free slotes avaliable
+                                        </span>
+                                    </h3>
+                                    <div class="card-toolbar">
+                                        <ul class="nav" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <a class="nav-link btn btn-sm btn-color-muted btn-active btn-active-secondary fw-bold px-4 me-1 active" data-bs-toggle="tab" href="#kt_table_widget_5_tab_1" aria-selected="true" role="tab">Table view</a>
+                                            </li>
+
+                                            @* <li class="nav-item" role="presentation">
+                                                <a class="nav-link btn btn-sm btn-color-muted btn-active btn-active-secondary fw-bold px-4 me-1" data-bs-toggle="tab" href="#kt_table_widget_5_tab_2" aria-selected="false" tabindex="-1" role="tab">Calendar view</a>
+                                            </li> *@
+                                        </ul>
+
+                                    </div>
+                                </div>
+                                <!--end::Header-->
+                                <!--begin::Body-->
+                                <div class="card-body py-3">
+                                    <div class="tab-content">
+
+                                        <!--begin::Tap pane-->
+                                        <div class="tab-pane fade show active" id="kt_table_widget_5_tab_1" role="tabpanel">
+                                            <!--begin::Table container-->
+                                            <div class="table-responsive">
+                                                <!--begin::Table-->
+                                                <script>
+                                                    $("#kt_datatable_complex_header").DataTable({
+                                                        "columnDefs": [{
+                                                            "visible": false,
+                                                            "targets": -1
+                                                        }]
+                                                    });
+                                                </script>
+                                                <table id="datatable_complex_header" class="table table-row-bordered table-column-bordered table-row-gray-200 align-start gs-0 gy-4">
+                                                    <!--begin::Table head-->
+                                                    <thead>
+                                                        <tr class="fw-bold fs-6 text-gray-800 px-7">
+                                                            <th rowspan="2" class="align-middle border-bottom border-end w-200px">Faculty</th>
+                                                            <th colspan="3" class="border-bottom">Available slots</th>
+                                                        </tr>
+                                                        <tr class="fw-bold fs-6 text-gray-800 px-7">
+                                                            <th class="ps-2 text-end">Day</th>
+                                                            <th class="text-end">Time(EDT)</th>
+                                                            <th class="text-end">Availability</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <!--end::Table head-->
+                                                    <!--begin::Table body-->
+                                                    <tbody ng-repeat="slotMap in SelectedSignUpDetail.SignupSlotMaps">
+                                                        <tr>
+                                                            <td rowspan="{{slotMap.TimeMapsCount+1}}">
+                                                                <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">
+                                                                    <span ng-bind="SelectedSignUpDetail.OrganizerEmployeeName"></span>
+                                                                </a>
+                                                                @* <span class="text-muted fw-semibold d-block">Subject</span> *@
+                                                            </td>
+                                                            <td rowspan="{{slotMap.TimeMapsCount+1}}" class="text-end text-muted fw-bold">
+                                                                <span ng-bind="slotMap.SlotDateString"></span>
+                                                            </td>
+                                                            @* <td class="text-end">
+                                                            2:00pm - 2-15pm
+                                                            </td>
+                                                            <td class="text-end">
+                                                            <span class="badge badge-light-danger">Already filled</span>
+
+                                                            </td> *@
+                                                        </tr>
+                                                        <tr ng-repeat="timeMap in slotMap.SignupSlotMapTimes">
+                                                            <td class="text-end">
+                                                                {{timeMap.StartTimeString}} - {{timeMap.EndTimeString}}
+                                                            </td>
+                                                            <td class="text-end" ng-if="!timeMap.IsSlotAllocated">
+                                                                <button type="button" class="btn btn-sm  btn-primary btn-active-primary toggle" ng-click="SlotSelectionClick(timeMap)">
+                                                                    Sign Up
+                                                                    <i class="ki-outline ki-plus fs-4 m-0 toggle-off"></i>
+                                                                    <i class="ki-outline ki-minus fs-4 m-0 toggle-on"></i>
+                                                                </button>
+                                                            </td>
+                                                            <td class="text-end" ng-if="timeMap.IsSlotAllocated">
+                                                                <span class="badge badge-light-danger">Already filled</span>
+                                                            </td>
+                                                        </tr>
+                                                        @*  <tr>
+                                                        <td class="text-end">
+                                                        2:30pm - 2-45pm
+                                                        </td>
+
+                                                        <td class="text-end">
+                                                        <span class="badge badge-light-danger">Already filled</span>
+                                                        </td>
+                                                        </tr> *@
+                                                    </tbody>
+                                                    <!--end::Table body-->
+                                                </table>
+                                            </div>
+                                            <!--end::Table-->
+                                        </div>
+                                        <div class="tab-pane fade active" id="kt_table_widget_5_tab_2" role="tabpanel">
+                                            <div id='calendar'></div>
+                                            <script>
+                                                const element = document.getElementById("calendar");
+
+                                                var calendarEl = document.getElementById("calendar");
+                                                var calendar = new FullCalendar.Calendar(calendarEl, {
+                                                    headerToolbar: {
+                                                        left: "prev,next",
+                                                        center: "title",
+                                                        right: "dayGridMonth,dayGridWeek,timeGridDay ,listMonth ,listWeek"
+                                                    },
+
+
+                                                    height: 700,
+                                                    // contentHeight: 780,
+                                                    aspectRatio: 3,
+
+                                                    nowIndicator: true,
+
+                                                    views: {
+                                                        dayGridMonth: { buttonText: "month" },
+                                                        timeGridWeek: { buttonText: "week" },
+                                                        timeGridDay: { buttonText: "day" }
+                                                    },
+
+                                                    initialView: "dayGridMonth",
+                                                    // initialDate:"2014-02-01",
+                                                    // initialDate:$scope.GetDateByMonth(),
+
+                                                    editable: false,
+                                                    dayMaxEvents: true, // allow "more" link when too many events
+                                                    navLinks: true,
+
+                                                    businessHours: [ // specify an array instead
+                                                        {
+                                                            daysOfWeek: [0, 1, 2, 3, 4], //sunday , Monday, Tuesday, Wednesday , thursday
+                                                            startTime: '07:00', // 7am
+                                                            endTime: '18:00' // 6pm
+                                                        },
+                                                        {
+                                                            daysOfWeek: [6], // saturday
+                                                            startTime: '09:00', // 9am
+                                                            endTime: '12:00' // 12pm
+                                                        }
+                                                    ],
+
+                                                    events: [{
+                                                        title: "All Day Event",
+                                                        start: "2023-03-10"
+                                                    },
+                                                    {
+                                                        title: "Long Event",
+                                                        start: "2020-09-07",
+                                                        end: "2023-03-10"
+                                                    },
+
+                                                    {
+                                                        title: "Conference",
+                                                        start: "2023-03-10",
+                                                        end: "2023-03-11"
+                                                    },
+
+
+                                                    {
+                                                        title: "Lunch",
+                                                        start: "2023-03-10T12:00:00"
+                                                    },
+
+                                                    {
+                                                        title: "Happy Hour",
+                                                        start: "2023-03-10T17:30:00",
+                                                        end: "2023-03-10T19:30:00"
+                                                    },
+                                                    {
+                                                        title: "Dinner",
+                                                        start: "2023-03-10T20:00:00"
+                                                    },
+                                                    {
+                                                        title: "Birthday Party",
+                                                        start: "2023-03-10T07:00:00",
+                                                        end: "2023-03-10T09:30:00"
+
+                                                    },
+                                                    {
+                                                        title: "Click for Google",
+                                                        url: "http://google.com/",
+                                                        start: "2023-03-10"
+                                                    }],
+                                                    resources: [{
+                                                        start: '2023-03-10',
+                                                        type: 'resourceTimeline',
+                                                        duration: { days: 4 }
+                                                    }],
+                                                    eventContent: function (info) {
+                                                        var element = $(info.el);
+
+                                                        if (info.event.extendedProps && info.event.extendedProps.description) {
+                                                            if (element.hasClass("fc-day-grid-event")) {
+                                                                element.data("content", info.event.extendedProps.description);
+                                                                element.data("placement", "top");
+                                                                KTApp.initPopover(element);
+                                                            }
+                                                        }
+                                                    }
+                                                });
+
+                                                calendar.render();
+                                            </script>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--end::Body-->
+                            </div>
+                            <!--end::Tables Widget 5-->
+                        </div>
+                        <!--end::Col-->
+                    </div>
+                    <!--end::Row-->
+                </div>
+                <!--end::Content-->
+            </div>
+        </div>
+        <!--end:::Main-->
+
+
+    </div>
+    <!--end::Wrapper container-->
+</div>

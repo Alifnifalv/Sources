@@ -1,0 +1,156 @@
+﻿@{
+    ViewBag.Title = "Meeting Request List";
+    var clientname = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENTINSTANCE");
+    var LessonPlanID = ViewBag.LessonPlanID;
+
+}
+
+<div class="app-main rounded-5  m-4 flex-column flex-row-fluid " ng-controller="MyLessonPlanController" ng-init="Init('LessonplanDetails', @LessonPlanID)">
+
+        <div class="d-flex flex-column flex-column-fluid">
+            <div id="kt_app_content" class="app-content  flex-column-fluid ">
+                    <div class="row g-5 g-xxl-10">
+                        <div class="col mb-5 mb-xxl-10">
+                   
+                                        <div class="card shadow-sm border-0">
+                        <div class="card-header border-0">
+                            <h3 class="card-title align-items-start flex-column">
+                                <span class="card-label fw-semibold text-gray-800">{{ LessonPlan.Title }}</span>
+                                <span class="text-gray-500 mt-1 fw-normal fs-6">Class / Science / Forces and their effects on moon</span>
+                            </h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <p>
+                                <span class="badge bg-success rounded-2 ">{{ LessonPlan.SubjectUnit.Value }}</span>
+                                                </p>
+
+                                                <p><i class="bi bi-calendar-event"></i> <strong>Start Date:</strong> {{ LessonPlan.StartDate }}</p>
+                                                <p><i class="bi bi-calendar-check"></i> <strong>End Date:</strong> {{ LessonPlan.EndDate }}</p>
+
+                                                <div class="accordion" id="lessonAccordion">
+                                                    <div class="accordion-item">
+                                                        <h2 class="accordion-header" id="headingContent">
+                                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseContent" aria-expanded="true">
+                                                                <i class="bi bi-book"></i> Lesson Content
+                                                            </button>
+                                                        </h2>
+                                                        <div id="collapseContent" class="accordion-collapse collapse show" aria-labelledby="headingContent">
+                                                            <div class="accordion-body">
+                                                                {{ LessonPlan.Content }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                  
+
+                                                    <!-- Homework -->
+                                                    <div class="accordion-item">
+                                                        <h2 class="accordion-header" id="headingHomework">
+                                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHomework">
+                                                                <i class="bi bi-pencil-square"></i> Homework
+                                                            </button>
+                                                        </h2>
+                                                        <div id="collapseHomework" class="accordion-collapse collapse">
+                                                            <div class="accordion-body">
+                                                                {{ LessonPlan.HomeWorks }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                 
+                                                </div>
+
+                                                <div class="mt-4">
+                                                    <h5><i class="bi bi-list-task"></i> Lesson Plan Topics</h5>
+                                                    <div class="accordion mt-3" id="lessonTopics">
+                                                        <div class="accordion-item" ng-repeat="topic in LessonPlan.LessonPlanTopicMap">
+                                                            <h2 class="accordion-header">
+                                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#topic_{{topic.LessonPlanTopicMapsIID}}">
+                                                                    <i class="bi bi-bookmark"></i> {{ topic.LectureCode }} - {{ topic.Topic }}
+                                                                </button>
+                                                            </h2>
+                                                            <div id="topic_{{topic.LessonPlanTopicMapsIID}}" class="accordion-collapse collapse">
+                                                                <div class="accordion-body">
+                                                                    <p><strong>Description:</strong> {{ topic.Description || "No description available." }}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            <div class="mt-4">
+                                                <h5><i class="bi bi-list-check"></i> Lesson Plan Tasks</h5>
+                                                <table class="table table-striped mt-3">
+                                                    <thead class="table-dark">
+                                                        <tr>
+                                                            <th><i class="bi bi-check-circle"></i> Task Name</th>
+                                                            <th><i class="bi bi-tag"></i> Task Type</th>
+                                                            <th><i class="bi bi-calendar"></i> Start Date</th>
+                                                            <th><i class="bi bi-calendar2-check"></i> End Date</th>
+                                                            <th><i class="bi bi-file-earmark"></i> Attachments</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr ng-repeat="task in LessonPlan.LessonPlanTask">
+                                                            <td>{{ task.Task }}</td>
+                                                            <td>{{ task.TaskType.Value }}</td>
+                                                            <td>{{ task.StartDate }}</td>
+                                                            <td>{{ task.EndDate }}</td>
+                                                            <td>
+                                                                <ul ng-if="task.LessonPlanTaskAttachment.length > 0">
+                                                                    <li ng-repeat="attachment in task.LessonPlanTaskAttachment">
+                                                                        <a href="attachment.url" target="_blank">{{ attachment.AttachmentName }}</a>
+                                                                    </li>
+                                                                </ul>
+                                                                <span v-else>No Attachments</span>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+
+                                                <!-- Action Plan -->
+                                                <div class="mt-3">
+                                                    <h6><i class="bi bi-bullseye"></i> <strong>Action Plan:</strong></h6>
+                                                    <p>{{ LessonPlan.ActionPlan }}</p>
+                                                </div>
+
+                                                <!-- Attachments -->
+                                                <div class="mt-3">
+                                                    <h6><i class="bi bi-paperclip"></i> <strong>Attachments:</strong></h6>
+                                                    <ul class="list-group">
+                                                        <li ng-repeat="attachment in LessonPlan.LessonPlanAttachmentMap" class="list-group-item">
+                                                            <a href="attachment.url" target="_blank">{{ attachment.AttachmentName }}</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+
+                                                <!-- Buttons -->
+                                                <div class="mt-4 d-flex justify-content-between">
+                                                    <button class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back</button>
+                                                    <button class="btn btn-primary"><i class="bi bi-save"></i> Save Changes</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                  
+                               
+                     
+                                <!--end::Body-->
+                                <!--end::Card body-->
+                            </div>
+                            <div class="w-350px">
+                                </div>
+                            <!--end::Timeline Widget 1-->
+                        </div>
+                    <!--end::Row-->
+              
+                </div>
+                <!--end::Content container-->
+            </div>
+            <!--end::Content-->
+
+        </div>
+        <!--end::Content wrapper-->
+    </div>
+

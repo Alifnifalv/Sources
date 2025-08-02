@@ -1,0 +1,56 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+@{
+    Layout = null;
+    var controllerName = string.IsNullOrEmpty(Model.JsControllerName) ? "ViewController" : Model.JsControllerName;
+}
+
+<div id="@(Model.ViewName)Lists" class="windowcontainer">
+    <div ng-controller="@(controllerName)" ng-init="@(controllerName == "ViewController" ? "ChildInit" : "init")(@Newtonsoft.Json.JsonConvert.SerializeObject(Model), '@(Model.ViewName)', '@(Model.ViewName)Lists');InitializeWayPoint();">
+        <div class="pageheadername">
+            <div>
+                <span>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("View") @(Model.ViewTitle)</span>
+
+                @if (Model.QuickFilters.Count > 0)
+                {
+                    <a href="#" ng-click="BringQuickFilter($event)">
+                        <i class="fa  fa fa-angle-double-down"></i>
+                    </a>
+                    <div class="headerFilter" style="display:none">
+                        <ul>
+                            @foreach (var filter in Model.QuickFilters)
+                            {
+                                <li class="selectFilter tagtitleText">@filter.ActionCaption</li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+
+            <div class="alignright menugroup">
+
+
+
+                @if (Model.IsEditableLink)
+                {
+                    <div class="createprodlink button-orange alignright" ng-click="Create('@(string.IsNullOrEmpty(Model.ActualControllerName) ?
+                            "Frameworks/CRUD/" + (Model.IsMasterDetail ? "CreateMasterDetail" : "CreateMaster") + "?screen=" + Model.ViewName : Model.ActualControllerName + "/Create")', $event, '@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Create") @(Model.ViewTitle)', '@(Model.ViewName)','@(Model.RuntimeFilter)')">
+                        <a title="Create @(Model.ViewTitle)"><i class="fa fa-plus"></i><span>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Create") @(Model.ViewTitle)</span></a>
+                    </div>
+                }
+
+                @if (Model.ViewActions != null)
+                {
+                    foreach (var action in Model.ViewActions)
+                    {
+                        <div class="createprodlink button-orange alignright" @(Html.Raw(action.ActionAttribute))>
+                            <a title="@(action.ActionCaption)"><i class="fa fa-plus"></i><span>@(action.ActionCaption)</span></a>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        @await Html.PartialAsync("_SummaryHeader", Model)
+        @await Html.PartialAsync("_List", Model)
+    </div>
+</div>

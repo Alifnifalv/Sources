@@ -1,0 +1,1664 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily">
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="Eduegate">
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=20.205.112.183;Initial Catalog=EduEgate_2022</ConnectString>
+        <Prompt>Specify a user name and password for data source Eduegate:</Prompt>
+      </ConnectionProperties>
+      <rd:SecurityType>DataBase</rd:SecurityType>
+      <rd:DataSourceID>5870b70e-3c4c-494b-93ef-d1b5b039f7d2</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="SalarySlip">
+      <Query>
+        <DataSourceName>Eduegate</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@SalarySlipIID">
+            <Value>=Parameters!SalarySlipIID.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandType>StoredProcedure</CommandType>
+        <CommandText>payroll.SPS_Salary_Slip_Report</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="SlipDateMonth">
+          <DataField>SlipDateMonth</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="MonthID">
+          <DataField>MonthID</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="YearID">
+          <DataField>YearID</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="SalarySlipIID">
+          <DataField>SalarySlipIID</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="EmployeeCode">
+          <DataField>EmployeeCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EmployeeName">
+          <DataField>EmployeeName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DesignationName">
+          <DataField>DesignationName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EmployeeID">
+          <DataField>EmployeeID</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="ComponentDescription">
+          <DataField>ComponentDescription</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Amount">
+          <DataField>Amount</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Earnings">
+          <DataField>Earnings</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Deductions">
+          <DataField>Deductions</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="Amount_Words">
+          <DataField>Amount_Words</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Component1">
+          <DataField>Component1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Component2">
+          <DataField>Component2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="EmployeeSalaryComponent">
+      <Query>
+        <DataSourceName>Eduegate</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@SalarySlipIID">
+            <Value>=Parameters!SalarySlipIID.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandType>StoredProcedure</CommandType>
+        <CommandText>payroll.SPS_SalarySlip_report_Employee_Salary_Structure</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="EmployeeSalaryStructureID">
+          <DataField>EmployeeSalaryStructureID</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="SalaryComponentID">
+          <DataField>SalaryComponentID</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="SalaryComponents">
+          <DataField>SalaryComponents</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Amount">
+          <DataField>Amount</DataField>
+          <rd:TypeName>System.Decimal</rd:TypeName>
+        </Field>
+        <Field Name="EmployeeID">
+          <DataField>EmployeeID</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="WorkingDays">
+      <Query>
+        <DataSourceName>Eduegate</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@SalarySlipIID">
+            <Value>=Parameters!SalarySlipIID.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandType>StoredProcedure</CommandType>
+        <CommandText>payroll.SPS_SalarySlip_report_Employee_Working_days</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="EmployeeID">
+          <DataField>EmployeeID</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="FromMonth">
+          <DataField>FromMonth</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="FromMonthID">
+          <DataField>FromMonthID</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="FromYear">
+          <DataField>FromYear</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="TotalNoOfDays">
+          <DataField>TotalNoOfDays</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="NoDaysLeave">
+          <DataField>NoDaysLeave</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="ToMonth">
+          <DataField>ToMonth</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="ToMonthID">
+          <DataField>ToMonthID</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="ToYear">
+          <DataField>ToYear</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="LOP">
+          <DataField>LOP</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="WorkedDays">
+          <DataField>WorkedDays</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Textbox Name="Textbox79">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox79</rd:DefaultName>
+            <Top>0.10583cm</Top>
+            <Left>0.09336cm</Left>
+            <Height>0.6cm</Height>
+            <Width>3.175cm</Width>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <BackgroundColor>Silver</BackgroundColor>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox70">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox70</rd:DefaultName>
+            <Top>0.10583cm</Top>
+            <Left>3.26836cm</Left>
+            <Height>0.6cm</Height>
+            <Width>9.2075cm</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <BackgroundColor>Silver</BackgroundColor>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox82">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Employee Code     </Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox82</rd:DefaultName>
+            <Top>0.70583cm</Top>
+            <Left>0.09336cm</Left>
+            <Height>0.6cm</Height>
+            <Width>3.175cm</Width>
+            <ZIndex>2</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox71">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!EmployeeCode.Value, "SalarySlip")</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox71</rd:DefaultName>
+            <Top>0.70583cm</Top>
+            <Left>3.26836cm</Left>
+            <Height>0.6cm</Height>
+            <Width>9.2075cm</Width>
+            <ZIndex>3</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox83">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Employee Name    </Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox83</rd:DefaultName>
+            <Top>1.30583cm</Top>
+            <Left>0.09336cm</Left>
+            <Height>0.6cm</Height>
+            <Width>3.175cm</Width>
+            <ZIndex>4</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox72">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!EmployeeName.Value, "SalarySlip")</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox72</rd:DefaultName>
+            <Top>1.30583cm</Top>
+            <Left>3.26836cm</Left>
+            <Height>0.6cm</Height>
+            <Width>9.2075cm</Width>
+            <ZIndex>5</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox84">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Designation  </Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox84</rd:DefaultName>
+            <Top>1.90583cm</Top>
+            <Left>0.09336cm</Left>
+            <Height>0.6cm</Height>
+            <Width>3.175cm</Width>
+            <ZIndex>6</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox76">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!DesignationName.Value, "SalarySlip")</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox76</rd:DefaultName>
+            <Top>1.90583cm</Top>
+            <Left>3.26836cm</Left>
+            <Height>0.6cm</Height>
+            <Width>9.2075cm</Width>
+            <ZIndex>7</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox85">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Year                          </Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox85</rd:DefaultName>
+            <Top>2.50583cm</Top>
+            <Left>0.09336cm</Left>
+            <Height>0.6cm</Height>
+            <Width>3.175cm</Width>
+            <ZIndex>8</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox78">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!YearID.Value, "SalarySlip")</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox78</rd:DefaultName>
+            <Top>2.50583cm</Top>
+            <Left>3.26836cm</Left>
+            <Height>0.6cm</Height>
+            <Width>9.2075cm</Width>
+            <ZIndex>9</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox42">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox42</rd:DefaultName>
+            <Top>0.10583cm</Top>
+            <Left>12.47586cm</Left>
+            <Height>0.6cm</Height>
+            <Width>4.08202cm</Width>
+            <ZIndex>10</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <BackgroundColor>Silver</BackgroundColor>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox52">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value />
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox52</rd:DefaultName>
+            <Top>0.10583cm</Top>
+            <Left>16.55788cm</Left>
+            <Height>0.6cm</Height>
+            <Width>1.72214cm</Width>
+            <ZIndex>11</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <BackgroundColor>Silver</BackgroundColor>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox117">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Month</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox117</rd:DefaultName>
+            <Top>0.70583cm</Top>
+            <Left>12.47586cm</Left>
+            <Height>0.6cm</Height>
+            <Width>4.08202cm</Width>
+            <ZIndex>12</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox118">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!SlipDateMonth.Value, "SalarySlip")</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox118</rd:DefaultName>
+            <Top>0.70583cm</Top>
+            <Left>16.55788cm</Left>
+            <Height>0.6cm</Height>
+            <Width>1.72214cm</Width>
+            <ZIndex>13</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox43">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>No. Of Days</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox43</rd:DefaultName>
+            <Top>1.30583cm</Top>
+            <Left>12.47586cm</Left>
+            <Height>0.6cm</Height>
+            <Width>4.08202cm</Width>
+            <ZIndex>14</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="TotalNoOfDays">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!TotalNoOfDays.Value, "WorkingDays")</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>TotalNoOfDays</rd:DefaultName>
+            <Top>1.30583cm</Top>
+            <Left>16.55788cm</Left>
+            <Height>0.6cm</Height>
+            <Width>1.72214cm</Width>
+            <ZIndex>15</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox48">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>LOP Days</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox48</rd:DefaultName>
+            <Top>1.89606cm</Top>
+            <Left>12.47586cm</Left>
+            <Height>0.60977cm</Height>
+            <Width>4.08202cm</Width>
+            <ZIndex>16</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="LOP">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!LOP.Value, "WorkingDays")</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>LOP</rd:DefaultName>
+            <Top>1.89606cm</Top>
+            <Left>16.55788cm</Left>
+            <Height>0.60977cm</Height>
+            <Width>1.72214cm</Width>
+            <ZIndex>17</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox50">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>No. Of Days Worked</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>Textbox50</rd:DefaultName>
+            <Top>2.50583cm</Top>
+            <Left>12.47586cm</Left>
+            <Height>0.6cm</Height>
+            <Width>4.08202cm</Width>
+            <ZIndex>18</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="WorkedDays">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!WorkedDays.Value, "WorkingDays")</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Left</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <rd:DefaultName>WorkedDays</rd:DefaultName>
+            <Top>2.50583cm</Top>
+            <Left>16.55788cm</Left>
+            <Height>0.6cm</Height>
+            <Width>1.72214cm</Width>
+            <ZIndex>19</ZIndex>
+            <Style>
+              <Border>
+                <Color>LightGrey</Color>
+                <Style>Solid</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Tablix Name="Tablix2">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>11.98271cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>3.15101cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>3.09121cm</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox11">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox11</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox15">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Earnings</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox14</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Silver</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox19">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Deductions</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox18</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Silver</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ComponentDescription1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!ComponentDescription.Value</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>ComponentDescription1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Earnings">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Earnings.Value</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Earnings</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Deductions">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Deductions.Value</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Deductions</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox29">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Total</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox29</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>LightGrey</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox30">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Earnings.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox30</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>LightGrey</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox32">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Deductions.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox32</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>LightGrey</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox80">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Net Salary</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox77</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>Gray</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox34">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Earnings.Value)-Sum(Fields!Deductions.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>8pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox34</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                        <ColSpan>2</ColSpan>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell />
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Details1" />
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <KeepWithGroup>Before</KeepWithGroup>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>SalarySlip</DataSetName>
+            <Top>3.2071cm</Top>
+            <Left>0.09336cm</Left>
+            <Height>2.4cm</Height>
+            <Width>18.22494cm</Width>
+            <ZIndex>20</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>58.63424mm</Height>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Body>
+      <Width>183.183mm</Width>
+      <Page>
+        <PageHeader>
+          <Height>25.04723mm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="Textbox4">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Date:</Value>
+                      <Style>
+                        <FontFamily>Century Gothic</FontFamily>
+                        <FontWeight>Bold</FontWeight>
+                        <Format>dd-MM-yyyy</Format>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Value xml:space="preserve"> </Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                        <Format>dd-MM-yyyy</Format>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Value>=Format(Globals!ExecutionTime,"dd-MM-yyyy")</Value>
+                      <Style>
+                        <FontFamily>Century Gothic</FontFamily>
+                        <FontSize>9pt</FontSize>
+                        <Format>dd-MM-yyyy</Format>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox2</rd:DefaultName>
+              <Top>0mm</Top>
+              <Left>146.54683mm</Left>
+              <Height>6.08542mm</Height>
+              <Width>36.31858mm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox116">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Page " &amp; Globals!PageNumber &amp; " of " &amp; Globals!TotalPages</Value>
+                      <Style>
+                        <FontFamily>Century Gothic</FontFamily>
+                        <FontSize>8pt</FontSize>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox2</rd:DefaultName>
+              <Top>7.49653mm</Top>
+              <Left>153.11388mm</Left>
+              <Height>6.08542mm</Height>
+              <Width>29.75153mm</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Image Name="Image2">
+              <Source>External</Source>
+              <Value>=Parameters!RootUrl.Value + Parameters!Logo.Value</Value>
+              <Sizing>FitProportional</Sizing>
+              <Top>0mm</Top>
+              <Left>0.9336mm</Left>
+              <Height>16.07533mm</Height>
+              <Width>55.35742mm</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+              </Style>
+            </Image>
+            <Textbox Name="Textbox2">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>SALARY SLIP</Value>
+                      <Style>
+                        <FontFamily>Century Gothic</FontFamily>
+                        <FontSize>12pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                        <Color>Brown</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>Textbox2</rd:DefaultName>
+              <Top>1.00753cm</Top>
+              <Left>5.97641cm</Left>
+              <Height>0.6cm</Height>
+              <Width>7.08548cm</Width>
+              <ZIndex>3</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <VerticalAlign>Middle</VerticalAlign>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <BottomBorder>
+              <Style>Solid</Style>
+            </BottomBorder>
+          </Style>
+        </PageHeader>
+        <PageFooter>
+          <Height>12.32952mm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="ExecutionTime">
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Parameters!ReportFooter.Value</Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <rd:DefaultName>ExecutionTime</rd:DefaultName>
+              <Top>2.4694mm</Top>
+              <Left>0.9336mm</Left>
+              <Height>8.96597mm</Height>
+              <Width>181.93181mm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+            <TopBorder>
+              <Color>Black</Color>
+              <Style>Solid</Style>
+              <Width>1pt</Width>
+            </TopBorder>
+          </Style>
+        </PageFooter>
+        <PageHeight>29.7cm</PageHeight>
+        <PageWidth>21cm</PageWidth>
+        <LeftMargin>1.27cm</LeftMargin>
+        <RightMargin>1.27cm</RightMargin>
+        <TopMargin>1.27cm</TopMargin>
+        <BottomMargin>1.27cm</BottomMargin>
+        <ColumnSpacing>0.13cm</ColumnSpacing>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="ReportFooter">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportFooter</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="RootUrl">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>RootUrl</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="Logo">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Logo</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="SalarySlipIID">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>SalarySlipIID</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>4</NumberOfColumns>
+      <NumberOfRows>2</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>ReportFooter</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>RootUrl</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>Logo</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>SalarySlipIID</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <EmbeddedImages>
+    <EmbeddedImage Name="Pearl">
+      <MIMEType>image/jpeg</MIMEType>
+      <ImageData>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</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>769cc8a8-c885-4d46-aafd-1d0170cea0f1</rd:ReportID>
+</Report>

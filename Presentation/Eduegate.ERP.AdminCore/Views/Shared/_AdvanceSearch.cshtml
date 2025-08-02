@@ -1,0 +1,131 @@
+﻿@model  Eduegate.Web.Library.ViewModels.Filter.AdvanceFilterViewModel
+
+@{
+    Layout = null;
+    int index = 0;
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div id="@windowName" class="popup-wrap" ng-controller="AdvancedSearchController" ng-init="init('@windowName', '@Model.JsonModel', '@Model.FilterViewModel.View', '@Model.SearchMetadata.ViewFullPath')">
+    <span class="close" ng-click="CloseSearch($event)">X</span>
+    <div class="productcreteheader">
+        @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Advanced Search")
+        <div class="expand-collapse" ng-click="HideFilterPanel($event)"><i class="fa fa-angle-down"></i></div>
+    </div>
+
+    <div class="fl-advsearch-section">
+
+
+        @foreach (var col in Model.FilterViewModel.Columns.OrderBy(x=>x.FilterColumnID))
+        {
+            int indexadv = 0;
+            <div class="adv-fields">
+                <label>@col.ColumnCaption</label>
+                <span class="inputwrap two-fields">
+                    <select class="custom-select" ng-model="Model[@index].FilterCondition">
+                        @foreach (var condition in col.FilterConditions)
+                        {
+                            if (indexadv == 1)
+                            {
+                                <option selected="selected" class="custom-select-font">@condition</option>
+
+                            }
+                            else
+                            {
+                                <option class="custom-select-font">@condition</option>
+                            }
+                            indexadv++;
+                        }
+                    </select>
+
+                    @switch (col.ColumnType)
+                    {
+                        case Eduegate.Services.Contracts.Enums.DataTypes.Date:
+                            <span class="filterfield datetime_picker">
+                                <span>
+                                    <input type="text" placeholder="@col.ColumnCaption" autocomplete="off" id="Model[@index].FilterValue" name="Model[@index].FilterValue" ng-keyup="$event.keyCode == 13 ? SearchClick() : null" ng-model="Model[@index].FilterValue"
+                                           ng-change="Model[@index].IsDirty=true;" wb-datepicker>
+                                    <span data-datepicker="#datepicker-icon" id="datepicker-icon-trigger" class="input-group-addon1"></span>
+                                </span>
+                                <span>
+                                    <input autocomplete="off" type="text" placeholder="@col.ColumnCaption" id="Model[@index].FilterValue2" name="Model[@index].FilterValue2"  ng-keyup="$event.keyCode == 13 ? SearchClick() : null"  ng-model="Model[@index].FilterValue2"
+                                           ng-change="Model[@index].IsDirty=true;" ng-show="Model[@index].FilterCondition=='Between'" wb-datepicker>
+                                    <span data-datepicker="#datepicker-icon" id="datepicker-icon-trigger" class="input-group-addon1"
+                                          ng-show="Model[@index].FilterCondition=='Between'"></span>
+                                </span>
+                            </span>
+                            break;
+                        case Eduegate.Services.Contracts.Enums.DataTypes.DateTime:
+                            <span class="filterfield datetime_picker">
+                                <span>
+                                    <input autocomplete="off" type="text" placeholder="@col.ColumnCaption" id="Model[@index].FilterValue" name="Model[@index].FilterValue"  ng-keyup="SearchClick()" ng-model="Model[@index].FilterValue"
+                                           ng-change="Model[@index].IsDirty=true;" datetimepicker>
+                                    <span data-datepicker="#datepicker-icon" id="datepicker-icon-trigger" class="input-group-addon1"></span>
+                                </span>
+                                <span>
+                                    <input autocomplete="off" type="text" placeholder="@col.ColumnCaption" id="Model[@index].FilterValue2" name="Model[@index].FilterValue2"  ng-keyup="SearchClick()"   ng-model="Model[@index].FilterValue2"
+                                           ng-change="Model[@index].IsDirty=true;" ng-show="Model[@index].FilterCondition=='Between'">
+                                    <span data-datepicker="#datepicker-icon" id="datepicker-icon-trigger" class="input-group-addon1"
+                                          ng-show="Model[@index].FilterCondition=='Between'"></span>
+                                </span>
+                            </span>
+                            break;
+                        case Eduegate.Services.Contracts.Enums.DataTypes.String:
+                        case Eduegate.Services.Contracts.Enums.DataTypes.Number:
+                            <span class="filterfield">
+                                <input type="text" data-rel="tooltip-right" placeholder="@col.ColumnCaption" class="width-70"  ng-keyup="$event.keyCode == 13 ? SearchClick() : null"   ng-model="Model[@index].FilterValue"
+                                       ng-change="Model[@index].IsDirty=true;">
+                                <input type="text" data-rel="tooltip-right" placeholder="@col.ColumnCaption" class="width-70"  ng-keyup="$event.keyCode == 13 ? SearchClick() : null"   ng-model="Model[@index].FilterValue2"
+                                       ng-show="c" ng-change="Model[@index].IsDirty=true;">
+                            </span>
+                            break;
+                    }
+
+                </span>
+            </div>
+            index++;
+        }
+
+
+        <div>
+            <label>&nbsp;</label><a class="button-orange" href="" ng-click="SearchClick()"><i class="fa fa-search"></i> @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Search")</a>
+            <label>&nbsp;</label><a class="button-orange" href="" ng-click="ResetSearchClick()"><i class="fa fa-undo"></i> @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Reset")</a>
+        </div>
+    </div><!--advanced_search-->
+    <div class="wrapper overflow-scroll" style="height:60vh;">
+        <div class="tablewrapper">
+            <table cellpadding="0" cellspacing="0">
+                @{
+                    await Html.RenderPartialAsync("_TableHeader", Model.SearchMetadata);
+                    await Html.RenderPartialAsync("_TableRows", Model.SearchMetadata);
+                }
+            </table>
+            <div id="AttachWayPointsDiv" class="AttachWayPointsDiv" style="width:100%;">
+                <center>
+                    <i class="content-load fa fa-circle-o-notch fa-pulse waypoint"
+                       style="font-size:20px;"></i>
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.popup.fl-advsearch').draggable({
+            handle: ".productcreteheader"
+        });
+    });
+</script>
+<style>
+    .custom-select{
+        padding-top:0rem !important;
+        font-size:13px;
+    }
+
+    .custom-select option.custom-select-font{
+        font-size:13px;
+    }
+</style>

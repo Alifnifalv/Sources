@@ -1,0 +1,125 @@
+﻿@model Eduegate.Web.Library.School.Students.StudentTransferRequestViewModel
+
+@{
+    ViewBag.Title = "StudentTCApplication";
+}
+<div class="pageContentInner setVerticalScroll" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+    <div class="flex-column-fluid">
+        <div class="row g-5 g-lg-8 mb-5 mb-xl-0">
+            <div class="col-xl-3 mb-xl-8">
+            </div>
+            <div class="col-xl-6 mb-xl-8">
+                <!--begin::Statistics Widget 1-->
+                <div class="card h-xl-100">
+                    <!--begin::Header-->
+                    <div class="card-header align-items-center border-0 mt-4">
+                        <h3 class="card-title align-items-start flex-column">
+                            <span class="fw-bold mb-2 text-dark">Request for TC</span>
+                            <span class="text-muted fw-semibold fs-7">TC Request application form</span>
+                        </h3>
+
+                    </div>
+                    <!--end::Header-->
+                    <!--begin::Body-->
+                    <div class="card-body pt-5">
+                        @using (Html.BeginForm("submitTransferApplication", "Home", FormMethod.Post, new { id = "StudTCApplication" }))
+                        {
+                            <form @*method="post" class="form-horizontal" ng-submit="submitTransferApplication()" id="transferApplication"*@>
+                                @Html.TextBoxFor(a => a.StudentTransferRequestIID, new { data_ng_model = "transferApplication.StudentTransferRequestIID", style = "display: none;" })
+                                @Html.TextBoxFor(a => a.StudentID, new { data_ng_model = "transferApplication.StudentID", style = "display: none;" })
+                                @Html.TextBoxFor(a => a.TransferRequestStatusID, new { data_ng_model = "transferApplication.TransferRequestStatusID", style = "display: none;" })
+                                @Html.TextBoxFor(a => a.TransferRequestReasonID, new { data_ng_model = "transferApplication.TransferRequestReasonID", style = "display: none;" })
+                                @Html.TextBoxFor(a => a.CreatedBy, new { data_ng_model = "transferApplication.CreatedBy", style = "display: none;" })
+                                @Html.TextBoxFor(a => a.CreatedDate, new { data_ng_model = "transferApplication.CreatedDateString", style = "display: none;" })
+                                @Html.HiddenFor(a => a.StudentID, new { data_ng_model = "transferApplication.StudentID" })
+                                <div class="form-body">
+                                    <span>
+                                        @Html.CheckBoxFor(m => m.IsSchoolChange, new { ng_click = "TransportApplication_checkbox1()", id = "IsSchoolChange", ng_model = "transferApplication.IsSchoolChange" })
+                                        <label>&nbsp;Change of School</label>
+                                    </span>&emsp;&emsp;&emsp;&emsp;&emsp;
+                                    <span>
+                                        @Html.CheckBoxFor(m => m.IsLeavingCountry, new { ng_click = "TransportApplication_checkbox2()", id = "IsLeavingCountry", ng_model = "transferApplication.IsLeavingCountry" })
+                                        <label> Leaving Country</label>
+                                    </span>
+                                    <div class="form-group ">
+                                        <label class="control-label col-md-12" for="StudentTransferRequestReasons">
+                                            Reason
+                                            <span class="required"> * </span>
+                                        </label>
+                                        <div class="input-icon right">
+                                            <div class="col-md-12">
+                                                <i class="fa"></i>
+                                                <select class="form-control validate" required="" aria-required="true" name="StudentTransferRequestReasons" id="StudentTransferRequestReasons"
+                                                        ng-options="item as item.Value for item in ReasonData track by item.Key" ng-model="StudentTransferRequestReasons" ng-change="onReasonDataChange()">
+                                                    <option value=""></option>
+                                                </select>
+                                            </div>
+                                            @Html.ValidationMessageFor(m => m.StudentTransferRequestReasons)
+                                        </div>
+                                    </div>
+                                    <div class="form-group row" ng-if="onOtherReason == true">
+                                        <label class="control-label col-md-12" for="chkReason">
+                                            <span class="required">   </span>
+                                            Other Reason
+                                        </label>
+                                        <div class="col-md-12">
+                                            <div class="input-icon right">
+                                                <i class="fa"></i>
+                                                @Html.TextBoxFor(m => m.OtherReason, new { @class = "form-control", @autocomplete = "off", @placeholder = "Other Reason", ng_model = "transferApplication.OtherReason", @id = "txtReasonOther" })
+                                                @Html.ValidationMessageFor(m => m.OtherReason)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group ">
+                                        <label class="control-label col-md-12">
+                                            The Expecting Reliving Date
+                                            <span class="required"> * </span>
+                                        </label>
+                                        <div class="col-md-12">
+                                            <div class="input-icon right">
+                                                <i class="fa"></i>
+                                                @Html.TextBoxFor(m => m.ExpectingRelivingDateString, new { @class = "form-control date", @required = "", @aria_required = "true", @autocomplete = "off", @placeholder = "The Expecting Reliving Date", ng_model = "transferApplication.ExpectingRelivingDateString", @id = "ExpectingRelivingDateString" })
+                                                @Html.ValidationMessageFor(m => m.ExpectingRelivingDateString)
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-12">
+                                            <label>One area of School Administration (Academics/Activities/Transport) that is a concern</label>
+                                            @Html.TextAreaFor(m => m.Concern, new { ng_model = "transferApplication.Concern", @id = "Concern", @rows = "2", @class = "col-12" })
+                             
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-12">
+                                            <label>One Positive aspect of Pearl School</label>
+                                            @Html.TextAreaFor(m => m.PositiveAspect, new { ng_model = "transferApplication.PositiveAspect", @id = "PositiveAspect", @rows = "2", @class = "col-12" })
+                         
+                                        </div>
+                                    </div>
+                                  
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-12">
+                                        <button type="submit" id="SubmitTcRequestBtn" name="action" class="btn btn-danger btn-dark col-md-12" ng-click="buttonAction()">Submit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        }
+
+                    </div>
+
+                    <!--end: Card Body-->
+                </div>
+                <!--end::Statistics Widget 1-->
+            </div>
+            <div class="col-xl-3 mb-xl-8">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+            
+
+

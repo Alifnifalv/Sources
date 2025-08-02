@@ -1,0 +1,21 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div id="@windowName" tempalte="_RecentActivity" ng-controller="BoilerPlateController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+    <div class="col-md-4 charts-grids widget states-mdl">
+        <div class="page_subtitles">Recent Activity<a href="" class="pull-right">View all...</a></div>
+        <div class="list-unstyled comment-list timeline" ng-repeat="activity in DataSource.RecentActivity">
+            <div class="media">
+                <div class="indication text-success"><i class="fa fa-dot-circle-o"></i></div>
+               <div class="">
+                    <h6 class="mb-1">{{ activity.Description}} <small> {{ activity.Description2}}</small></h6>
+                    <span am-time-ago="activity.ActivityDate"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

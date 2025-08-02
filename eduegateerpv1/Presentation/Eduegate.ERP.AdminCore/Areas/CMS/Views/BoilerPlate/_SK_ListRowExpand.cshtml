@@ -1,0 +1,72 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@using Eduegate.Framework.Extensions;
+@{
+    Random rnd = new Random();
+    var window = "window_ListRowExpand";
+    var documentTypeID = Model.GetParameterValue<string>("DocumentTypeID");
+    var title = Model.GetParameterValue<string>("Title");
+    var viewID = Model.GetParameterValue<string>("ViewID");
+    var cultureTitle = Model.GetParameterValue<string>("Title_" + System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower());
+    if (!string.IsNullOrEmpty(cultureTitle))
+    {
+        title = cultureTitle;
+    }
+    var viewName = (Eduegate.Services.Contracts.Enums.SearchView)int.Parse(viewID); 
+}
+
+
+<div id="@window" template="_SK_ListRowExpand" class="card h-xl-100 rounded-2" ng-controller="ListRowExpandBoilerPlateController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@window')">
+    <script src="javascript/main.js"></script>
+
+    <div id="Fee Summary">
+
+        <div class="card-header border-0 pt-5 justify-content-start">
+
+            <h3 class="card-title align-items-start flex-column">
+                <span class="card-label fw-bold text-dark">@title</span>
+            </h3>
+
+        </div>
+        <div id="FeeListOverlay" class="preload-overlay center">
+            <span id="FeeListOverlayButtonLoader" class="preloadImg">
+                <img src="~/Images/preloader.GIF" alt="loader" />
+            </span>
+        </div>
+
+        <div>
+            <ul class="nav nav-tabs gap-1">
+
+                <li class="nav-item" ng-click="onTabChange('Tab_01')">
+                    <a class="nav-link active ms-4" id="Tab_01_nav" aria-current="page" href="#"><span class="seletedsubject">Circular</span></a>
+                </li>
+
+                <li class="nav-item" ng-click="onTabChange('Tab_03')">
+                    <a class="nav-link" id="Tab_03_nav" href="#"><span class="seletedsubject">Lesson Plan</span></a>
+                </li>
+
+                <li class="nav-item" ng-click="onTabChange('Tab_04')">
+                    <a class="nav-link" id="Tab_04_nav" href="#"><span class="seletedsubject">Cases</span></a>
+                </li>
+
+            </ul>
+        </div>
+
+        <div class="scheduleWrapper innertab subject" id="Tab_01" style="display:block">
+            @await Html.PartialAsync("_SK_Circular")
+        </div>    
+
+    @*  <div class="scheduleWrapper innertab subject" id="Tab_03" style="display:none">
+            @await Html.PartialAsync("_Cases")
+        </div> *@
+
+        @*    <div class="scheduleWrapper innertab subject" id="Tab_04" style="display:none">
+            @await Html.PartialAsync("_FeeCollectionCase")
+        </div>
+
+        <div class="scheduleWrapper innertab subject" id="Tab_05" style="display:none">
+            @await Html.PartialAsync("_ComplaintCase")
+        </div> *@
+     
+    </div>
+</div>

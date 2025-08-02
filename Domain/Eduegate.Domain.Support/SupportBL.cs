@@ -1,0 +1,534 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Eduegate.Domain.Mappers;
+using Eduegate.Domain.Repository;
+using Eduegate.Framework;
+using Eduegate.Framework.Extensions;
+using Eduegate.Services.Contracts;
+using Eduegate.Framework.Contracts.Common;
+using Eduegate.Services.Contracts.Enums;
+using Eduegate.Services.Contracts.Mutual;
+using Eduegate.Services.Contracts.Notifications;
+using Eduegate.Services.Contracts.Supports;
+using Eduegate.Framework.Contracts.Common.Enums;
+using Eduegate.Domain.Entity.Supports.Models;
+using Eduegate.Domain.Mappers.School.Students;
+using Eduegate.Services.Contracts.School.Students;
+using System.Globalization;
+using Eduegate.Domain.Mappers.School.Fees;
+using Eduegate.Services.Contracts.Commons;
+using Eduegate.Domain.Mappers.Support.CustomerSupport;
+using Eduegate.Domain.Report;
+using Eduegate.Domain.Setting;
+
+namespace Eduegate.Domain.Support
+{
+    public class SupportBL
+    {
+        private CallContext _callContext;
+        private static SupportRepository supportRepository = new SupportRepository();
+
+        public SupportBL(CallContext context)
+        {
+            _callContext = context;
+        }
+
+        public TicketDTO GetTicket(int ticketID)
+        {
+            return TicketMapper.Mapper(_callContext).ToDTO(new SupportRepository().GetTicket(ticketID));
+        }
+
+        public TicketDTO SaveTicket(TicketDTO ticketDTO)
+        {
+            var dbTicket = new SupportRepository().GetTicket(ticketDTO.TicketIID);
+
+            Ticket ticket = new SupportRepository().SaveTicket(TicketMapper.Mapper(_callContext).ToEntity(ticketDTO));
+
+            // Add Ticket No# as comment to selected order
+            if (ticketDTO.TicketIID == default(long) || (dbTicket.IsNotNull() && ticket.TicketStatusID != dbTicket.TicketStatusID))
+            {
+                var comment = new CommentDTO();
+                comment.CommentText = string.Concat("Ticket No# ", ticket.TicketNo, " | Ticket Status: ", ticketDTO.TicketStatus);
+                comment.EntityType = EntityTypes.Transaction;
+                comment.ReferenceID = Convert.ToInt64(ticket.HeadID);
+                comment = new MutualBL(_callContext).SaveComment(comment);
+
+                // Add Email notificatio for customer/product manager
+                AddEmailNotification(ticket);
+            }
+
+            // change Transaction status as per action selected
+            if (ticketDTO.TicketIID == default(long) || (dbTicket.IsNotNull() && (Eduegate.Framework.Enums.SupportActions)dbTicket.ActionID != (Eduegate.Framework.Enums.SupportActions)ticketDTO.ActionID))
+            {
+                ActionProcessing(ticket);
+            }
+            Entity.Models.DocumentType entity = new MutualBL(_callContext).UpdateLastTransactionNo(Convert.ToInt32(ticket.DocumentTypeID), ticket.TicketNo);
+
+            return TicketMapper.Mapper(_callContext).ToDTO(ticket);
+        }
+
+        public bool AddCustomerSupportTicket(CustomerSupportTicketDTO ticketDTO)
+        {
+            //var cultureID = new UtilityBL().GetLanguageCultureId(_callContext.LanguageCode).CultureID;
+            //ticketDTO.CultureID = cultureID;
+            var ticket = new TicketDTO();
+            ticket.Subject = ticketDTO.Name + " Telephone : " + ticketDTO.Telephone + " Mail: " + ticketDTO.EmailID;
+            ticket.Description = ticketDTO.Comments;
+            ticket.CreatedBy = _callContext.LoginID.IsNotNull() ? Convert.ToInt32(_callContext.LoginID) : (int?)null;
+            var documenttype = new SettingRepository().GetSettingDetail("TICKETDCMNTTYPEID", _callContext.CompanyID ?? 1);
+            if (_callContext.LoginID.IsNotNull()) //? new AccountRepository().GetCustomerIDbyLoginID(long.Parse(_callContext.LoginID.ToString())) : null;
+            {
+                var Customers = new AccountRepository().GetCustomerIDbyLoginID(_callContext.LoginID.HasValue ? (long)_callContext.LoginID : 0);
+                ticket.CustomerID = Customers.IsNotNull() ? Customers : (long?)null;
+            }
+            ticket.DocumentTypeID = int.Parse(documenttype.SettingValue);
+            //ticket.CustomerID = Customer.IsNotNull() ? Customer : (long?)null;
+            ticket.TicketStatusID = (int)Eduegate.Services.Contracts.Enums.TicketStatuses.Open;
+            ticket.ActionID = (int)Eduegate.Services.Contracts.Enums.TicketActions.Refund;
+            var lastticketnumber = new MutualBL(_callContext).GetNextTransactionNumber(Convert.ToInt64(ticket.DocumentTypeID));
+            Entity.Models.DocumentType entity = new MutualBL(_callContext).UpdateLastTransactionNo(Convert.ToInt32(ticket.DocumentTypeID), lastticketnumber);
+            ticket.TicketNo = lastticketnumber;
+            new SupportRepository().SaveTicket(TicketMapper.Mapper(_callContext).ToEntity(ticket));
+            new SupportRepository().AddCustomerSupportTicket(CustomerSupportTicketMapper.Mapper(_callContext).ToEntity(ticketDTO));
+            return true;
+            //if(entity != null)
+            //{
+            //    return null;
+            //}
+            //return ticketDTO;
+        }
+
+        public bool JustAskInsert(JustAskDTO justAskDTO)
+        {
+            try
+            {
+                //var cultureID = new UtilityBL().GetLanguageCultureId(_callContext.LanguageCode).CultureID;
+                //justAskDTO.CultureID = cultureID;
+                var ticket = new TicketDTO();
+                ticket.Subject = justAskDTO.Name + " Telephone : " + justAskDTO.Telephone + " Mail: " + justAskDTO.EmailID;
+                ticket.Description = justAskDTO.Description;
+                ticket.CreatedBy = _callContext.LoginID.IsNotNull() ? Convert.ToInt32(_callContext.LoginID) : (int?)null;
+                var documenttype = new SettingRepository().GetSettingDetail("TICKETDCMNTTYPEID", _callContext.CompanyID ?? 1);
+                if (_callContext.LoginID.IsNotNull()) //? new AccountRepository().GetCustomerIDbyLoginID(long.Parse(_callContext.LoginID.ToString())) : null;
+                {
+                    var Customers = new AccountRepository().GetCustomerIDbyLoginID(_callContext.LoginID.HasValue ? (long)_callContext.LoginID : 0);
+                    ticket.CustomerID = Customers.IsNotNull() ? Customers : (long?)null;
+                }
+                ticket.DocumentTypeID = int.Parse(documenttype.SettingValue);
+                ticket.TicketStatusID = (int)Eduegate.Services.Contracts.Enums.TicketStatuses.Open;
+                ticket.ActionID = (int)Eduegate.Services.Contracts.Enums.TicketActions.Refund;
+                var lastticketnumber = new MutualBL(_callContext).GetNextTransactionNumber(Convert.ToInt32(ticket.DocumentTypeID));
+                Entity.Models.DocumentType entity = new MutualBL(_callContext).UpdateLastTransactionNo(Convert.ToInt32(ticket.DocumentTypeID), lastticketnumber);
+                ticket.TicketNo = lastticketnumber;
+                new SupportRepository().SaveTicket(TicketMapper.Mapper(_callContext).ToEntity(ticket));
+                new SupportRepository().JustAskInsert(JustAskMapper.Mapper(_callContext).ToEntity(justAskDTO));
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool JobInsert(UserJobApplicationDTO dto)
+        {
+            //var cultureID = new UtilityBL().GetLanguageCultureId(_callContext.LanguageCode).CultureID;
+            //dto.CultureID = cultureID;
+            return new SupportRepository().JobInsert(UserJobApplicationMapper.Mapper(_callContext).ToEntity(dto));
+        }
+
+        public KeyValueDTO GetTicketStatusByStatusID(int statusID)
+        {
+            //var statuses = new ReferenceDataBL(_callContext).GetLookUpData(Services.Contracts.Enums.LookUpTypes.TicketStatus);
+            var status = new SupportRepository().GetTicketStatuses().Where(s => s.TicketStatusID == statusID).FirstOrDefault();
+            return new KeyValueDTO() { Key = status?.TicketStatusID.ToString(), Value = status?.StatusName };
+        }
+
+        public KeyValueDTO GetTicketActionByActionID(int actionID)
+        {
+            //var statuses = new ReferenceDataBL(_callContext).GetLookUpData(Services.Contracts.Enums.LookUpTypes.TicketStatus);
+            var action = new SupportRepository().GetTicketActions().Where(a => a.SupportActionID == actionID).FirstOrDefault();
+            return new KeyValueDTO() { Key = action?.SupportActionID.ToString(), Value = action?.ActionName };
+        }
+
+
+        #region Private Methods
+        private void ActionProcessing(Ticket ticket)
+        {
+            // Update related transaction based on selected ticket action
+            switch ((Eduegate.Framework.Enums.SupportActions)ticket.ActionID)
+            {
+                //case Framework.Enums.SupportActions.Distrubutions:
+                //    break;
+                //case Framework.Enums.SupportActions.RMA:
+                //    break;
+                //case Framework.Enums.SupportActions.SC:
+                //    break;
+                //case Framework.Enums.SupportActions.Warehouse:
+                //    break;
+                //case Framework.Enums.SupportActions.Showroom:
+                //    break;
+                //case Framework.Enums.SupportActions.Purchase:
+                //    break;
+                //case Framework.Enums.SupportActions.Accounts:
+                //    break;
+                case Framework.Enums.SupportActions.Refund:
+                    if (ticket.HeadID.IsNotNull())
+                    {
+                        // Update Head to InitiateReprocess and Cancelled
+                        new TransactionBL(_callContext).UpdateTransactionHead(new Services.Contracts.Catalog.TransactionHeadDTO()
+                        {
+                            HeadIID = Convert.ToInt64(ticket.HeadID),
+                            TransactionStatusID = (byte)Services.Contracts.Enums.TransactionStatus.IntitiateReprecess,
+                            DocumentStatusID = (short)Services.Contracts.Enums.DocumentStatuses.Cancelled
+                        });
+                    }
+                    break;
+                //case Framework.Enums.SupportActions.DigitalProblem:
+                //    break;
+                default:
+                    break;
+            }
+        }
+
+        private void AddEmailNotification(Ticket ticket)
+        {
+
+            /*
+                1. Add Email notification to Customer + Product manager
+                2. Send email to notify selection if ticket-action is arrangement
+             
+             */
+
+            // Step 1
+            var notificationDTO = new EmailNotificationDTO();
+            notificationDTO.EmailNotificationType = Eduegate.Services.Contracts.Enums.EmailNotificationTypes.SupportTicketAlert;
+            notificationDTO.AdditionalParameters = new List<Eduegate.Services.Contracts.Commons.KeyValueParameterDTO>();
+            notificationDTO.FromEmailID = "customer.support@blink.com.kw"; // new Domain.Setting.SettingBL().GetSettingValue<string>("EmailFrom").ToString(); // can I add setting entry for this
+
+            notificationDTO.AdditionalParameters.Add(new Eduegate.Services.Contracts.Commons.KeyValueParameterDTO() { ParameterName = Eduegate.Services.Contracts.Constants.EmailNotificationType.SupportTicketNotification.Keys.OrderID, ParameterValue = ticket.HeadID.ToString() });
+
+            notificationDTO.AdditionalParameters.Add(new Eduegate.Services.Contracts.Commons.KeyValueParameterDTO() { ParameterName = Eduegate.Services.Contracts.Constants.EmailNotificationType.SupportTicketNotification.Keys.TicketID, ParameterValue = ticket.TicketIID.ToString() });
+
+            var customerDetail = new AccountBL(_callContext).GetUserDetailsByCustomerID(Convert.ToInt64(ticket.CustomerID), false);
+            //var managerDetail = new EmployeeBL(_callContext).GetEmployee(Convert.ToInt64(ticket.ManagerEmployeeID));
+
+            // Send Customer Notification
+            if (Convert.ToBoolean(ticket.IsSendCustomerNotification))
+            {
+                notificationDTO.ToEmailID = customerDetail.LoginEmailID;
+                // Adding CC and BCC to additional pararms as we do not have fild in NotificationEmailData
+                //notificationDTO.AdditionalParameters.Add(new Eduegate.Services.Contracts.Commons.KeyValueParameterDTO() { ParameterName = Eduegate.Services.Contracts.Constants.EmailNotificationType.SupportTicketNotification.Keys.ToBCCEmailID, ParameterValue = managerDetail.Login.LoginEmailID });
+            }
+            else
+            {
+                //notificationDTO.ToEmailID = managerDetail.Login.LoginEmailID;
+            }
+
+
+            string websiteUrl = string.Empty;
+            var domainsetting = new Domain.Setting.SettingBL().GetSettingDetail("DOMAINNAME");
+
+            if (domainsetting.IsNotNull())
+            {
+                websiteUrl = domainsetting.SettingValue + ": ";
+            }
+
+            notificationDTO.Subject = string.Concat(websiteUrl, "Ticket Status: ", ticket.TicketStatus.StatusName, " | Ticket No# ", ticket.TicketNo);
+            var notificationReponse = Task<EmailNotificationDTO>.Factory.StartNew(() => new NotificationBL(_callContext).SaveEmailData(notificationDTO));
+
+
+            if ((Services.Contracts.Enums.TicketActions)Enum.Parse(typeof(Services.Contracts.Enums.TicketActions), ticket.ActionID.ToString()) == TicketActions.Arrangement)
+            {
+                // Step 2
+                var notifyDTO = new EmailNotificationDTO();
+                notifyDTO.EmailNotificationType = Eduegate.Services.Contracts.Enums.EmailNotificationTypes.SupportTicketAlert;
+                notifyDTO.AdditionalParameters = new List<Eduegate.Services.Contracts.Commons.KeyValueParameterDTO>();
+                notifyDTO.AdditionalParameters.Add(new Eduegate.Services.Contracts.Commons.KeyValueParameterDTO() { ParameterName = Eduegate.Services.Contracts.Constants.EmailNotificationType.SupportTicketNotification.Keys.OrderID, ParameterValue = ticket.HeadID.ToString() });
+
+                notifyDTO.AdditionalParameters.Add(new Eduegate.Services.Contracts.Commons.KeyValueParameterDTO() { ParameterName = Eduegate.Services.Contracts.Constants.EmailNotificationType.SupportTicketNotification.Keys.TicketID, ParameterValue = ticket.TicketIID.ToString() });
+
+                if (ticket.TicketActionDetailMaps.IsNotNull() && ticket.TicketActionDetailMaps.Count > 0 && ticket.TicketActionDetailMaps.First().TicketActionDetailDetailMaps.IsNotNull() && ticket.TicketActionDetailMaps.First().TicketActionDetailDetailMaps.Count > 0)
+                {
+                    foreach (var actionDetailDetailMap in ticket.TicketActionDetailMaps.First().TicketActionDetailDetailMaps)
+                    {
+                        switch ((Services.Contracts.Enums.TicketActions)Enum.Parse(typeof(Services.Contracts.Enums.TicketActions), ticket.ActionID.ToString()))
+                        {
+
+                            case TicketActions.ArrangmentPM:
+                                // Send mail to Product Manager
+                                //notificationDTO.AdditionalParameters.Add(new Eduegate.Services.Contracts.Commons.KeyValueParameterDTO() { ParameterName = Eduegate.Services.Contracts.Constants.EmailNotificationType.SupportTicketNotification.Keys.ToBCCEmailID, ParameterValue = managerDetail.Login.LoginEmailID });
+
+                                break;
+                            case TicketActions.ArrangementPurchase:
+                                // to purchase department
+                                break;
+                            case TicketActions.ArrangementWarehouse:
+                                // To warehouse
+                                break;
+                            case TicketActions.ArrangementDistribution:
+                                // To ditribution department
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+
+
+                notifyDTO.Subject = string.Concat(websiteUrl, "Ticket Status: ", ticket.TicketStatus.StatusName, " | Ticket No# ", ticket.TicketNo, " | ", ((Services.Contracts.Enums.TicketActions)ticket.ActionID).ToString());
+                var notifyReponse = Task<EmailNotificationDTO>.Factory.StartNew(() => new NotificationBL(_callContext).SaveEmailData(notifyDTO));
+            }
+
+            // To test above, uncomment like below and test in sync mode
+            //return notificationReponse.ToString();
+            //var result  = new NotificationBL(null).SaveEmailData(notificationDTO);
+        }
+        #endregion
+
+        #region Case Management related
+        public OperationResultDTO SendFeeDueMailReportToParent(long? studentID, string reportName)
+        {
+            var returnData = new OperationResultDTO();
+
+            var reportDateFormat = new SettingBL(null).GetSettingValue<string>("ReportDateFormat", "dd/MM/yyyy");
+            var currentDate = DateTime.Now.Date;
+
+            try
+            {
+                var studentData = StudentMapper.Mapper(_callContext).GetStudentDetailsByStudentID(studentID.Value);
+
+                var gridData = new MailFeeDueStatementReportDTO()
+                {
+                    StudentID = studentID,
+                    ClassID = studentData.ClassID,
+                    Class = studentData.ClassName,
+                    AdmissionNo = studentData.AdmissionNumber,
+                    StudentName = studentData.FirstName + " " + (string.IsNullOrEmpty(studentData.MiddleName) ? "" : studentData.MiddleName + " ") + studentData.LastName,
+                    ParentEmailID = studentData.Guardian?.GaurdianEmail,
+                    ParentLoginID = studentData.Guardian?.LoginID,
+                    SchoolID = studentData.SchoolID,
+                    SchoolName = studentData.SchoolName,
+                    AcademicYearID = studentData.AcademicYearID,
+                    AsOnDate = currentDate.ToString(reportDateFormat, CultureInfo.InvariantCulture),
+                    ReportName = reportName,
+                };
+
+                var dataPass = MailFeeDueStatementMapper.Mapper(_callContext).SendFeeDueMailReportToParent(gridData);
+
+                new ReportGenerationBL(_callContext).SendFeeDueMailReportToParent(gridData);
+
+                returnData = new OperationResultDTO()
+                {
+                    operationResult = OperationResult.Success,
+                    Message = "Fee due statement Successfully sent!"
+                };
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = ex.Message.ToLower().Contains("inner") && ex.Message.ToLower().Contains("exception")
+                    ? ex.InnerException?.Message : ex.Message;
+
+                Eduegate.Logger.LogHelper<string>.Fatal($"Fee due statement Sending failed. Error message: {errorMessage}", ex);
+
+                returnData = new OperationResultDTO()
+                {
+                    operationResult = OperationResult.Error,
+                    Message = errorMessage
+                };
+            }
+
+            return returnData;
+        }
+
+        public OperationResultDTO SendProformaInvoiceToParent(long? studentID, string reportName)
+        {
+            var returnData = new OperationResultDTO();
+
+            try
+            {
+                var studentData = StudentMapper.Mapper(_callContext).GetStudentDetailsByStudentID(studentID.Value);
+
+                var reportDTO = new MailFeeDueStatementReportDTO()
+                {
+                    StudentID = studentID,
+                    ClassID = studentData.ClassID,
+                    Class = studentData.ClassName,
+                    AdmissionNo = studentData.AdmissionNumber,
+                    StudentName = studentData.FirstName + " " + (string.IsNullOrEmpty(studentData.MiddleName) ? "" : studentData.MiddleName + " ") + studentData.LastName,
+                    ParentEmailID = studentData.Guardian?.GaurdianEmail,
+                    ParentLoginID = studentData.Guardian?.LoginID,
+                    SchoolID = studentData.SchoolID,
+                    SchoolName = studentData.SchoolName,
+                    AcademicYearID = studentData.AcademicYearID,
+                    ReportName = reportName,
+                };
+
+                new ReportGenerationBL(_callContext).SendProformaInvoiceToParent(reportDTO);
+
+                returnData = new OperationResultDTO()
+                {
+                    operationResult = OperationResult.Success,
+                    Message = "Proforma invoice successfully sent!"
+                };
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = ex.Message.ToLower().Contains("inner") && ex.Message.ToLower().Contains("exception")
+                    ? ex.InnerException?.Message : ex.Message;
+
+                Eduegate.Logger.LogHelper<string>.Fatal($"Proforma invoice sending failed. Error message: {errorMessage}", ex);
+
+                returnData = new OperationResultDTO()
+                {
+                    operationResult = OperationResult.Error,
+                    Message = errorMessage
+                };
+            }
+
+            return returnData;
+        }
+        #endregion
+
+        public List<TicketDTO> GetAllTicketsByLoginID(long? loginID)
+        {
+            var result = TicketingMapper.Mapper(_callContext).GetAllTicketsByLoginID(loginID);
+
+            return result;
+        }
+
+        public OperationResultDTO GenerateTicket(TicketDTO ticket) // Input is already a DTO
+        {
+            var result = new OperationResultDTO();
+
+            try
+            {
+                // Validate essential input DTO properties if not handled by model binding/validation attributes
+                if (ticket == null)
+                {
+                    return new OperationResultDTO
+                    {
+                        operationResult = OperationResult.Error,
+                        Message = "Input ticket data cannot be null."
+                    };
+                }
+                // Based on your JS, some fields are mandatory before client-side submission.
+                // You might want to re-validate them on the server.
+                if (string.IsNullOrWhiteSpace(ticket.Subject))
+                {
+                    return new OperationResultDTO { operationResult = OperationResult.Error, Message = "Subject is required." };
+                }
+                if (string.IsNullOrWhiteSpace(ticket.Description)) // Assuming ProblemDescription maps to Description
+                {
+                    return new OperationResultDTO { operationResult = OperationResult.Error, Message = "Description (Query) is required." };
+                }
+                if (!ticket.DocumentTypeID.HasValue || ticket.DocumentTypeID.Value <= 0)
+                {
+                    return new OperationResultDTO { operationResult = OperationResult.Error, Message = "Document Type is required." };
+                }
+                // Add other critical validations as needed...
+
+
+                var currentDate = DateTime.Now;
+                var settingBL = new SettingBL(_callContext); // Instantiate your BLs
+                var accountBL = new AccountBL(_callContext);
+                var documentBL = new DocumentBL(_callContext);
+
+                // Fetched settings - Default to 1 if not found, as in your controller
+                var highPriorityIDStr = settingBL.GetSettingValue<string>("TICKET_PRIORITY_ID_HIGH", 1);
+                var defaultActionIDStr = settingBL.GetSettingValue<string>("DEFAULT_TICKET_ACTION_ID", 1);
+                var newStatusIDStr = settingBL.GetSettingValue<string>("TICKET_STATUS_ID_NEW", 1);
+                // DateFormat is fetched in controller but not directly used for DueDateFrom if it's DateTime.
+                // If you need to parse FromDueDateString, you'd use it.
+                // var dateFormat = settingBL.GetSettingValue<string>("DateFormat");
+
+
+                var parentDet = accountBL.GetParentDetailsByLoginID(_callContext.LoginID); // Assuming _callContext has LoginID
+
+                string supportEmail = null;
+                // DocumentTypeID is already on the ticket DTO
+                if (ticket.DocumentTypeID.HasValue)
+                {
+                    // DocumentTypeID is nullable int in DTO, GetDocumentTypeSettingsByTypeID expects int
+                    var documentTypeSettings = documentBL.GetDocumentTypeSettingsByTypeID(ticket.DocumentTypeID.Value);
+                    if (documentTypeSettings != null && documentTypeSettings.Any())
+                    {
+                        supportEmail = documentTypeSettings.FirstOrDefault(x => x.SettingCode == "EMAIL")?.SettingValue;
+                    }
+                }
+
+                // Populate/Override properties on the input 'ticket' DTO with defaults
+                // Client sends: Subject, Description (as ProblemDescription), DocumentTypeID (as DocumentType),
+                // Student, FacultyType, AssignedEmployee, Department, SupportCategory etc.
+                // These should be preserved if they are part of TicketDTO and set by the client.
+
+                ticket.LoginID = _callContext.LoginID; // Assuming _callContext has LoginID
+                ticket.PriorityID = Convert.ToByte(highPriorityIDStr);
+                ticket.ActionID = Convert.ToByte(defaultActionIDStr);
+                ticket.TicketStatusID = Convert.ToByte(newStatusIDStr);
+
+                // The controller set DueDateFromString. TicketDTO has DueDateFrom (DateTime?)
+                // and FromDueDateString (string). If client sends string, parse it.
+                // If we are setting it fresh, use currentDate.Date.
+                ticket.DueDateFrom = currentDate.Date;
+                // If you need to populate FromDueDateString for some reason:
+                // var dateFormat = settingBL.GetSettingValue<string>("DateFormat");
+                // ticket.FromDueDateString = currentDate.Date.ToString(dateFormat);
+
+
+                ticket.IsSendCustomerNotification = true;
+                ticket.Parent = parentDet != null ? new KeyValueDTO() // TicketDTO has Parent as KeyValueDTO
+                {
+                    Key = parentDet.ParentIID.ToString(),
+                    Value = $"{parentDet.ParentCode} - {parentDet.FatherFirstName} {(parentDet.FatherMiddleName != null ? parentDet.FatherMiddleName + " " : "")}{parentDet.FatherLastName}",
+                } : new KeyValueDTO(); // Match controller: create an empty object if parentDet is null
+
+                ticket.IsSendMailToAssignedEmployee = true;
+                ticket.AssignedEmployeeEmailID = supportEmail;
+
+                // Ensure TicketIID is 0 for new tickets if your mapper relies on this.
+                // Client-side sets ticketGenerationVM.TicketIID = 0; so it should be 0 already.
+                // ticket.TicketIID = 0; 
+
+                // Client also sends TicketTypeID. This seems to be set based on some logic ($scope.IsAcademic etc.)
+                // If ticket.TicketTypeID is already populated from client, use it. If not, and it needs a default, set it here.
+                // For example:
+                // if (!ticket.TicketTypeID.HasValue) {
+                //     ticket.TicketTypeID = /* some default ticket type ID */;
+                // }
+
+
+                // Call the service/mapper to save the ticket
+                var savedTicket = TicketingMapper.Mapper(_callContext).GenerateTicketByDTO(ticket);
+
+                if (savedTicket != null && savedTicket.TicketIID != 0)
+                {
+                    result.operationResult = OperationResult.Success; // For JS: operationResult == 1
+                    result.Message = "Ticket generated successfully!"; // Controller used crudSave.ErrorMessage
+                }
+                else
+                {
+                    result.operationResult = OperationResult.Error;
+                    result.Message = "Error generating ticket. Save operation failed.";
+                    // If savedTicket might contain an error message from the mapper:
+                    // result.Message = savedTicket?.ErrorMessage ?? "Error generating ticket. Save operation failed.";
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = ex.Message.ToLower().Contains("inner") && ex.Message.ToLower().Contains("exception") && ex.InnerException != null
+                    ? ex.InnerException.Message
+                    : ex.Message;
+
+
+                result.operationResult = OperationResult.Error;
+                result.Message = $"An unexpected error occurred: {errorMessage}"; // Be cautious about exposing raw error messages to client
+            }
+            return result;
+        }
+    }
+
+
+}

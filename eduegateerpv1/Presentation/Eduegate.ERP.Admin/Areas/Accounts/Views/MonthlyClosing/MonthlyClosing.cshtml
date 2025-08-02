@@ -1,0 +1,98 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+
+@{ if (Request.IsAjaxRequest()) { Layout = null; }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+<link href="~/Content/datatable.css" rel="stylesheet" />
+
+<div style="background-color: #f5f5f5;" id="MonthlyClosing" class="windowcontainer" ng-controller="MonthlyClosingController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+    <script>
+        $("#example-basic").steps({
+            headerTag: "h3",
+            bodyTag: "section",
+            transitionEffect: "slideLeft",
+            autoFocus: true
+        });
+    </script>
+    <div class="window-tab preload-overlay" style="display:none;">
+        <div class="preloader"><img src="~/Images/preloader.gif" width="32" height="32" alt="Loading" /></div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="app-content  flex-column-fluid p-0">
+            <div class="app-container  container-fluid ">
+                <div class="row gy-0 g-xl-2">
+                    <div class="col-lg-4">
+                        <span class="form-group">
+                            <span class="controls w-75">
+                                <label>Date From<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                <span class="controls brand">
+                                    <input type="date" ng-model="SelectedFromDate" ng-change="DateChanges()" />
+                                </span>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="col-lg-4">
+                        <span class="form-group">
+                            <span class="controls w-75">
+                                <label>Date To</label>
+                                <span class="controls brand">
+                                    <input type="date" ng-model="SelectedToDate" ng-change="CheckDateRanges()" />
+                                </span>
+                            </span>
+                        </span>
+
+
+                    </div>
+
+                    <div>
+                        <div id="example-basic">
+                            <h3>Fee General</h3>
+                            <section>
+                                <table id="test1">
+                                    <thead>
+
+                                        <tr>
+                                            <th>FeeTypeName</th>
+
+                                        </tr>
+
+                                    </thead>
+                                    <tbody>
+                                        @*<tr><td>Values</td></tr>*@
+                                        <tr ng-repeat="gridModel in FeeDueGeneral">
+
+                                            <td>
+                                                <span ng-bind="gridModel.FeeTypeName"></span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </section>
+                            <h3>next General</h3>
+                            <section>
+                                test value
+                            </section>
+                        </div>
+                        @*<script>
+                                $("#example-basic").steps({        $("#example-basic").steps({
+                                    headerTag: "h3",
+                                    bodyTag: "section",
+                                    transitionEffect: "slideLeft",
+                                    autoFocus: true
+                                });
+                            </script>*@
+                    </div>
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+

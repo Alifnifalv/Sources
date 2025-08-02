@@ -1,0 +1,67 @@
+﻿@using Eduegate.Framework.Mvc.Attributes
+
+@{
+    var fileUploadInfo = (FileUploadInfoAttribute)ViewBag.Property
+                                   .GetCustomAttributes(typeof(FileUploadInfoAttribute), true)[0];
+    <div class="controls marginBtm5">
+        <div class="dropzone" style="cursor: pointer;">
+            
+            <div class="fallback">
+                <div>
+                    <label for="upload">
+                        <input type="file" id="upload"
+                               onchange="angular.element(this).scope().UploadCropImageFiles(this, '@(fileUploadInfo.ActionUrl)', '@(fileUploadInfo.ImageType)',
+                                                            '@ViewBag.BindingPrefix', '@fileUploadInfo.ImageSourceModel', angular.element(this).scope().gridModel,
+                                                                angular.element(this).scope().$index, angular.element(this),
+                                                                @fileUploadInfo.CroppingWidth, @fileUploadInfo.CroppingHeight)"
+                               class="UploadFile" multiple accept="image/*" />
+                        
+                         @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Click here to Upload") 
+                    </label>
+                </div>
+            </div>
+            <div class="dynamicPopoverOverlay overlaydiv" style="display: none;"></div>
+            <div class="popup pagePopup popupwindow cropPopup" data-popup-type="dynamicPopover" id="dynamicPopover" style="display: none;">
+                <div class="popup-wrap">
+                    <span class="close" ng-click="ClosePopup($event)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="close" viewBox="0 0 16 16">
+                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z" />
+                        </svg>
+                    </span>
+                    <div id="dynamicPopoverContainer" class="dynamicPopoverContainer">
+
+                        <div class="cropBtn">
+                            <button type="button" class="btn btn-primary">Upload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (fileUploadInfo.CroppingHeight != 0 && fileUploadInfo.CroppingWidth != 0)
+        {
+            <div class="displaylineBlock fullwidth text-right fontSize12 lightGrey">
+                Dimension:@(fileUploadInfo.CroppingWidth)w x @(fileUploadInfo.CroppingHeight)h
+            </div>
+        }
+
+        @if (fileUploadInfo.ActionUrl.Contains("Content"))
+        {
+            <a prettyp class="lightbox" data-src="Content/ReadContentsByID?contentID={{@ViewBag.BindingPrefix.@fileUploadInfo.ImageSourceModel}}" rel="prettyPhoto[]">
+                <img loading="lazy" src="Content/ReadContentsByID?contentID={{@ViewBag.BindingPrefix.@fileUploadInfo.ImageSourceModel}}" onerrorsrc="~/images/unknown.png" />
+            </a>
+            <div>
+                <img class="croppingImage" />
+            </div>
+        }
+        else
+        {
+            <a prettyp class="lightbox" data-src="{{@ViewBag.BindingPrefix.@fileUploadInfo.ImageSourceModel}}" rel="prettyPhoto[]">
+                <img loading="lazy" ng-src="{{@ViewBag.BindingPrefix.@fileUploadInfo.ImageSourceModel}}" />
+            </a>
+            <div class="croppingImagePopover" data-popup-type="dynamicPopover" title="Cropping Image">
+                <img class="croppingImage" />
+            </div>
+        }
+    </div>
+}

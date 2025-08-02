@@ -1,0 +1,53 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+@{
+    var count = 0;
+    string filterValue;
+}
+
+@if (Model.SummaryHeaderList != null && Model.SummaryHeaderList.Count > 0)
+{
+    <div class="summaryheader-blk" ng-controller="SummaryRowsController as RowModel" ng-init="RowModel.activate('@(!string.IsNullOrEmpty(Model.ControllerName) ? Model.ControllerName : Model.ViewName.ToString())', '@Model.ViewName')">
+        <div class="summary-buttons" ng-click="RowModel.activate('@(!string.IsNullOrEmpty(Model.ControllerName) ? Model.ControllerName : Model.ViewName.ToString())', '@Model.ViewName')">
+            <span class="refresh"><i class="fa fa-refresh"></i></span>
+            @*<span class="remove">x</span>*@
+        </div>
+        <ul class="summaryheader">
+            @{
+                if (Model.SummaryHeaderList != null)
+                {
+                    foreach (var header in Model.SummaryHeaderList)
+                    {
+                        @*<li>
+                                <label>@header.Header</label>
+                                <span>{{RowModel.SummaryRows[0].@header.ColumnName}}</span>
+                            </li>*@
+
+                            <li>
+                                @{
+                                    filterValue = !string.IsNullOrEmpty(header.FilterValue) ? "ng-click=RowModel.FilterAction(\"" + header.FilterValue + "\")" : "";
+                                    //filterValue = "ng-click=RowModel.FilterAction(123)";
+                                }
+                                <span @filterValue>
+                                    <span class="quick-icon"><i class="fa fa-2x fa-cubes"></i></span>
+                                    <label>@header.Header</label>
+
+                                    @switch (header.DataType.ToLower())
+                                    {
+                                        case "currency":
+                                            <span class="value" @(Html.Raw(header.IsExpression ? header.Expression : string.Empty))>{{RowModel.SummaryRows[0].@header.ColumnName | number : @ViewBag.DefaultDecimalPoints}}</span>
+                                            break;
+                                        default:
+                                            <span class="value" @(Html.Raw(header.IsExpression ? header.Expression : string.Empty))>{{RowModel.SummaryRows[0].@header.ColumnName}}</span>
+                                            break;
+                                    }
+
+                                </span>
+                            </li>
+
+                            count++;
+                        }
+                    }
+            }
+        </ul>
+    </div>
+}

@@ -1,0 +1,111 @@
+﻿@model Eduegate.Web.Library.ViewModels.Common.CRUDMasterDetailViewModel
+@using System.Reflection;
+@using Eduegate.Framework.Mvc.Attributes;
+@using Eduegate.Frameworks.Mvc.Attributes;
+
+<div class="tabletop-section">
+    @if (Model.DetailViewModel != null)
+    {
+        <div class="alignleft">
+            <a class="button-orange  delete nontexticon" ng-click="DeleteGridItems($event, CRUDModel.Model.DetailViewModel)"><i class="fa fa-trash" aria-hidden="true" title="delete"></i></a>
+            <a class="button-orange  delete nontexticon" ng-click="AddNewItem(CRUDModel.Model.DetailViewModel)"><i class="fa fa-plus" aria-hidden="true" title="import"></i></a>
+            <a class="button-orange  delete nontexticon" ng-click=""><i class="fa fa-download" aria-hidden="true" title="import"></i></a>
+
+            @if (@Model.MasterViewModel.GetType().GetProperty("SearchText") != null)
+            {
+                <div class="controls">
+                    <input type="text" placeholder="Bar Code/Part No" ng-model="CRUDModel.Model.MasterViewModel.SearchText" name="searchText" ng-keyup="ProductExists($event);" />
+                </div>
+            }
+
+        </div>
+    }
+
+    @if (Model.MasterViewModel.IsSummaryPanel)
+    {
+        <div class="grid-controls alignright">
+
+            @if ((!(Model.MasterViewModel.ToString().Contains(".Accounts.") || Model.MasterViewModel.ToString().Contains(".AccountTransactions.")) ||
+                (Model.MasterViewModel.ToString() == "Eduegate.Web.Library.ViewModels.Inventory.BranchTransferRequestMasterViewModel") ||
+                Model.MasterViewModel.ToString() == "Eduegate.Web.Library.ViewModels.Inventory.BranchTransferMasterViewModel"))
+            {
+                <div class="total alignleft">
+                    <span class="caption">Quantity:</span>
+
+                    <span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Quantity'| number : 0)}}</span>
+                </div>
+            }
+
+            @if (Model.MasterViewModel.ToString() == "Eduegate.Web.Library.ViewModels.AccountTransactions.PVRegularPaymentMasterViewModel" ||
+                            Model.MasterViewModel.ToString() == "Eduegate.Web.Library.ViewModels.AccountTransactions.RVRegularReceiptMasterViewModel" ||
+                            Model.MasterViewModel.ToString() == "Eduegate.Web.Library.ViewModels.AccountTransactions.JVMasterViewModel" ||
+                            Model.MasterViewModel.ToString() == "Eduegate.Web.Library.ViewModels.AccountTransactions.RegularCreditMasterViewModel" ||
+                            Model.MasterViewModel.ToString() == "Eduegate.Web.Library.ViewModels.AccountTransactions.RegularDebitMasterViewModel")
+            {
+                <div class="total alignleft">
+                    <span class="caption">Amount remain to adjust:</span>
+                    <span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Debit': -1 * (CRUDModel.Model.DetailViewModel|sumByKey:'Credit') | number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span>
+                </div>
+            }
+            else
+            if (Model.MasterViewModel.ToString() == "Eduegate.Web.Library.ViewModels.Accounts.ExpenseEntryHeadViewModel")
+            {
+                <div class="total alignleft">
+                    <span class="caption">Amount:</span>
+                    <span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'DebitAmount': -1 * (CRUDModel.Model.MasterViewModel.Discount == null ? 0 : CRUDModel.Model.MasterViewModel.Discount) +  CRUDModel.Model.MasterViewModel.TaxAmount | number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span>
+                </div>
+            }
+            else
+            if (Model.MasterViewModel.ToString() != "Eduegate.Web.Library.ViewModels.Accounts.AssetMasterViewModel" &&
+                            Model.MasterViewModel.ToString() != "Eduegate.Web.Library.ViewModels.Inventory.BranchTransferRequestMasterViewModel" &&
+                                 Model.MasterViewModel.ToString() != "Eduegate.Web.Library.ViewModels.Inventory.BranchTransferMasterViewModel")
+            {
+                <div class="total alignleft">
+                    <span class="caption">Amount:</span>
+                    <span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Amount': ((CRUDModel.Model.MasterViewModel.DeliveryCharge == null ? 0 : CRUDModel.Model.MasterViewModel.DeliveryCharge) +  CRUDModel.Model.MasterViewModel.TaxAmount - (CRUDModel.Model.MasterViewModel.Discount == null ? 0 : CRUDModel.Model.MasterViewModel.Discount)) | number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span>
+                </div>
+            }
+        </div>
+    }
+
+    @if (Model.DetailViewModel != null)
+    {
+        <div class="stickygridheader">
+            <table cellpadding="0" cellspacing="0" class="listing">
+                <thead>
+                    <tr>
+                        @foreach (var property in Model.DetailViewModel.GetType().GetProperties())
+                        {
+                            var title = (System.ComponentModel.DisplayNameAttribute)property.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+                            var controlType = (ControlTypeAttribute)property.GetCustomAttributes(typeof(ControlTypeAttribute)).FirstOrDefault();
+
+                            var claimType = (HasClaimAttribute)property.GetCustomAttributes(typeof(HasClaimAttribute)).FirstOrDefault();
+
+                            if (claimType != null)
+                            {
+                                var allClaims = (ViewBag.Claims as List<Eduegate.Web.Library.ViewModels.Security.ClaimViewModel>);
+                                var allClaimNames = allClaims.Select(a => a.ResourceName).ToList();
+                                if (!claimType.HasAccess(allClaimNames))
+                                {
+                                    continue;
+                                }
+                            }
+
+                            if (controlType != null && controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.CheckBox)
+                            {
+                                <th @Html.Raw((string.IsNullOrEmpty(controlType.Css) ? string.Empty : "class=\"" + controlType.Css + "\""))>
+                                    <input type="checkbox" class="zoomin" ng-model="CRUDModel.Model.SelectAll" ng-change="SelectAllHeader($event,CRUDModel.Model.DetailViewModel, CRUDModel.Model.SelectAll)" />
+                                </th>
+                            }
+                            else if (title != null && controlType != null)
+                            {
+                                <th @Html.Raw((string.IsNullOrEmpty(controlType.Css) ? string.Empty : "class=\"" + controlType.Css + "\""))>@title.DisplayName</th>
+                            }
+                        }
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    }
+</div>

@@ -1,0 +1,29 @@
+﻿@using Eduegate.Services.Contracts.Enums
+
+
+
+<div class="summary-toggle" ng-controller="SummaryViewControllerSupplierPurchaseOrderActionController" ng-init="SummaryViewInit( @ViewBag.IID)" >
+    <div class="sum_toggleheader" ng-click="GetOrderDetails()">Order Confirmation</div>
+    <div class="sum_togglecontent" ng-if="OrderDetail.DocumentStatus.Key != 7">
+        <div class="label-value-box">
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">Order</span>
+                <span class="link-content">
+                    <select name="StatusIID" ng-model="OrderDetail.DocumentStatus.Key" required>
+                        <i class="fa fa-caret-down"></i>
+                        <option ng-repeat="status in documentStatuses" ng-selected="status.Key == ViewModels.@(DynamicViews.PurchaseOrder).DocumentStatusID" value="{{status.Key}}">{{status.Value}}</option>
+                    </select>
+                </span>
+            </div>
+            <div class="label-value-box-inner" ng-show="OrderDetail.DocumentStatus.Key == 7">
+                <span class="label-style fontbold">Reason</span>
+                <span class="link-content">
+                   <input ng-model="OrderDetail.Reason" required/>
+                </span>
+            </div>
+            <div class="fullwidth alignleft textright paddingbtm5">
+                <input type="button" value="Save" class="button-orange" ng-click="UpdateMarketPlaceOrderStatus(OrderDetail);" />
+            </div>
+        </div>
+    </div>
+</div>

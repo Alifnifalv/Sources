@@ -1,0 +1,150 @@
+﻿<div class="productcreteheader">SKU's<button value="Submit" type="button" class="submitcreateform-style">Next</button></div>
+<div class="panel-body">
+    <ng-form name="SKUMappingForm">
+        <table class="listing planner-create sku ui-table ui-table-reflow" data-role="table" data-mode="reflow" border="0">
+            <thead>
+                <tr>
+                    <th class="toggle-arrow"><span>&nbsp;</span></th>
+                    @*<th class="large-col-width">SKU</th>*@
+                    <th class="large-col-width">SKU Name</th>
+                    @*<th>ProductPrice <span style="color:white">*</span></th>*@
+                    <th>PartNumber <span style="color:white">*</span></th>
+                    <th>BarCode</th>
+                    <th></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="product-list" ng-repeat-start="sku in ProductModel.SKUMappings">
+                    @*<td class="chkbox">
+                            <b class="ui-table-cell-label">
+
+                            </b>
+                            <input data-role="none" type="checkbox">
+                            <span class="togglehead first-toggle active">
+                                <ul class="accordian_header">
+                                    <li>11/26/2012</li>
+                                    <li class="accordian-arrow">
+                                        <span class="accordian-arrow-icon rotate180"></span>
+                                    </li>
+                                    <li>
+                                        <span>8 Hrs</span>
+                                    </li>
+                                </ul>
+                            </span>
+                        </td>*@
+                    <td class="toggle-arrow" ng-click="ShowCustomSKUField($index);"><span>&nbsp;</span></td>
+                    @*<td class="large-col-width" ng-click="ShowCustomSKUField($index);">
+                        <label data-role="none"> <a>{{sku.SKU}} </a></label>
+                    </td>*@
+
+                    <td class="large-col-width fieldpopup" @*ng-click="ShowCustomSKUField($index);"*@>
+                        <a>@*<input type="text" data-role="none" ng-model="sku.SkuName"/>*@</a>
+                        <a>
+                            <input type="text" data-role="none" ng-focus="MultilanguagePopup($event, 'show');" ng-model="sku.SkuName.Text" />
+                            <div class="productname">
+                                <div id="languageoptionSKU" class="languageoption">
+                                    <ul>
+                                        <li ng-repeat="culture in sku.SkuName.CultureDatas">
+                                            <label ng-bind="culture.CultureName"></label>
+                                            <input ng-if="$index == 0" type="text" value="{{culture.CultureValue; sku.SkuName.Text=culture.CultureValue;}}" ng-model="culture.CultureValue" class="haslanguage">
+                                            <input ng-if="$index!=0" type="text" value="{{culture.CultureValue;}}" ng-model="culture.CultureValue" class="haslanguage">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </a>
+                    </td>
+
+                    @*<td class="job-col bgcolor">
+                        <input name="" data-role="none" placeholder="0.000" ng-model="sku.ProductPrice" type="text" required ng-pattern="/^[0-9]*\d{0,9}(\.?\d{1,3})?%?$/">
+                        <span class="cufon" style="color:red" ng-show="submitted && sku.ProductPrice == undefined">Please enter a valid price </span>
+                    </td>*@
+                    <td class="bgcolor">
+                        <input data-role="none" placeholder="Part Number" ng-model="sku.PartNumber" ng-blur="PartNumberExists(sku);" type="text" required />
+                        <span class="cufon" style="color:red" ng-show="submitted && sku.PartNumber == undefined">Please enter a valid Part Number </span>
+                        <span class="cufon" style="color:red" ng-show="sku.PartNoExists">Part Number Exists Already</span>
+                    </td>
+                    <td class="job-col bgcolor">
+                        <input data-role="none" placeholder="Bar Code" ng-model="sku.BarCode" ng-blur="BarcodeExist(sku);" type="text" >
+                        <span class="cufon" style="color:red" ng-show="sku.BarCodeExists">Barcode Exists Already</span>
+                    </td>
+                    <td class="upload-controls">
+                        <span style="margin-top:4px" class="uploadicon popupbtn" data-popup-type="morelistoptionSKUmenu" ng-click="OpenImageMapPopup(sku, $event)">&nbsp;</span>
+                        <span class="uploadvideoicon popupbtn" data-popup-type="morevideolistoptionSKUmenu" ng-click="OpenVideoMapPopup(sku, $event)">&nbsp;</span>
+                        <span class="cufon" style="color:red" ng-show="submitted && sku.ImageMaps.length <= 0">Please map atleast one image </span>
+                    </td>
+
+                </tr>
+
+                @*start*@
+                <tr id="skuField" class="sku-fields showfields" ng-repeat-end ng-show="$index == SKUIndex">
+                    <td colspan="6">
+                        @{
+                            await Html.RenderPartialAsync("_CustomSKUField", false);
+                        }
+                    </td>
+                </tr>
+                @*end*@
+
+            </tbody>
+        </table>
+    </ng-form>
+</div>
+
+<div class="popup morelist-options" data-popup-type="morelistoptionSKUmenu" id="ImageMapPopup">
+
+    <div class="popup-wrap">
+        <span class="close" ng-click="CloseImageMapPopup($event)">X</span>
+        <div class="productcreteheader">Customize Product Images</div>
+        <div class="total_imgs">
+            <span class="title">List of Images</span>
+            <ul>
+                <li ng-repeat="imageInfo in SKUMapImagesToSelect" ng-class="{'selected' : imageInfo.isSelected === true, '' : imageInfo.isSelected === false}" ng-click="ToggleImageSelected(imageInfo);">
+                    <span class="delete">X</span><img ng-src="{{imageInfo.FilePath}}" />
+                </li>
+            </ul>
+        </div>
+        <div id="add" class="addimagesbtn button-orange set-sku-image" data-skumapid="" ng-click="MapImagesToskuLine($event)"><a href="#">Add<i class="fa fa-angle-double-right"></i></a></div>
+        <div class="selected-images">
+            <span class="title">Selected Images</span>
+            <ul>
+                <li ng-repeat="imageInfo in selectedSKUMapImages"><span class="delete" data-skumapid="" ng-click="RemoveImageMapsToSKuLines(imageInfo)">X</span><img ng-src="{{imageInfo.ImagePath}}" /></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+@*Video map popup*@
+<div class="popup morelist-options" data-popup-type="morevideolistoptionSKUmenu" id="VideoMapPopup">
+
+    <div class="popup-wrap">
+        <span class="close" ng-click="CloseVideoMapPopup($event)">X</span>
+        <div class="productcreteheader">Customize Product Videos</div>
+        <div class="total_imgs">
+            <span class="title">List of Videos</span>
+            <ul>
+                <li ng-repeat="videoInfo in SKUMapVideosToSelect" ng-class="{'selected' : videoInfo.isSelected === true, '' : videoInfo.isSelected === false}" ng-click="ToggleVideoSelected(videoInfo);" style="width: 150px;">
+                    <span class="delete">X</span>
+                    <video width="150" controls>
+                        <source ng-src="{{videoInfo.FilePath}}" type="video/mp4">
+                    </video>
+                </li>
+            </ul>
+        </div>
+        <div id="addVideo" class="addimagesbtn button-orange set-sku-video" data-skumapid="" ng-click="MapVideosToskuLine($event)"><a href="#">Add<i class="fa fa-angle-double-right"></i></a></div>
+        <div class="selected-images">
+            <span class="title">Selected Videos</span>
+            <ul>
+                <li ng-repeat="videoInfo in selectedSKUMapVideos" style="width: 150px;">
+                    <span class="delete" data-skumapid="" ng-click="RemoveVideoMapsToSKuLines(imageInfo)">X</span>
+                    <video width="150" controls>
+                        <source ng-src="{{videoInfo.VideoPath}}" type="video/mp4">
+                    </video>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+

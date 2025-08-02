@@ -1,0 +1,57 @@
+﻿@using Eduegate.Domain;
+@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+@{
+    string model = Model.IsChild ? "ChildModel" : "RowModel";
+    var rowEvent = "\"" + model + ".RowClick('" + (!string.IsNullOrEmpty(Model.ViewFullPath) ? Model.ViewFullPath : string.IsNullOrEmpty(Model.ControllerName) ? Model.ViewName.ToString() : Model.ControllerName)
+       + "', $index, $event, Row," + (Model.IsDetailedView ? "true" : "false") + "," + (Model.IsReloadSummarySmartViewAlways ? "true" : "false") + ");\"";
+    var imagePath = new Eduegate.Domain.Setting.SettingBL().GetSettingValue<string>("ImageHostUrl");
+}
+
+<script>
+         $(function() {
+             $(".grid-sortable", $('#@(ViewBag.WindowName)')).sortable({
+               placeholder: "highlight"
+            });
+         });
+</script>
+
+<ul class="grid-sortable">
+    <li ng-repeat="Row in @(model).rows" data-rowid="moreDetails1" class="mainrow"
+        ng-click=@(Html.Raw(Model.IsRowClickForMultiSelect ? "\"" + "MultiSelectClick(Row)\"" : rowEvent))>
+        @foreach (var cell in Model.HeaderList.Where(a => a.ColumnName != "RowCategory"))
+        {
+            if(cell.IsVisible)
+            { 
+                switch (cell.DataType.ToLower().Trim())
+                {
+                    case "datetime":
+                        <span ng-bind="Row.@cell.ColumnName  | date:@(model).DateTimeFormat"></span>
+                        break;
+                    case "date":
+                    <span ng-bind="Row.@cell.ColumnName  | date:@(model).DateFormat"></span>
+                        break;
+                    case "image":
+                        <a prettyp class="lightbox" ng-href="{{@(model).GetImageUrl('@imagePath',Row.@cell.ColumnName)}}" rel="prettyPhoto[]">
+                            <img ng-src="{{@(model).GetImageUrl('@imagePath',Row.@cell.ColumnName)}}" style="width:50px;height:50px;" />
+                        </a>
+                        break;
+                    default:
+                        <span ng-bind="Row.@cell.ColumnName" @Html.Raw(cell.Expression)></span>
+                        break;
+                }
+                @Html.Raw("<br/>");
+
+            }
+            else
+            {
+                <input type="hidden" ng-bind="Row.@cell.ColumnName">
+            }
+        }
+        <i class="bg-icon text-center fa fa-cubes"></i>
+    </li>
+</ul>
+<div class="transparent-overlay" ng-click="RowModel.ClosePopup($event);"></div>
+<div class="popup gridpopupfields" data-popup-type="gridpopupfields">
+    <div class="popup-wrap" id="popupContainer">
+    </div>
+</div>

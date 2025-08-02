@@ -1,0 +1,165 @@
+﻿@model Eduegate.Web.Library.ViewModels.HR.EmploymentRequestViewModel
+@{
+    ViewBag.Title = "WorkFlow";
+    Layout = null;
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div ng-controller="WorkFlowController" ng-init="init('@windowName',@Newtonsoft.Json.JsonConvert.SerializeObject(Model))"
+     style="width:500px">
+    @await Html.PartialAsync("~/Views/Shared/_InfoMessage.cshtml")
+    <form id="workFlowID">
+        <div id="gridpopupoverlay" class="window-tab popup-window preload-overlay"><div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div></div>
+        <div class="summary-content">
+            <div class="label-value-box">
+                <div class="label-value-box-inner">
+                    <span class="label-style">Request ID</span>
+                    <span class="link-content">@Model.MasterViewModel.EMP_REQ_NO</span>
+                </div>
+                <div class="label-value-box-inner">
+                    <span class="label-style">Employee Name</span>
+                    <span class="link-content">@(Model.MasterViewModel.F_NAME + " " + Model.MasterViewModel.M_NAME + " " + Model.MasterViewModel.L_NAME)</span>
+                </div>
+                <div class="label-value-box-inner">
+                    <span class="label-style">Designation</span>
+                    <span class="link-content">@(Model.MasterViewModel.Designation.Value)</span>
+                </div>
+                <div class="label-value-box-inner">
+                    <span class="label-style">Department</span>
+                    <span class="link-content">@(Model.MasterViewModel.Shop.Value)</span>
+                </div>
+                <div class="label-value-box-inner">
+                    <span class="label-style">Location</span>
+                    <span class="link-content">@(Model.MasterViewModel.Location.Value)</span>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="summary-content">
+            <div class="label-value-box">
+
+                <div class="label-value-box-inner">
+                    <span class="label-style">Basic Salary</span>
+                    <span class="link-content">@(Model.MasterViewModel.BasicSalary)</span>
+                </div>
+                <div class="label-value-box-inner">
+                    <span class="label-style">Passport No</span>
+                    <span class="link-content">@(Model.MasterViewModel.PASSPORT_NO)</span>
+                </div>
+                <div class="label-value-box-inner">
+                    <span class="label-style">Nationality</span>
+                    <span class="link-content">@(Model.MasterViewModel.Nationality.Value)</span>
+                </div>
+                <div class="label-value-box-inner">
+                    <span class="label-style">Reason for hight basic salary</span>
+                    <span class="link-content">@(Model.MasterViewModel.Reason_Basic)</span>
+                    @*@(Model.MasterViewModel.S)*@
+                </div>
+                <div class="label-value-box-inner">
+                    <span class="label-style">Status</span>
+                    <span class="link-content">@(Model.MasterViewModel.EmpRequestStatus.Value)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-content">
+            <div class="label-value-box-inner">
+                <span class="label-style">Visa Company</span>
+                @*@Html.DropDownListFor(model => model.MasterViewModel.VisaCompany, new SelectList(visaCompany, "Key", "Value"), new { @class = "required", @ng_model = "CRUDModel.Model.MasterViewModel.VisaCompany" })*@
+
+                @*@Html.DropDownList("VisaCompany", new SelectList(new List<SelectListItem>
+                    {
+                        new SelectListItem { Selected = true, Text = string.Empty, Value = "-1"},
+
+                    }, "Value", "Text", 1))*@
+
+
+                <ui-select ng-model="Model.MasterViewModel.VisaCompany" theme="select2" class="pos-txt" style="width: 100%;" ng-if="VisaCompany.length > 0">
+                    <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                    <ui-select-choices repeat="visaCo in VisaCompany track by $index">
+                        <div ng-bind-html="visaCo.Value | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+                @*blisterPackTemplate as blisterPackTemplate.name for blisterPackTemplate in blisterPackTemplates*@
+
+                @*<select ng-model="VisaCompanySelected" ng-options="visaCo as visaCo.Value for visaCo in VisaCompany" ng-change="OnVisaCompanyChange(VisaCompanySelected)">
+
+                        <option value="">Select</option>
+                    </select>*@
+
+                <input type="hidden" class="val_input" ng-value="Model.MasterViewModel.VisaCompany.Key" data-val="true" data-val-required="Select Visa Company." id="VisaCompany" name="VisaCompany" />
+                @Html.ValidationMessage("VisaCompany", new { @ng_show = "Model.MasterViewModel.VisaCompany == null || Model.MasterViewModel.VisaCompany.Key == '' " })
+            </div>
+
+
+            <div class="label-value-box-inner">
+                <span class="label-style">Quota</span>
+                @*@Html.DropDownListFor(model => model.MasterViewModel.QuotaType, new SelectList(quotaType, "Key", "Value"), new { @class = "required", @ng_model = "CRUDModel.Model.MasterViewModel.QuotaType" })*@
+                @*@Html.DropDownList("Quota", new SelectList(new List<SelectListItem>
+                    {
+                        new SelectListItem { Selected = true, Text = string.Empty, Value = "-1"},
+                    }, "Value", "Text", 1))*@
+                <ui-select ng-model="Model.MasterViewModel.QuotaType" theme="select2" class="pos-txt" style="width: 100%;" ng-if="QuotaTypes.length > 0">
+                    <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                    <ui-select-choices repeat="quota in QuotaTypes track by $index">
+                        <div ng-bind-html="quota.Value"></div>
+                    </ui-select-choices>
+                </ui-select>
+
+                @*<select ng-model="QuotaTypeSelected" ng-options="quota as quota.Value for quota in QuotaTypes" ng-change="OnQuotaTypeChange(QuotaTypeSelected)">
+                        <option value="">Select</option>
+                    </select>*@
+
+                <input type="hidden" class="val_input" ng-value="Model.MasterViewModel.QuotaType.Key" data-val="true" data-val-required="Select Quota Type." id="QuotaType" name="QuotaType" />
+                @Html.ValidationMessage("QuotaType", new { @ng_show = "Model.MasterViewModel.QuotaType == null || Model.MasterViewModel.QuotaType.Key == '' " })
+            </div>
+
+            <div class="label-value-box-inner">
+                <span class="label-style">Remarks</span>
+                <textarea rows="5" cols="100" ng-model="Model.MasterViewModel.PersonalRemarks"></textarea>
+            </div>
+
+            <div class="label-value-box-inner">
+                <span class="label-style">Action</span>
+                <ui-select ng-model="Model.MasterViewModel.EmpProcessRequestStatus" theme="select2" class="pos-txt" style="width: 100%;" ng-if="StatusAction.length > 0">
+                    <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                    <ui-select-choices repeat="stat in StatusAction track by $index">
+                        <div ng-bind-html="stat.Value | highlight: $select.search"></div>
+                    </ui-select-choices>
+                </ui-select>
+
+                <input type="hidden" class="val_input" ng-value="Model.MasterViewModel.EmpProcessRequestStatus.Key" data-val="true" data-val-required="Select Process status." id="EmpProcessRequestStatus" name="EmpProcessRequestStatus" />
+                @Html.ValidationMessage("EmpProcessRequestStatus", new { @ng_show = "Model.MasterViewModel.EmpProcessRequestStatus == null || Model.MasterViewModel.EmpProcessRequestStatus.Key == '' " })
+
+                @*@Html.DropDownList("ProcessingStatus", new SelectList(new List<SelectListItem>
+                    {
+                        new SelectListItem { Selected = true, Text = string.Empty, Value = "-1"},
+                        new SelectListItem { Selected = false, Text = "Draft", Value = "1"},
+                        new SelectListItem { Selected = false, Text = "Submit for approval", Value = "2"},
+                        new SelectListItem { Selected = false, Text = "Approved", Value = "3"},
+                        new SelectListItem { Selected = false, Text = "Submit Back", Value = "4"},
+                        new SelectListItem { Selected = false, Text = "Cancel", Value = "5"},
+                    }, "Value", "Text", 1))*@
+            </div>
+        </div>
+        <div class="productcreteheader">Signature Pad</div>
+        <div class="fullwidth-column alignleft">
+            <div id="signature"></div>
+        </div>
+        <div class="fullwidth-column alignleft signcontrols">
+            <span class="alignleft"><a id="clear" class="button-orange">Clear</a></span>
+            @*<span class="alignright"><a class="button-orange">Save</a></span>*@
+            <button class="button-orange alignright" type="button" ng-click="Save($event);" form="workFlowID" value="Submit">Save</button>
+        </div>
+    </form>
+    <script>
+        $('#signature').signature();
+        $('#clear').on('click', function () {
+            $('#signature').signature('clear');
+        });
+    </script>
+</div>
+

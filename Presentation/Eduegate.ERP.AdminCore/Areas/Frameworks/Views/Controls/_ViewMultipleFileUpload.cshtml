@@ -1,0 +1,49 @@
+﻿@using Eduegate.Framework.Mvc.Attributes
+
+@{
+    var fileUpload = ViewBag.Property.GetCustomAttributes(typeof(FileUploadInfoAttribute), true);
+
+    if(fileUpload.Length == 0)
+    {
+        throw new Exception("No file upload infor provided for " + ViewBag.BindingPrefix);
+    }
+
+    var fileUploadInfo = (FileUploadInfoAttribute)fileUpload[0];
+
+    <div class="controls marginBtm5">       
+
+        @if (fileUploadInfo.CroppingHeight != 0 && fileUploadInfo.CroppingWidth != 0)
+        {
+            <div class="displaylineBlock fullwidth text-right fontSize12 lightGrey">
+                Dimension:@(fileUploadInfo.CroppingWidth)w x @(fileUploadInfo.CroppingHeight)h
+            </div>
+        }
+        <div class="panel-body">
+            <div class="upload-preview">
+                <div class="imgsuploaded">
+                    <h2>Preview</h2>
+                    <div class="upload-imgwrap dropzone-previews" id="previews">
+                        <div class="dz-preview dz-processing dz-image-preview" ng-repeat="imageInfo in @(ViewBag.BindingPrefix).@(fileUploadInfo.ImageSourceModel)s track by $index">
+                            <div class="dz-image"> <img data-dz-thumbnail="" ng-src="{{imageInfo.FilePath}}"></div>
+                            <a href="" class="dz-remove" ng-click="@(ViewBag.BindingPrefix).@(fileUploadInfo.ImageSourceModel)s.splice($index, 1);">Cancel upload</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="imgsuploaded uploaded">
+                <h2>Uploaded Images</h2>
+                <div class="upload-imgwrap dropzone-previews" id="previews">
+                    <div class="dz-preview dz-processing dz-image-preview" ng-repeat="uploadedImage in @(ViewBag.BindingPrefix).New@(fileUploadInfo.ImageSourceModel)s track by $index">
+                        <div class="dz-image"> <img data-dz-thumbnail="" ng-src="{{uploadedImage.FilePath}}"> </div>
+                        <a href="" class="dz-remove" ng-click="@(ViewBag.BindingPrefix).New@(fileUploadInfo.ImageSourceModel)s.splice($index,1);">Cancel upload</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="croppingImagePopover" data-popup-type="dynamicPopover" title="Cropping Image">
+            <img class="croppingImage" />
+        </div>
+    </div>
+    }

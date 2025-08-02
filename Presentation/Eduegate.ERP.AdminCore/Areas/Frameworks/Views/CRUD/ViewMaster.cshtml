@@ -1,0 +1,65 @@
+﻿@model Eduegate.Web.Library.ViewModels.CRUDViewModel
+@using System.Reflection;
+@using Eduegate.Framework.Mvc.Attributes
+ 
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    var windowName = "window_" + Guid.NewGuid().ToString();
+    ViewBag.WindowName = windowName;
+    var container = (ContainerTypeAttribute)Model.ViewModel.GetType().GetCustomAttribute(typeof(ContainerTypeAttribute));
+    ViewBag.Claims = Model.Claims;
+}
+<div class="windowcontainer" id="View@(Model.Name)">
+    <div id="@windowName">
+        <div class="dynamicPopoverOverlay"></div>
+        <div class="popup pagePopup" data-popup-type="dynamicPopover" id="dynamicPopover">
+            <div class="popup-wrap">
+                <span class="close">X</span>
+                <div id="dynamicPopoverContainer" class="dynamicPopoverContainer"></div>
+            </div>
+        </div><!--add-np-section-->
+
+        <form id="crud@(Model.Name)_form">
+            <div id="crud@(Model.Name)" ng-app="CRUDAPP" ng-controller="@(string.IsNullOrEmpty(Model.JsControllerName) ? "CRUDController" : Model.JsControllerName) as CRUD"
+                 data-ng-init="Init('@windowName',@Newtonsoft.Json.JsonConvert.SerializeObject(Model), '@Model.Name', @(!string.IsNullOrEmpty(Model.IID2) ? "'" + Model.IID2 + "'" : Model.IID.ToString()))">
+
+                <div class="window-tab preload-overlay" style="display:block;">
+                    <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+                </div>              
+
+                <center> <div class="bounce-wrapper" id="Load" style="display:none;"><div class="three-bounce-inner"><div class="bounce-item bi-item1"></div><div class="bounce-item bi-item2"></div><div class="bounce-item bi-item3"></div></div></div></center>
+
+            <div class="pagecontent" ng-class="{'quick-summary-wrap' : QuickSmartView.length > 0}">
+
+                <div class="pagecontent-inner">
+                    @{
+                        <ul class="nav nav-tabs nav-tabsmobile" id="myTab">
+                            @{await Html.RenderPartialAsync("~/Areas/Frameworks/Views/CRUD/BuildViewContainerContent.cshtml", Model);}
+                        </ul>
+                    }
+                </div>
+
+                <div id="advanceSearchForCRUD" class="popup fl-advsearch" data-popup-type="flowlayout-advsearch"></div>
+            </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('body').on('click', function (e) {
+            if ($(e.target).closest('.quickviewpanel').length === 0 && $(e.target).closest('ul.squick-view li').length === 0 && $(e.target).closest('.detailviews').length === 0) {
+                $('.quickviewpanel').removeClass('slide');
+                $('ul.squick-view li').removeClass('active');
+            }
+        });
+
+        $('.popup.fl-advsearch').draggable({
+            handle: ".productcreteheader"
+        });
+    });
+</script>

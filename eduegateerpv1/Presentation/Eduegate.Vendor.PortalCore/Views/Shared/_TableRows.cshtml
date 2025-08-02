@@ -1,0 +1,79 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+@using Eduegate.Domain;
+@using Eduegate.Framework.Extensions;
+
+@{
+    string model = Model.IsChild ? "ChildModel" : "RowModel";
+    var rowEvent = "\"" + model + ".RowClick('" + (!string.IsNullOrEmpty(Model.ViewFullPath) ? Model.ViewFullPath : string.IsNullOrEmpty(Model.ControllerName) ? Model.ViewName.ToString() : Model.ControllerName)
+        + "', $index, $event, Row," + (Model.IsDetailedView ? "true" : "false") + "," + (Model.IsReloadSummarySmartViewAlways ? "true" : "false") + ");\"";
+    var imagePath = new Eduegate.Domain.Setting.SettingBL().GetSettingValue<string>("ImageHostUrl");
+}
+<tbody class="tableRow">
+    <tr ng-repeat ="(index,Row) in @(model).rows" data-rowid="moreDetails1" class="mainrow"
+                 ng-dblclick=@(Html.Raw(Model.IsRowClickForMultiSelect ? "\"" + "MultiSelectClick(Row)\"" : rowEvent))>
+        <th scope="row" style="text-align:center;">{{((RowModel.CurrentPage?(RowModel.CurrentPage-1):0)*25)+index+1}}</th>
+
+        @if (Model.HeaderList != null)
+        {
+            //Binding data
+            foreach (var cell in Model.HeaderList.Where(a => a.ColumnName != "RowCategory" && a.IsVisible))
+            {
+                @switch (cell.DataType.ToLower().Trim())
+                {
+                    case "datetime":
+                        <td title="{{Row.@cell.ColumnName  | date:@(model).DateTimeFormat}}" ng-bind="Row.@cell.ColumnName  | date:@(model).DateTimeFormat"></td>
+                        break;
+                    case "date":
+                        <td title="{{Row.@cell.ColumnName  | date:@(model).DateFormat}}" ng-bind="Row.@cell.ColumnName  | date:@(model).DateFormat"></td>
+                        break;
+                    case "image":
+                        break;
+                    default:
+                        <td title="{{Row.@cell.ColumnName}}" ng-bind="Row.@cell.ColumnName" @Html.Raw(cell.Expression)></td>
+                        break;
+                }
+            }
+        }
+
+        <td style="text-align:right;">
+            @foreach (var cell in Model.HeaderList.Where(a => a.ColumnName != "RowCategory" && a.IsVisible))
+            {
+                switch (cell.DataType.ToLower().Trim())
+                {
+                    case "image":
+                        <span style="cursor:pointer;">
+                            @if (cell.ColumnName.IsNotNullOrEmpty())
+                            {
+                                <a prettyp class="lightbox" ng-href="@(imagePath){{Row.@cell.ColumnName}}" rel="prettyPhoto[]">
+                                    <img ng-src="@(imagePath){{Row.@cell.ColumnName}}" style="width:50px;height:50px;" />
+                                </a>
+                            }
+                            else
+                            {
+                                @Html.Raw(cell.Expression)
+                            }
+                        </span>
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @if (Model.IsEditableLink)
+            {
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" ng-click="EditList('@Model.ViewName', $index, $event, '@Model.RuntimeFilter', '@Model.ViewTitle')" style="cursor:pointer;">
+                    <circle cx="14" cy="14" r="14" fill="#DAF2FF" />
+                    <g clip-path="url(#clip0_2191_1035)">
+                        <path d="M23 7.7547C23 7.04476 22.7239 6.37755 22.221 5.87467L22.1422 5.79579C21.1068 4.76045 19.4207 4.76045 18.3821 5.79579L10.862 13.3225C10.7666 13.4178 10.7075 13.5427 10.691 13.6775L10.3229 17.0431C10.3032 17.2206 10.3657 17.3981 10.4938 17.5263C10.622 17.6545 10.7995 17.7169 10.977 17.6972L14.3426 17.3291C14.4774 17.3159 14.6023 17.2535 14.6976 17.1582L17.5965 14.2592C17.8266 14.0291 17.8266 13.6545 17.5965 13.4211C17.3665 13.1877 16.9918 13.191 16.7584 13.4211L14.0074 16.1721L11.5785 16.4351L11.8414 14.0061L19.2202 6.63391C19.7954 6.05873 20.7321 6.05873 21.3073 6.63391L21.3862 6.7128C21.9614 7.28798 21.9614 8.22471 21.3862 8.7999L19.5555 10.6306C19.4437 10.7424 19.3813 10.8936 19.3813 11.048L19.3846 19.5246C19.3846 19.6758 19.2597 19.8007 19.1085 19.8007H8.45933C8.30813 19.8007 8.18324 19.6758 8.18324 19.5246V8.87549C8.18324 8.7243 8.30813 8.5994 8.45933 8.5994H14.1422C14.4675 8.5994 14.7338 8.33317 14.7338 8.00778C14.7338 7.68239 14.4675 7.41616 14.1422 7.41616H8.45933C7.65407 7.41288 7 8.07023 7 8.8722V19.5213C7 20.3266 7.65407 20.9807 8.45933 20.9807H19.1085C19.9137 20.9807 20.5678 20.3266 20.5678 19.5213L20.5645 11.2913L22.221 9.63474C22.7239 9.13186 23 8.46464 23 7.7547Z" fill="#5C5C5C" />
+                    </g>
+                    <defs>
+                        <clipPath id="clip0_2191_1035">
+                            <rect width="16" height="16" fill="white" transform="translate(7 5)" />
+                        </clipPath>
+                    </defs>
+                </svg>
+            }
+
+        </td>
+    </tr>
+</tbody>

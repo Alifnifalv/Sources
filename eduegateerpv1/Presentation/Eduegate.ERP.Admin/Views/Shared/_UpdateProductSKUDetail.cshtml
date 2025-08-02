@@ -1,0 +1,130 @@
+﻿@using Eduegate.Services.Contracts.Enums
+
+<div class="summary-toggle" ng-controller="SummaryViewProductSKUController">
+    <div class="sum_toggleheader" ng-click="GetSKUDetails(ViewModels.@(DynamicViews.ProductSKUDetails).ProductSKUMapIID)">Edit SKU Details</div>
+    <div class="sum_togglecontent">
+        <div class="fullwidth alignleft textright paddingbtm5">
+            <input type="button" value="Save" class="button-orange" ng-click="SaveProductSKUDetails(SKUViewModel);" />
+            <input type="button" value="Cancel" class="button-orange" ng-click="ResetDeliverySetting()" />
+        </div>
+        <div class="label-value-box">
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">SKU ID</span>
+                <span class="link-content"><label ng-bind="SKUViewModel.ProductSKUMapID" /></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">Name</span>
+                <span class="link-content"><input ng-model="SKUViewModel.SKU"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">SKU Status</span>
+                <span class="link-content">
+                    <select name="StatusIID" ng-model="SKUViewModel.StatusID" required>
+                        <i class="fa fa-caret-down"></i>
+                        <option ng-repeat="status in skuStatuses" ng-selected="status.StatusIID == SKUViewModel.StatusID" value="{{status.StatusIID}}">{{status.StatusName}}</option>
+                    </select>
+                </span>
+            </div>
+            @*<div class="label-value-box-inner">
+                <span class="label-style fontbold">Price</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductPrice"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">Part Number</span>
+                <span class="link-content"><label ng-bind="SKUViewModel.PartNumber" /></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">NotifyQuantity</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.NotifyQuantity"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">MinimumQuantity</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.MinimumQuantity"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">MaximumQuantity</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventorySKUConfigMaps.ProductInventoryConfig.MaximumQuantity"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">MinimumQuanityInCart</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.MinimumQuanityInCart"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">MaximumQuantityInCart</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.MaximumQuantityInCart"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">ProductWarranty</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.ProductWarranty"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">IsSerialNumber</span>
+                <span class="link-content"><input type="checkbox" ng-checked="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.IsSerialNumber" ng-model="SKUViewModel.ProductInventorySKUConfigMaps.ProductInventoryConfig.IsSerialNumber"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">IsSerialNumberRequiredForPurchase</span>
+                <span class="link-content"><input type="checkbox" ng-checked="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.IsSerialNumberRequiredForPurchase" ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.IsSerialNumberRequiredForPurchase"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">ProductLength</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.ProductLength"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">ProductWidth</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.ProductWidth"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">ProductHeight</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.ProductHeight"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">ProductWeight</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.ProductWeight"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">DimensionalWeight</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.DimensionalWeight"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">IsMarketPlace</span>
+                <span class="link-content"><input type="checkbox" ng-checked="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.IsMarketPlace" ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.IsMarketPlace"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">HSCode</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.HSCode"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">IsHiddenFromList</span>
+                <span class="link-content"><input type="checkbox" ng-checked="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.IsHiddenFromList" ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.IsHiddenFromList"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">HideSKU</span>
+                <span class="link-content"><input type="checkbox" ng-checked="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.HideSKU" ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.HideSKU"></span>
+            </div>
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">IsNonRefundable</span>
+                <span class="link-content"><input type="checkbox" ng-checked="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.IsNonRefundable" ng-model="SKUViewModel.ProductInventorySKUConfigMaps.ProductInventoryConfig[0].IsNonRefundable"></span>
+            </div>
+
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">IsSerailNumberAutoGenerated</span>
+                <span class="link-content"><input type="checkbox" ng-checked="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.IsSerailNumberAutoGenerated" ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.IsSerailNumberAutoGenerated"></span>
+            </div>
+
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">MaxQuantityInCartForVerifiedCustomer</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.MaxQuantityInCartForVerifiedCustomer"></span>
+            </div>
+
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">MaxQuantityInCartForNonVerifiedCustomer</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.MaxQuantityInCartForNonVerifiedCustomer"></span>
+            </div>
+
+            <div class="label-value-box-inner">
+                <span class="label-style fontbold">MaxQuantityDuration</span>
+                <span class="link-content"><input ng-model="SKUViewModel.ProductInventorySKUConfigMaps[0].ProductInventoryConfig.MaxQuantityDuration"></span>
+            </div>*@
+        </div>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+﻿@{
+    Layout = null;
+}
+<div class="productcreteheader">Product Relations<button value="Submit" type="button" class="submitcreateform-style">Next</button></div>
+<div class="panel-body">
+    <div ng-model="ProductMap" class="container-left form-horizontal">
+        <div class="form-group">
+            <label class="addprodleft control-label">From Product</label>
+            <div id="FromProduct" class="controls productname">
+                <ui-select style="width: 100%;" ng-model="ProductMap.FromProduct" theme="select2" class="pos-txt" ng-disabled="ProductMap.IsFromProductDisabled">
+                    <ui-select-match placeholder="Select">{{$select.selected.ProductName}}</ui-select-match>
+                    <ui-select-choices repeat="product in ProductMap.ProductList|filter:$select.search">{{product.ProductName}}</ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        @*<div class="form-group">
+                <label class="addprodleft control-label">To Product</label>
+                <div id="ToProduct" class="controls productname">
+                    <ui-select multiple style="width: 100%;" ng-model="ProductMap.ToProduct" theme="select2" class="pos-txt">
+                        <ui-select-match placeholder="Select">{{$item.ProductName}}</ui-select-match>
+                        <ui-select-choices repeat="product in ProductMap.ProductList|filter:$select.search">{{product.ProductName}}</ui-select-choices>
+                    </ui-select>
+                </div>
+            </div>*@
+
+
+        <div class="form-group" ng-repeat="realtion in ProductMap.SalesRelationshipTypes">
+            <label class="addprodleft control-label">{{realtion.RelationName}}</label>
+            <div id="relation_{{realtion.SalesRelationTypeID}}" class="controls productname">
+                <ui-select multiple style="width: 100%;" ng-model="realtion.ToProduct" theme="select2" class="pos-txt">
+                    <ui-select-match placeholder="Select">{{$item.ProductName}}</ui-select-match>
+                    <ui-select-choices repeat="product in ProductMap.ProductList|filter:$select.search"
+                                       refresh="RefreshProductList($select.search)"
+                                       refresh-delay="1">{{product.ProductName}}</ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+
+    </div>
+</div>

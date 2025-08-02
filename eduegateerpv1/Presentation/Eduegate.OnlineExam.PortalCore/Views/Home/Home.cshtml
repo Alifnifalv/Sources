@@ -1,0 +1,145 @@
+﻿@model List<Eduegate.Web.Library.OnlineExam.OnlineExam.ExamsListViewModel>
+@{
+    ViewData["Title"] = "Exam";
+    var ExamsList = Model;
+    // var CandidateDetails = ViewBag.CandidateDetails;
+    var client = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENTINSTANCE");
+    var clientFullName = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENT_FULL_NAME");
+}
+
+<head>
+</head>
+
+<body>
+
+    <div id="OnlineExamHome" ng-controller="LayoutController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(ExamsList))">
+        <div class="container-fluid">
+            <img class="w-75" src="~/Clients/@client/Images/main_banner.png" />
+            <div class="card-row">
+                <div class="card1">
+                    <div>
+                        <img src="~/img/paper_blue.svg" alt="Icon">
+                    </div>
+                    <div class="card-content1">
+                        <p class="card-title1">Scheduled</p>
+                        <p class="card-subtitle1">Exams</p>
+                    </div>
+                    <div class="card-number1">00</div>
+                </div>
+
+                <div class="card1">
+                    <div>
+                        <img src="~/img/paper_green.svg" alt="Icon">
+                    </div>
+                    <div class="card-content1">
+                        <p class="card-title1">Completed</p>
+                        <p class="card-subtitle1">Exams</p>
+                    </div>
+                    <div class="card-number1">00</div>
+                </div>
+
+                <div class="card1">
+                    <div>
+                        <img src="~/img/paper_yellow.svg" alt="Icon">
+                    </div>
+                    <div class="card-content1">
+                        <p class="card-title1">Published</p>
+                        <p class="card-subtitle1">Results</p>
+                    </div>
+                    <div class="card-number1">00</div>
+                </div>
+            </div>
+            @* analytics *@
+            @* <div class="analytics-card">
+            <div class="card-header">
+            <h3>Exam Performance Analytics</h3>
+            <div class="filter-button">
+            <button>
+            <img src="filter-icon.svg" alt="Filter"> Filter
+            </button>
+            </div>
+            </div>
+            <div class="chart-container">
+            <canvas id="performanceChart"></canvas>
+            </div>
+            <div class="legend">
+            <div class="legend-item">
+            <span class="color-box" style="background-color: #00b8a9;"></span> Subject 1
+            </div>
+            <div class="legend-item">
+            <span class="color-box" style="background-color: #007bff;"></span> Subject 2
+            </div>
+            <div class="legend-item">
+            <span class="color-box" style="background-color: #f0ad4e;"></span> Subject 3
+            </div>
+            <div class="legend-item">
+            <span class="color-box" style="background-color: #f8b739;"></span> Subject 4
+            </div>
+            </div>
+            *@
+
+
+            <div class="content-row2 w-75">
+                <!-- Enter Exam Image Container -->
+                <div class="image-container1" id="enter-exam">
+                    <a href="/home/exam">
+                        <img src="~/img/enter_exam.png" alt="Enter Exam Image" class="default-image">
+                        <img src="~/img/enter_exam_1.png" alt="Enter Exam Hover Image" class="hover-image">
+                    </a>
+                </div>
+
+                <!-- Check Result Image Container -->
+                <div class="image-container1" id="check-result">
+                    <a href="/home/result">
+                        <img src="~/img/check_result.png" alt="Check Result Image" class="default-image">
+                        <img src="~/img/check_result_1.png" alt="Check Result Hover Image" class="hover-image">
+                    </a>
+                </div>
+
+                <!-- Upcoming Exams Table -->
+                <div class="upcoming-exams-card">
+                    <h3>Upcoming Exams</h3>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Exam</th>
+                                    @* <th>Date</th> *@
+                                    <th>Duration</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody ng-repeat="exams in UpcomingExams">
+                                <tr>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="alert alert-warning text-center" role="alert" ng-if="UpcomingExams.length == 0" style="margin-top: 10px;">
+                            <span>There are no scheduled exams for this student at the moment.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="notification-card w-50">
+                <div class="card-header-noti">
+                    <h3>Notifications</h3>
+                </div>
+                <div class="card-body">
+                    <ul class="d-flex flex-column gap-2" ng-if="ExamNotifications.length > 0" ng-repeat="noti in ExamNotifications">
+                        <li class="notification-item">
+                            <span class="notification-text" ng-bind="noti.Message"></span>
+                            <span class="timestamp" ng-bind="noti.timestamps">></span>
+                        </li>
+                    </ul>
+                    <div class="alert alert-warning text-center" role="alert" ng-if="ExamNotifications.length == 0">
+                        <span>There are no notifications for this student.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+    </style>
+</body>
+

@@ -1,0 +1,95 @@
+﻿@{
+    ViewData["Title"] = "Quotation List";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="~/app/Services/app.js"></script>
+    <script src="~/app/Controller/VendorController.js"></script>
+    <script src="~/app/Controller/LoginController.js"></script>
+    <script src="~/app/Controller/LayoutHeaderController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/DataListController.js"></script>
+
+
+    <title>Quotation List</title>
+    <style>
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div id="QuotationList" ng-controller="VendorController" ng-init="Init('QuotationList')">
+        <h1 style="color: #3366cc; text-align: center;">Quotation List</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th><b>Sr No.</b></th>
+                    <th><b>Date</b></th>
+                    <th><b>Quotation No</b></th>
+                    <th><b>From</b></th>
+                    <th><b>Validity</b></th>
+                </tr>
+            </thead>
+            <tbody ng-repeat="quotation in QuotationList">
+                <tr>
+                    <td>{{$index + 1}}</td>
+                    <td>{{quotation.Date}}</td>
+                    <td>{{quotation.QuotationNo}}</td>
+                    <td>{{quotation.FromSchool}}</td>
+                    <td>{{quotation.Validity}}</td>
+                    <td ng-click="toggleRowDataVisible($index)" title="Expand" style="cursor: pointer;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5m-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5" />
+                        </svg>
+                    </td>
+                </tr>
+                <tr ng-show="rowDataVisible[$index]">
+                    <td colspan="2"></td>
+                    <td colspan="3" style="padding: 10px; background-color: lightgray;">
+                        <table class="table" style="float: right;">
+                            <thead>
+                                <tr>
+                                    <th><b>Product</b></th>
+                                    <th><b>Product Code</b></th>
+                                    <th><b>Quantity</b></th>
+                                    <th><b>Unit</b></th>
+                                    <th><b>Price</b></th>
+                                    <th><b>Amount</b></th>
+                                </tr>
+                            </thead>
+                            <tbody ng-repeat="prdct in quotation.DetailsDTO">
+                                <tr>
+                                    <td>{{prdct.Product}}</td>
+                                    <td>{{prdct.ProductCode}}</td>
+                                    <td><input type="number" ng-model="prdct.Quantity" ng-change="QtyChanges(quotation, prdct)" min="0"></td>
+                                    <td>{{prdct.Unit}}</td>
+                                    <td><input type="number" ng-model="prdct.Price" ng-change="PriceChanges(quotation, prdct)" min="0"></td>
+                                    <td><input type="number" ng-model="prdct.Amount" min="0" disabled style="font-weight:700;"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot style="background-color:white">
+                                <tr>
+                                    <td colspan="2" class="text-center"><b>Total</b></td>
+                                    <td><b>{{quotation.TotalQuantity}}</b></td>
+                                    <td></td>
+                                    <td><b>{{quotation.TotalPrice}}</b></td>
+                                    <td><b>{{quotation.TotalAmount}}</b></td>
+                                    <td>
+                                        <button type="button" class="btn btn-secondary">Save</button>
+                                    </td>
+                                    <td><button type="button" class="btn btn-success">Submit</button></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

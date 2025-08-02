@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+namespace EntityGenerator.Core.Data
+{
+    [Keyless]
+    public partial class CustomerGroupSearchView
+    {
+        public long CustomerGroupIID { get; set; }
+        [StringLength(50)]
+        public string GroupName { get; set; }
+    }
+}

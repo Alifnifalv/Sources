@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .standalone {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo img {
+            max-width: 100px;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="standalone">
+        <div class="logo">
+            <img src="http://api.eduegate.com/images/naba.png" />
+        </div>
+        <form method="post" name="redirect" action="https://secure.ccavenue.ae/transaction/transaction.do?command=initiateTransaction">
+            <input type="hidden" id="encRequest" name="encRequest" value="">
+            <input type="hidden" name="access_code" id="access_code" value="">
+            <script language='javascript'>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const urlParams = new URLSearchParams(window.location.search)
+                    document.getElementById("encRequest").value = urlParams.get('encRequest');
+                    //encRequest.val(urlParams.get('encRequest'));
+                    document.getElementById("access_code").value = urlParams.get('access_code');
+                    //access_code.val(urlParams.get('access_code'))
+                    document.getElementById("customer_identifier").value = urlParams.get('customer_identifier');
+                    redirect.submit();
+                });
+            </script>
+        </form>
+    </div>
+</body>
+</html>

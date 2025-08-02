@@ -1,0 +1,213 @@
+﻿@model Eduegate.Web.Library.ViewModels.AddProductViewModel
+@{
+    Layout = null;
+    var createOrEdit = Model.QuickCreate.ProductIID == 0 ? "Create" : "Edit";
+}
+
+<div id="@(createOrEdit)Product" class="windowcontainer">
+    <!--ProtoType Version:1378-->
+    <div id="Product@(createOrEdit)" ng-controller="CreateProductController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'Product@(createOrEdit)')" ng-model="ProductModel">
+        @await Html.PartialAsync("~/Views/Shared/_InfoMessage.cshtml")
+
+        @*<div class="pagenav"><a class="pagenav-leftmargin" href="#">Dashboard </a><a href="#" class="pagenav-leftmargin"> Product Catalog </a> /<span> List</span>  /<span> @(createOrEdit)</span></div>*@
+        <div class="pageheader stickdiv">
+            <span>@(createOrEdit) Product</span>
+            <div class="alignright menugroup">
+                <button class="button-orange alignright" type="button" ng-click="SaveProduct();" form="nameform" value="Submit">Save</button>
+                <button class="button-orange alignright" type="submit" ng-click="LoadProductView();" form="nameform" value="Submit">Cancel</button>
+                <button class="button-orange alignright" ng-click="LoadProductView()"><a href="" title="@(createOrEdit) Product"><i class="fa fa-eye"></i>&nbsp;<span>Product List</span></a></button>
+            </div>
+        </div>
+        <center> <span id="Load" class="fa fa-circle-o-notch fa-pulse waypoint" style="font-size:20px; display:none"><div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></span></center>
+        @*<div class="msg-alert stickmsg">
+            <div ng-class="{'success-msg' : IsError == false, 'error-msg' : IsError == true }" class="msg success-msg" style="display: none;">
+                <div ng-class="{'success-msginner' : IsError == false, 'error-msginner' : IsError == true }" class="success-msginner">
+                    <span ng-bind="Message" class="ng-binding">Sucessfully saved.</span>
+                </div>
+            </div>
+        </div>*@
+        <div class="pagecontent">
+            <div class="pagecontent-inner">
+                <div class="pagecontent-column columnleft">
+                    <div class="productcreateleftnav productcreateleftrightmaxheight1">
+                        <div class="producttab-space">
+                            @*<ul class="nav nav-tabs nav-tabsmobile" id="myTab">*@
+                                @*<li ng-class="{'active' : isProductFeatureTabSelected === true, '' : isProductFeatureTabSelected === false}" class="tab-header"><a href="" ng-click="LoadProductFeature();">Product Feature <span class="toggle-arrow"><i class="fa fa-angle-right" aria-hidden="true"></i></span></a>
+                                    <div id="ProductFeature" class="tab-pane fade in " ng-class="{'active' : isProductFeatureTabSelected === true, '' : isProductFeatureTabSelected === false}">
+                                    </div>
+                                    </li>*@
+                                @*<li ng-class="{'active' : isProductTypeLoaded === true, '' : isProductTypeLoaded === false}" class="tab-header"><a href="" ng-click="LoadProductType();">Product Type</a>
+                                    <div id="ProductType" class="tab-pane fade in " ng-class="{'active' : isProductTypeLoaded === true, '' : isProductTypeLoaded === false}">
+                                    </div>
+                                    </li>*@
+                            @*</ul>*@
+                            <div class="nav-tabs">
+                                <div class="panel-group" id="prodaccordion">
+                                    <div class="panel-body panel">
+                                        <div class="page_subtitles">
+                                            <h4>
+                                                <a href="#quickcreate" data-toggle="collapse" data-parent="#prodaccordion" ng-click="LoadQuickCreate();">Quick @(createOrEdit) <span class="toggle-arrow"><i class="fa  fa fa-chevron-down"></i></span></a>
+                                            </h4>
+                                        </div>
+
+                                        <div class="panel-collapse collapse in" id="quickcreate" refnavbarid="_TABINDEX_0">
+                                            <div class="panel-body form-horizontal">
+                                                <div id="QuickCreate" ng-model="ProductModel.QuickCreate">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="panel-body panel">
+                                        <div class="page_subtitles">
+                                            <h4>
+                                                <a class="collapsed" href="#bundlemaps" data-toggle="collapse" data-parent="#prodaccordion" ng-click="LoadBundleMaps();">Product Bundles <span class="toggle-arrow"><i class="fa  fa fa-chevron-down"></i></span></a>
+                                            </h4>
+                                        </div>
+
+                                        <div class="panel-collapse collapse" id="bundlemaps" refnavbarid="_TABINDEX_1">
+                                            <div class="panel-body form-horizontal">
+                                                <div id="BundleMaps"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="panel-body panel">
+                                        <div class="page_subtitles">
+                                            <h4>
+                                                <a class="collapsed" href="#productconfig" data-toggle="collapse" data-parent="#prodaccordion" ng-click="LoadProductConfig(true);">Settings <span class="toggle-arrow"><i class="fa  fa fa-chevron-down"></i></span></a>
+                                            </h4>
+                                        </div>
+
+                                        <div class="panel-collapse collapse" id="productconfig" refnavbarid="_TABINDEX_2">
+                                            <div class="panel-body form-horizontal">
+                                                <div id="ProductConfigSKU"> </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="panel-body panel">
+                                        <div class="page_subtitles">
+                                            <h4>
+                                                <a class="collapsed" href="#uploadimage" data-toggle="collapse" data-parent="#prodaccordion" ng-click="LoadUploadProductImages();">Upload Product Image <span class="toggle-arrow"><i class="fa  fa fa-chevron-down"></i></span></a>
+                                            </h4>
+                                        </div>
+
+                                        <div class="panel-collapse collapse" id="uploadimage" refnavbarid="_TABINDEX_3">
+                                            <div class="panel-body form-horizontal">
+                                                <div id="UploadProductImage" ng-model="ProductModel.UplodedImages"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="panel-body panel">
+                                        <div class="page_subtitles">
+                                            <h4>
+                                                <a class="collapsed" href="#uploadvideo" data-toggle="collapse" data-parent="#prodaccordion" ng-click="LoadUploadProductVideos();">Upload Product Videos <span class="toggle-arrow"><i class="fa  fa fa-chevron-down"></i></span></a>
+                                            </h4>
+                                        </div>
+
+                                        <div class="panel-collapse collapse" id="uploadvideo" refnavbarid="_TABINDEX_4">
+                                            <div class="panel-body form-horizontal">
+                                                <div id="UploadProductVideo" ng-model="ProductModel.UplodedVideos"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="panel-body panel">
+                                        <div class="page_subtitles">
+                                            <h4>
+                                                <a class="collapsed" href="#skumapping" data-toggle="collapse" data-parent="#prodaccordion" ng-click="LoadSKUMapping();">SKU's<span class="toggle-arrow"><i class="fa  fa fa-chevron-down"></i></span></a>
+                                            </h4>
+                                        </div>
+
+                                        <div class="panel-collapse collapse" id="skumapping" refnavbarid="_TABINDEX_5">
+                                            <div class="panel-body form-horizontal">
+                                                <div id="SKUMapping" ng-model="ProductModel.SKUMappings"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="panel-body panel">
+                                        <div class="page_subtitles">
+                                            <h4>
+                                                <a class="collapsed" href="#searchcategory" data-toggle="collapse" data-parent="#prodaccordion" ng-click="LoadSearchCategory();">Product / Category Tags <span class="toggle-arrow"><i class="fa  fa fa-chevron-down"></i></span></a>
+                                            </h4>
+                                        </div>
+
+                                        <div class="panel-collapse collapse" id="searchcategory" refnavbarid="_TABINDEX_6">
+                                            <div class="panel-body form-horizontal">
+                                                <div id="SearchCategory"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="panel-body panel">
+                                        <div class="page_subtitles">
+                                            <h4>
+                                                <a class="collapsed" href="#productmaps" data-toggle="collapse" data-parent="#prodaccordion" ng-click="LoadProductMaps();">Product Relations <span class="toggle-arrow"><i class="fa  fa fa-chevron-down"></i></span></a>
+                                            </h4>
+                                        </div>
+
+                                        <div class="panel-collapse collapse" id="productmaps" refnavbarid="_TABINDEX_7">
+                                            <div class="panel-body form-horizontal">
+                                                <div id="ProductMaps"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="panel-body panel">
+                                        <div class="page_subtitles">
+                                            <h4>
+                                                <a class="collapsed" href="#seometadata" data-toggle="collapse" data-parent="#prodaccordion" ng-click="LoadSeoMetadata();">Seo/Keywords <span class="toggle-arrow"><i class="fa  fa fa-chevron-down"></i></span></a>
+                                            </h4>
+                                        </div>
+
+                                        <div class="panel-collapse collapse" id="seometadata" refnavbarid="_TABINDEX_8">
+                                            <div class="panel-body form-horizontal">
+                                                <div id="SeoMetadata"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="panel-body panel">
+                                        <div class="page_subtitles">
+                                            <h4>
+                                                <a class="collapsed" href="#pricesettings" data-toggle="collapse" data-parent="#prodaccordion" ng-click="LoadPriceSettings();">Price settings<span class="toggle-arrow"><i class="fa  fa fa-chevron-down"></i></span></a>
+                                            </h4>
+                                        </div>
+
+                                        <div class="panel-collapse collapse" id="pricesettings" refnavbarid="_TABINDEX_9">
+                                            <div class="panel-body form-horizontal">
+                                                <div id="pricesettings"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*<div class="pagecontent-column columnright">
+                            <div class="productcreaterightnav productcreateleftrightmaxheight">
+                                <div class="producttab-space">
+                                    <div class="">
+                                        <div class="tab-content">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+                <div class="submitcreateform" align="center">
+
+                </div>
+            </div>
+        </div>
+    </div>
+ </div>

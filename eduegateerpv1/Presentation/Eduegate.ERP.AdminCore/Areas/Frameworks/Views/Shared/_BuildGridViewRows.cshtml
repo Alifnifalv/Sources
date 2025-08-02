@@ -1,0 +1,146 @@
+﻿@model Eduegate.Web.Library.ViewModels.BaseMasterViewModel
+@using System.Reflection;
+@using Eduegate.Framework.Mvc.Attributes;
+@using Eduegate.Framework.Extensions;
+@using Eduegate.Frameworks.Mvc.Attributes;
+
+@{
+    var containerAttribute = (ContainerTypeAttribute)Model.GetType().GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+    Model.NamePrefix = Model.NamePrefix + "_" + ViewBag.WindowName;
+
+    var detailMetadata = containerAttribute == null ? "CRUDModel.Model.DetailViewModel" : containerAttribute.BindingPrefix;
+    var modelCollectionChildGrid = Model as System.Collections.IList;
+    var childsGridColspan = containerAttribute == null ? "" : string.Concat("colspan='", containerAttribute.Colspan, "'");
+
+    IEnumerable<PropertyInfo> gridFields;
+    var orderBy = (OrderAttribute)Model.GetType().GetCustomAttributes(typeof(OrderAttribute)).FirstOrDefault();
+
+    if (orderBy == null)
+    {
+        gridFields = Model.GetType().GetProperties();
+    }
+    else
+    {
+        gridFields = Model.GetType().GetProperties().Where(a => a.GetCustomAttribute(typeof(OrderAttribute), false) != null).OrderBy(a => (a.GetCustomAttribute(typeof(OrderAttribute), false) as OrderAttribute).Order);
+
+    }
+
+    var gridBinding = ViewBag.GridBinding == null ? "detail" : ViewBag.GridBinding;
+}
+
+<tr ng-click="RowSelected($event);" ng-repeat="@gridBinding in @detailMetadata track by $index">
+    @if (Model.IsHierarchicalGrid)
+    {
+        @Html.Raw("<td " + childsGridColspan + " class='Some-Child-Grid'><table class='Some-Child-Grid'><tr class='Some-Child-Grid'>")
+        ;
+    }
+
+    @foreach (var property in gridFields)
+    {
+        var title = (System.ComponentModel.DisplayNameAttribute)property.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+        var controlType = (ControlTypeAttribute)property.GetCustomAttributes(typeof(ControlTypeAttribute)).FirstOrDefault();
+
+        var claimType = (HasClaimAttribute)property.GetCustomAttributes(typeof(HasClaimAttribute)).FirstOrDefault();
+
+        if (claimType != null)
+        {
+            var allClaims = (ViewBag.Claims as List<Eduegate.Web.Library.ViewModels.Security.ClaimViewModel>);
+            var allClaimNames = allClaims.Select(a => a.ResourceName).ToList();
+            if (!claimType.HasAccess(allClaimNames))
+            {
+                continue;
+            }
+        }
+
+        if (title != null && controlType != null)
+        {
+            if (property.Name.Equals("SerialNo"))
+            {
+                <td @Html.Raw((string.IsNullOrEmpty(controlType.Css) ? string.Empty : "class=\"" + controlType.Css + "\""))>{{$index +1}}</td>
+            }
+            else
+            {
+                <td @controlType.ControlType.ToString() @Html.Raw((string.IsNullOrEmpty(controlType.Css) ? string.Empty : "class=\"" + controlType.Css + "\""))>
+                    @switch (controlType.ControlType)
+                    {
+
+                        case Eduegate.Framework.Enums.ControlTypes.RowIndicator:
+                            <label class="status-color green" style=""></label>
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.Select2:
+                            <label class="control-label"><span ng-bind="@gridBinding.@(property.Name).Value" />
+                                <span class="redcolor"></span></label>
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.CheckBox:
+                        case Eduegate.Framework.Enums.ControlTypes.TextBox:
+                        case Eduegate.Framework.Enums.ControlTypes.TextBoxWithPickButton:
+                        case Eduegate.Framework.Enums.ControlTypes.Hidden:
+                        case Eduegate.Framework.Enums.ControlTypes.HiddenWithLabel:
+                        case Eduegate.Framework.Enums.ControlTypes.TextBoxWithPopup:
+                        case Eduegate.Framework.Enums.ControlTypes.TextBoxWithDynamicPopup:
+                        case Eduegate.Framework.Enums.ControlTypes.LabelWithTextBox:
+                        case Eduegate.Framework.Enums.ControlTypes.LabelWithTextBoxAndUpdateVerify:
+                        case Eduegate.Framework.Enums.ControlTypes.LabelWithTextBoxAndUpdateVerifyWithCopy:
+                        case Eduegate.Framework.Enums.ControlTypes.LabelWithTextBoxAndUpdateVerifyWithSave:
+                        case Eduegate.Framework.Enums.ControlTypes.Button:
+                        case Eduegate.Framework.Enums.ControlTypes.YesNoCheckBox:
+                        case Eduegate.Framework.Enums.ControlTypes.DateTimePicker:
+                        case Eduegate.Framework.Enums.ControlTypes.DatePicker:
+                        case Eduegate.Framework.Enums.ControlTypes.TimePicker:
+                        case Eduegate.Framework.Enums.ControlTypes.TextBoxWithButton:
+                        case Eduegate.Framework.Enums.ControlTypes.Label:
+                            if (property.PropertyType == typeof(double?) || property.PropertyType == typeof(double) || property.PropertyType == typeof(decimal) || property.PropertyType == typeof(decimal?))
+                            {
+                                <label class="control-label"><span ng-bind="@gridBinding.@property.Name | number : @ViewContext.ViewBag.DefaultDecimalPoints" /><span class="redcolor"></span></label>
+                            }
+                            else
+                            {
+                                <label class="control-label"><span ng-bind="@gridBinding.@property.Name" /><span class="redcolor"></span></label>
+                            }
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.Image:
+                            <img ng-src="{{@gridBinding.@property.Name}}" alt="" />
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.IconButton:
+                            <a @Html.Raw(controlType.Attributes) class="button-orange "><i class="fa fa-save"></i>&nbsp;</a>
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.PopupGrid:
+                            <div class="popupwindow" ng-show="@gridBinding.IsQuantityPopup">
+                                <span class="fa fa-close" ng-click="PoupClose(@gridBinding);"></span>
+                                @{
+                                    var modelCollection = property.GetValue(Model, null) as System.Collections.IList;
+                                }
+                                <div class="controls fullcolumn-layout">
+                                    <table id="GridTable" class="fullcolumn-layout grid">
+                                        @if (modelCollection.Count > 0)
+                                        {
+                                            @await Html.PartialAsync("_GridBuildField", modelCollection[0])
+                                            ;
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.Grid:
+                            modelCollectionChildGrid = property.GetValue(Model, null) as System.Collections.IList;
+
+                            if (modelCollectionChildGrid.Count > 0)
+                            {
+                                if (property.Name.Equals("ChildGrid"))
+                                {
+                                    ViewBag.GridBinding = "childGrid";
+                                    @await Html.PartialAsync("~/Views/Shared/_BuildGridViewRows.cshtml", modelCollectionChildGrid[0])
+                                }
+                            }
+
+                            break;
+                    }
+                </td>
+            }
+        }
+    }
+    @if (Model.IsHierarchicalGrid)
+    {
+        @Html.Raw("</tr></table></td>")
+    }
+</tr>

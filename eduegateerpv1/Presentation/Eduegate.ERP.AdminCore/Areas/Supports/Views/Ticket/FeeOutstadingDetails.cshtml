@@ -1,0 +1,110 @@
+﻿@{
+    Layout = null;
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+    var feeTypeDetails = ViewBag.FeeTypes;
+}
+
+<div id="FeeDueDetails">
+    @foreach (var feeType in feeTypeDetails)
+    {
+        <div>
+            <div class="card card-flush h-xl-100">
+
+                <div class="card-body">
+                    <div class="hover-scroll-overlay-y pe-6 me-n6">
+
+                        <div class="card-header">
+                            <h4 class="card-title align-items-start flex-column">
+                                <span class="card-label fw-bold text-dark">Fee Type</span>
+                            </h4>
+                        </div>
+
+                        <div class="text-gray-400 fw-bold">
+                            Invoice No:
+                            <span class="text-gray-800 fw-bold">
+                                @feeType.InvoiceNo
+                            </span>
+                        </div>
+
+                        <div class="text-gray-400 fw-bold">
+                            Fee Period:
+                            <span class="text-gray-800 fw-bold">
+                                @if (@feeType.FeePeriod != null)
+                                {
+                                    @feeType.FeePeriod
+                                }
+                                else
+                                {
+                                    <span style="color:red;">NA</span>
+                                }
+                            </span>
+                        </div>
+
+                        <div class="text-gray-400 fw-bold">
+                            Fee Master:
+                            <span class="text-gray-800 fw-bold">
+                                @if (@feeType.FeeMaster != null)
+                                {
+                                    @feeType.FeeMaster
+                                }
+                                else
+                                {
+                                    <span style="color:red;">NA</span>
+                                }
+                            </span>
+                        </div>
+
+                        <div class="text-gray-400 fw-bold">
+                            Total Amount:
+                            <span class="text-gray-800 fw-bold">
+                                @feeType.Amount
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+            </div><br />
+
+            @if (@feeType.FeeMonthly.Count > 0)
+            {
+                <div class="card card-flush h-xl-100">
+
+                    <div class="card-body">
+                        <div class="hover-scroll-overlay-y pe-6 me-n6">
+                            <div><span class="text-gray-800 fw-bold">Monthly Split Details</span></div>
+                            @foreach (var month in feeType.FeeMonthly)
+                            {
+                                <div class="border border-dashed border-gray-300 rounded px-7 py-3 mb-6">
+                                    <div class="d-flex flex-stack">
+                                        <span class="text-gray-400 fw-bold">
+                                            Month Name <br />
+                                            <span class="text-gray-800 fw-bold">
+                                                @month.MonthName
+                                            </span>
+                                        </span>
+
+                                        <span class="text-gray-400 fw-bold">
+                                            Year <br />
+                                            <span class="text-gray-800 fw-bold">
+                                                @month.Year
+                                            </span>
+                                        </span>
+
+                                        <span class="text-gray-400 fw-bold">
+                                            Amount <br />
+                                            <span class="text-gray-800 fw-bold">
+                                                @month.Amount
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    }
+</div>

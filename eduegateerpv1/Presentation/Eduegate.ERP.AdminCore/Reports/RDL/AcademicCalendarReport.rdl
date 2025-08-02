@@ -1,0 +1,1221 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily" xmlns:am="http://schemas.microsoft.com/sqlserver/reporting/authoringmetadata">
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>a043fcc1-9bb0-434f-bf13-5035db3f3ee8</rd:ReportID>
+  <am:AuthoringMetadata>
+    <am:CreatedBy>
+      <am:Name>PBIRB</am:Name>
+      <am:Version>15.7.1806.11</am:Version>
+    </am:CreatedBy>
+    <am:UpdatedBy>
+      <am:Name>PBIRB</am:Name>
+      <am:Version>15.7.1806.11</am:Version>
+    </am:UpdatedBy>
+    <am:LastModifiedTimestamp>2023-12-29T05:09:23.7621612Z</am:LastModifiedTimestamp>
+  </am:AuthoringMetadata>
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="Eduegate">
+      <rd:SecurityType>DataBase</rd:SecurityType>
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=.;Initial Catalog=EduEgate_2022</ConnectString>
+        <Prompt>Specify a user name and password for data source Eduegate:</Prompt>
+      </ConnectionProperties>
+      <rd:DataSourceID>62eb08ba-faf1-44fe-888e-6467d8168f20</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="Day">
+      <Query>
+        <DataSourceName>Eduegate</DataSourceName>
+        <rd:DesignerState>
+          <QueryDefinition xmlns="http://schemas.microsoft.com/ReportingServices/QueryDefinition/Relational">
+            <AutoJoin>False</AutoJoin>
+            <SelectedColumns>
+              <ColumnExpression Schema="mutual" ColumnOwner="Days" ColumnName="DayID" />
+              <ColumnExpression Schema="mutual" ColumnOwner="Days" ColumnName="DayName" />
+            </SelectedColumns>
+          </QueryDefinition>
+        </rd:DesignerState>
+        <CommandText>SELECT
+  mutual.Days.DayID
+  ,mutual.Days.DayName
+FROM
+  mutual.Days</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="DayID">
+          <rd:TypeName>System.Byte</rd:TypeName>
+          <DataField>DayID</DataField>
+        </Field>
+        <Field Name="DayName">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>DayName</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="Academic">
+      <Query>
+        <DataSourceName>Eduegate</DataSourceName>
+        <CommandText>SELECT * FROM schools.AcademicYears</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="AcademicYearID">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>AcademicYearID</DataField>
+        </Field>
+        <Field Name="AcademicYearCode">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>AcademicYearCode</DataField>
+        </Field>
+        <Field Name="Description">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Description</DataField>
+        </Field>
+        <Field Name="StartDate">
+          <rd:TypeName>System.DateTime</rd:TypeName>
+          <DataField>StartDate</DataField>
+        </Field>
+        <Field Name="EndDate">
+          <rd:TypeName>System.DateTime</rd:TypeName>
+          <DataField>EndDate</DataField>
+        </Field>
+        <Field Name="SchoolID">
+          <rd:TypeName>System.Byte</rd:TypeName>
+          <DataField>SchoolID</DataField>
+        </Field>
+        <Field Name="IsActive">
+          <rd:TypeName>System.Boolean</rd:TypeName>
+          <DataField>IsActive</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="AcademicYear_Data">
+      <Query>
+        <DataSourceName>Eduegate</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@AcademicYearID">
+            <Value>=Parameters!AcademicYear.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+        <CommandType>StoredProcedure</CommandType>
+        <CommandText>schools.SPS_ACADEMIC_CALENDAR_DATA</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Cols_Count">
+          <rd:TypeName>System.Int64</rd:TypeName>
+          <DataField>Cols_Count</DataField>
+        </Field>
+        <Field Name="Week_Count">
+          <rd:TypeName>System.Int64</rd:TypeName>
+          <DataField>Week_Count</DataField>
+        </Field>
+        <Field Name="AcademicYearID">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>AcademicYearID</DataField>
+        </Field>
+        <Field Name="AcademicYearCode">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>AcademicYearCode</DataField>
+        </Field>
+        <Field Name="Description">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Description</DataField>
+        </Field>
+        <Field Name="SchoolID">
+          <rd:TypeName>System.Byte</rd:TypeName>
+          <DataField>SchoolID</DataField>
+        </Field>
+        <Field Name="StartDate">
+          <rd:TypeName>System.DateTime</rd:TypeName>
+          <DataField>StartDate</DataField>
+        </Field>
+        <Field Name="EndDate">
+          <rd:TypeName>System.DateTime</rd:TypeName>
+          <DataField>EndDate</DataField>
+        </Field>
+        <Field Name="SDate">
+          <rd:TypeName>System.DateTime</rd:TypeName>
+          <DataField>SDate</DataField>
+        </Field>
+        <Field Name="Wk">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>Wk</DataField>
+        </Field>
+        <Field Name="YR">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>Yr</DataField>
+        </Field>
+        <Field Name="Dy">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>Dy</DataField>
+        </Field>
+        <Field Name="MN">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>Mn</DataField>
+        </Field>
+        <Field Name="Month_Name">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Month_Name</DataField>
+        </Field>
+        <Field Name="Week_Name">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Week_Name</DataField>
+        </Field>
+        <Field Name="EventTitle">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>EventTitle</DataField>
+        </Field>
+        <Field Name="IsHoliday">
+          <rd:TypeName>System.Boolean</rd:TypeName>
+          <DataField>IsHoliday</DataField>
+        </Field>
+        <Field Name="ColorCode">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>ColorCode</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="AcademicYearName">
+      <Query>
+        <DataSourceName>Eduegate</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@AcademicYear">
+            <Value>=Parameters!AcademicYear.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+        <CommandText>select AcademicYearID,REPLACE(REPLACE(REPLACE(REPLACE(Description, 'Thumama (', ''), 'Westbay (', ''), 'Meshaf (', ''),')', '') as AcademicYear from schools.academicyears
+where AcademicYearID = @AcademicYear</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="AcademicYearID">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>AcademicYearID</DataField>
+        </Field>
+        <Field Name="AcademicYear">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>AcademicYear</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="Tablix3">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>22.48333mm</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.79375mm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="Rectangle2">
+                          <KeepTogether>true</KeepTogether>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Rectangle>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="Cols_Count">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!Cols_Count.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!Cols_Count.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixHeader>
+                    <Size>12.49302mm</Size>
+                    <CellContents>
+                      <Tablix Name="Tablix6">
+                        <TablixCorner>
+                          <TablixCornerRows>
+                            <TablixCornerRow>
+                              <TablixCornerCell>
+                                <CellContents>
+                                  <Textbox Name="Textbox51">
+                                    <rd:DefaultName>Textbox51</rd:DefaultName>
+                                    <CanGrow>true</CanGrow>
+                                    <KeepTogether>true</KeepTogether>
+                                    <Paragraphs>
+                                      <Paragraph>
+                                        <TextRuns>
+                                          <TextRun>
+                                            <Value />
+                                            <Style>
+                                              <FontFamily>Century Gothic</FontFamily>
+                                              <FontSize>8pt</FontSize>
+                                            </Style>
+                                          </TextRun>
+                                        </TextRuns>
+                                        <Style />
+                                      </Paragraph>
+                                    </Paragraphs>
+                                    <Style>
+                                      <Border>
+                                        <Color>LightGrey</Color>
+                                        <Style>Solid</Style>
+                                      </Border>
+                                      <PaddingLeft>2pt</PaddingLeft>
+                                      <PaddingRight>2pt</PaddingRight>
+                                      <PaddingTop>2pt</PaddingTop>
+                                      <PaddingBottom>2pt</PaddingBottom>
+                                    </Style>
+                                  </Textbox>
+                                  <ColSpan>2</ColSpan>
+                                </CellContents>
+                              </TablixCornerCell>
+                              <TablixCornerCell />
+                            </TablixCornerRow>
+                          </TablixCornerRows>
+                        </TablixCorner>
+                        <TablixBody>
+                          <TablixColumns>
+                            <TablixColumn>
+                              <Width>10.75763mm</Width>
+                            </TablixColumn>
+                          </TablixColumns>
+                          <TablixRows>
+                            <TablixRow>
+                              <Height>6.17882mm</Height>
+                              <TablixCells>
+                                <TablixCell>
+                                  <CellContents>
+                                    <Textbox Name="Week_Name">
+                                      <rd:DefaultName>Week_Name</rd:DefaultName>
+                                      <KeepTogether>true</KeepTogether>
+                                      <Paragraphs>
+                                        <Paragraph>
+                                          <TextRuns>
+                                            <TextRun>
+                                              <Value>=LEFT(Fields!Week_Name.Value,3)</Value>
+                                              <Style>
+                                                <FontFamily>Century Gothic</FontFamily>
+                                                <FontSize>8pt</FontSize>
+                                                <FontWeight>Bold</FontWeight>
+                                              </Style>
+                                            </TextRun>
+                                          </TextRuns>
+                                          <Style>
+                                            <TextAlign>Center</TextAlign>
+                                          </Style>
+                                        </Paragraph>
+                                      </Paragraphs>
+                                      <Style>
+                                        <Border>
+                                          <Color>LightGrey</Color>
+                                          <Style>Solid</Style>
+                                        </Border>
+                                        <BackgroundColor>LightBlue</BackgroundColor>
+                                        <VerticalAlign>Middle</VerticalAlign>
+                                        <PaddingLeft>2pt</PaddingLeft>
+                                        <PaddingRight>2pt</PaddingRight>
+                                        <PaddingTop>2pt</PaddingTop>
+                                        <PaddingBottom>2pt</PaddingBottom>
+                                      </Style>
+                                    </Textbox>
+                                  </CellContents>
+                                </TablixCell>
+                              </TablixCells>
+                            </TablixRow>
+                            <TablixRow>
+                              <Height>5.52045mm</Height>
+                              <TablixCells>
+                                <TablixCell>
+                                  <CellContents>
+                                    <Tablix Name="Tablix2">
+                                      <TablixBody>
+                                        <TablixColumns>
+                                          <TablixColumn>
+                                            <Width>10.75763mm</Width>
+                                          </TablixColumn>
+                                        </TablixColumns>
+                                        <TablixRows>
+                                          <TablixRow>
+                                            <Height>5.52045mm</Height>
+                                            <TablixCells>
+                                              <TablixCell>
+                                                <CellContents>
+                                                  <Textbox Name="Dy">
+                                                    <rd:DefaultName>Dy</rd:DefaultName>
+                                                    <KeepTogether>true</KeepTogether>
+                                                    <Paragraphs>
+                                                      <Paragraph>
+                                                        <TextRuns>
+                                                          <TextRun>
+                                                            <Value>=iif(Fields!Dy.Value=50,"",Fields!Dy.Value)</Value>
+                                                            <Style>
+                                                              <FontFamily>Century Gothic</FontFamily>
+                                                              <FontSize>8pt</FontSize>
+                                                              <FontWeight>=iif(len(Fields!EventTitle.Value)&gt;0,"Bold","Default")</FontWeight>
+                                                            </Style>
+                                                          </TextRun>
+                                                        </TextRuns>
+                                                        <Style>
+                                                          <TextAlign>Center</TextAlign>
+                                                        </Style>
+                                                      </Paragraph>
+                                                    </Paragraphs>
+                                                    <Style>
+                                                      <Border>
+                                                        <Style>None</Style>
+                                                      </Border>
+                                                      <BackgroundColor>=iif(LEN(Fields!ColorCode.Value)&gt;0 AND Fields!Dy.Value&lt;&gt;50 ,Fields!ColorCode.Value,"Transparent")</BackgroundColor>
+                                                      <VerticalAlign>Middle</VerticalAlign>
+                                                      <PaddingLeft>2pt</PaddingLeft>
+                                                      <PaddingRight>2pt</PaddingRight>
+                                                      <PaddingTop>2pt</PaddingTop>
+                                                      <PaddingBottom>2pt</PaddingBottom>
+                                                    </Style>
+                                                  </Textbox>
+                                                </CellContents>
+                                              </TablixCell>
+                                            </TablixCells>
+                                          </TablixRow>
+                                        </TablixRows>
+                                      </TablixBody>
+                                      <TablixColumnHierarchy>
+                                        <TablixMembers>
+                                          <TablixMember />
+                                        </TablixMembers>
+                                      </TablixColumnHierarchy>
+                                      <TablixRowHierarchy>
+                                        <TablixMembers>
+                                          <TablixMember>
+                                            <Group Name="Details1" />
+                                          </TablixMember>
+                                        </TablixMembers>
+                                      </TablixRowHierarchy>
+                                      <DataSetName>AcademicYear_Data</DataSetName>
+                                      <Style>
+                                        <Border>
+                                          <Style>None</Style>
+                                        </Border>
+                                      </Style>
+                                    </Tablix>
+                                  </CellContents>
+                                </TablixCell>
+                              </TablixCells>
+                            </TablixRow>
+                          </TablixRows>
+                        </TablixBody>
+                        <TablixColumnHierarchy>
+                          <TablixMembers>
+                            <TablixMember>
+                              <Group Name="ColumnGroup">
+                                <GroupExpressions>
+                                  <GroupExpression>=Fields!Wk.Value</GroupExpression>
+                                </GroupExpressions>
+                              </Group>
+                              <SortExpressions>
+                                <SortExpression>
+                                  <Value>=Fields!Wk.Value</Value>
+                                </SortExpression>
+                              </SortExpressions>
+                              <TablixHeader>
+                                <Size>0.79375mm</Size>
+                                <CellContents>
+                                  <Textbox Name="Textbox59">
+                                    <rd:DefaultName>Textbox59</rd:DefaultName>
+                                    <CanGrow>true</CanGrow>
+                                    <KeepTogether>true</KeepTogether>
+                                    <Paragraphs>
+                                      <Paragraph>
+                                        <TextRuns>
+                                          <TextRun>
+                                            <Value />
+                                            <Style>
+                                              <FontFamily>Century Gothic</FontFamily>
+                                              <FontSize>8pt</FontSize>
+                                            </Style>
+                                          </TextRun>
+                                        </TextRuns>
+                                        <Style>
+                                          <TextAlign>Center</TextAlign>
+                                        </Style>
+                                      </Paragraph>
+                                    </Paragraphs>
+                                    <Style>
+                                      <Border>
+                                        <Color>LightGrey</Color>
+                                        <Style>Solid</Style>
+                                      </Border>
+                                      <VerticalAlign>Middle</VerticalAlign>
+                                      <PaddingLeft>2pt</PaddingLeft>
+                                      <PaddingRight>2pt</PaddingRight>
+                                      <PaddingTop>2pt</PaddingTop>
+                                      <PaddingBottom>2pt</PaddingBottom>
+                                    </Style>
+                                  </Textbox>
+                                </CellContents>
+                              </TablixHeader>
+                            </TablixMember>
+                          </TablixMembers>
+                        </TablixColumnHierarchy>
+                        <TablixRowHierarchy>
+                          <TablixMembers>
+                            <TablixMember>
+                              <Group Name="YR">
+                                <GroupExpressions>
+                                  <GroupExpression>=Fields!YR.Value</GroupExpression>
+                                </GroupExpressions>
+                              </Group>
+                              <SortExpressions>
+                                <SortExpression>
+                                  <Value>=Fields!YR.Value</Value>
+                                </SortExpression>
+                              </SortExpressions>
+                              <TablixHeader>
+                                <Size>4.67431mm</Size>
+                                <CellContents>
+                                  <Textbox Name="Textbox52">
+                                    <rd:DefaultName>Textbox52</rd:DefaultName>
+                                    <CanGrow>true</CanGrow>
+                                    <KeepTogether>true</KeepTogether>
+                                    <Paragraphs>
+                                      <Paragraph>
+                                        <TextRuns>
+                                          <TextRun>
+                                            <Value />
+                                            <Style>
+                                              <FontFamily>Arial</FontFamily>
+                                            </Style>
+                                          </TextRun>
+                                        </TextRuns>
+                                        <Style />
+                                      </Paragraph>
+                                    </Paragraphs>
+                                    <Style>
+                                      <Border>
+                                        <Color>LightGrey</Color>
+                                        <Style>Solid</Style>
+                                      </Border>
+                                      <PaddingLeft>2pt</PaddingLeft>
+                                      <PaddingRight>2pt</PaddingRight>
+                                      <PaddingTop>2pt</PaddingTop>
+                                      <PaddingBottom>2pt</PaddingBottom>
+                                    </Style>
+                                  </Textbox>
+                                </CellContents>
+                              </TablixHeader>
+                              <TablixMembers>
+                                <TablixMember>
+                                  <Group Name="MN">
+                                    <GroupExpressions>
+                                      <GroupExpression>=Fields!MN.Value</GroupExpression>
+                                    </GroupExpressions>
+                                  </Group>
+                                  <SortExpressions>
+                                    <SortExpression>
+                                      <Value>=Fields!MN.Value</Value>
+                                    </SortExpression>
+                                  </SortExpressions>
+                                  <TablixHeader>
+                                    <Size>7.05139mm</Size>
+                                    <CellContents>
+                                      <Textbox Name="Month_Name">
+                                        <rd:DefaultName>Month_Name</rd:DefaultName>
+                                        <KeepTogether>true</KeepTogether>
+                                        <Paragraphs>
+                                          <Paragraph>
+                                            <TextRuns>
+                                              <TextRun>
+                                                <Value>=Fields!Month_Name.Value + "-"+CSTR(Fields!YR.Value)</Value>
+                                                <Style>
+                                                  <FontFamily>Century Gothic</FontFamily>
+                                                  <FontWeight>Bold</FontWeight>
+                                                </Style>
+                                              </TextRun>
+                                            </TextRuns>
+                                            <Style>
+                                              <TextAlign>Center</TextAlign>
+                                            </Style>
+                                          </Paragraph>
+                                        </Paragraphs>
+                                        <Style>
+                                          <Border>
+                                            <Color>LightGrey</Color>
+                                            <Style>Solid</Style>
+                                          </Border>
+                                          <BackgroundColor>Khaki</BackgroundColor>
+                                          <VerticalAlign>Bottom</VerticalAlign>
+                                          <PaddingLeft>2pt</PaddingLeft>
+                                          <PaddingRight>2pt</PaddingRight>
+                                          <PaddingTop>2pt</PaddingTop>
+                                          <PaddingBottom>2pt</PaddingBottom>
+                                          <WritingMode>Rotate270</WritingMode>
+                                        </Style>
+                                      </Textbox>
+                                    </CellContents>
+                                  </TablixHeader>
+                                  <TablixMembers>
+                                    <TablixMember>
+                                      <KeepWithGroup>After</KeepWithGroup>
+                                    </TablixMember>
+                                    <TablixMember>
+                                      <Group Name="Month_Name">
+                                        <GroupExpressions>
+                                          <GroupExpression>=Fields!YR.Value</GroupExpression>
+                                          <GroupExpression>=Fields!MN.Value</GroupExpression>
+                                          <GroupExpression>=Fields!Week_Count.Value</GroupExpression>
+                                        </GroupExpressions>
+                                      </Group>
+                                      <SortExpressions>
+                                        <SortExpression>
+                                          <Value>=Fields!Month_Name.Value</Value>
+                                        </SortExpression>
+                                      </SortExpressions>
+                                    </TablixMember>
+                                  </TablixMembers>
+                                </TablixMember>
+                              </TablixMembers>
+                            </TablixMember>
+                          </TablixMembers>
+                        </TablixRowHierarchy>
+                        <DataSetName>AcademicYear_Data</DataSetName>
+                        <Style>
+                          <Border>
+                            <Style>None</Style>
+                          </Border>
+                        </Style>
+                      </Tablix>
+                    </CellContents>
+                  </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember />
+                  </TablixMembers>
+                </TablixMember>
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="Details">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!AcademicYearID.Value</GroupExpression>
+                      <GroupExpression>=Fields!YR.Value</GroupExpression>
+                      <GroupExpression>=Fields!MN.Value</GroupExpression>
+                      <GroupExpression>=Fields!Week_Count.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <KeepTogether>true</KeepTogether>
+            <DataSetName>AcademicYear_Data</DataSetName>
+            <Top>15.67907mm</Top>
+            <Left>1.37765mm</Left>
+            <Height>13.28677mm</Height>
+            <Width>22.48333mm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Textbox Name="Textbox3">
+            <rd:DefaultName>Textbox3</rd:DefaultName>
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Academic Year : </Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                  <TextRun>
+                    <Value>=First(Fields!AcademicYear.Value, "AcademicYearName")</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>0.16358cm</Top>
+            <Left>0.09525cm</Left>
+            <Height>0.6cm</Height>
+            <Width>5.50438cm</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Tablix Name="Tablix14">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>0.69201cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>4.68722cm</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="ColorCode">
+                          <rd:DefaultName>ColorCode</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value />
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=Fields!ColorCode.Value</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="EventTitle">
+                          <rd:DefaultName>EventTitle</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!EventTitle.Value</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>LightGrey</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="Details2">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!ColorCode.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <Visibility>
+                    <Hidden>=iif(Len(Fields!EventTitle.Value)=0, True,False)</Hidden>
+                  </Visibility>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>AcademicYear_Data</DataSetName>
+            <Top>0.86254cm</Top>
+            <Left>0.0934cm</Left>
+            <Height>0.6cm</Height>
+            <Width>5.37923cm</Width>
+            <ZIndex>2</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>29.38917mm</Height>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Body>
+      <Width>175.6752mm</Width>
+      <Page>
+        <PageHeader>
+          <Height>2.34653cm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="Textbox1">
+              <rd:DefaultName>Textbox1</rd:DefaultName>
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>ACADEMIC CALENDAR</Value>
+                      <Style>
+                        <FontSize>14pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                        <Color>Red</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>1.39403cm</Top>
+              <Height>0.69701cm</Height>
+              <Width>17.56752cm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox19">
+              <rd:DefaultName>Textbox2</rd:DefaultName>
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Date: </Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Value>=Format(Globals!ExecutionTime,"dd/MM/yyyy hh:mm tt")</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>1.77496mm</Top>
+              <Left>126.81533mm</Left>
+              <Height>6.08542mm</Height>
+              <Width>48.85982mm</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox20">
+              <rd:DefaultName>Textbox2</rd:DefaultName>
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Page " &amp; Globals!PageNumber &amp; " of " &amp; Globals!TotalPages</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>8.56594mm</Top>
+              <Left>154.81361mm</Left>
+              <Height>6.08542mm</Height>
+              <Width>20.86154mm</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Image Name="Image2">
+              <Source>External</Source>
+              <Value>=Parameters!RootUrl.Value + Parameters!Logo.Value</Value>
+              <Sizing>FitProportional</Sizing>
+              <Top>0mm</Top>
+              <Left>0mm</Left>
+              <Height>13.94028mm</Height>
+              <Width>57.2095mm</Width>
+              <ZIndex>3</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+              </Style>
+            </Image>
+            <Line Name="Line1">
+              <Top>22.11588mm</Top>
+              <Left>0.00002mm</Left>
+              <Height>0mm</Height>
+              <Width>175.67515mm</Width>
+              <ZIndex>4</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </Border>
+                <TopBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </TopBorder>
+                <BottomBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </BottomBorder>
+                <LeftBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </LeftBorder>
+                <RightBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </RightBorder>
+              </Style>
+            </Line>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageHeader>
+        <PageFooter>
+          <Height>1.0848cm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="Textbox2">
+              <rd:DefaultName>Textbox1</rd:DefaultName>
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Parameters!ReportFooter.Value</Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>0.16581cm</Top>
+              <Height>0.80284cm</Height>
+              <Width>17.56752cm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Line Name="Line2">
+              <Top>0.66148mm</Top>
+              <Left>0.00002mm</Left>
+              <Height>0mm</Height>
+              <Width>175.67515mm</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </Border>
+                <TopBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </TopBorder>
+                <BottomBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </BottomBorder>
+                <LeftBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </LeftBorder>
+                <RightBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </RightBorder>
+              </Style>
+            </Line>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageFooter>
+        <PageHeight>29.7cm</PageHeight>
+        <PageWidth>21cm</PageWidth>
+        <LeftMargin>0.25cm</LeftMargin>
+        <RightMargin>0.5cm</RightMargin>
+        <TopMargin>0.5cm</TopMargin>
+        <BottomMargin>0.25cm</BottomMargin>
+        <ColumnSpacing>0.13cm</ColumnSpacing>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="AcademicYear">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <DataSetReference>
+          <DataSetName>Academic</DataSetName>
+          <ValueField>AcademicYearID</ValueField>
+        </DataSetReference>
+      </DefaultValue>
+      <Prompt>Academic Year</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>Academic</DataSetName>
+          <ValueField>AcademicYearID</ValueField>
+          <LabelField>AcademicYearCode</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+    <ReportParameter Name="ReportFooter">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportFooter</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="Logo">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Logo</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="RootUrl">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>RootUrl</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="SchoolID">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>SchoolID</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="CurrentAcademicYearID">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>CurrentAcademicYearID</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="Signature">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Signature</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="SchoolSeal">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>SchoolSeal</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="HeaderBGColor">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HeaderBGColor</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="HeaderForeColor">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HeaderForeColor</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>4</NumberOfColumns>
+      <NumberOfRows>3</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>AcademicYear</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>ReportFooter</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>Logo</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>RootUrl</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>SchoolID</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>CurrentAcademicYearID</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>Signature</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>SchoolSeal</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>HeaderBGColor</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>HeaderForeColor</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+</Report>

@@ -1,0 +1,45 @@
+﻿@model Eduegate.Web.Library.ViewModels.Settings.PrintSettingViewModel
+@{
+    Layout = null;
+}
+
+<div id="ViewChartOfAccounts" class="windowcontainer" ng-controller="PrintSettingController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+    <div class="pageheadername">
+        <div>Chart Of Accounts</div>
+        @*<div class="alignright menugroup">
+                <div class="createprodlink button-orange alignright"><a href="" title="Save Changes"><span>Save Changes</span></a></div>
+            </div>*@
+    </div>
+    <div class="pagecontent">
+        <div class="producttab">
+            <div class="settings">
+                <div class="fullwidth alignleft">
+                    <table cellpadding="0" cellspacing="0" class="grid">
+                        <thead>
+                            <tr>
+                                <th class="ex-small-col-width textleft">Number</th>
+                                <th class="medium-col-width textleft">Name</th>
+                                <th class="small-col-width textleft">Balance</th>
+                                <th class="small-col-width textleft">Type</th>
+                                @*<th class="ex-large-col-width textleft">Header</th>
+                                    <th class="ex-large-col-width textleft">Bank</th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="detail in GetChartOfAccounts.Details" ng-class="{gridtitle: detail.ChartRowType == 'Header'}">
+                                <td ng-if="detail.ChartRowType != 'Header'" class="ex-small-col-width textleft">{{detail.AccountCode}}</td>
+                                <td ng-if="detail.ChartRowType == 'Header'"></td>
+                                <td ng-if="detail.ChartRowType == 'Header'" class="ex-small-col-width textleft">{{detail.AccountGroupName}}</td>
+                                <td ng-if="detail.ChartRowType != 'Header'" class="medium-col-width textleft">{{detail.Name}}</td>
+                                <td class="small-col-width textleft"><span ng-bind="detail.Balance" /></td>
+                                <td ng-if="detail.ChartRowType != 'Header'" class="small-col-width textleft">{{detail.AccountGroupName}}</td>
+                                <td ng-if="detail.ChartRowType == 'Header'" class="small-col-width textleft">Header</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html ng-app="Eduegate.ERP.School.Portal">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>EduGate Parent Portal</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    @*<link rel="manifest" href="site.webmanifest">*@
+    <link rel="apple-touch-icon" href="icon.png">
+    <!-- Place favicon.ico in the root directory -->
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/angular")
+
+    @Scripts.Render("~/bundles/appmodels")
+    @Scripts.Render("~/bundles/plugins")
+    @Scripts.Render("~/bundles/others")
+    @Scripts.Render("~/bundles/jslinq")
+    @Scripts.Render("~/bundles/highchart")
+
+    <script src="~/Scripts/ng-map.min.js" type="text/javascript"></script>
+
+    <link href="@Url.Content("~/Content/animate.css")" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Scripts/wow.min.js")"></script>
+    <script>
+        new WOW().init();
+    </script>
+
+    <script src="@Url.Content("~/Scripts/Chart.js")"></script>
+    <script src="@Url.Content("~/Scripts/ckeditor/ckeditor.js")"></script>
+    @*<script src="@Url.Content("~/signalr/hubs")"></script>*@
+
+    <style>
+        .dropdown-content {
+            top: 0rem !important;
+        }
+        /*label {
+            font-size: 1.5rem !important;
+        }*/
+    </style>
+</head>
+<body>
+    @{
+        var request = HttpContext.Current.Request.ApplicationPath;
+    }
+    <div class="pageContainer fullWidth fullHeight" ng-controller="LayoutController">
+        <div class="headerSection" ng-controller="LayoutHeaderController">
+            <div class="headerTop">
+                <div class="portalWrapper">
+                    <div class="logo fLeft"><img src="~/img/eduegate_logo.png" /></div><!--logo-->
+                    <div class="headerTopMenu fRight">
+                        <ul>
+                            @*<li class="pointer hasChildElement">
+                                    <span class="settingIcon displaylineBlock"></span><span class="downArrow"></span>
+                                    <ul>
+                                        <li class="tooltippointer"></li>
+                                        <li class="pointer">Profile</li>
+                                        <li class="pointer">Change Password</li>
+                                        <li class="pointer">Update Student Details</li>
+                                    </ul>
+                                </li>*@
+                            <li class="pointer" ng-model="HeaderInfoModel" ng-init="Init();">
+                                <img ng-src="{{HeaderInfoModel.ProfileFile}}" onerrorsrc="@Url.Content("~/images/profilepic.png")" />
+                                <span>
+                                    <span class="profilename" onclick="window.location.href='@request'">
+                                        <span ng-bind="HeaderInfoModel.Customer == null ? HeaderInfoModel.Supplier == null ? HeaderInfoModel.LoginEmailID : HeaderInfoModel.Supplier.FirstName :  HeaderInfoModel.Customer.FirstName"></span>
+                                        <span ng-bind="HeaderInfoModel.Customer == null ? HeaderInfoModel.Supplier == null ? '' : HeaderInfoModel.Supplier.MiddleName : HeaderInfoModel.Customer.MiddleName"></span>
+                                        <span ng-bind="HeaderInfoModel.Customer == null ? HeaderInfoModel.Supplier == null ? '' : HeaderInfoModel.Supplier.LastName : HeaderInfoModel.Customer.LastName"></span>
+                                    </span>
+                                    <span ng-click="Signout()"><span class="logoutIcon displaylineBlock"></span>Logout</span>
+                                </span>
+                            </li>
+                        </ul>
+                    </div><!--settings-->
+                </div><!--portalWrapper-->
+            </div><!--headerTop-->
+            <div class="flexFull headerNavigation">
+                <div class="portalWrapper">
+                    <div class="parentProfile">
+                        <span class="profileImage"></span>
+                        <h2 class="welcomeTitle fLeft fontNormal">
+                            Welcome
+                            <span ng-bind="HeaderInfoModel.Customer == null ? HeaderInfoModel.Supplier == null ? HeaderInfoModel.LoginEmailID : HeaderInfoModel.Supplier.FirstName :  HeaderInfoModel.Customer.FirstName"></span>
+                        </h2>
+
+                    </div>
+
+                </div><!--portalWrapper-->
+            </div><!--headerNavigation-->
+        </div><!--headerSection-->
+        <div id="ApplicationListOverlay" class="preload-overlay">
+            <span id="ApplicationListOverlayButtonLoader" class="preloadImg">
+                <img src="~/Images/preloader.gif" alt="loader" />
+                <br /><label>Loading...</label>
+            </span>
+        </div>
+        <div class="pageContent flexFull">
+            @RenderBody()
+
+        </div><!--pageContent-->
+    </div><!--pageContainer-->
+
+
+    <script type="text/javascript">
+        utility.myHost = "@string.Format("{0}://{1}{2}/", Request.Url.Scheme, Request.Url.Authority, HttpRuntime.AppDomainAppVirtualPath)";
+
+        $('.datepicker').bind("cut copy paste", function (e) {
+            e.preventDefault();
+        });
+
+        $(document).ready(function () {
+            //var dateofbirthmindate = new Date().addYears(-3).toDateString();
+            //var defaultDOBDate = new Date(dateofbirthmindate);
+            //$(".dateofbirth").datepicker({
+            //    maxDate: new Date().addYears(-3),
+            //    defaultDate: defaultDOBDate
+            //});
+
+            //$(".maxtodayDate").datepicker({
+            //    maxDate: new Date(),
+            //});
+
+            //$(".mintodayDate").datepicker({
+            //    minDate: new Date(),
+            //});
+
+            //$('#PassportNoIssueString').on('change', function () {
+            //    //- get date from another datepicker without language dependencies
+            //    var PassportNoIssueString = $('#PassportNoIssueString').datepicker()[0].value;
+                
+            //    if (PassportNoIssueString != "" && PassportNoIssueString != null) {
+            //        var minDate = new Date(dateofbirthmindate);
+            //        //$("#PassportNoExpiryString").datepicker("change", { minDate: minDate });
+            //    }
+            //});
+            //$('#PassportNoExpiryString').on('change', function () {
+            //    var PassportNoExpiryString = new Date($('#PassportNoExpiryString').datepicker()[0].value);
+            //    var PassportNoIssueString = new Date($('#PassportNoIssueString').datepicker()[0].value);
+            //    //- get date from another datepicker without language dependencies
+            //    //var maxDate = new Date(PassportNoExpiryString);
+            //    //$("#PassportNoIssueString").datepicker("change", { maxDate: maxDate });
+            //    if (PassportNoIssueString < PassportNoExpiryString) {
+
+            //    }
+            //    else if (PassportNoExpiryString != null && PassportNoExpiryString != "") {}
+            //        else {
+            //        $('#PassportNoExpiryString').val("");
+            //        alert("Please select valide Expiry date..!");
+            //    }
+
+            //});
+
+        })
+
+
+    </script>
+
+</body>
+</html>

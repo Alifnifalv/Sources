@@ -1,0 +1,89 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    ViewData["Title"] = "JobDescription";
+    var windowName = "jdList";
+}
+
+@await Html.PartialAsync("_ToastMessage")
+<div id="interviewList" ng-controller="RecruitmentController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+
+    <div class="container pt-5 mb-15">
+        <div class="card overflow-hidden rounded-2">
+            <div class="row">
+                <div class="col-8">
+                    <h4 class="pt-5 px-10">Job Description</h4>
+                </div>
+                <div class="col-4 pt-2">
+                    <div class="col-md-8 d-flex justify-content-end">
+                        <div class="input-container">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="input-icon" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                                <path d="M10.5752 11.075L13.5002 14" stroke="#7E7E7E" stroke-width="0.975" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M12.2 6.85C12.2 3.61914 9.58089 1 6.35 1C3.11914 1 0.5 3.61914 0.5 6.85C0.5 10.0809 3.11914 12.7 6.35 12.7C9.58089 12.7 12.2 10.0809 12.2 6.85Z" stroke="#7E7E7E" stroke-width="0.975" stroke-linejoin="round" />
+                            </svg>
+                            <input type="text" placeholder="Search job title" class="px-10 form-control inputSearch" ng-model="searchText" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="table-responsive px-15">
+                    <!-- PROJECT TABLE -->
+                    <table class="table colored-header datatable project-list mt-5">
+                        <thead class="h5 bg-secondary">
+                            <tr>
+                                <th class="px-3">Sr.#</th>
+                                <th>Job Title</th>
+                                <th>Reporting To</th>
+                                <th>Signed Date</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="jd in MyJDList | filter: {JobTitle: searchText }" class="interviewListTR">
+                                <td class="px-3">{{ $index + 1 }}</td>
+                                <td><label class="font-weight-bold">{{jd.JobTitle}}</label></td>
+                                <td hidden ng-model="jd.JobDescriptionIID"></td>
+                                <td>{{jd.ReportingToEmployee.Value}}</td>
+                                <td>{{jd.SignedDateString}}</td>
+                                <td>
+                                    <button type="button" ng-if="!jd.IsAgreementSigned" class="btn btn-info btn-sm" data-dismiss="modal" ng-click="openModal($index)">Confirm JD</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- END PROJECT TABLE -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="jdModal" tabindex="-1" role="dialog" aria-labelledby="jobApplicationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="jobApplicationModalLabel">{{MyJDList[CurrentJDindex].JobTitle}}</h5>
+                </div>
+                <div class="modal-body">
+                    <label>Job Description</label>
+                    <div ng-repeat="des in MyJDList[CurrentJDindex].EmpJobDescriptionDetail">
+                        <div>{{ $index + 1 }} ) {{des.Description}}</div>
+                    </div>
+                    <div class="form-check m-10">
+                        <input class="form-check-input" type="checkbox" id="acceptTerms" ng-model="acceptTerms" required>
+                        <label class="form-check-label" for="acceptTerms">
+                            I accept the terms and conditions
+                        </label>
+                    </div>
+
+                    <h6>
+                        By checking the box below, I confirm that I have read and understood the job description and the terms and conditions related to this application. I acknowledge that submitting this application signifies my acceptance of these terms.
+                    </h6>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" ng-click="closeModal()">Close</button>
+                    <button type="submit" class="btn btn-primary" ng-click="confrimJobDescription(MyJDList[CurrentJDindex].JobDescriptionIID,acceptTerms)">Confrim</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

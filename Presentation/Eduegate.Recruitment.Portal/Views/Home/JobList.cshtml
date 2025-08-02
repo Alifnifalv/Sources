@@ -1,0 +1,163 @@
+﻿@using Eduegate.Services.Contracts.Enums
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    var windowName = "jobList";
+    var settingBL = new Eduegate.Domain.Setting.SettingBL(null);
+    var clientName = settingBL.GetSettingValue<string>("CLIENTINSTANCE");
+}
+
+@await Html.PartialAsync("_ToastMessage")
+
+<div id="JobList" ng-controller="RecruitmentController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName'); Filter = {};" >
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+    <!-- Begin: Main Container -->
+    <div class="kt-container-fluid p-5 lg:p-10">
+        <!-- Begin: Banner and Search -->
+        <div class="relative rounded-xl overflow-hidden mb-10 shadow-md">
+            <img src="~/Images/jobapplybanner.png" alt="Job Apply Banner" style="object-fit:cover" class="w-full h-48 object-cover" />
+            <div class="absolute inset-0 bg-black/25 flex items-center justify-center p-4">
+                <div class="w-full max-w-2xl flex flex-col md:flex-row gap-3">
+                    <div class="kt-input w-full">
+                        <i class="fa fa-briefcase text-muted-foreground"></i>
+                        <input ng-model="searchText" type="text" placeholder="Search by job title...">
+                    </div>
+                    <div class="kt-input w-full">
+                        <i class="fa fa-cogs text-muted-foreground"></i>
+                        <input ng-model="searchJobType" type="text" placeholder="Search by job type...">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End: Banner and Search -->
+        <!-- Begin: Page Layout -->
+        <div class="flex flex-col lg:flex-row gap-7">
+
+            <!-- Begin: Filter Sidebar -->
+            <aside class="lg:w-[280px] shrink-0">
+                <div class="kt-card">
+                    <div class="kt-card-header">
+                        <h3 class="kt-card-title">Filter Options</h3>
+                    </div>
+                    <div class="kt-card-content divide-y divide-border">
+                        <div class="py-4">
+                            <label class="kt-form-label mb-2" for="Department">Department</label>
+                            <select id="Department" name="Department" class="kt-select" ng-options="item as item.Value for item in Departments track by item.Key" ng-model="Filter.Department">
+                                <option value="">All Departments</option>
+                            </select>
+                        </div>
+                        <div class="py-4">
+                            <label class="kt-form-label mb-2" for="Designation">Designation</label>
+                            <select id="Designation" name="Designation" class="kt-select" ng-options="item as item.Value for item in Designations track by item.Key" ng-model="Filter.Designation">
+                                <option value="">All Designations</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="kt-card-footer flex flex-col gap-2">
+                        <button class="kt-btn kt-btn-primary w-full" ng-click="Filter(Filter)">Filter</button>
+                        <button class="kt-btn kt-btn-outline w-full" ng-click="ClearFilter(Filter)">Clear</button>
+                    </div>
+                </div>
+            </aside>
+            <!-- End: Filter Sidebar -->
+            <!-- Begin: Main Content -->
+            <div class="flex-grow">
+                <!-- Begin: Toolbar -->
+                <div class="flex flex-wrap items-center gap-5 justify-between mb-5">
+                    <div class="flex flex-col">
+                        <h3 class="text-lg font-semibold text-foreground">Recommended Jobs</h3>
+                        <p class="text-sm text-muted-foreground">Showing {{ filteredJobList.length }} results</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <label class="kt-form-label" for="profileSwitch">For my profile</label>
+                            <input class="kt-switch" type="checkbox" role="switch" id="flexSwitchCheckChecked" />
+                        </div>
+                        <div class="kt-toggle-group">
+                            <a class="kt-btn kt-btn-icon" ng-class="{'active': !isListView}" ng-click="isListView = false">
+                                <i class="fa fa-th-large"></i>
+                            </a>
+                            <a class="kt-btn kt-btn-icon" ng-class="{'active': isListView}" ng-click="isListView = true">
+                                <i class="fa fa-bars"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- End: Toolbar -->
+                <!-- Begin: Views Container -->
+                <div ng-init="isListView = true">
+                    <!-- Grid View -->
+                    <div ng-show="!isListView">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                            <div ng-repeat="jobs in jobList">
+                                <div class="kt-card flex flex-col h-full" ng-repeat="job in jobs | filter: { JobTitle: searchText, TypeOfJob: searchJobType }">
+                                    <div class="kt-card-content flex-grow">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <div class="flex items-center gap-3">
+                                                <span class="kt-avatar"><span class="kt-avatar-fallback">{{job.JobTitleInitial}}</span></span>
+                                                <div>
+                                                    <a class="hover:text-primary font-semibold text-foreground leading-tight" href="#" ng-click="JobDetails(job.JobIID)">{{job.JobTitle}}</a>
+                                                </div>
+                                            </div>
+                                            <span class="kt-badge kt-badge-outline">{{job.PostedDate}}</span>
+                                        </div>
+                                        <p class="text-sm text-secondary-foreground my-3 h-12 overflow-hidden">{{job.JobDetails}}</p>
+                                        <div class="flex flex-wrap gap-2">
+                                            <span class="kt-badge kt-badge-light">Exp: {{job.TotalYearOfExperience}} Years</span>
+                                            <span class="kt-badge kt-badge-light">{{job.TypeOfJob}}</span>
+                                        </div>
+                                    </div>
+                                    <div class="kt-card-footer justify-between">
+                                        <span class="text-lg font-bold text-primary">{{job.MonthlySalary}}<span ng-if="job.MonthlySalary" class="text-sm font-normal text-muted-foreground">/month</span></span>
+                                        <button class="kt-btn kt-btn-primary kt-btn-sm" ng-click="JobDetails(job.JobIID)">Details</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- List View -->
+                    <div ng-show="isListView">
+                        <div class="grid grid-cols-1 gap-5">
+                            <div ng-repeat="jobs in jobList" class="grid grid-cols-1 gap-5">
+                                <div class="kt-card" ng-repeat="job in jobs | filter: { JobTitle: searchText, TypeOfJob: searchJobType }">
+                                    <div class="kt-card-content flex flex-col sm:flex-row items-center flex-wrap justify-between p-4 gap-5">
+                                        <div class="flex items-center gap-4 flex-grow">
+                                            <span class="kt-avatar kt-avatar-lg"><span class="kt-avatar-fallback">{{job.JobTitleInitial}}</span></span>
+                                            <div class="flex flex-col">
+                                                <a class="hover:text-primary text-base font-semibold text-foreground" href="#" ng-click="JobDetails(job.JobIID)">{{job.JobTitle}}</a>
+                                                <div class="flex items-center flex-wrap gap-x-4 gap-y-1 mt-1 text-sm text-muted-foreground">
+                                                    <span><i class="fa fa-briefcase me-2"></i>Exp: {{job.TotalYearOfExperience}} Years</span>
+                                                    <span><i class="fa fa-tag me-2"></i>{{job.TypeOfJob}}</span>
+                                                    <span><i class="fa fa-calendar me-2"></i>Posted: {{job.PostedDate}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-4 shrink-0">
+                                            <span class="text-lg font-bold text-primary">{{job.MonthlySalary}}<span ng-if="job.MonthlySalary" class="text-sm font-normal text-muted-foreground">/month</span></span>
+                                            <button class="kt-btn kt-btn-primary shrink-0" ng-click="JobDetails(job.JobIID)">Details</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End: Views Container -->
+                <!-- Begin: Empty State -->
+                <div class="kt-card p-8 lg:p-12 mt-5" ng-if="!jobList.length">
+                    <div class="kt-card-content text-center">
+                        <h3 class="text-lg font-medium text-mono text-center">No Job Listings Found</h3>
+                        <p class="text-sm text-secondary-foreground text-center">Please check back later or adjust your search filters.</p>
+                    </div>
+                </div>
+                <!-- End: Empty State -->
+
+            </div>
+            <!-- End: Main Content -->
+        </div>
+        <!-- End: Page Layout -->
+    </div>
+    <!-- End: Main Container -->
+</div>

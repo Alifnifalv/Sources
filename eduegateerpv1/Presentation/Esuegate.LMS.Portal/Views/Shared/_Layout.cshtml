@@ -1,0 +1,367 @@
+﻿@{
+    var client = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENTINSTANCE");
+    var clientFullName = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENT_FULL_NAME");
+    var clientWebsite = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENT_WEBSITE");
+}
+
+<!DOCTYPE html>
+<html ng-app="Eduegate.Signup.Portal">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Eduegate.Signup</title>
+
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Content/Site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Content/styles-gray.css" asp-append-version="true" />
+
+    <link href="~/Content/dashboard/dashboard.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/Content/dashboard/docs.css" rel="stylesheet" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Content/Style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Content/semantic.css" />
+    <link href="~/Content/dashboard/style.bundle.css" rel="stylesheet" asp-append-version="true" />
+
+
+
+    <script src="~/Scripts/jquery-3.4.1.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.prettyPhoto.js" asp-append-version="true"></script>
+    <script src="~/Scripts/draggable/draggable.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.custom.js" asp-append-version="true"></script>
+    <script src="~/app/CustomValidation.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js" asp-append-version="true"></script>
+    @* <script src="~/Scripts/bootstrap.js" asp-append-version="true"></script> *@
+    <script src="~/Scripts/bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/respond.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-route.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-animate.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-sanitize.js" asp-append-version="true"></script>
+    <script src="~/Scripts/i18n/angular-locale_en.js" asp-append-version="true"></script>
+    <script src="~/Scripts/tmhDynamicLocale.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-filter.min.js" asp-append-version="true"></script>
+
+    <script src="~/app/app.js" asp-append-version="true"></script>
+    <script src="~/app/CustomValidation.js" asp-append-version="true"></script>
+    <script src="~/app/print.min.js" asp-append-version="true"></script>
+    <script src="~/app/ReportController.js" asp-append-version="true"></script>
+    <script src="~/app/schedule.js" asp-append-version="true"></script>
+    <script src="~/app/util.js" asp-append-version="true"></script>
+
+
+
+    <script type="text/javascript" src="~/Scripts/Chart.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/Scripts/datatables.bundle.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/Scripts/fullcalendar.bundle.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/Scripts/semantic.js" asp-append-version="true"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet" type="text/css" asp-append-version="true" />
+
+    <script src="~/app/utility.js" asp-append-version="true"></script>
+
+    <script src="~/Scripts/anime.min.js" asp-append-version="true"></script>
+
+    <script src="~/Scripts/site.js" asp-append-version="true"></script>
+    @*<script src="~/Content/dashboard/dashboard.js" asp-append-version="true"></script>*@
+    <script src="~/Scripts/Custom.js"></script>
+
+    <script src="~/app/Controller/LayoutController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/LayoutHeaderController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/login-controller.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/ResetController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/SignupController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/MeetingRequestListController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/MeetingRequestController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/UserProfileController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/MeetingRemarksController.js" asp-append-version="true"></script>
+
+    <script src="~/Scripts/moment.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-moment.min.js" asp-append-version="true"></script>
+    <script src="~/Content/scripts.bundle.js" asp-append-version="true"></script>
+
+</head>
+<body>
+    <div ng-controller="LayoutHeaderController" ng-init="Init()">
+        <div class="overlaydiv"></div>
+        <div class="d-flex flex-column flex-root">
+            <div class="docs-page d-flex flex-row flex-column-fluid">
+                <div id="kt_docs_aside" class="docs-aside" data-kt-drawer="true" data-kt-drawer-name="aside" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="{default:'200px', '300px': '250px'}" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_docs_aside_toggle" style="">
+                    <!--begin::Logo-->
+                    <div class="docs-aside-logo flex-column-auto h-75px">
+                        <a>
+                            <img alt="Logo" src="~/Clients/@client/Images/signup-logo.png" class="h-50px">
+                        </a>
+                    </div>
+             @*        <div id="Overlay" class="loaderoverlay">
+                        <div class="d-flex justify-content-center align-items-center vh-100">
+                            <div id="ButtonLoader" class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div> *@
+                    @await Html.PartialAsync("~/Views/Shared/_GlobalInfoMessage.cshtml")
+                    <div class="docs-aside-menu flex-column-fluid">
+                        <div class="hover-scroll-overlay-y mt-5 mb-5 mt-lg-0 mb-lg-5 pe-lg-n2 me-lg-2 px-4" id="kt_docs_aside_menu_wrapper" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_docs_aside_logo" data-kt-scroll-wrappers="#kt_docs_aside_menu" data-kt-scroll-offset="10px" style="height: 668px;">
+                            <!--begin::Menu-->
+                            <div class="card py-5 bg-gray-200 my-5" data-kt-sticky="true" data-kt-sticky-name="app-sidebar-menu-sticky" data-kt-sticky-offset="{default: false, xl: '500px'}" data-kt-sticky-width="250px" data-kt-sticky-left="auto" data-kt-sticky-top="100px" data-kt-sticky-animation="false" data-kt-sticky-zindex="95">
+                                <div class="hover-scroll-y mx-2 px-1 px-lg-2">
+                                    <div id="kt_app_sidebar_menu" data-kt-menu="true" class="
+                    menu
+                    menu-sub-indention
+                    menu-rounded
+                    menu-column
+                    menu-active-bg
+                    menu-title-gray-600
+                    menu-icon-gray-500
+                    menu-state-primary
+                    menu-arrow-gray-500
+                    fw-semibold
+                    fs-6
+                ">
+                                    <div class="menu-item">
+                                            <div class="menu-content ">
+                                                <span class="menu-section fs-5 fw-bolder ps-1 py-1">Home</span>
+                                            </div>
+                                        </div>
+                                        <div class="menu-item">
+                                            <a class="menu-link" href="/metronic8/demo40/index.html">
+                                                <span class="menu-bullet">
+                                                    <span class="bullet bullet-dot"></span>
+                                                </span>
+                                                <span class="menu-title">My Courses</span>
+                                            </a><!--end:Menu link-->
+                                        </div><!--end:Menu item--><!--begin:Menu item-->
+                                        <div class="menu-item">
+                                            <!--begin:Menu link--><a class="menu-link active" href="/metronic8/demo40/dashboards/ecommerce.html">
+                                                <span class="menu-bullet">
+                                                    <span class="bullet bullet-dot">
+                                                    </span>
+                                                </span><span class="menu-title">Calendar</span>
+                                            </a><!--end:Menu link-->
+                                        </div><!--end:Menu item--><!--begin:Menu item-->
+                                        <div class="menu-item">
+                                            <!--begin:Menu link-->
+                                            <a class="menu-link" href="/metronic8/demo40/dashboards/projects.html">
+                                                <span class="menu-bullet">
+                                                    <span class="bullet bullet-dot"></span>
+                                                </span><span class="menu-title">Messages</span>
+                                            </a><!--end:Menu link-->
+                                        </div><!--end:Menu item--><!--begin:Menu item--><div class="menu-item">
+                                            <!--begin:Menu link-->
+                                            <a class="menu-link" href="/metronic8/demo40/dashboards/online-courses.html">
+                                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                                <span class="menu-title">My Library</span>
+                                            </a><!--end:Menu link-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card py-5 bg-gray-200" data-kt-sticky="true" data-kt-sticky-name="app-sidebar-menu-sticky" data-kt-sticky-offset="{default: false, xl: '500px'}" data-kt-sticky-width="250px" data-kt-sticky-left="auto" data-kt-sticky-top="100px" data-kt-sticky-animation="false" data-kt-sticky-zindex="95">
+                                <div class="hover-scroll-y mx-2 px-1 px-lg-2">
+                                    <div id="kt_app_sidebar_menu" data-kt-menu="true" class="
+                    menu
+                    menu-sub-indention
+                    menu-rounded
+                    menu-column
+                    menu-active-bg
+                    menu-title-gray-600
+                    menu-icon-gray-500
+                    menu-state-primary
+                    menu-arrow-gray-500
+                    fw-semibold
+                    fs-6
+                ">
+                                        <!--begin:Menu item--><div class="menu-item">
+                                            <!--begin:Menu content--><div class="menu-content ">
+                                                <span class="menu-section fs-5 fw-bolder ps-1 py-1">Library</span>
+                                            </div><!--end:Menu content-->
+                                        </div><!--end:Menu item--><!--begin:Menu item--><div class="menu-item">
+                                            <!--begin:Menu link-->
+                                            <a class="menu-link" href="/metronic8/demo40/index.html">
+                                                <span class="menu-bullet">
+                                                    <span class="bullet bullet-dot"></span>
+                                                </span><span class="menu-title">Courses</span>
+                                            </a><!--end:Menu link-->
+                                        </div><!--end:Menu item--><!--begin:Menu item-->
+                                        <div class="menu-item">
+                                            <!--begin:Menu link--><a class="menu-link active" href="/metronic8/demo40/dashboards/ecommerce.html">
+                                                <span class="menu-bullet">
+                                                    <span class="bullet bullet-dot">
+                                                    </span>
+                                                </span><span class="menu-title">Modules</span>
+                                            </a><!--end:Menu link-->
+                                        </div><!--end:Menu item--><!--begin:Menu item-->
+                                        <div class="menu-item">
+                                            <!--begin:Menu link-->
+                                            <a class="menu-link" href="/metronic8/demo40/dashboards/projects.html">
+                                                <span class="menu-bullet">
+                                                    <span class="bullet bullet-dot"></span>
+                                                </span><span class="menu-title">Lessons</span>
+                                            </a><!--end:Menu link-->
+                                        </div><!--end:Menu item--><!--begin:Menu item--><div class="menu-item">
+                                            <!--begin:Menu link-->
+                                            <a class="menu-link" href="/metronic8/demo40/dashboards/online-courses.html">
+                                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                                <span class="menu-title">Groups</span>
+                                            </a><!--end:Menu link-->
+                                        </div><!--end:Menu item--><!--begin:Menu item--><div class="menu-item">
+                                            <!--begin:Menu link-->
+                                            <a class="menu-link" href="/metronic8/demo40/dashboards/marketing.html">
+                                                <span class="menu-bullet"><span class="bullet bullet-dot"></span></span>
+                                                <span class="menu-title">Reports</span>
+                                            </a><!--end:Menu link-->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                             </div>
+                    </div>
+                    <div class="docs-aside-menu flex-column-fluid">
+                        <div class="hover-scroll-overlay-y mt-5 mb-5 mt-lg-0 mb-lg-5 pe-lg-n2 me-lg-2" id="kt_docs_aside_menu_wrapper" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_docs_aside_logo" data-kt-scroll-wrappers="#kt_docs_aside_menu" data-kt-scroll-offset="10px" style="height: 668px;">
+                            <!--begin::Menu-->
+                            <div class="menu menu-column menu-title-gray-800 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500" id="#kt_docs_aside_menu" data-kt-menu="true">
+                                <div class="menu-item">
+                                    <a class="menu-link" ng-click="Signout()">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right svgMenulink" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
+                                            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+                                        </svg>
+                                        &ensp;<span class="menu-label">Log out</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="docs-wrapper d-flex flex-column flex-row-fluid">
+                    <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
+                        <!--begin::Page-->
+                        <div class="app-page flex-column flex-column-fluid " id="kt_app_page">
+                            <div class="app-header" id="kt_app_wrapper">
+
+                                <div class="app-container  container-fluid ">
+                                    <div class="card card-flush border-0 bgi-no-repeat bgi-size-cover bgi-position-center mt-8  mb-4" style="background-image:url('../../Images/banner.svg  ')">
+                                        <!--begin::Body-->
+                                        <div class="card-body position-relative h-150px">
+                                            <!--begin::Search-->
+                                            <div class="d-flex position-absolute top-50 start-50 translate-middle z-index-1 w-500px">
+
+                                                <div class="ui right fluid aligned category search">
+                                                    <div class="ui icon input w-500px">
+                                                        <input class="prompt" type="text" placeholder="Search for topics, products, learning content and more...">
+                                                        <i class="search icon"></i>
+                                                    </div>
+                                                    <div class="results"></div>
+                                                </div>
+                                            </div>
+
+                                            <!--end::Search-->
+                                        </div>
+                                        <div class="d-flex flex-stack mb-6 mx-12">
+                                            <!--begin::Navs-->
+                                            <ul class="nav nav-stretch nav-line-tabs nav-line-tabs-2x flex-row-fluid border-bottom border-2 border-gray-100 fs-6 fw-bold bg-white rounded-3">
+                                                <!--begin::Nav item-->
+                                                <li class="nav-item">
+                                                    <a class="nav-link text-active-primary ms-0 me-5 me-lg-8 px-3 pb-4
+				active" href="/metronic8/demo59/index.html">
+                                                        Courses
+                                                    </a>
+                                                </li>
+                                                <!--end::Nav item-->
+                                                <!--begin::Nav item-->
+                                                <li class="nav-item">
+                                                    <a class="nav-link text-active-primary ms-0 me-5 me-lg-8 px-3 pb-4
+                " href="/metronic8/demo59/apps/projects/list.html">
+                                                        Filters
+                                                    </a>
+                                                </li>
+                                                <!--end::Nav item-->
+                                                <!--begin::Nav item-->
+                                                <li class="nav-item">
+                                                    <a class="nav-link text-active-primary ms-0 me-5 me-lg-8 px-3 pb-4
+                " href="/metronic8/demo59/account/statements.html">
+                                                        My Courses
+                                                    </a>
+                                                </li>
+                                                <!--end::Nav item-->
+                                                <!--begin::Nav item-->
+                                                <li class="nav-item">
+                                                    <a class="nav-link text-active-primary ms-0 me-5 me-lg-8 px-3 pb-4
+                " href="/metronic8/demo59/pages/user-profile/campaigns.html">
+                                                        Enroll
+                                                    </a>
+                                                </li>
+                                                <!--end::Nav item-->
+                                                <!--begin::Nav item-->
+                                                <li class="nav-item">
+                                                    <a class="nav-link text-active-primary ms-0 me-5 me-lg-8 px-3 pb-4
+                " href="/metronic8/demo59/apps/file-manager/folders.html">
+                                                        Favorites
+                                                    </a>
+                                                </li>
+                                                <!--end::Nav item-->
+                                                <!--begin::Nav item-->
+                                                <li class="nav-item">
+                                                    <a class="nav-link text-active-primary ms-0 me-5 me-lg-8 px-3 pb-4
+                " href="/metronic8/demo59/apps/projects/activity.html">
+                                                        Recommendations
+                                                    </a>
+                                                </li>
+                                                <!--end::Nav item-->
+
+                                                <li class="flex-grow-1"></li>
+
+                                                <li class="d-flex gap-2 mb-2 me-4">
+                                                    <a href="/metronic8/demo59/pages/blog/post.html" class="btn btn-sm btn-flex btn-primary align-self-center px-3">
+                                                        <i class="ki-outline ki-plus-square fs-3"></i>				Sort
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                            <!--begin::Navs-->
+                                        </div>
+                                        <!--end::Body-->
+                                    </div>
+                                
+                                </div>
+                            </div>
+
+                            </div>
+
+                            @RenderBody()
+
+                            <!--Footer::Start-->
+                            <div id="kt_app_footer" class="app-footer ">
+                                <!--begin::Footer container-->
+                                <div class="app-container  container-fluid d-flex flex-column flex-md-row flex-center flex-md-stack py-3 ">
+                                    <!--begin::Copyright-->
+                                    <div class="text-gray-900 order-2 order-md-1">
+                                        <span class="text-muted fw-semibold me-1"><span ng-bind="CurrentYear"></span>©</span>
+                                        <a href="@clientWebsite" target="_blank" class="text-gray-800 text-hover-primary">@clientFullName</a>
+                                    </div>
+                                    <!--end::Copyright-->
+                                    <!--begin::Menu-->
+                                    <ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1">
+                                        @* <li class="menu-item"><a href="https://keenthemes.com" target="_blank" class="menu-link px-2">About</a></li>
+
+                                        <li class="menu-item"><a href="https://devs.keenthemes.com" target="_blank" class="menu-link px-2">Support</a></li> *@
+                                    </ul>
+                                    <!--end::Menu-->
+                                </div>
+                                <!--end::Footer container-->
+                            </div>
+                            <!--Footer::End-->
+                        </div>
+                        <!--end::Page-->
+                    </div>
+                </div>
+                <!--end::Wrapper-->
+
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

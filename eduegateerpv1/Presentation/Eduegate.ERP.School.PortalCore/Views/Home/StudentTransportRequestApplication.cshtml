@@ -1,0 +1,394 @@
+﻿
+@model Eduegate.Web.Library.School.Transports.TransportApplicationViewModel
+
+@{
+    ViewBag.Title = "StudentTransportRequestApplication";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript" src="StudentTransportRequestListController.js"></script>
+
+<div class="bg-light d-flex flex-column" style="flex:1;" ng-controller="StudentTransportRequestController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+    <section class="home-section-wrap">
+        <div class="container">
+            <div class="row row-eq-height">
+                <!-- Nav tabs -->
+                <!-- Tab panes -->
+
+                <div class="tab-pane  fontawesome-demo">
+                    <div class="container-custom container-xxl d-flex flex-column-fluid  p-md-sm-0">
+                        <div class="content d-flex flex-row flex-row-fluid" id="kt_content">
+                            <div class="d-flex flex-column flex-row-fluid">
+                                <div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6" id="kt_toolbar">
+                                    <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2">
+                                        <h1 class="d-flex text-dark fw-bold m-0 fs-3">New Transport Application</h1>
+                                        <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+                                            <li class="breadcrumb-item text-gray-600">
+                                                <a class="text-gray-600 text-hover-primary" href="~/Home/MyWards">Home</a>
+                                            </li>
+                                            <li class="breadcrumb-item text-gray-500">New Transport Application</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="flex-column-fluid">
+                                    <div class="row g-5 g-lg-8 mb-5 mb-xl-0">
+
+                                        <div class="content d-flex flex-row flex-row-fluid">
+                                            <div class="d-flex flex-column flex-row-fluid">
+                                                <form ng-if="Applications.ApplicationNumber != ''">
+                                                    <div class="mb-3 form-group col-md-auto col-12 center">
+                                                        <label for="exampleFormControlInput1" class="form-label pull-m12"><b style="color:brown">Application Number <br />{{Applications.ApplicationNumber}}</b></label>
+                                                    </div>
+                                                </form>
+
+                                                <div ng-repeat="data in Applications.TransportApplicationStudentMaps"
+                                                     ng-init="current = $parent.start; $parent.start=$parent.start+1;"
+                                                     class="col-xl-12 mb-xl-8">
+                                                    <div class="card">
+
+                                                        <div class="card-body">
+
+                                                            <form>
+                                                                <div class="row align-items-center g-3">
+                                                                    <input type="hidden" class="form-control" id="TransportApplctnStudentMapIID" name="TransportApplctnStudentMapIID" value="{{data.TransportApplctnStudentMapIID}}" ng-model="data.TransportApplctnStudentMapIID" />
+                                                                    <input type="hidden" class="form-control" id="TransportApplicationID" name="TransportApplicationID" value="{{data.TransportApplicationID}}" ng-model="data.TransportApplicationID" />
+                                                                    <div class="form-check form-check-custom form-check-solid">
+                                                                        <div class="form-check  col-md-auto col-12">
+                                                                            <input class="form-check-input" type="checkbox" ng-model="data.CheckBoxStudent" id="CheckBoxStudent{{current}}">
+
+                                                                            <label class="form-check-label" for="CheckBoxStudent{{current}}" style="color:maroon">
+                                                                                Please Tick to Submit Student Transport Application
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="w-100"></div>
+                                                                    <div class="mb-3 col-md-auto col-12">
+                                                                        <label for="exampleFormControlInput1" class="form-label">FIRST NAME</label>
+                                                                        <input type="hidden" class="form-control" id="StudentID" name="StudentID" value="{{data.StudentID}}" ng-model="data.StudentID" />
+                                                                        <input class="form-control" type="text" ng-model="data.FirstName" readonly />
+                                                                    </div>
+                                                                    <div class="mb-3 form-group col-md-auto col-12">
+                                                                        <label for="exampleFormControlInput1" class="form-label">LAST NAME</label>
+                                                                        <input type="hidden" class="form-control" id="MiddleName" name="MiddleName" value="{{data.MiddleName}}" ng-model="data.MiddleName" />
+                                                                        <input class="form-control" type="text" ng-model="data.LastName" readonly />
+                                                                    </div>
+                                                                    <div class="mb-3 col-md-auto col-12">
+                                                                        <label for="exampleFormControlInput1" class="form-label">GRADE</label>
+                                                                        <input type="hidden" class="form-control" id="SchoolID" name="SchoolID" value="{{data.SchoolID}}" ng-model="data.SchoolID" />
+                                                                        <input type="hidden" class="form-control" id="ClassID" name="ClassID" value="{{data.Class.Key}}" ng-model="data.Class.Key" />
+                                                                        <input class="form-control" type="text" ng-model="data.ClassName" readonly />
+                                                                    </div>
+                                                                    <div class="mb-3 col-md-auto col-12">
+                                                                        <label for="exampleFormControlInput1" class="form-label">GENDER</label>
+                                                                        <input type="hidden" class="form-control" id="GenderID" name="GenderID" value="{{data.GenderID}}" ng-model="data.GenderID" />
+                                                                        <input class="form-control" type="text" ng-model="data.Gender" readonly />
+                                                                    </div>
+                                                                    <div class="mb-3 col-md-auto col-12">
+                                                                        <label for="exampleFormControlInput1" class="form-label">START DATE</label>
+                                                                        @*<input type="date" placeholder="Start Date" ng-model="data.StartDateString" id="StartDateString" name="StartDateString" class="form-control" value={{data.StartDateString}} />*@
+                                                                        <input type="date" placeholder="Start Date" required="" ng-model="data.StartDateString" id="StartDateString" name="StartDateString" class="form-control" value={{data.StartDateString}} />
+                                                                        @*<input type="date" class="form-control date" id="StartDate" value={{data.StartDateString}} />*@
+                                                                    </div>
+                                                                    <div class="w-100"></div>
+                                                                    <div class="form-check form-check-custom form-check-solid" ng-if="data.IsNewRider == true" style="opacity:0; position:absolute; left:9999px;">
+                                                                        <div class="form-check  col-md-auto col-12">
+                                                                            <input class="form-check-input" type="checkbox"  ng-model="data.IsNewRider" id="IsNewRider{{current}}">
+
+                                                                            <label class="form-check-label" for="IsNewRider{{current}}" style="color:maroon">
+                                                                                New rider
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-check form-check-custom form-check-solid" ng-if="data.IsNewRider != true" style="opacity:0; position:absolute; left:9999px;">
+                                                                        <div class="form-check  col-md-auto col-12">
+                                                                            <input class="form-check-input" type="checkbox"  ng-model="data.LocationChange" id="LocationChange{{current}}" ng-bind="data.LocationChange">
+
+                                                                            <label class="form-check-label" for="LocationChange{{current}}" style="color:maroon">
+                                                                                Location change
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    @*<div class="form-check col-md-auto col-12">
+                                                                            <input class="form-check-input" type="checkbox" ng-model="data.IsActive">
+                                                                            <label class="form-check-label" for="exampleFormControlInput1">
+                                                                                IS ACTIVE
+                                                                            </label>
+                                                                        </div>*@
+                                                                    <div class="w-100"></div>
+                                                                    @*<div class="mb-3 col-md-auto col-12">
+                                                                        <label for="exampleFormControlInput1" class="form-label">Does your child have a medical condition</label>
+                                                                        <input type="radio" id="Yes" name="MedicalCondition" value="Yes" ng-click="ChangeMedicalCondition(data)">
+                                                                        <label for="Yes">Yes</label>
+                                                                        <input type="radio" id="No" name="MedicalCondition" value="No" ng-click="ChangeMedicalCondition(data)">
+                                                                        <label for="No">No</label><br>
+                                                                        </div>*@                                                      <div class="form-check form-check-custom form-check-solid">
+                                                                        <div class="form-check  col-md-auto col-12">
+                                                                            <input class="form-check-input" type="checkbox" ng-model="data.IsMedicalCondition" id="IsMedicalCondition{{curret}}">
+
+                                                                            <label class="form-check-label" for="IsMedicalCondition{{current}}" style="color:maroon">
+                                                                                Does your child have a medical condition
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                    <div class="col-12">
+                                                                        <label for="exampleFormControlInput1{{current}}" class="form-label">If Yes,Please explain</label>
+                                                                        <textarea class="form-control" ng-model="data.Remarks" id="Remarks{{current}}"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="content d-flex flex-row flex-row-fluid">
+                                            <div class="card">
+
+                                                <div class="card-body">
+                                                    <form>
+                                                        <div class="row align-items-center g-3">
+                                                            <p class="h5">FATHER</p>
+                                                            <input type="hidden" class="form-control" id="TransportApplicationIID" name="TransportApplicationIID" value="{{Applications.TransportApplicationIID}}" ng-model="Applications.TransportApplicationIID" />
+                                                            <input type="hidden" class="form-control" id="ApplicationNumber" name="ApplicationNumber" value="{{Applications.ApplicationNumber}}" ng-model="Applications.ApplicationNumber" />
+                                                            <div class="mb-3 form-group col-md-auto col-12">
+                                                                <label for="exampleFormControlInput1" class="form-label">NAME</label>
+                                                                <input type="hidden" class="form-control" id="LoginID" name="LoginID" value="{{Applications.LoginID}}" ng-model="Applications.LoginID" />
+                                                                <input class="form-control" type="text" ng-model="Applications.FatherName" readonly/>
+                                                            </div>
+                                                            <div class="mb-3 form-group col-md-auto col-12">
+                                                                <label for="exampleFormControlInput1" class="form-label">EMAIL ADDRESS</label>
+                                                                <input type="email" class="form-control" ng-model="Applications.FatherEmailID" id="FatherEmailID" readonly/>
+                                                            </div>
+                                                            <div class="mb-3 form-group col-md-auto col-12">
+                                                                <label for="exampleFormControlInput1" class="form-label">MOBILE AND HOME PHONE</label>
+                                                                <input type="text" class="form-control" ng-model="Applications.FatherContactNumber" id="FatherContactNumber" readonly/>
+                                                            </div>
+
+                                                            <p class="h5">MOTHER</p>
+
+                                                            <div class="mb-3 form-group col-md-auto col-12">
+                                                                <label for="exampleFormControlInput1" class="form-label">NAME</label>
+                                                                <input type="hidden" class="form-control" id="ParentID" name="ParentID" value="{{Applications.ParentID}}" ng-model="Applications.ParentID" />
+                                                                <input type="text" class="form-control" ng-model="Applications.MotherName" readonly/>
+                                                            </div>
+                                                            <div class="mb-3 form-group col-md-auto col-12">
+                                                                <label for="exampleFormControlInput1" class="form-label">EMAIL ADDRESS</label>
+                                                                <input type="email" class="form-control" ng-model="Applications.MotherEmailID" id="MotherEmailID" readonly/>
+                                                            </div>
+                                                            <div class="mb-3 form-group col-md-auto col-12">
+                                                                <label for="exampleFormControlInput1" class="form-label">MOBILE AND HOME PHONE</label>
+                                                                <input type="text" class="form-control" ng-model="Applications.MotherContactNumber" id="MotherContactNumber" readonly/>
+                                                            </div>
+                                                            <p class="h5">EMERGENCY CONTACT</p>
+
+                                                            <div class="mb-3 form-group col-md-2 col-12">
+                                                                <label for="exampleFormControlInput1" class="form-label">CHOOSE CONTACT</label>
+                                                                <select class="form-control" required="" aria-required="true" name="SelectedType" id="SelectedType"
+                                                                        ng-model="SelectedType" ng-options="item as item.Value for item in ContactTypes track by item.Key" autofocus tabindex="0" ng-change="TypeChanges()"></select>
+                                                            </div>
+                                                            <div class="mb-3 form-group col-md-auto col-12">
+                                                                <label for="exampleFormControlInput1" class="form-label">EMAIL ADDRESS</label>
+                                                                <input type="text" class="form-control" ng-model="Applications.EmergencyEmailID" />
+                                                            </div>
+                                                            <div class="mb-3 form-group col-md-auto col-12">
+                                                                <label for="exampleFormControlInput1" class="form-label">MOBILE AND HOME PHONE</label>
+                                                                <input type="text" class="form-control" required ng-model="Applications.EmergencyContactNumber" id="EmergencyContactNumber"/>
+                                                            </div>
+
+                                                            <p class="h5">LOCATION</p>
+                                                            @*<p>
+                                                                    If Necessary,please draw or sketch a map of your exact location on
+                                                                    space provided, or attach a map ( from google earth print - out).
+                                                                </p>*@
+
+                                                            <div class="mb-3 form-group col-md-auto col-12">
+                                                                <label for="exampleFormControlInput1" class="form-label">LOCATION NAME</label>
+                                                                <input type="text" class="form-control" required ng-model="Applications.LocationName" id="LocationName" maxlength="50" />
+                                                            </div>
+                                                            <div class="mb-3 form-group col-md-auto col-12">
+                                                                <label for="exampleFormControlInput1" class="form-label">BUILDING NUMBER</label>
+                                                                <input class="form-control" type="text" required ng-model="Applications.Building_FlatNo" id="Building_FlatNo" maxlength="50" onkeypress="return event.charCode >= 48 && event.charCode <= 57" />
+                                                                <small id="building_Message" class="text-danger d-none">Please enter numeric values only.</small>
+                                                            </div>
+                                                            <div class="mb-3 form-group col-md-auto col-12">
+                                                                <label for="exampleFormControlInput1" class="form-label">STREET NUMBER</label>
+                                                                <input class="form-control" type="text" required ng-model="Applications.StreetNo" id="StreetNo" maxlength="50" onkeypress="return event.charCode >= 48 && event.charCode <= 57" />
+                                                                <small id="street_Message" class="text-danger d-none">Please enter numeric values only.</small>
+                                                            </div>
+                                                            <div class="mb-3 form-group col-md-auto col-12">
+                                                                <label for="exampleFormControlInput1" class="form-label">ZONE NUMBER</label>
+                                                                <input class="form-control" type="text" required ng-model="Applications.ZoneNo" id="ZoneNo" maxlength="50" onkeypress="return event.charCode >= 48 && event.charCode <= 57" />
+                                                                <small id="zone_Message" class="text-danger d-none">Please enter numeric values only.</small>
+                                                            </div>
+                                                            <div class="mb-3 form-group col-md-auto col-12">
+                                                                <label for="exampleFormControlInput1" class="form-label">LAND MARK</label>
+                                                                <input class="form-control" type="text" required ng-model="Applications.LandMark" id="LandMark" maxlength="50" />
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="checkbox" ng-model="Applications.IsRouteDifferent" id="IsRouteDifferent">
+                                                                <label class="form-check-label" for="IsRouteDifferent">
+                                                                    Is Drop Different
+                                                                </label>
+                                                                <p class="h5">LOCATION DETAILS</p>
+                                                                <p class="h6">Drop Stop Location Details </p>
+
+                                                                <div class="row">
+                                                                    <!-- First Row -->
+                                                                    <div class="mb-3 form-group col-md-auto col-12">
+                                                                        <label for="exampleFormControlInput1" class="form-label">LOCATION NAME</label>
+                                                                        <input class="form-control" type="text" required ng-model="Applications.TransportLocation.LocationName_Drop" id="LocationName_Drop" maxlength="50" ng-disabled="!Applications.IsRouteDifferent" ng-required="Applications.IsRouteDifferent">
+                                                                    </div>
+
+                                                                    <div class="mb-3 form-group col-md-auto col-12">
+                                                                        <label for="exampleFormControlInput1" class="form-label">BUILDING NUMBER</label>
+                                                                        <input class="form-control" type="text" required ng-model="Applications.TransportLocation.BuildingNo_Drop" id="BuildingNo_Drop" maxlength="50" ng-disabled="!Applications.IsRouteDifferent" ng-required="Applications.IsRouteDifferent" >
+                                                                        <small id="building_Message" class="text-danger d-none">Please enter numeric values only.</small>
+                                                                    </div>
+
+                                                                    <div class="mb-3 form-group col-md-auto col-12">
+                                                                        <label for="exampleFormControlInput1" class="form-label">STREET NUMBER</label>
+                                                                        <input class="form-control" type="text" required ng-model="Applications.TransportLocation.StreetNo_Drop" id="StreetNo_Drop" maxlength="50" ng-disabled="!Applications.IsRouteDifferent" ng-required="Applications.IsRouteDifferent" >
+                                                                        <small id="street_Message" class="text-danger d-none">Please enter numeric values only.</small>
+                                                                    </div>
+
+                                                                    <div class="mb-3 form-group col-md-auto col-12">
+                                                                        <label for="exampleFormControlInput1" class="form-label">ZONE NUMBER</label>
+                                                                        <input class="form-control" type="text" required ng-model="Applications.TransportLocation.ZoneNo_Drop" id="ZoneNo_Drop" maxlength="50" ng-disabled="!Applications.IsRouteDifferent" ng-required="Applications.IsRouteDifferent">
+                                                                        <small id="zone_Message" class="text-danger d-none">Please enter numeric values only.</small>
+                                                                    </div>
+
+                                                                    <div class="mb-3 form-group col-md-auto col-12">
+                                                                        <label for="exampleFormControlInput1" class="form-label">LAND MARK</label>
+                                                                        <input class="form-control" type="text" required ng-model="Applications.TransportLocation.LandMark_Drop" id="LandMark_Drop" maxlength="50" ng-disabled="!Applications.IsRouteDifferent" ng-required="Applications.IsRouteDifferent">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+                                                           
+
+                                                            </div>
+                                                        <div class="col-12 mb-3">
+                                                            <label for="exampleFormControlInput1" class="form-label">Remarks</label>
+                                                            <textarea class="form-control" ng-model="Applications.Remarks" id="Remarks" placeholder="If any Remarks . Please text here.." style="height: 100px"></textarea>
+                                                        </div>
+
+                                                            @*<div class="mb-3 form-group col-md-auto col-12">
+                                                                 <label for="exampleFormControlInput1" class="form-label">Campus</label>
+                                                                 <select class="form-select form-control validate" required="" aria-required="true" name="School" id="School"
+                                                                         ng-options="item as item.Value for item in Schools track by item.value" ng-model="School"></select>
+                                                                </div>*@
+
+                                                            <div class="form-check form-check-custom form-check-solid">
+                                                                <div class="form-check  col-md-auto col-12">
+                                                                    <input class="form-check-input" type="checkbox" ng-model="data.TransportTerms" id="TransportTerms">
+
+                                                                    <label class="form-check-label" for="TransportTerms">
+                                                                        Transport once allocated, minimum one month fee will be payable even if it is not used at all.
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-check form-check-custom form-check-solid">
+                                                                <div class="form-check  col-md-auto col-12">
+                                                                    <input class="form-check-input" type="checkbox" ng-model="data.TermsAndConditions" id="TermsAndConditions">
+
+                                                                    <label class="form-check-label" for="TermsAndConditions">
+                                                                        I have read & agreed to the terms and conditions.
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <marquee style="color:red">Please note any new transport request/change will take max 5 working days to take effect from the date of submission</marquee>
+                                                            </div>
+                                                            <button type="submit" id="SubmitapplicationBtn" name="action" class="btn btn-danger btn-dark col-md-12" ng-click="SubmitTransportApplicationClick()">Submit</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="content d-flex flex-row flex-row-fluid">
+                                            <div class="card">
+
+                                                <div class="card-body">
+                                                    <div class=" pb-lg-20">
+
+                                                        <h2 class="fw-bold text-dark mb-8">
+                                                            School transportation rules and regulations
+                                                        </h2>
+                                                    <span ng-bind-html="TransprtRulesAndRegulationsDetails"></span>
+
+                                                          </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gy-5 g-xl-10">
+                        <div class="col-xl-4 mb-5 mb-xl-10">
+                        </div>
+
+                    </div>
+                </div>
+
+            </div><!--pageContent-->
+        </div><!--pageContainer-->
+    </section>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#Building_FlatNo').on('keypress', function (e) {
+            if (e.charCode < 48 || e.charCode > 57) {
+                $('#building_Message').removeClass('d-none');
+            } else {
+                $('#building_Message').addClass('d-none');
+            }
+        });
+
+        $('#StreetNo').on('keypress', function (e) {
+            if (e.charCode < 48 || e.charCode > 57) {
+                $('#street_Message').removeClass('d-none');
+            } else {
+                $('#street_Message').addClass('d-none');
+            }
+        });
+
+        $('#ZoneNo').on('keypress', function (e) {
+            if (e.charCode < 48 || e.charCode > 57) {
+                $('#zone_Message').removeClass('d-none');
+            } else {
+                $('#zone_Message').addClass('d-none');
+            }
+        });
+    });
+</script>
+
+
+<style>
+    .gfuSqG {
+        box-sizing: border-box;
+        border: 1px solid rgb(241, 245, 246);
+        border-radius: 0px 0px 4px 4px;
+        background-color: rgb(255, 255, 255);
+        box-shadow: rgb(28 47 58 / 20%) -2px 3px 13px 0px;
+        padding: 23px 17px 35px;
+    }
+
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0,0,0,.1);
+    }
+</style>

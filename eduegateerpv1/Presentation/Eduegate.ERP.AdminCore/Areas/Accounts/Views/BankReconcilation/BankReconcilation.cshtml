@@ -1,0 +1,1192 @@
+﻿@using Eduegate.ERP.Admin.Globalization;
+@model Eduegate.Web.Library.ViewModels.Accounts.BankReconcilationViewModel
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+    var windowName = "window_" + Guid.NewGuid().ToString();
+}
+
+
+<div id="BankReconcilation" class="app-container windowcontainer  position-relative" accesskey="" ng-controller="UploadFileController" ng-init="Init('@windowName', @Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+    <div class="main-page row g-3 g-xl-5 mb-5 mb-xl-10">
+        <div class="  flex-column-fluid mt-0 mb-4">
+            <div class="row gy-4 flex-row-fluid">
+                <form class="col-3">
+                    <div class="w-100 card">
+                        <div class="card-header" style="min-height:auto ; align-items:center" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseExample">
+                            <legend class="col-6">Ledger Data Selection</legend>
+
+                            <button class="button-orange p-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseExample">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                    <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="card-body collapse show" id="collapseFilter">
+
+                            <div class="row gy-0 g-xl-2">
+                                <div class="col-lg-6">
+                                    <span class="form-group">
+                                        <span class="controls w-75">
+                                            <label>Bank</label>
+                                            <span class="controls brand">
+                                                <ui-select style="width: 100%;" ng-model="Search.BankAccount" ng-change="BankAccountChanges(Search.BankAccount)"
+                                                           theme="select2" class="pos-txt" sortable="true" name="selectedBank" id="selectedBank">
+                                                    <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                    <ui-select-choices repeat="data in BankAccounts | filter:$select.search">{{data.Value}}</ui-select-choices>
+                                                </ui-select>
+                                            </span>
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="w-100"></div>
+                                <div class="col-lg-6">
+                                    <span class="form-group">
+                                        <span class="controls w-75">
+                                            <label>From date</label>
+                                            <span class="controls brand">
+                                                <input type="text" autocomplete="off" ng-model="FromDateString" skien-Datepicker />
+                                            </span>
+                                        </span>
+                                    </span>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <span class="form-group">
+                                        <span class="controls w-75">
+                                            <label>To date</label>
+                                            <span class="controls brand">
+                                                <input type="text" autocomplete="off" ng-model="ToDateString" skien-Datepicker />
+                                            </span>
+                                        </span>
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </form>
+
+                <div class="col-4">
+                    <!-- PDF Upload Section -->
+                    <div class="w-100 h-100 card">
+                        <div class="card-header" style="min-height:auto; align-items:center" data-bs-toggle="collapse" data-bs-target="#collapsePdfUpload" aria-expanded="false" aria-controls="collapsePdfUpload">
+                            <legend class="col-lg-2">Upload Bank Statement(PDF)</legend>
+                            <button class="button-orange p-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePdfUpload" aria-expanded="false" aria-controls="collapsePdfUpload">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                    <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="card-body collapse show" id="collapsePdfUpload">
+                            <div class="row gy-0 g-xl-2 dropDivClass" id="dropDivPdf">
+                                <div class="col-lg-8">
+                                    <form id="pdfUploadDropzone" ng-click="TriggerUploadPdfFile($event);" method="post" action="~/Documents/DocManagement/UploadPdfDocument" enctype="multipart/form-data" class="dropzone uploadWidgetForm h-100px">
+                                        <div class="dz-message dz-message-continer" data-dz-message>
+                                            <div class="dz-message-title">
+                                                @ResourceHelper.GetValue("Drag and drop or browse your PDF files.")
+                                            </div>
+                                        </div>
+                                        <div class="fallback">
+                                            <input ng-model="uploadedPdfDocuments" onchange="UploadPdfFiles(this)" name="pdfFile" type="file" accept=".pdf" multiple />
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-lg-3 d-flex flex-end">
+                                    <div class="">
+                                        <input id="postPdfUploads" type="button" ng-disabled='uploadedPdfInfo.length > 0' class="button-orange" value="Upload"
+                                               ng-click="SaveUploadedPdfFiles($event);" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+
+                    <!-- Excel Upload Section -->
+                    <div class="w-100 h-100 card">
+                        <div class="card-header" style="min-height:auto; align-items:center" data-bs-toggle="collapse" data-bs-target="#collapseExcelUpload" aria-expanded="false" aria-controls="collapseExcelUpload">
+                            <legend class="col-lg-2">Upload Opening File(excel)</legend>
+                            <button class="button-orange p-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExcelUpload" aria-expanded="false" aria-controls="collapseExcelUpload">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                    <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="card-body collapse show" id="collapseExcelUpload">
+                            <div class="row gy-0 g-xl-2 dropDivClass" id="dropDivExcel">
+                                <div class="row gy-0 g-xl-2">
+                                    <span class="form-group">
+                                        <span class="controls w-75">
+                                            <label>Bank Closing Balance</label>
+                                            <span class="controls brand">
+                                                <input type="text" autocomplete="off" ng-model="BankClosingBalInput" />
+                                            </span>
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="row gy-0 g-xl-2">
+                                    <span class="form-group">
+                                        <span class="controls w-75">
+                                            <label>Ledger Closing Balance</label>
+                                            <span class="controls brand">
+                                                <input type="text" autocomplete="off" ng-model="LedgerClosingBalInput" />
+                                            </span>
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="w-100"></div>
+                                <div class="col-lg-8">
+                                    <form id="excelUploadDropzone" ng-click="TriggerUploadExcelFile($event);" method="post" action="~/Documents/DocManagement/UploadExcelDocument" enctype="multipart/form-data" class="dropzone uploadWidgetForm h-100px">
+                                        <div class="dz-message dz-message-continer" data-dz-message>
+                                            <div class="dz-message-title">
+                                                @ResourceHelper.GetValue("Drag and drop or browse your Excel files.")
+                                            </div>
+                                        </div>
+                                        <div class="fallback">
+                                            <input ng-model="uploadedExcelDocuments" onchange="UploadExcelFiles(this)" name="excelFile" type="file" accept=".xls,.xlsx" multiple />
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-lg-3 d-flex flex-end">
+                                    <div class="">
+                                        <input id="postExcelUploads" type="button" ng-disabled='uploadedExcelInfo.length > 0' class="button-orange" value="Upload"
+                                               ng-click="SaveUploadedExcelFile($event);" />
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>@*
+                        <div class="content-right" style=" visibility: hidden;">
+                        <div class="import-content">
+                        <div class="title">Update</div>
+                        <a href="" class="button-orange alignright" ng-click="DownloadTemplate();">Download Template</a>
+                        <div class="fullwidth alignleft uploadfield">
+                        <input type="file" class="uploadexcel" file-model="feedFile"
+                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+                        <span><input type="text" class="filename" /></span>
+                        <button class="button-orange uploadfile">Upload File</button>
+                        </div>
+                        <div class="fullwidth alignleft processimport">
+                        <label class="alignleft"><input type="checkbox" />&nbsp; Ignore Errors</label>
+                        <button class="button-orange alignright" ng-click="InitiateFeed();">Process Import</button>
+                        </div>
+                        </div>
+                        </div> *@
+                    </div>
+                </div>
+                <div class="col-1">
+                    <div class="row gy-0 g-xl-2  dropDivClass" id="dropDiv">
+
+                        <div class="col-lg-1 " style=" visibility: hidden;">
+                            <div id="kt_search_map" class="w-100 h-100 card-rounded leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0" style="position: relative;">
+                                <div class="imgsuploaded">
+                                    @* <h3>@ResourceHelper.GetValue("Preview")</h3> *@
+                                    <div class="upload-imgwrap dropzone-previews h-100px border" id="previews">
+                                        <div class="dz-preview dz-processing dz-image-preview" ng-repeat="docInfo in uploadedDocInfo">
+                                            <div>
+                                                <input name="filename" />
+                                                <select name="filetype"></select>
+                                            </div>
+                                            <div class="dz-image">
+
+                                                <img data-dz-thumbnail="" ng-src="{{docInfo.FilePath}}" />
+                                            </div>
+                                            <a data-dz-remove="" class="dz-remove" ng-click="DeleteUploadedDcuments(docInfo);">Cancel upload</a>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 ">
+                    <div class="card">
+
+                        <div class="card-header" style="min-height:auto ; align-items:center" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseExample">
+                            <legend class="col-lg-2">Summary</legend>
+
+                            <button class="button-orange p-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseExample">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                    <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="card-body collapse show" id="collapseFilter">
+                            <div class="d-flex gap-3">
+                                <table class="ui definition table w-50" ng-if="BankName">
+                                    <thead>
+                                        @*    <tr>
+                                        <th></th>
+                                        <th>Arguments</th>
+                                        <th>Description</th>
+                                        </tr> *@
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Bank Name</td>
+                                            <td>{{BankName}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Date from</td>
+                                            <td>{{FromDateString}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Date To</td>
+                                            <td>{{ToDateString}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Upload file</td>
+                                            <td>{{ContentFileName}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <div class="table-responsive w-50 p-4">
+                                    <table class="ui compact celled definition table">
+                                        <thead>
+                                            <tr>
+                                                <th></th>
+                                                <th colspan="2" class="border-bottom">Opening</th>
+                                                <th colspan="2" class="border-bottom">Closing</th>
+                                            </tr>
+                                            <tr class="">
+                                                <th></th>
+
+                                                <th class=" text-end">Debit</th>
+                                                <th class=" text-end">Credit</th>
+                                                <th class=" text-end">Debit</th>
+                                                <th class=" text-end">Credit</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    Bank statement
+                                                </td>
+                                                <td class=" text-end">
+                                                    <span>{{BankOpeningBalance > 0 ? BankOpeningBalance : 0}}</span>
+
+                                                </td>
+                                                <td class=" text-end">
+                                                    <span>{{BankOpeningBalance < 0 ? -BankOpeningBalance : 0}}</span>
+                                                </td>
+                                                <td class="text-end ">
+                                                    <span>{{BankClosingBalance > 0 ? BankClosingBalance : 0}}</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span>{{BankClosingBalance < 0 ? -BankClosingBalance : 0}}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Ledger Balance
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class=" text-end">{{LedgerOpeningBalance > 0 ? LedgerOpeningBalance : 0}}</span>
+
+                                                </td>
+                                                <td class="text-end">
+                                                    <span>{{LedgerOpeningBalance < 0 ? -LedgerOpeningBalance : 0}}</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class=" ">{{LedgerClosingBalance > 0 ? LedgerClosingBalance : 0}}</span>
+                                                </td>
+                                                <td class="text-end">
+                                                    <span class="">{{LedgerClosingBalance < 0 ? -LedgerClosingBalance : 0}}</span>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                        <tfoot class="full-width">
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="col-lg-12 ">
+                    <div class="card">
+                        <div class="card-header" style="min-height:auto; align-items:center" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseExample">
+                            <legend class="col-lg-2">Summary</legend>
+
+                            <button class="button-orange p-1" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseExample">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+                                    <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="card-body collapse show" id="collapseFilter">
+                            <ul class="summaryheader">
+                                @*  <li>
+                                <span ng-click="RowModel.FilterAction(123)">
+                                <span class="quick-icon">
+                                <i class="fa fa-2x fa-cubes"></i>
+                                </span>
+                                <label>Self Check</label>
+
+                                <span class="value ng-binding">{{SelfCheckingString}}</span>
+
+                                </span>
+
+                                </li> *@
+                                @*  <li>
+                                <span ng-click="RowModel.FilterAction(123)">
+                                <span class="quick-icon">
+                                <i class="fa fa-2x fa-cubes"></i>
+                                </span>
+                                <label>Opening Balance as per Bank</label>
+
+                                <span class="value ng-binding">{{BankOpeningBalance}}</span>
+
+                                </span>
+                                </li> *@
+                                @*  <li>
+                                <span ng-click="RowModel.FilterAction(123)">
+                                <span class="quick-icon">
+                                <i class="fa fa-2x fa-cubes"></i>
+                                </span>
+                                <label>Closing Balance as per Bank</label>
+
+                                <span class="value ng-binding">{{BankClosingBalance}}</span>
+
+                                </span>
+                                </li> *@
+                                <li>
+                                    <span ng-click="RowModel.FilterAction(123)">
+                                        <span class="quick-icon">
+                                            <i class="fa fa-2x fa-cubes"></i>
+                                        </span>
+                                        <label>Total Bank Statement Entries</label>
+
+                                        <span class="value ng-binding">{{BankReconciliationBankTrans.length}}</span>
+
+                                    </span>
+                                </li>
+                                <li>
+                                    <span ng-click="RowModel.FilterAction(123)">
+                                        <span class="quick-icon">
+                                            <i class="fa fa-2x fa-cubes"></i>
+                                        </span>
+                                        <label>Total Ledger Entries</label>
+
+                                        <span class="value ng-binding">{{BankReconciliationLedgerTrans.length}}</span>
+
+                                    </span>
+                                </li>
+                                <li>
+                                    <span ng-click="RowModel.FilterAction(123)">
+                                        <span class="quick-icon">
+                                            <i class="fa fa-2x fa-cubes"></i>
+                                        </span>
+                                        <label>Matched Entries</label>
+
+                                        <span class="value ng-binding">{{BankReconciliationMatchedEntries.length}}</span>
+
+                                    </span>
+                                </li>
+                                <li>
+                                    <span ng-click="RowModel.FilterAction(123)">
+                                        <span class="quick-icon">
+                                            <i class="fa fa-2x fa-cubes"></i>
+                                        </span>
+                                        <label>Mismatch with Ledger Entries</label>
+
+                                        <span class="value ng-binding">{{BankReconciliationUnMatchedWithLedgerEntries.length}}</span>
+
+                                    </span>
+                                </li>
+                                <li>
+                                    <span ng-click="RowModel.FilterAction(123)">
+                                        <span class="quick-icon">
+                                            <i class="fa fa-2x fa-cubes"></i>
+                                        </span>
+                                        <label>Mismatch with Bank Entries</label>
+
+                                        <span class="value ng-binding">{{BankReconciliationUnMatchedWithBankEntries.length}}</span>
+
+                                    </span>
+                                </li>
+
+                                <li>
+                                    <span ng-click="RowModel.FilterAction(123)">
+                                        <span class="quick-icon">
+                                            <i class="fa fa-2x fa-cubes"></i>
+                                        </span>
+                                        <label>Manual Entries</label>
+                                        <span class="value ng-binding">{{BankReconciliationManualEntry.length}}</span>
+
+                                    </span>
+                                </li>
+
+                            </ul>
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+            </div>
+        </div>
+
+
+        @* <div id="dropDiv" class="dropDivClass"> *@
+        @*           <form id="fileuploaddropzone" ng-click="TriggerUploadFile($event);" method="post" action="~/Documents/DocManagement/UploadDocument" enctype="multipart/form-data" class="dropzone uploadWidgetForm"
+        style="height:120px">
+        <div class="dz-message dz-message-continer" data-dz-message>
+        <div class="dz-message-title">
+        @ResourceHelper.GetValue("Drag and drop or browse your files into the grid.")
+        </div>
+        </div>
+        <div class="fallback">
+        <input ng-model="uploadedDocuments" onchange="UploadDocumentFiles(this)" name="file" type="file" multiple />
+        </div>
+        </form> *@
+        @*  <div class="imgsuploaded">
+        <h2>@ResourceHelper.GetValue("Preview")</h2>
+        <div class="upload-imgwrap dropzone-previews" id="previews">
+        <div class="dz-preview dz-processing dz-image-preview" ng-repeat="docInfo in uploadedDocInfo">
+        <div>
+        <input name="filename" />
+        <select name="filetype"></select>
+        </div>
+        <div class="dz-image">
+
+        <img data-dz-thumbnail="" ng-src="{{docInfo.FilePath}}" />
+        </div>
+        <a data-dz-remove="" class="dz-remove" ng-click="DeleteUploadedDcuments(docInfo);">Cancel upload</a>
+
+        </div>
+        </div>
+        </div> *@
+        @*     <div style="float: right; padding-top: 10px;" class="mb-10">
+        <input id="uploadCancel" type="button" class="button-orange h-30px" value="Cancel" ng-click="CloseUploadWindow($event);" />
+        <input id="postUploads" type="button" ng-disabled='uploadedDocInfo.length > 0' class="button-orange " value="Upload"
+        ng-click="SaveUploadedFiles($event);" />
+        </div> *@
+
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border d-none" role="status" id="spinner">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 px-0">
+                <ul class="nav nav-tabs" id="myTab" role="tablist" style="column-gap:6px;">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="ReconciledEntryPanel-tab" data-bs-toggle="tab" data-bs-target="#ReconciledEntryPanel-tab-pane" type="button" role="tab" aria-controls="ReconciledEntryPanel-tab-pane" aria-selected="true">
+                            Reconciled Entry
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="LedgerEntryPanel-tab" data-bs-toggle="tab" data-bs-target="#LedgerEntryPanel-tab-pane" type="button" role="tab" aria-controls="LedgerEntryPanel-tab-pane" aria-selected="false">
+                            Ledger Entry
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="BankStatementEntryPanel-tab" data-bs-toggle="tab" data-bs-target="#BankStatementEntryPanel-tab-pane" type="button" role="tab" aria-controls="BankStatementEntryPanel-tab-pane" aria-selected="false">
+                            Bank Statement Entry
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content min-h-500px" id="myTabContent">
+                    <div class="tab-pane fade show active" id="ReconciledEntryPanel-tab-pane" role="tabpanel" aria-labelledby="ReconciledEntryPanel-tab" tabindex="0">
+                        <div>
+                            <ul class="nav nav-tabs" id="myTab1" role="tablist" style="column-gap:6px;">
+
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="ComparisonEntryPanel-tab" data-bs-toggle="tab" data-bs-target="#ComparisonEntryPanel-tab-pane" type="button" role="tab" aria-controls="ComparisonEntryPanel-tab-pane" aria-selected="false">Matching</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link " id="MatchedEntryPanel-tab" data-bs-toggle="tab" data-bs-target="#MatchedEntryPanel-tab-pane" type="button" role="tab" aria-controls="MatchedEntryPanel-tab-pane" aria-selected="true">Matched Entries</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="ReconciliationEntryPanel-tab" data-bs-toggle="tab" data-bs-target="#ReconciliationEntryPanel-tab-pane" type="button" role="tab" aria-controls="ReconciliationEntryPanel-tab-pane" aria-selected="false">Reconciliation</button>
+                                </li>
+
+                            </ul>
+                            <div class="tab-content mx-0" id="myTabContent1">
+                                <div class="tab-pane fade show active" id="ComparisonEntryPanel-tab-pane" role="tabpanel" aria-labelledby="ComparisonEntryPanel-tab" tabindex="0">
+                                    <button type="button" class="btn btn-sm btn-primary" ng-click="MovetoMatching()">
+                                        Move to Matching
+                                        <i class="fa fa-arrow-right" aria-hidden="true"></i>
+
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary" ng-click="UndoMatching()">
+                                        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                                        Undo Matching
+
+                                    </button>
+
+                                    <div style="display:flex; gap:12px;">
+                                        <div class="col-md-12 px-0 controls fullcolumn-layout" ng-if="BankReconciliationMatchingLedgerEntries.length > 0" style="height: 27vw; overflow-y: auto; width: 60%; clear: both; display: inline-block; vertical-align: top; position: relative; padding: 10px;">
+                                            <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7" style="display: flex; justify-content: space-between; align-items: center;">
+                                                <li class="breadcrumb-item text-gray-700 fw-semibold fs-4">
+                                                    Ledger Entry
+                                                </li>
+                                                <li>
+                                                    <div class="search_box d-none d-lg-flex" style="margin-left: auto;">
+                                                        <form action="" method="get" class="d-flex fullheight ng-pristine ng-valid">
+                                                            <div style="display:flex;">
+                                                                <div>
+                                                                    <input type="text" ng-model="searchQuery" ng-change="searchNodes(searchQuery)" placeholder="Search...">
+                                                                </div>
+                                                                <button class="btn" ng-click="clearSearch()"><i class="fa fa-search text-gray-100" aria-hidden="true"></i></button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                            <table class="fullcolumn-layout grid">
+                                                <thead style="position: sticky; top: 0;">
+                                                    <tr style="background:#f5f5f5;">
+                                                        <th style="width:50px;">SL. No</th>
+                                                        <th class="w-75px">Move To Matching</th>
+                                                        @*  <th class="w-75px">Undo Matching</th> *@
+                                                        <th>Particulars</th>
+                                                        <th>Trans. Date</th>
+                                                        <th>Voucher Ref</th>
+                                                        <th>ChequeNo</th>
+                                                        <th>Cheque Date</th>
+                                                        <th style="text-align: right;">Debit</th>
+                                                        <th style="text-align: right;">Credit</th>
+                                                        @* <th>Move to Matching</th> *@
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    <tr ng-repeat="trans in BankReconciliationMatchingLedgerEntries" ng-class="{'selected-row': trans.IsMoved, 'unselected-row': !trans.IsMoved}" @* style="background-color: #ffe6e6;" *@>
+                                                        <td>{{$index +1}}</td>
+                                                        <td class="ps-3 align-middle">
+
+                                                            <input class="h-20px" type="checkbox"
+                                                                   ng-model="trans.IsMatching"
+                                                                   ng-change="UpdateSelectedIndex($index, trans.IsMatching,'L')" />
+                                                        </td>
+                                                        @*  <td class="ps-3 align-middle">
+                                                        <input class="h-20px" type="checkbox" name="IsMatching" id="IsMatching" ng-model="trans.IsMatching" />
+                                                        </td> *@
+                                                        @* <td class="ps-3 align-middle">
+                                                        <input class="h-20px" type="checkbox" name="IsUndoMatching" id="IsUndoMatching" ng-model="trans.IsUndoMatching" />
+                                                        </td> *@
+                                                        <td>{{trans.Narration}}</td>
+                                                        <td>{{trans.PostDate}}</td>
+                                                        <td ng-bind="trans.VoucherRef"></td>
+                                                        <td ng-bind="trans.ChequeNo"></td>
+                                                        <td ng-bind="trans.ChequeDate"></td>
+                                                        <td ng-bind="trans.LedgerDebitAmount" style="text-align: right;"></td>
+                                                        <td ng-bind="trans.LedgerCreditAmount" style="text-align: right;"></td>
+                                                        @*  <td class="controls text-center">
+                                                        <button type="button" class="button-orange p-1">&larr;</button>
+                                                        </td> *@
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col-md-12 px-0 controls fullcolumn-layout" ng-if="BankReconciliationMatchingBankEntries.length > 0" style="height: 27vw; overflow-y: auto; width: 40%; clear: both; display: inline-block; vertical-align: top; position: relative; padding: 10px;">
+                                            <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7" style="display: flex; justify-content: space-between; align-items: center;">
+                                                <li class="breadcrumb-item text-gray-700 fw-semibold fs-4">
+                                                    Bank Statement
+                                                </li>
+                                                <li>
+                                                    <div class="search_box d-none d-lg-flex" style="margin-left: auto;">
+                                                        <form action="" method="get" class="d-flex fullheight ng-pristine ng-valid">
+                                                            <div style="display:flex;">
+                                                                <div>
+                                                                    <input type="text" ng-model="searchQuery" ng-change="searchNodes(searchQuery)" placeholder="Search...">
+                                                                </div>
+                                                                <button class="btn" ng-click="clearSearch()"><i class="fa fa-search text-gray-100" aria-hidden="true"></i></button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </li>
+                                            </ul>
+
+                                            <table class="fullcolumn-layout grid">
+                                                <thead style="position: sticky; top: 0;">
+                                                    @*   <tr style="background:#f5f5f5;">
+                                                    <th colspan="7" style="font-weight: bold; font-size: 20px;">Bank Statement</th>
+
+                                                    </tr> *@
+                                                    <tr style="background:#f5f5f5;">
+                                                        <th style="width:50px;">SL. No</th>
+                                                        <th class="w-75px">Move To Matching</th>
+                                                        @* <th class="w-75px">Undo Matching</th> *@
+                                                        <th>Particulars</th>
+                                                        <th>Post Date</th>
+                                                        <th style="text-align: right;">Debit</th>
+                                                        <th style="text-align: right;">Credit</th>
+                                                        @*  <th>Move to Matching</th> *@
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    <tr ng-repeat="trans in BankReconciliationMatchingBankEntries" ng-class="{'selected-row': trans.IsMoved, 'unselected-row': !trans.IsMoved}" @* style="background-color: #ffe6e6;" *@ @* ng-class="{'light-green': trans.IsSelected, 'light-red': !trans.IsSelected}" *@>
+                                                        <td>{{$index +1}}</td>
+                                                        <td class="ps-3 align-middle">
+
+                                                            <input class="h-20px" type="checkbox"
+                                                                   ng-model="trans.IsMatching"
+                                                                   ng-change="UpdateSelectedIndex($index, trans.IsMatching,'B')" />
+                                                        </td>
+                                                        @* <td class="ps-3 align-middle">
+                                                        <input class="h-20px" type="checkbox" name="IsMatching" id="IsMatching" ng-model="trans.IsMatching" />
+                                                        </td> *@
+                                                        @*  <td class="ps-3 align-middle">
+                                                        <input class="h-20px" type="checkbox" name="IsUndoMatching" id="IsUndoMatching" ng-model="trans.IsUndoMatching" />
+                                                        </td> *@
+                                                        <td>{{trans.Narration}}</td>
+                                                        <td>{{trans.PostDate}}</td>
+                                                        <td ng-bind="trans.BankDebitAmount" style="text-align: right;"></td>
+                                                        <td ng-bind="trans.BankCreditAmount" style="text-align: right;"></td>
+                                                        @* <td class="controls text-center">
+                                                        <button type="button" class="button-orange p-1">&rarr;</button>
+                                                        </td> *@
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="MatchedEntryPanel-tab-pane" role="tabpanel" aria-labelledby="MatchedEntryPanel-tab" tabindex="0">
+
+
+
+                                    <div class="col-md-12 controls fullcolumn-layout" ng-if="BankReconciliationMatchedEntries.length > 0" style="height: 27vw; overflow-y: auto; width: 100%; clear: both; display: inline-block; vertical-align: top; position: relative; padding: 10px;">
+                                        <table class="fullcolumn-layout grid">
+                                            <thead style="position: sticky; top: 0;">
+                                                <tr style="background:#f5f5f5;">
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th></th>
+                                                    <th colspan="2" style="text-align: center;">Ledger</th>
+                                                    <th colspan="2" style="text-align: center;">Bank</th>
+                                                    <th></th>
+                                                </tr>
+                                                <tr style="background:#f5f5f5;">
+                                                    <th style="width:50px;">SL. No</th>
+                                                    <th>Particulars</th>
+                                                    <th>Bank Description</th>
+                                                    <th>Trans. Date</th>
+                                                    <th>Post Date</th>
+                                                    <th>ChequeNo</th>
+                                                    <th style="text-align: right;">Debit</th>
+                                                    <th style="text-align: right;">Credit</th>
+                                                    <th style="text-align: right;">Debit</th>
+                                                    <th style="text-align: right;">Credit</th>
+                                                    <th>Undo Matching</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <tr ng-repeat="trans in BankReconciliationMatchedEntries">
+                                                    <td>{{$index +1}}</td>
+                                                    <td>{{trans.Particulars}}</td>
+                                                    <td>{{trans.BankDescription}}</td>
+                                                    <td>{{trans.TransDate}}</td>
+                                                    <td>{{trans.PostDate}}</td>
+                                                    <td ng-bind="trans.ChequeNo"></td>
+                                                    <td ng-bind="trans.LedgerDebitAmount" style="text-align: right;"></td>
+                                                    <td ng-bind="trans.LedgerCreditAmount" style="text-align: right;"></td>
+                                                    <td ng-bind="trans.BankDebitAmount" style="text-align: right;"></td>
+                                                    <td ng-bind="trans.BankCreditAmount" style="text-align: right;"></td>
+                                                    <td class="controls text-center">
+                                                        <button type="button" class="button-orange p-1" ng-click="UndoMatchingRow(trans)">&larr;</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="ReconciliationEntryPanel-tab-pane" role="tabpanel" aria-labelledby="ReconciliationEntryPanel-tab" tabindex="0">
+                                    <button type="button" class="btn btn-sm btn-primary mb-3" ng-click="SaveBankReconciliationEntry()">
+                                        Save <i class="fa fa-arrow-down" aria-hidden="true"></i>
+
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-primary mb-3" ng-click="SaveBankReconciliationEntry()">
+                                        Post <i class="fa fa-arrow-down" aria-hidden="true"></i>
+                                    </button>
+                                    <div class="col-md-12 controls fullcolumn-layout" ng-if="BankReconciliationEntries.length > 0" style="height: 27vw; overflow-y: auto; width: 100%; clear: both; display: inline-block; vertical-align: top; position: relative;">
+
+
+
+                                        @*      <style>
+                                        .custom-table {
+                                        width: 100%;
+                                        border-collapse: collapse;
+                                        }
+
+                                        .custom-table, .custom-th, .custom-td {
+                                        border: 1px solid black;
+                                        }
+
+                                        .custom-th, .custom-td {
+                                        padding: 8px;
+                                        text-align: left;
+                                        }
+
+                                        .header-background {
+                                        background-color: lightgray;
+                                        }
+
+                                        .highlight-row {
+                                        font-weight: bold;
+                                        }
+
+                                        .text-center-align {
+                                        text-align: center;
+                                        }
+
+                                        .text-right-align {
+                                        text-align: right;
+                                        }
+
+                                        .section-title {
+                                        font-weight: bold;
+                                        background-color: #f2f2f2;
+                                        }
+
+                                        .bg-yellow {
+                                        background-color: yellow;
+                                        }
+
+                                        .collapse {
+                                        transition: max-height 0.2s ease-out;
+                                        overflow: hidden; /* Hide the overflow */
+                                        max-height: 0; /* Start hidden */
+                                        }
+
+                                        .collapse.show {
+                                        max-height: 500px; /* Adjust as needed */
+                                        }
+
+                                        /* Optionally, add scroll for overflow */
+                                        .collapse.auto-scroll {
+                                        max-height: 300px; /* Limit the height */
+                                        overflow-y: auto; /* Enable scrolling */
+                                        }
+                                        </style> *@
+                                        @* <div class="table-responsive"> *@
+                                        <table class="ui structured  table fixed " style=" border-collapse: separate;
+  border-spacing: 0;">
+                                            <thead>
+                                                <tr class="header-background">
+                                                    <th class="custom-th w-100px"></th>
+                                                    <th class="custom-th w-100px"></th>
+                                                    <th class="custom-th"></th>
+                                                    <th class="custom-th  w-100px"></th>
+                                                    <th class="custom-th w-100px"></th>
+                                                    <th class="custom-th w-100px"></th>
+                                                    <th class="custom-th w-100px"></th>
+                                                    <th class="custom-th w-100px"></th>
+                                                    <th colspan="2" class="text-center-align w-150px">Ledger</th>
+                                                    <th colspan="2" class="text-center-align w-150px">Bank</th>
+                                                    <th colspan="2" class="text-center-align w-150px">Reconciliation</th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="custom-th w-100px">Ledger Date</th>
+                                                    <th class="custom-th w-100px">Bank Date</th>
+                                                    <th class="custom-th">Particulars</th>
+                                                    <th class="custom-th  w-100px"></th>
+                                                    <th class="custom-th w-100px"></th>
+                                                    <th class="custom-th w-100px">Voucher Ref</th>
+                                                    <th class="custom-th w-100px">Cheq. Date</th>
+                                                    <th class="custom-th w-100px">Cheq. No</th>
+                                                    <th class="custom-th text-right-align w-75px">Debit</th>
+                                                    <th class="custom-th text-right-align w-75px">Credit</th>
+                                                    <th class="custom-th text-right-align w-75px">Debit</th>
+                                                    <th class="custom-th text-right-align w-75px">Credit</th>
+                                                    <th class="custom-th text-right-align w-75px">Debit</th>
+                                                    <th class="custom-th text-right-align w-75px">Credit</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <!-- Not Matched in Bank -->
+                                                <tr class="section-title">
+                                                    <td colspan="13">Not Matched in Bank</td>
+                                                    <td colspan="1" class="collapse-control">
+                                                        <div class="controls text-center-align">
+                                                            <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                               data-bs-toggle="collapse"
+                                                               href="#collapseNotMatchedBankEntries"
+                                                               role="button"
+                                                               aria-expanded="false"
+                                                               aria-controls="collapseNotMatchedBankEntries">
+                                                                <i class="fa fa-angle-double-down"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <tr class="collapse" id="collapseNotMatchedBankEntries">
+                                                    <td colspan="14" class="p-0">
+                                                        <!-- Your data here without introducing a new table -->
+                                                        <table style="width: 100%;" class="ui fixed basic  ">
+                                                            <thead class="" style="visibility:collapse;">
+                                                                <tr>
+                                                                    <th class="custom-th w-100px">Ledger Date</th>
+                                                                    <th class="custom-th w-100px">Bank Date</th>
+                                                                    <th class="custom-th">Particulars</th>
+                                                                    <th class="custom-th  w-100px"></th>
+                                                                    <th class="custom-th w-100px"></th>
+                                                                    <th class="custom-th w-100px">Voucher Ref</th>
+                                                                    <th class="custom-th w-100px">Cheq. Date</th>
+                                                                    <th class="custom-th w-100px">Cheq. No</th>
+                                                                    <th class="custom-th text-right-align w-75px">Debit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Credit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Debit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Credit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Debit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Credit</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr ng-repeat="entry in BankReconciliationUnMatchedWithBankEntries track by $index">
+                                                                    <td class="w-100px">{{ entry.TransDate || '-' }}</td>
+                                                                    <td class="w-100px">{{ entry.PostDate || '-' }}</td>
+                                                                    <td>{{ entry.Particulars || '-' }}</td>
+                                                                    <td class="w-100px"></td>
+                                                                    <td class="w-100px"></td>
+                                                                    <td class="w-100px">{{ entry.VoucherRef || '-' }}</td>
+                                                                    <td class="w-100px">{{ entry.CheqDate || '-' }}</td>
+                                                                    <td class="w-100px">{{ entry.ChequeNo || '-' }}</td>
+                                                                    <td class="w-75px">{{ entry.LedgerDebitAmount || 0 }}</td>
+                                                                    <td class="w-75px">{{ entry.LedgerCreditAmount || 0 }}</td>
+                                                                    <td class="w-75px">{{ entry.BankDebitAmount || 0 }}</td>
+                                                                    <td class="w-75px">{{ entry.BankCreditAmount || 0 }}</td>
+                                                                    <td class="w-75px">{{ entry.ReconciliationDebitAmount || 0 }}</td>
+                                                                    <td class="w-75px">{{ entry.ReconciliationCreditAmount || 0 }}</td>
+                                                                </tr>
+                                                            </tbody>
+
+                                                        </table>
+                                                    </td>
+
+                                                </tr>
+
+                                                <!-- Not Matched in Ledger -->
+                                                <tr class="section-title">
+                                                    <td colspan="13">Not Matched in Ledger</td>
+                                                    <td colspan="1" class="collapse-control">
+                                                        <div class="controls text-center-align">
+                                                            <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                               data-bs-toggle="collapse"
+                                                               href="#collapseNotMatchedLedgerEntries"
+                                                               role="button"
+                                                               aria-expanded="false"
+                                                               aria-controls="collapseNotMatchedLedgerEntries">
+                                                                <i class="fa fa-angle-double-down"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <tr class="collapse" id="collapseNotMatchedLedgerEntries">
+                                                    <td colspan="14" class="p-0">
+                                                        <!-- Your data here without introducing a new table -->
+                                                        <table style="width: 100%;" class="ui fixed basic  ">
+                                                            <thead class="" style="visibility:collapse;">
+                                                                <tr>
+                                                                    <th class="custom-th w-100px">Ledger Date</th>
+                                                                    <th class="custom-th w-100px">Bank Date</th>
+                                                                    <th class="custom-th">Particulars</th>
+                                                                    <th class="custom-th  w-100px"></th>
+                                                                    <th class="custom-th w-100px"></th>
+                                                                    <th class="custom-th w-100px">Voucher Ref</th>
+                                                                    <th class="custom-th w-100px">Cheq. Date</th>
+                                                                    <th class="custom-th w-100px">Cheq. No</th>
+                                                                    <th class="custom-th text-right-align w-75px">Debit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Credit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Debit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Credit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Debit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Credit</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr ng-repeat="entry in BankReconciliationUnMatchedWithLedgerEntries track by $index">
+                                                                    <td class="w-100px">{{ entry.TransDate || '-' }}</td>
+                                                                    <td class="w-100px">{{ entry.PostDate || '-' }}</td>
+                                                                    <td>{{ entry.Particulars || '-' }}</td>
+                                                                    <td class="w-100px"></td>
+                                                                    <td class="w-100px"></td>
+                                                                    <td class="w-100px">{{ entry.VoucherRef || '-' }}</td>
+                                                                    <td class="w-100px">{{ entry.CheqDate || '-' }}</td>
+                                                                    <td class="w-100px">{{ entry.ChequeNo || '-' }}</td>
+                                                                    <td class="w-75px">{{ entry.LedgerDebitAmount || 0 }}</td>
+                                                                    <td class="w-75px">{{ entry.LedgerCreditAmount || 0 }}</td>
+                                                                    <td class="w-75px">{{ entry.BankDebitAmount || 0 }}</td>
+                                                                    <td class="w-75px">{{ entry.BankCreditAmount || 0 }}</td>
+                                                                    <td class="w-75px">{{ entry.ReconciliationDebitAmount || 0 }}</td>
+                                                                    <td class="w-75px">{{ entry.ReconciliationCreditAmount || 0 }}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                                <!-- Not Matched in Ledger -->
+                                                <tr class="section-title">
+                                                    <td colspan="13">Manual Entry</td>
+                                                    <td colspan="1" class="collapse-control">
+                                                        <div class="controls text-center-align">
+                                                            <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                               data-bs-toggle="collapse"
+                                                               href="#collapseManualEntries"
+                                                               role="button"
+                                                               aria-expanded="false"
+                                                               aria-controls="collapseManualEntries">
+                                                                <i class="fa fa-angle-double-down"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td colspan="14">
+                                                        <div class="collapse" id="collapseManualEntries">
+
+                                                            <table style="width: 100%;" class="table">
+                                                                <tr ng-repeat="ManualEntry in BankReconciliationManualEntry track by $index">
+                                                                    <td class="text-end  ">
+                                                                        <div class="input-group ">
+                                                                            <input type="text" class="form-control text-end" ng-model="ManualEntry.TransDate" skien-datepicker>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="text-end  ">
+                                                                        <div class="input-group ">
+                                                                            <input type="text" class="form-control text-end" ng-model="ManualEntry.PostDate" skien-datepicker>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="text-end  ">
+                                                                        <div class="input-group ">
+                                                                            <input type="text" class="form-control text-end" ng-model="ManualEntry.Particulars">
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="text-end  ">
+                                                                        <div class="input-group ">
+                                                                            <input type="text" class="form-control text-end" ng-model="ManualEntry.VoucherRef">
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="text-end  ">
+                                                                        <div class="input-group ">
+                                                                            <input type="text" class="form-control text-end" ng-model="ManualEntry.CheqDate" skien-datepicker>
+                                                                        </div>
+                                                                    </td>
+
+                                                                    <td class="text-end  ">
+                                                                        <div class="input-group ">
+                                                                            <input type="text" class="form-control text-end" ng-model="ManualEntry.ChequeNo">
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="text-end  ">
+                                                                        <div class="input-group ">
+                                                                            <input type="text" class="form-control text-end" ng-model="ManualEntry.LedgerDebitAmount">
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="text-end  ">
+                                                                        <div class="input-group ">
+                                                                            <input type="text" class="form-control text-end" ng-model="ManualEntry.LedgerCreditAmount">
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="text-end  ">
+                                                                        <div class="input-group ">
+                                                                            <input type="text" class="form-control text-end" ng-model="ManualEntry.BankDebitAmount">
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="text-end  ">
+                                                                        <div class="input-group ">
+                                                                            <input type="text" class="form-control text-end" ng-model="ManualEntry.BankCreditAmount">
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="text-end  ">
+                                                                        {{ManualEntry.ReconciliationDebitAmount|| 0}}
+                                                                    </td>
+                                                                    <td class="text-end  ">
+                                                                        <div class="input-group ">
+                                                                            {{ManualEntry.ReconciliationCreditAmount|| 0}}
+                                                                        </div>
+                                                                    </td>
+
+                                                                    <td class="sticky-last dtfc-fixed-right" style="right: 30px;">
+                                                                        <div class="controls text-center">
+                                                                            <button type="button" class="button-orange p-1" ng-click="InsertRow($index + 1)">
+                                                                                <span class="svg-icon svg-icon-3 m-0">
+                                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+                                                                                        <rect opacity="0.5" x="11" y="18" width="12" height="2" rx="1" transform="rotate(-90 11 18)" fill="#ffffff"></rect>
+                                                                                        <rect x="6" y="11" width="12" height="2" rx="1" fill="#ffffff"></rect>
+                                                                                    </svg>
+                                                                                </span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </td>
+                                                                    <td class="sticky-last dtfc-fixed-left">
+                                                                        <div class="controls text-center">
+                                                                            <button type="button" class="button-orange p-1" ng-click="RemoveRow($index)">
+                                                                                <span class="svg-icon svg-icon-3 m-0">
+                                                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#ffffff" xmlns="http://www.w3.org/2000/svg">
+                                                                                        <rect x="6" y="11" width="12" height="2" rx="1" fill="#ffffff"></rect>
+                                                                                    </svg>
+                                                                                </span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </td>
+
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="14" class="p-0">
+
+                                                        <table style="width: 100%;" class="ui fixed basic ">
+                                                            <thead class="" style="visibility:collapse;">
+                                                                <tr>
+                                                                    <th class="custom-th w-100px">Ledger Date</th>
+                                                                    <th class="custom-th w-100px">Bank Date</th>
+                                                                    <th class="custom-th">Particulars</th>
+                                                                    <th class="custom-th  w-100px"></th>
+                                                                    <th class="custom-th w-100px"></th>
+                                                                    <th class="custom-th w-100px">Voucher Ref</th>
+                                                                    <th class="custom-th w-100px">Cheq. Date</th>
+                                                                    <th class="custom-th w-100px">Cheq. No</th>
+                                                                    <th class="custom-th text-right-align w-75px">Debit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Credit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Debit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Credit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Debit</th>
+                                                                    <th class="custom-th text-right-align w-75px">Credit</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td colspan="8">
+                                                                        Total
+                                                                    </td>
+                                                                    <td>
+                                                                        {{TotalLedgerDebitAmount|| 0}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{TotalLedgerCreditAmount|| 0}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{TotalBankDebitAmount|| 0}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{TotalBankCreditAmount|| 0}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{TotalReconciliationDebitAmount|| 0}}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{TotalReconciliationCreditAmount|| 0}}
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        @* </div> *@
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="LedgerEntryPanel-tab-pane" role="tabpanel" aria-labelledby="LedgerEntryPanel-tab" tabindex="0">
+                        <div class="col-md-12 controls fullcolumn-layout" ng-if="BankReconciliationLedgerTrans.length > 0" style="height: 27vw; overflow-y: auto; width: 100%; clear: both; display: inline-block; vertical-align: top; position: relative; padding: 10px;">
+                            <table class="fullcolumn-layout grid">
+                                <thead style="position: sticky; top: 0;">
+                                    <tr style="background:#f5f5f5;">
+                                        <th style="width:50px;"></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr style="background:#f5f5f5;">
+                                        <th style="width:50px;">SL. No</th>
+                                        <th>Particulars</th>
+                                        <th>Trans. Date</th>
+                                        <th>ChequeNo</th>
+                                        <th style="text-align: right;">Debit</th>
+                                        <th style="text-align: right;">Credit</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="trans in BankReconciliationLedgerTrans">
+                                        <td>{{$index +1}}</td>
+                                        <td>{{trans.Narration}}</td>
+                                        <td>{{trans.PostDate}}</td>
+                                        <td ng-bind="trans.ChequeNo"></td>
+                                        <td ng-bind="trans.LedgerDebitAmount" style="text-align: right;"></td>
+                                        <td ng-bind="trans.LedgerCreditAmount" style="text-align: right;"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="BankStatementEntryPanel-tab-pane" role="tabpanel" aria-labelledby="BankStatementEntryPanel-tab" tabindex="0">
+                        <div class="col-md-12 controls fullcolumn-layout" ng-if="BankReconciliationBankTrans.length > 0" style="height: 27vw; overflow-y: auto; width: 100%; clear: both; display: inline-block; vertical-align: top; position: relative; padding: 10px;">
+                            <table class="fullcolumn-layout grid">
+                                <thead style="position: sticky; top: 0;">
+                                    <tr style="background:#f5f5f5;">
+                                        <th style="width:50px;"></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr style="background:#f5f5f5;">
+                                        <th style="width:50px;">SL. No</th>
+                                        <th>Particulars</th>
+                                        <th>Post Date</th>
+                                        <th>ChequeNo</th>
+                                        <th style="text-align: right;">Debit</th>
+                                        <th style="text-align: right;">Credit</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="trans in BankReconciliationBankTrans">
+                                        <td>{{$index +1}}</td>
+                                        <td>{{trans.Narration}}</td>
+                                        <td>{{trans.PostDate}}</td>
+                                        <td ng-bind="trans.ChequeNo"></td>
+                                        <td ng-bind="trans.BankDebitAmount" style="text-align: right;"></td>
+                                        <td ng-bind="trans.BankCreditAmount" style="text-align: right;"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+

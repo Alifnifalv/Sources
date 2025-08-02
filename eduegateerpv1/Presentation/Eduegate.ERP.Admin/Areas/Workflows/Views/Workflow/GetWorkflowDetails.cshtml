@@ -1,0 +1,37 @@
+﻿@model long
+
+<div class="infoInner" ng-controller="WorkflowLogController" ng-init="Init(@Model, @(ViewBag.WorkflowID == null ? "null" : ViewBag.WorkflowID))">
+    <h5><i class="fa fa-cogs" aria-hidden="true"></i>&nbsp;&nbsp; Workflow Log</h5> <div class="noPadding workflowList">
+    <center><span id="WorkflowLoad" class="fa fa-circle-o-notch fa-pulse waypoint" style="font-size:20px;color:black;display:none"></span></center>
+    <ul>
+        <li class="active approval" ng-repeat="approval in WorkflowLogs">
+            <span class="flowdataDetails noPadding">
+                <span class="flowStatus_Icon"></span> <span class="flowData pull-left">
+                    <span ng-bind-html="approval.Description"></span>
+                </span>
+                <span title="2 months ago" class="flowstatus_time pull-left noPadding">
+                    {{ moment(approval.UpdatedDate).format('DD-MMM-YYYY') }}
+                </span>
+            </span>
+        </li>
+    </ul>
+    <textarea ng-if="IsApprovedUsers||IsRestartedUsers" rows="2" class="w-100" name="Remarks" ng-model="Remarks" ng-bind="approval.Remarks">
+</textarea>
+    @*<input type="text" ng-if="IsApprovedUsers || IsRestartedUsers" ng-model="Remarks" ng-bind="approval.Remarks"/>*@
+    @*<div class="text-right mt-3">
+        <button ng-if="IsApprovedUsers" id="IsApprovedUsersbtn" class="button-orange" ng-click="Approve()">Approve</button>
+        <button ng-if="IsApprovedUsers" id="IsRejectedUsersbtn" class="button-orange" ng-click="Reject()">Reject</button>
+        <button ng-if="IsRestartedUsers" id="IsRestartedUsersbtn" class="button-orange" ng-click="Restart()">Restart</button>
+    </div>*@
+    <div class="text-right mt-3" ng-hide="HideButtons">
+    <span ng-repeat="item in WorkflowLogs" ng-hide="item.IsBtnHide">
+        <span ng-repeat="button in item.Buttons">
+            <button id="IsApprovedUsersbtn" class="button-orange" ng-click="WorkFlowButton(button.Key,item)" ng-model="button.Key">{{ button.Value }}</button>
+            <button @*ng-if="IsApprovedUsers"*@ id="IsRejectedUsersbtn" class="button-orange" ng-click="WorkFlowButton('Reject',item)">Reject</button>
+        </span>
+    </span>
+    </div>
+
+
+</div>
+</div>

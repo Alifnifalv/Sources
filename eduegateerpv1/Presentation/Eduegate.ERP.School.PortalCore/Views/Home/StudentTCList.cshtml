@@ -1,0 +1,50 @@
+﻿@{
+    ViewBag.Title = "StudentTCList";
+}
+
+<div data-attr="TransferRequestApplication" class="featureContent noPaddingLeft noPaddingRight active" ng-cloak>
+    <div id="TCListOverlay" class="preload-overlay center">
+        <span id="TCListOverlayButtonLoader" class="preloadImg">
+            <img src="~/Images/preloaderWhite.GIF" alt="loader" />
+        </span>
+    </div>
+    <div class="card-content">
+        <div class="alert alert-info text-center" ng-if="!ShowPreLoader && (StudentTransferApplications == null || StudentTransferApplications.length == 0)">
+            <b>  No Transfer Request Application Found.</b>
+        </div>
+    </div>
+
+    <div class="full-column-layout" ng-if="StudentTransferApplications != null && StudentTransferApplications.length > 0">
+        <div class="table-responsive table-responsive-custom">
+            <table  style="width:100%" class="table table-striped table-bordered table-hover table-checkable order-column valign-middle">
+                <thead>
+                    <tr>
+                        <th>Application No</th>
+                        <th>Apply Date</th>
+                        <th>Expecting Reliving Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="studentTransferApplication in StudentTransferApplications">
+                        <td ng-bind="studentTransferApplication.TCAppNumber"></td>
+                        <td ng-bind="studentTransferApplication.CreatedDateString"></td>
+                        <td ng-bind="studentTransferApplication.ExpectingRelivingDateString"></td>
+                        <td style="color:orange" ng-bind="studentTransferApplication.TransferRequestStatus"></td>
+                        <td align="center">
+                            <span data-attr="TransferRequestApplication" ng-if="studentTransferApplication.TransferRequestStatusID !=2 && studentTransferApplication.TransferRequestStatusID !=3 " ng-hide="edit">
+                                <a data-toggle="pill" ng-click="EditTransferRequestClick(studentTransferApplication.StudentTransferRequestIID)"><span class="edit"><i class="material-icons small" title="edit">edit</i></span></a>
+                            </span>
+                            <a href="DeleteTransferApplication?Id={{studentTransferApplication.StudentTransferRequestIID}}">
+                                <span class="delete" ng-if="studentTransferApplication.TransferRequestStatusID !=2 && studentTransferApplication.TransferRequestStatusID !=3 " ng-hide="delete" ng-click="Delete(studentTransferApplication.StudentTransferRequestIID)"><i class="material-icons small" title="delete">delete</i> </span>
+                            </a>
+                            @*</div>*@
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </div>
+    </div>
+

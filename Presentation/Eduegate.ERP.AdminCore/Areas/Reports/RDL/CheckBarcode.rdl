@@ -1,0 +1,701 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition">
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="MyXMLDataSource">
+      <DataSourceReference>/EduEgate</DataSourceReference>
+      <rd:SecurityType>DataBase</rd:SecurityType>
+      <rd:DataSourceID>8ebc1f7b-e923-4227-a0fd-7ef3c2e1b6b2</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="MyXMLDataSet">
+      <Query>
+        <DataSourceName>MyXMLDataSource</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@Employee_IDs">
+            <Value>=Parameters!Employee_IDs.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Designation">
+            <Value>=Parameters!Designation.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@SchoolID">
+            <Value>=Parameters!SchoolID.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>Select top(6) a.*,c.ContentData as PrincipleSign
+from schools.EmployeeIDCardReportView as a
+  left join payroll.employees as e on e.BranchID = a.BranchID
+			and e.IsActive=1 and e.DesignationID = (Select SettingValue from setting.Settings where settingcode = 'EMP_PRINCIPAL_DESIGNATION_ID')
+  left join contents.ContentFiles as c on c.ContentFileIID = e.SignatureContentID
+Where a.EmployeeIID=IIF(@Employee_IDs='0',a.EmployeeIID ,@Employee_IDs) and a.DesignationID=IIF(@Designation=0,a.DesignationID ,@Designation) and a.BranchID = @SchoolID
+order by a.EmployeeCode desc</CommandText>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+      </Query>
+      <Fields>
+        <Field Name="EmployeeCode">
+          <DataField>EmployeeCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="IsActive">
+          <DataField>IsActive</DataField>
+          <rd:TypeName>System.Boolean</rd:TypeName>
+        </Field>
+        <Field Name="BloodGroupName">
+          <DataField>BloodGroupName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EmergencyContactNo">
+          <DataField>EmergencyContactNo</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Employee">
+          <DataField>Employee</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="BranchID">
+          <DataField>BranchID</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="EmployeeIID">
+          <DataField>EmployeeIID</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="DateOfJoining">
+          <DataField>DateOfJoining</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="DesignationName">
+          <DataField>DesignationName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EmployeeImage">
+          <DataField>EmployeeImage</DataField>
+          <rd:TypeName>System.Byte[]</rd:TypeName>
+        </Field>
+        <Field Name="EmployeeName">
+          <DataField>EmployeeName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="DesignationID">
+          <DataField>DesignationID</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="EmployeePhoto">
+          <DataField>EmployeePhoto</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PrincipleSign">
+          <DataField>PrincipleSign</DataField>
+          <rd:TypeName>System.Byte[]</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="DataSet1">
+      <Query>
+        <DataSourceName>MyXMLDataSource</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@EmployeeSearch">
+            <Value>=Parameters!EmployeeSearch.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Designation">
+            <Value>=Parameters!Designation.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@SchoolID">
+            <Value>=Parameters!SchoolID.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>SELECT 0 AS EmployeeIID,'ALL' AS EmployeeName where len(isnull(@EmployeeSearch,''))=0 
+UNION ALL
+SELECT EmployeeIID, ISNULL(EmployeeCode,'')+' - '+ISNULL(FirstName,'')+' '+ISNULL(MiddleName,'')+' '+ISNULL(LastName,'') as EmployeeName
+FROM payroll.Employees 
+WHERE len(isnull(@EmployeeSearch,''))=0 and DesignationID = IIF(@Designation=0,DesignationID,@Designation) and BranchID=@SchoolID
+UNION ALL
+SELECT EmployeeIID, ISNULL(EmployeeCode,'')+' - '+ISNULL(FirstName,'')+' '+ISNULL(MiddleName,'')+' '+ISNULL(LastName,'') as EmployeeName
+FROM payroll.Employees
+WHERE EmployeeCode + ' - ' + RTRIM(LTRIM(ISNULL(FirstName,'') +' ' + ISNULL(MiddleName,'') +' ' + ISNULL(LastName,''))) LIKE '%' +isnull(@EmployeeSearch,'') +'%' AND len(isnull(@EmployeeSearch,''))&gt;0
+and DesignationID = IIF(@Designation=0,DesignationID,@Designation) and BranchID=@SchoolID</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="EmployeeIID">
+          <DataField>EmployeeIID</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="EmployeeName">
+          <DataField>EmployeeName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="DataSet2">
+      <Query>
+        <DataSourceName>MyXMLDataSource</DataSourceName>
+        <CommandText>SELECT 0 AS DesignationID,'ALL' AS DesignationName
+UNION ALL
+SELECT DesignationID,DesignationName
+From payroll.Designations</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="DesignationID">
+          <DataField>DesignationID</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="DesignationName">
+          <DataField>DesignationName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="DataSet3">
+      <Query>
+        <DataSourceName>MyXMLDataSource</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@SchoolID">
+            <Value>=Parameters!SchoolID.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>SELECT * FROM SCHOOLS.Schools where SchoolID =@SchoolID</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="SchoolID">
+          <DataField>SchoolID</DataField>
+          <rd:TypeName>System.Byte</rd:TypeName>
+        </Field>
+        <Field Name="SchoolName">
+          <DataField>SchoolName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Description">
+          <DataField>Description</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Address1">
+          <DataField>Address1</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Address2">
+          <DataField>Address2</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="RegistrationID">
+          <DataField>RegistrationID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="CompanyID">
+          <DataField>CompanyID</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="CreatedDate">
+          <DataField>CreatedDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="UpdatedDate">
+          <DataField>UpdatedDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
+        <Field Name="UpdatedBy">
+          <DataField>UpdatedBy</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="CreatedBy">
+          <DataField>CreatedBy</DataField>
+          <rd:TypeName>System.Int32</rd:TypeName>
+        </Field>
+        <Field Name="SchoolCode">
+          <DataField>SchoolCode</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="Place">
+          <DataField>Place</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="EmployerEID">
+          <DataField>EmployerEID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PayerEID">
+          <DataField>PayerEID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="PayerQID">
+          <DataField>PayerQID</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SchoolShortName">
+          <DataField>SchoolShortName</DataField>
+          <rd:TypeName>System.String</rd:TypeName>
+        </Field>
+        <Field Name="SchoolProfileID">
+          <DataField>SchoolProfileID</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+        <Field Name="SchoolSealID">
+          <DataField>SchoolSealID</DataField>
+          <rd:TypeName>System.Int64</rd:TypeName>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="Tablix1">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>1.70625cm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>7.71229cm</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>0.6399cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox1">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>First Name</Value>
+                                  <Style>
+                                    <FontFamily>Tahoma</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>#7292cc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#4c68a2</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Textbox3">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>item barcode</Value>
+                                  <Style>
+                                    <FontFamily>Tahoma</FontFamily>
+                                    <FontSize>11pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>Textbox3</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>#7292cc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#4c68a2</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>4.18532cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="EmployeeCode">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!EmployeeCode.Value</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <Color>#4d4d4d</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>EmployeeCode</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Color>#e5e5e5</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Rectangle Name="Rectangle2">
+                          <ReportItems>
+                            <Image Name="Image1">
+                              <Source>Database</Source>
+                              <Value>=Code.Code128A(Fields!EmployeeCode.Value, 2, False)</Value>
+                              <MIMEType>image/png</MIMEType>
+                              <Sizing>Fit</Sizing>
+                              <Top>1.27cm</Top>
+                              <Left>0.3175cm</Left>
+                              <Height>1.85699cm</Height>
+                              <Width>5.64854cm</Width>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                              </Style>
+                            </Image>
+                            <Rectangle Name="Rectangle3">
+                              <KeepTogether>true</KeepTogether>
+                              <Top>1.27cm</Top>
+                              <Left>0.3175cm</Left>
+                              <Height>0.62146cm</Height>
+                              <Width>5.64854cm</Width>
+                              <ZIndex>1</ZIndex>
+                              <Style>
+                                <Border>
+                                  <Style>None</Style>
+                                </Border>
+                                <BackgroundColor>White</BackgroundColor>
+                              </Style>
+                            </Rectangle>
+                          </ReportItems>
+                          <KeepTogether>true</KeepTogether>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Rectangle>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Details">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!EmployeeCode.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <RepeatColumnHeaders>true</RepeatColumnHeaders>
+            <RepeatRowHeaders>true</RepeatRowHeaders>
+            <DataSetName>MyXMLDataSet</DataSetName>
+            <Height>4.82522cm</Height>
+            <Width>9.41854cm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>56.98283mm</Height>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Body>
+      <Width>94.18542mm</Width>
+      <Page>
+        <PageFooter>
+          <Height>11.43mm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageFooter>
+        <PageHeight>15cm</PageHeight>
+        <PageWidth>15cm</PageWidth>
+        <LeftMargin>2cm</LeftMargin>
+        <RightMargin>2cm</RightMargin>
+        <TopMargin>2cm</TopMargin>
+        <BottomMargin>2cm</BottomMargin>
+        <ColumnSpacing>0.13cm</ColumnSpacing>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="SchoolID">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>30</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>School ID</Prompt>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="EmployeeSearch">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Employee Search</Prompt>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="Designation">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value>0</Value>
+        </Values>
+      </DefaultValue>
+      <Prompt>Designation</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>DataSet2</DataSetName>
+          <ValueField>DesignationID</ValueField>
+          <LabelField>DesignationName</LabelField>
+        </DataSetReference>
+      </ValidValues>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="Employee_IDs">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <DataSetReference>
+          <DataSetName>DataSet1</DataSetName>
+          <ValueField>EmployeeIID</ValueField>
+        </DataSetReference>
+      </DefaultValue>
+      <Prompt>Employee IDs</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>DataSet1</DataSetName>
+          <ValueField>EmployeeIID</ValueField>
+          <LabelField>EmployeeName</LabelField>
+        </DataSetReference>
+      </ValidValues>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>4</NumberOfColumns>
+      <NumberOfRows>2</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>SchoolID</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>EmployeeSearch</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>Designation</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>Employee_IDs</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <Code>Public Shared Function Code128A(ByVal stringText as String, ByVal fontVer as Integer, Optional showHumanReadable As Boolean = True) As Byte()
+	If showHumanReadable Then
+		Return GenerateImage("BCW_Code128_1", BCW_Code128A(stringText))
+	Else
+		Return GenerateImage("BCW_Code128_1", BCW_Code128A(stringText))
+	End If
+End Function
+
+Public Shared Function GenerateImage(ByVal fontName As String,  ByVal stringText As String) As Byte()
+        Dim oGraphics As System.Drawing.Graphics
+        Dim barcodeSize As System.Drawing.SizeF
+        Dim ms As System.IO.MemoryStream
+ 
+        Dim fontSize as Integer = 220
+
+        Using font As New System.Drawing.Font(New System.Drawing.FontFamily(fontName), fontSize)
+            Using tmpBitmap As New System.Drawing.Bitmap(1, 1, System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+                oGraphics = System.Drawing.Graphics.FromImage(tmpBitmap)
+                oGraphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixel
+                barcodeSize = oGraphics.MeasureString(stringText, font)
+                oGraphics.Dispose()
+            End Using
+ 
+            Using newBitmap As New System.Drawing.Bitmap(barcodeSize.Width, barcodeSize.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+                oGraphics = System.Drawing.Graphics.FromImage(newBitmap)
+                oGraphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.SingleBitPerPixel
+ 
+                Using oSolidBrushWhite As New System.Drawing.SolidBrush(System.Drawing.Color.White)
+                    Using oSolidBrushBlack As New System.Drawing.SolidBrush(System.Drawing.Color.Black)
+                        oGraphics.FillRectangle(oSolidBrushWhite, New System.Drawing.Rectangle(0, 0, barcodeSize.Width, barcodeSize.Height))
+                        oGraphics.DrawString(stringText, font, oSolidBrushBlack, 0, 0)
+                    End Using
+ 
+                End Using
+ 
+                ms = New System.IO.MemoryStream()
+                newBitmap.Save(ms, System.Drawing.Imaging.ImageFormat.Png)
+            End Using
+        End Using
+ 
+        Return ms.ToArray()
+    End Function
+
+
+    Public Shared Function BCW_Code128A(ByVal input As String) As String
+        Dim chkDigitTotal As Integer = 104
+        Dim inputLength As Integer = input.Length
+
+        If inputLength = 0 Then Return ""
+
+        Dim currentPos As Integer = 1
+
+        While currentPos &lt;= inputLength
+            Dim bcVal As Integer
+
+            Dim asciiVal As Integer = Asc(input(currentPos - 1))
+
+            If asciiVal &gt;= 32 And asciiVal &lt;= 126 Then
+                bcVal = asciiVal - 32
+            Else
+                Return ""
+            End If
+
+            chkDigitTotal += bcVal * currentPos
+            currentPos = currentPos + 1
+        End While
+
+        chkDigitTotal = chkDigitTotal Mod 103
+
+        Dim output As String = ""
+
+        output = output + Chr(204)
+
+        For i As Integer = 0 To inputLength - 1
+
+            If input(i) = Chr(32) Then
+                output += Chr(232)
+            Else
+                output += input(i)
+            End If
+        Next
+
+        output += C128ToBars(chkDigitTotal)
+        output += Chr(206)
+
+        Return output
+    End Function
+
+
+    Private Shared Function C128ToBars(ByVal chkDigit As Integer) As String
+
+        Dim c As String = "212222222122222221121223121322" _
+                        + "131222122213122312132212221213221312" _
+                        + "231212112232122132122231113222123122" _
+                        + "123221223211221132221231213212223112" _
+                        + "312131311222321122321221312212322112" _
+                        + "322211212123212321232121111323131123" _
+                        + "131321112313132113132311211313231113" _
+                        + "231311112133112331132131113123113321" _
+                        + "133121313121211331231131213113213311" _
+                        + "213131311123311321331121312113312311" _
+                        + "332111314111221411431111111224111422" _
+                        + "121124121421141122141221112214112412" _
+                        + "122114122411142112142211241211221114" _
+                        + "413111241112134111111242121142121241" _
+                        + "114212124112124211411212421112421211" _
+                        + "212141214121412121111143111341131141" _
+                        + "114113114311411113411311113141114131" _
+                        + "3111414111312114122112142112322331112"
+
+        Dim startPos As Integer = chkDigit * 6
+        Dim output As String = ""
+
+        For i As Integer = 0 To 5
+            Dim addPos As Integer = 0
+            If i Mod 2 = 0 Then
+                addPos = 180 + Asc(c.Substring(startPos + i)) - 48 - 1
+            Else
+                addPos = 184 + Asc(c.Substring(startPos + i)) - 48 - 1
+            End If
+            output += Chr(addPos)
+        Next
+
+        Return output
+    End Function</Code>
+  <CodeModules>
+    <CodeModule>System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</CodeModule>
+  </CodeModules>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportServerUrl>http://pearldoha/ReportServer</rd:ReportServerUrl>
+  <rd:ReportID>4e711277-1f4e-45f6-bcaf-11dd473c644e</rd:ReportID>
+</Report>

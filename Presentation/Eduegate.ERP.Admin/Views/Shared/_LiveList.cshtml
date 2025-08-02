@@ -1,0 +1,157 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+    string model = Model.IsChild ? "ChildModel" : "RowModel";
+}
+<div class="pagecontent" id="@windowName" ng-controller="LiveTableRowsController as RowModel" ng-init="RowModel.activate('#@windowName','@Model.ControllerName', '@Model.ViewName', '@Model.ActionName', '@Model.JsonModel')">
+    @Html.Partial("~/Views/Shared/_InfoMessage.cshtml")
+    <div class="prod-tab-wrap">
+        <div class="producttab">
+            <div class="producttab-space">
+                <div class="productGrid_massaction">
+                    <div class="tabletop">
+                        <div class="massaction">
+                            <div class="table-topright">
+                                <ul class="tabletop-right">
+                                    <li>
+                                        <div class="button-orange grid-refresh" ng-click="">
+                                            <span ng-click="RowModel.ReLoad($event)"><i class="fa fa-refresh"></i> @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Refresh")</span>
+                                        </div>
+                                        <div ng-click="RowModel.LoadFilterView();" class="button-orange" id="filterbuttonoption">
+                                            <span ng-class="{filter: !RowModel.HasFilters, activefilter: RowModel.HasFilters}">
+                                                <i class="filtericon fa fa-filter"></i>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Filter")
+                                                @*<span class="filter-tabletview"></span>*@
+                                            </span>
+                                        </div>
+
+                                        @Html.Raw(Model.InfoBar)
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="table-topleft">
+                                <div class="tabletop-left">
+                                    <form action="" id="productGrid_massaction-form" method="post">
+                                        <input name="form_key" type="hidden" value="WkObrUTAoAFBBWaf">
+
+
+                                        @if (Model.FilterColumns != null)
+                                        {
+                                            int index = 0;
+                                            foreach (var filterColumn in Model.FilterColumns)
+                                            {
+                                                switch (filterColumn.ColumnType)
+                                                {
+                                                    case Eduegate.Services.Contracts.Enums.DataTypes.Date:
+                                                        <span class="field-row">
+                                                            <label>@filterColumn.ColumnCaption</label>
+                                                            <span class="datetime_picker">
+                                                                <input type="text" id="QuickFilter[@index].FilterValue" name="QuickFilter[@index].FilterValue" ng-model="RowModel.QuickFilter[@index].FilterValue"
+                                                                       ng-change="RowModel.QuickFilter[@index].IsDirty= RowModel.QuickFilter[@index].FilterValue.length!=0;"
+                                                                       ng-keyup="$event.keyCode == 13 && RowModel.QuickSearch($event)"
+                                                                       wb-datepicker>
+                                                                <span data-datepicker="#datepicker-icon" id="datepicker-icon-trigger" class="input-group-addon1"></span>
+                                                            </span>
+                                                        </span>
+                                                        break;
+                                                    case Eduegate.Services.Contracts.Enums.DataTypes.DateTime:
+                                                        <span class="field-row">
+                                                            <label>@filterColumn.ColumnCaption</label>
+                                                            <span class="datetime_picker">
+                                                                <input type="text" id="QuickFilter[@index].FilterValue" name="QuickFilter[@index].FilterValue" ng-model="RowModel.QuickFilter[@index].FilterValue"
+                                                                       ng-change="RowModel.DropDownOnChange(@(index), 1);"
+                                                                       ng-keyup="$event.keyCode == 13 && RowModel.QuickSearch($event)"
+                                                                       datetimepicker>
+                                                                <span data-datepicker="#datepicker-icon" id="datepicker-icon-trigger" class="input-group-addon1"></span>
+                                                            </span>
+                                                        </span>
+                                                        break;
+                                                    case Eduegate.Services.Contracts.Enums.DataTypes.String:
+                                                    case Eduegate.Services.Contracts.Enums.DataTypes.Number:
+                                                    default:
+                                                        switch (filterColumn.FilterControlType)
+                                                        {
+                                                            case Eduegate.Services.Contracts.Enums.UIControlTypes.TextBox:
+                                                                <span class="field-row" ng-class="{filtermodified:RowModel.QuickFilter[@index].IsDirty}">
+                                                                    <label>@filterColumn.ColumnCaption</label>
+                                                                    <input type="text" ng-model="RowModel.QuickFilter[@index].FilterValue"
+                                                                           ng-keyup="$event.keyCode == 13 && RowModel.QuickSearch($event)"
+                                                                           ng-change="RowModel.QuickFilter[@index].IsDirty= RowModel.QuickFilter[@index].FilterValue.length!=0;">
+                                                                </span>
+                                                                break;
+                                                            case Eduegate.Services.Contracts.Enums.UIControlTypes.DropDown:
+                                                                if (filterColumn.LookUpID.HasValue)
+                                                                {
+                                                                    <span class="field-row" ng-class="{filtermodified:RowModel.QuickFilter[@index].IsDirty}">
+                                                                        <label>@filterColumn.ColumnCaption</label>
+                                                                        <ui-select style="width: 100%;"
+                                                                                   ng-model="RowModel.QuickFilter[@index].FilterValue3"
+                                                                                   theme="select2" class="pos-txt"
+                                                                                   ng-change="RowModel.DropDownOnChange(@(index), 2);" ng-keyup="$event.keyCode == 13 && RowModel.QuickSearch($event)"
+                                                                                   ng-click="RowModel.LoadLookups('@(((Eduegate.Services.Contracts.Enums.LookUpTypes)filterColumn.LookUpID).ToString())')">
+                                                                            <ui-select-match>{{$select.selected.Value}}</ui-select-match>
+                                                                            <ui-select-choices repeat="data in RowModel.LookUps.@(((Eduegate.Services.Contracts.Enums.LookUpTypes)filterColumn.LookUpID).ToString()) | filter:$select.search">{{data.Value}}</ui-select-choices>
+                                                                        </ui-select>
+                                                                    </span>
+                                                                }
+                                                                break;
+                                                        }
+                                                        break;
+                                                }
+
+                                                index++;
+                                            }
+
+
+                                            <span class="field-row field-row-btn">
+                                                <label>&nbsp;</label>
+                                                <input type="reset" class="button-orange reset" value="Reset" ng-click="RowModel.ResetQuickSearch($event)" />
+                                                <span class="button-orange filter-search" href="" ng-click="RowModel.QuickSearch($event)">
+                                                    @*<span class="fa fa-search fa-2x"></span>*@Search
+                                                </span>
+                                            </span>
+                                        }
+
+                                    </form>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                    <div class="wrapper">
+                        <div class="tablewrapper">
+                            @if (Model.EnabledSortableGrid)
+                            {
+                                Html.RenderPartial("_SortableTable", Model);
+                            }
+                            else
+                            {
+                                <table cellpadding="0" cellspacing="0">
+                                    @{
+                                        Html.RenderPartial("_TableHeader", Model);
+                                        Html.RenderPartial("_TableRows", Model);
+                                    }
+                                </table>
+                            }
+
+                            <center>
+                                <i class="content-load fa fa-circle-o-notch fa-pulse waypoint"
+                                   style="font-size:20px;color:black;"></i>
+                            </center>
+                            <div>
+                                <center>
+                                    <span ng-if="@(model).rows.length == 0">No records found!!</span>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @Html.Partial("_FilterView")
+            </div>
+        <div id="summarypanel" class="summary-panel">
+
+        </div><!--summary-->
+    </div>
+</div>

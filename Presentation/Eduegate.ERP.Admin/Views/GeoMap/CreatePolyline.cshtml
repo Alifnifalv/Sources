@@ -1,0 +1,49 @@
+﻿@{
+    Layout = null;
+}
+<div id="CreateCreatePolyline" class="windowcontainer" style="height:inherit">
+    <div ng-controller="CreatePolylineController as vm" style="height:inherit">
+        <div class="window-tab preload-overlay" style="display:block;">
+            <div class="preloader"><img src="~/Images/preloader.gif" width="32" height="32" alt="Loading" /></div>
+        </div>
+
+        <div class="panel-body panel">
+            <div class="page_subtitles">
+                <h4>
+                    <a class="collapsed" data-toggle="collapse">
+                        School area settings on google map
+                    </a>
+                </h4>
+            </div>
+
+            <div class="panel-body panel">
+                <div>
+                    <label class="addprodleft control-label">
+                        School
+                    </label>
+                    <div class="controls">
+                        <select ng-model="SelectedSchoolID" ng-change="vm.LoadSchoolSetting(SelectedSchoolID)">
+                            <i class="fa fa-caret-down"></i>
+                            <option ng-repeat="data in vm.Schools" value={{data.Key}}>{{data.Value}}</option>
+                        </select>
+                    </div>
+                </div>
+               
+                <div style="margin-top:10px">
+                    <button class="button-orange" ng-click="vm.SaveSchoolSetting(SelectedSchoolID, BranchID, AreaID)">Save</button>
+                    <button class="button-orange" ng-click="vm.ClearSchoolSetting(SelectedSchoolID, BranchID, AreaID)">Clear</button>
+                </div>
+            </div>
+        </div>
+
+        <ng-map zoom="7" on-click="vm.addMarkerAndPath()" id="map">
+            <shape name="polyline" id="polyline"
+                   path="{{vm.SchoolSettingPath}}"
+                   stroke-color="#FF0000"
+                   stroke-opacity="1.0"
+                   stroke-weight="3">
+            </shape>
+        </ng-map>
+
+    </div>
+</div>

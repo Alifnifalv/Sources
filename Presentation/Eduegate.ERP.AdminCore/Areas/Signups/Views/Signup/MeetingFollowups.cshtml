@@ -1,0 +1,113 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+
+    ViewBag.Title = "Meeting Follow-ups";
+}
+
+<div id="MeetingFollowups" class="windowcontainer" ng-controller="MeetingFollowupController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+    <div class="window-tab preload-overlay" style="display:block;">
+        <div class="preloader"><img src="~/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+    </div>
+    @await Html.PartialAsync("~/Views/Shared/_InfoMessage.cshtml")
+    <div class="pageheadername">
+        <div>
+            <img src="~/Images/meeting.png" />
+            &nbsp;Meeting Follow-ups
+        </div>
+    </div>
+    <hr class="noMargin noBorderTop borderBtmE4" />
+    <div class="pagecontent full-width displayFlex">
+        <div class="smartMenus">
+            <div class="bodyleftnav active displayFlex">
+                <ul>
+                    <li class="parent_li hasSubMenu">
+                        <a href="#" class="open">
+                            <span><label>Signups</label></span>
+                        </a>
+                        <ul style="display:block;">
+                            <li ng-repeat="signup in ActiveSignups" class="parent_li hasSubMenu">
+                                <a href="#" class="open">
+                                    <span><label ng-bind="signup.SignupName">Signups</label></span>
+                                </a>
+                                <ul style="display:block;">
+                                    <li ng-repeat="slotMap in signup.SignupSlotMaps" class="parent_li hasSubMenu">
+                                        <a href="#" class="open">
+                                            <span ng-bind="slotMap.SlotDateString"></span>
+                                        </a>
+
+                                        <ul style="display:block;">
+                                            <li ng-repeat="timeMap in slotMap.SignupSlotMapTimes">
+                                                <a href="#" ng-click="MeetingSlotSelection($event, timeMap, slotMap, signup)">
+                                                    <div>
+                                                        <label ng-bind="timeMap.StartTimeString"></label> - <label ng-bind="timeMap.EndTimeString"></label>
+                                                        <div>
+                                                            <label ng-if="timeMap.SlotMapStatusName == 'Open'" ng-bind="timeMap.SlotMapStatusName" style="color:blue"></label>
+                                                            <label ng-if="timeMap.SlotMapStatusName == 'Assigned'" ng-bind="timeMap.SlotMapStatusName" style="color:green"></label>
+                                                            <label ng-if="timeMap.SlotMapStatusName == 'Closed'" ng-bind="timeMap.SlotMapStatusName" style="color:orangered"></label>
+                                                            <label ng-if="slotMap.IsSlotDateCurrentDate && timeMap.IsTimeExpired" style="color:red">Time Expired</label>
+                                                        </div>
+                                                    </div>
+                                                </a>
+
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="smartmenu_Content flexAuto padLeft10">
+            <div class="smartmenu_Content_Wrap fullwidth fullheight">
+                <div class="smartmenu_Content_Inner fullwidth inheritedUI">
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="dynamicPopoverOverlay"></div>
+    <div class="popup pagePopup" data-popup-type="dynamicPopover" id="dynamicPopover">
+        <div class="popup-wrap">
+            <span class="close">X</span>
+            <div id="dynamicPopoverContainer" class="dynamicPopoverContainer"></div>
+        </div>
+    </div>
+</div>
+<style>
+    .displayFlex {
+        display: flex !important;
+    }
+
+    .padLeft10 {
+        padding-left: 10px !important;
+    }
+
+    .flexAuto {
+        flex: auto;
+    }
+</style>
+
+<script>
+    $(function () {
+        $("body").on('click', 'li.hasSubMenu > a', function () {
+            var closestSubItem = $(this).closest("li").find("> ul");
+            $(this).toggleClass("open");
+            if ($(this).hasClass("open")) {
+                closestSubItem.slideDown("fast");
+            }
+            else {
+                closestSubItem.slideUp("fast");
+            }
+        });
+    })
+</script>

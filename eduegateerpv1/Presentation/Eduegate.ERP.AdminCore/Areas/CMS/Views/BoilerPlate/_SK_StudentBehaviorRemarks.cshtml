@@ -1,0 +1,67 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_StudentBehaviorRemarks";
+    var documentTypeID = Model.GetParameterValue<string>("DocumentTypeID");
+}
+
+<div id="@windowName" template="_SK_StudentBehaviorRemarks" class="card h-xl-100 rounded-2" ng-controller="DashboardController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+    <script src="javascript/main.js"></script>
+
+    <div id="Fee Summary">
+
+        <div class="card-header border-0 pt-5 justify-content-start">
+
+            <h3 class="card-title align-items-start flex-column">
+                <span class="card-label fw-bold text-dark">Student Behavior Remarks</span>               
+            </h3>
+
+        </div>
+        <div id="FeeListOverlay" class="preload-overlay center">
+            <span id="FeeListOverlayButtonLoader" class="preloadImg">
+                <img src="~/Images/preloader.GIF" alt="loader" />
+            </span>
+        </div>
+        <div class="alert alert-info text-center" ng-if="!ShowPreLoader && (StudentBehaviorRemarksList == null || StudentBehaviorRemarksList.length == 0)">
+            <b>There is no details found!</b>
+        </div>
+        <div class="card-body">
+        <div class="fullcolumn-layout" ng-if="StudentBehaviorRemarksList != null && StudentBehaviorRemarksList.length > 0">
+                <div class="table-responsive table-responsive-custom mh-500px">
+                <table id="GridTable" class="table table-striped table-bordered table-hover table-checkable order-column valign-middle">
+                    <thead>
+                        <tr>
+                            <th class ="medium-col-width">Academic Year </th>
+                            <th >Class</th>
+                            <th>Section</th>
+                            <th class ="medium-col-width">Teacher</th>
+                            <th>Remarks</th>       
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat-start="gridModel in StudentBehaviorRemarksList  track by $index" class="ng-scope">
+                            <td class="medium-col-width">
+                                <span ng-bind="gridModel.AcademicYear" class="ng-binding"></span>
+                            </td>
+                            <td class="medium-col-width">
+                                <span ng-bind="gridModel.Class" class="ng-binding"></span>
+                            </td>
+                            <td>
+                                <span ng-bind="gridModel.Section" class="ng-binding"></span>
+                            </td>
+                            <td>
+                                <span ng-bind="gridModel.Teacher" class="ng-binding"></span>
+                            </td>
+                            <td>
+                                <span ng-bind="gridModel.Remarks" class="ng-binding"></span>
+                            </td>                           
+                        </tr>                       
+                        <tr ng-repeat-end="" class="ng-scope"></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>

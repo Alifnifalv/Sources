@@ -1,0 +1,73 @@
+﻿@model Eduegate.Web.Library.ViewModels.CommunicationViewModel
+@{
+    ViewBag.Title = "Communication";
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div style="width:500px" ng-controller="CommunicationController" ng-init="Init('@windowName', @Newtonsoft.Json.JsonConvert.SerializeObject(Model),@ViewBag.ReferenceID)" id="@windowName">
+    @Html.HiddenFor(a => a.ReferenceID)
+
+    <div class="col-lg-12">
+        <div class="input-icon">
+            <i class="fa"></i><label>Communication Type</label>
+            <select class="form-control validate" required="" aria-required="true" name="CommunicationTypeKey" id="CommunicationTypeKey"
+                    ng-options="item as item.Value for item in CommunicationTypes track by item.Key" ng-model="CommunicationTypeKey" ng-change="onCommunicationChange(Model,CommunicationTypeKey)"></select>
+        </div>
+    </div>
+    <div class="col-md-12" ng-if="onCommunication == true">
+        <div class="input-icon">
+            <i class="fa"></i><label>From</label>
+            <input ng-model="Model.FromEmail" class="form-control" />
+        </div>
+    </div>
+
+    <div class="col-md-12" ng-if="onCommunication == true">
+        <div class="input-icon">
+            <i class="fa"></i><label>To</label>
+            <input ng-model="Model.ToEmail" class="form-control" />
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="input-icon">
+            <i class="fa"></i><label>Subject</label>
+            <input ng-model="Model.Subject" class="form-control" />
+        </div>
+    </div>
+
+    <div class="col-md-12" ng-if="onCommunication == false">
+        <div class="input-icon">
+            <i class="fa"></i><label>Mobile Number</label>
+            <input ng-model="Model.MobileNumber" class="form-control" />
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="input-icon">
+            <i class="fa"></i><label>Follow up date</label>
+            <input ng-model="Model.FollowUpDateString" wb-datepicker class="form-control" />
+        </div>
+    </div>
+
+    <div class="col-md-12" ng-if="onCommunication == true">
+        <div class="input-icon" id="EmpTemplate">
+            <i class="fa"></i><label>Email Template</label>
+            <select class="form-control validate" required="" aria-required="true" name="EmailTemplateKey" id="EmailTemplateKey"
+                    ng-options="item as item.Value for item in EmailTemplates track by item.Key" ng-model="EmailTemplateKey" ng-change="changeEmailTemplate(Model,EmailTemplateKey)"></select>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="input-icon">
+            <i class="fa"></i><label>Content</label>
+            <textarea ng-model="Model.EmailContent" class="form-control" style="height:100px"> </textarea>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="input-icon">
+            <br />
+            <button type="submit" id="SubmitCommunicationBtn" name="action" class="button-orange col-md-12 form-control" ng-click="submitCommunication(Model)">Send</button>
+        </div>
+    </div>
+</div>

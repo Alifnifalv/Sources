@@ -1,0 +1,1324 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+
+<div id="MonthlyClosing" class="windowcontainer" ng-controller="MonthlyClosingController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+    <script>
+
+    </script>
+    <div class="window-tab preload-overlay" style="display:none;">
+        <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="app-content  flex-column-fluid p-0">
+            <div class="app-container  container-fluid ">
+                <div class="row gy-0 g-xl-2">
+                    <div class="col-lg-6">
+                        <span class="form-group">
+                            <span class="controls w-75">
+                                <label>From Date</label>
+                                <span class="controls brand">
+                                    <input type="text" autocomplete="off" ng-disabled="IsDisabeleDate" ng-model="FromDateString" skien-Datepicker />
+                                </span>
+                            </span>
+                        </span>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <span class="form-group">
+                            <span class="controls w-75">
+                                <label>To Date</label>
+                                <span class="controls brand">
+                                    <input type="text" autocomplete="off" ng-model="ToDateString" skien-Datepicker />
+                                </span>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="w-100"></div>
+                    <div class="col-lg-6">
+                        <span class="form-group">
+                            <span class="controls w-75">
+                                <label>Company</label>
+                                <span class="controls brand">
+                                    <ui-select style="width: 100%;" ng-model="SearchCompany" ng-change="CompanyChanges(SearchCompany)"
+                                               theme="select2" class="pos-txt" sortable="true" name="selectedCompany" id="selectedCompany">
+                                        <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                        <ui-select-choices repeat="data in Companies | filter:$select.search">{{data.Value}}</ui-select-choices>
+                                    </ui-select>
+                                </span>
+                            </span>
+                        </span>
+                    </div>
+                    <div class="col-lg-6">
+                        <span class="form-group">
+                            <div class="">
+                                <Button id="btnView" type="button" class="btn btn-sm btn-primary me-4" value="View Data"
+                                        ng-click="ViewFeeDueFeeTypeDetails();">
+                                    <svg width="13" height="14" viewBox="0 0 29 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M14.3978 0C6.84684 0 0.456839 8.1 0.186839 8.451C0.0656913 8.60837 0 8.8014 0 9C0 9.1986 0.0656913 9.39163 0.186839 9.549C0.456839 9.9 6.84684 18 14.3978 18C21.9488 18 28.3388 9.9 28.6088 9.549C28.73 9.39163 28.7957 9.1986 28.7957 9C28.7957 8.8014 28.73 8.60837 28.6088 8.451C28.3388 8.1 21.9488 0 14.3978 0ZM14.3978 16.2C8.79084 16.2 3.59784 10.8 2.06784 9C3.59784 7.2 8.78184 1.8 14.3978 1.8C20.0138 1.8 25.1978 7.2 26.7278 9C25.1978 10.8 20.0138 16.2 14.3978 16.2Z" fill="white"></path>
+                                        <path d="M18.898 8.09998C19.0466 8.09986 19.1928 8.06297 19.3236 7.9926C19.4545 7.92224 19.5658 7.82058 19.6478 7.69671C19.7298 7.57284 19.7799 7.4306 19.7935 7.28268C19.8072 7.13476 19.784 6.98576 19.726 6.84898C19.2309 5.86313 18.4691 5.03599 17.5272 4.46163C16.5853 3.88727 15.5012 3.58874 14.398 3.59998C12.9659 3.59998 11.5924 4.1689 10.5797 5.1816C9.56697 6.1943 8.99805 7.56781 8.99805 8.99998C8.99805 10.4321 9.56697 11.8057 10.5797 12.8184C11.5924 13.831 12.9659 14.4 14.398 14.4C15.5012 14.4112 16.5853 14.1127 17.5272 13.5383C18.4691 12.964 19.2309 12.1368 19.726 11.151C19.784 11.0142 19.8072 10.8652 19.7935 10.7173C19.7799 10.5694 19.7298 10.4271 19.6478 10.3032C19.5658 10.1794 19.4545 10.0777 19.3236 10.0074C19.1928 9.93699 19.0466 9.9001 18.898 9.89998C18.7767 9.91271 18.6541 9.89818 18.5391 9.85745C18.4241 9.81672 18.3197 9.75082 18.2335 9.66457C18.1472 9.57831 18.0813 9.47388 18.0406 9.3589C17.9998 9.24392 17.9853 9.12129 17.998 8.99998C17.9853 8.87866 17.9998 8.75603 18.0406 8.64105C18.0813 8.52607 18.1472 8.42164 18.2335 8.33538C18.3197 8.24913 18.4241 8.18323 18.5391 8.1425C18.6541 8.10178 18.7767 8.08725 18.898 8.09998Z" fill="white"></path>
+                                    </svg>
+                                    View Data
+                                </Button>
+                            </div>
+                        </span>
+                    </div>
+                    <div class="w-100"></div>
+
+                    <div>
+                        <div id="example-basic" class="d-flex flex-wrap bg-light p-4 rounded-3" ng-style="{'visibility': isWizardVisible ? 'visible' : 'hidden'}">
+                            <h3> Fee General</h3>
+                            <section style="background-color:white ;width:100%">
+                                <div style="width:100%" class="fullcolumn-layout ng-scope" ng-if="FeeDueGeneral != null &amp;&amp; FeeDueGeneral.length > 0">
+                                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto; overflow-x: auto;">
+                                        <table style="width:100%" class="table table-rounded   border table-bordered gy-3 gs-7 ">
+
+                                            <thead class="bg-th-head table-light ">
+                                                <tr class="text-start fw-semibold fs-6 text-gray-800">
+
+                                                    <th class="text-start min-w-100px ">Fee Type</th>
+                                                    <th class="text-end w-125px ">Opening Amount</th>
+                                                    <th class="text-end w-125px ">Transaction Debit</th>
+                                                    <th class="text-end w-125px ">Transaction Credit</th>
+                                                    <th class="text-end w-125px">Closing Amount</th>
+                                                    <th class="text-end w-125px">Net Amount</th>
+
+                                                    <th class="text-end w-125px">KPI</th>
+                                                    <th class="text-start w-10px min-w-10px"></th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+
+                                                <tr ng-focus="FocusGrid($event,'FeeDueGeneral')" ng-repeat-start="gridModel in FeeDueGeneral track by $index"
+                                                    class="ng-scope" ng-init="currentTransaction = $parent.start; $parent.start=$parent.start+1;">
+
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.FeeTypeName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModel.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModel.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModel.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModel.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModel.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModel.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <div class="controls text-center">
+                                                            <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                               data-bs-toggle="collapse" href="#collapseExample{{currentTransaction}}"
+                                                               role="button" aria-expanded="false" aria-controls="collapseExample{{currentTransaction}}">
+                                                                <i ng-if="gridModel.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                                <i ng-if="!gridModel.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                            </a>
+                                                        </div>
+
+                                                    </td>
+                                                </tr>
+
+                                                <tr ng-if="gridModel.MCGridFeeDueFeeCycle.length > 0" class="ng-scope collapse" id="collapseExample{{currentTransaction}}" colspan="100%">
+                                                    <td class="feeStructure p-0" colspan="100%">
+                                                        <div class="table-responsive py-3  ">
+                                                            <table id="GridTable" class="table border table-bordered gy-3 gs-7 overflow-hidden mb-0">
+                                                                <thead class="bg-th-head table-light">
+                                                                    <tr class="text-start fw-semibold fs-6 text-gray-800">
+                                                                        <th class="text-start min-w-250px ">Fee Cycle</th>
+                                                                        <th class="text-end w-100px ">Opening Amount</th>
+                                                                        <th class="text-end w-100px ">Transaction Debit</th>
+                                                                        <th class="text-end w-100px ">Transaction Credit</th>
+                                                                        <th class="text-end w-125px ">Closing Amount</th>
+                                                                        <th class="text-end w-125px ">Net Amount</th>
+                                                                        <th class="text-end w-125px ">KPI</th>
+                                                                        <th class="text-start w-10px min-w-10px"> </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="">
+                                                                    <!-- ngRepeat: gridStudentModel in gridModel.StudentHistories track by $index -->
+                                                                    <tr ng-repeat-start="gridFeeCycleModel in gridModel.MCGridFeeDueFeeCycle track by $index" class="ng-scope" ng-init="currentFeeCycle = $parent.start; $parent.start=$parent.start+1;">
+
+                                                                        <td class="text-start">
+                                                                            <span ng-bind="gridFeeCycleModel.FeeCycleName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridFeeCycleModel.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridFeeCycleModel.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridFeeCycleModel.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridFeeCycleModel.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridFeeCycleModel.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridFeeCycleModel.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <div class="controls text-center">
+                                                                                <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                                                   data-bs-toggle="collapse" href="#collapseExample{{currentFeeCycle}}" role="button" aria-expanded="false" aria-controls="collapseExample{{currentFeeCycle}}">
+                                                                                    <i ng-if="gridFeeCycleModel.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                                                    <i ng-if="!gridFeeCycleModel.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                                                </a>
+                                                                            </div>
+                                                                        </td>
+
+                                                                    </tr>
+                                                                    <tr ng-if="gridFeeCycleModel.MCGridFeeDueFeeMaster.length > 0" class="ng-scope collapse" id="collapseExample{{currentFeeCycle}}" colspan="100%">
+                                                                        <td class="feeStructure p-0" colspan="100%">
+                                                                            <div class="table-responsive py-3 bg-light ">
+                                                                                <table id="GridTable" class="table border table-bordered gy-3 gs-7  overflow-hidden mb-0">
+                                                                                    <thead class="bg-th-head border-bottom-1 table-bordered">
+                                                                                        <tr class="text-start fw-semibold fs-6 text-gray-800">
+                                                                                            <th class="text-start min-w-100px ">Fee</th>
+                                                                                            <th class="text-end w-100px ">Opening Amount</th>
+                                                                                            <th class="text-end w-100px ">Transaction Debit</th>
+                                                                                            <th class="text-end w-100px ">Transaction Credit</th>
+                                                                                            <th class="text-end w-125px ">Closing Amount</th>
+                                                                                            <th class="text-end w-125px ">Net Amount</th>
+                                                                                            <th class="text-end w-125px ">KPI</th>
+
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody class="">
+                                                                                        <tr ng-repeat-start="gridFeeMasterModel in gridFeeCycleModel.MCGridFeeDueFeeMaster track by $index" class="ng-scope" ng-init="currentFeeCycle = $parent.start; $parent.start=$parent.start+1;">
+
+                                                                                            <td class="text-start">
+                                                                                                <span ng-bind="gridFeeMasterModel.FeeMasterName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridFeeMasterModel.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridFeeMasterModel.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridFeeMasterModel.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridFeeMasterModel.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridFeeMasterModel.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridFeeMasterModel.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+
+                                                                                        </tr>
+                                                                                        <tr ng-repeat-end="" class="ng-scope"></tr><!-- end ngRepeat: gridFeeMasterModel in gridModel.MCGridFeeDueFeeCycle track by $index -->
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr ng-repeat-end="" class="ng-scope"></tr><!-- end ngRepeat: gridStudentModel in gridModel.StudentHistories track by $index -->
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <tr ng-repeat-end="" class="ng-scope"></tr><!-- end ngRepeat: gridModel in FeeCollectionHistories track by $index -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </section>
+                            <h3>Fee VS Accounts</h3>
+                            <section style="background-color:white ;width:100%">
+                                <div style="width:100%" class="fullcolumn-layout ng-scope" ng-if="FeeVSAccounts != null &amp;&amp; FeeVSAccounts.length > 0">
+                                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto; overflow-x: auto;">
+                                        <table style="width:100%" class="table table-rounded border table-bordered gy-3 gs-7 ">
+
+                                            <thead class="bg-th-head table-light">
+                                                <tr class="text-start fw-semibold fs-6 text-gray-800">
+
+                                                    <th class="text-start min-w-100px ">Fee Type</th>
+                                                    <th class="text-end w-125px ">Fee Amount</th>
+                                                    <th class="text-end w-125px ">Account Amount</th>
+                                                    <th class="text-end w-125px">Net Amount</th>
+                                                    <th class="text-end w-125px">KPI</th>
+                                                    <th class="text-start w-10px min-w-10px"></th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+
+                                                <tr ng-focus="FocusGrid($event,'FeeVSAccounts')" ng-repeat-start="gridModel1 in FeeVSAccounts track by $index"
+                                                    class="ng-scope" ng-init="currentTransaction1 = $parent.start; $parent.start=$parent.start+1;">
+
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel1.FeeTypeName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModel1.FeeAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModel1.AccountAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModel1.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModel1.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <div class="controls text-center">
+                                                            <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                               data-bs-toggle="collapse" href="#collapseExample{{currentTransaction1}}"
+                                                               role="button" aria-expanded="false" aria-controls="collapseExample{{currentTransaction1}}">
+                                                                <i ng-if="gridModel1.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                                <i ng-if="!gridModel1.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                            </a>
+                                                        </div>
+
+                                                    </td>
+                                                </tr>
+                                                <tr ng-if="gridModel1.MCGridFeeVSAccountsFeeCycle.length > 0" class="ng-scope collapse"
+                                                    id="collapseExample{{currentTransaction1}}" colspan="100%">
+                                                    <td class="feeStructure p-0" colspan="100%">
+                                                        <div class="table-responsive py-3">
+                                                            <table id="GridTableNew1" class="table border  gy-3 gs-7 overflow-hidden mb-0">
+                                                                <thead class="bg-th-head table-light">
+                                                                    <tr class="text-start fw-semibold fs-6 text-gray-800">
+                                                                        <th class="text-start min-w-250px ">Fee Cycle</th>
+                                                                        <th class="text-end w-125px ">Fee Amount</th>
+                                                                        <th class="text-end w-125px ">Account Amount</th>
+                                                                        <th class="text-end w-125px">Net Amount</th>
+                                                                        <th class="text-end w-125px">KPI</th>
+                                                                        <th class="text-start w-10px min-w-10px"></th>
+
+                                                                    </tr>
+
+                                                                </thead>
+                                                                <tbody class="">
+                                                                    <tr ng-repeat-start="gridAccountFeeCycleModel in gridModel1.MCGridFeeVSAccountsFeeCycle track by $index" class="ng-scope" ng-init="currentAccountsFeeCycle = $parent.start; $parent.start=$parent.start+1;">
+                                                                        <td class="text-start">
+                                                                            <span ng-bind="gridAccountFeeCycleModel.FeeCycleName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridAccountFeeCycleModel.FeeAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridAccountFeeCycleModel.AccountAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridAccountFeeCycleModel.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridAccountFeeCycleModel.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <div class="controls text-center">
+                                                                                <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                                                   data-bs-toggle="collapse" href="#collapseExample{{currentAccountsFeeCycle}}" role="button" aria-expanded="false" aria-controls="collapseExample{{currentAccountsFeeCycle}}">
+                                                                                    <i ng-if="gridAccountFeeCycleModel.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                                                    <i ng-if="!gridAccountFeeCycleModel.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                                                </a>
+                                                                            </div>
+                                                                        </td>
+
+                                                                    </tr>
+                                                                    <tr ng-if="gridAccountFeeCycleModel.MCGridFeeVSAccountsFeeMaster.length > 0" class="ng-scope collapse" id="collapseExample{{currentAccountsFeeCycle}}" colspan="100%">
+                                                                        <td class="feeStructure p-0" colspan="100%">
+                                                                            <div class="table-responsive py-3 bg-light ">
+                                                                                <table id="GridTableNew2" class="table border table-bordered gy-3 gs-7  overflow-hidden mb-0">
+                                                                                    <thead class="bg-th-head border-bottom-1 table-bordered">
+                                                                                        <tr class="text-start fw-semibold fs-6 text-gray-800">
+                                                                                            <th class="text-start min-w-250px ">Fee</th>
+                                                                                            <th class="text-end w-125px ">Fee Amount</th>
+                                                                                            <th class="text-end  w-125px ">Account Amount</th>
+                                                                                            <th class="text-end w-125px ">Net Amount</th>
+                                                                                            <th class="text-end w-125px ">KPI</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody class="">
+                                                                                        <tr ng-repeat-start="gridAccFeeMasterModel in gridAccountFeeCycleModel.MCGridFeeVSAccountsFeeMaster track by $index" class="ng-scope" ng-init="currentAccountsFeeCycle = $parent.start; $parent.start=$parent.start+1;">
+                                                                                            <td class="text-start">
+                                                                                                <span ng-bind="gridAccFeeMasterModel.FeeMasterName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridAccFeeMasterModel.FeeAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridAccFeeMasterModel.AccountAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridAccFeeMasterModel.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridAccFeeMasterModel.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+
+                                                                                        </tr>
+                                                                                        <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <tr ng-repeat-end="" class="ng-scope"></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <h3>Inventory</h3>
+                            <section style="background-color:white ;width:100%">
+                                <div style="width:100%" class="fullcolumn-layout ng-scope" ng-if="InventoryGeneral != null &amp;&amp; InventoryGeneral.length > 0">
+                                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto; overflow-x: auto;">
+                                        <table style="width:100%" class="table table-rounded border table-bordered gy-3 gs-7 ">
+                                            <thead class="bg-th-head table-light">
+                                                <tr class="text-start fw-semibold fs-6 text-gray-800">
+
+                                                    <th class="text-start min-w-100px ">Trans.Type Name</th>
+                                                    <th class="text-end w-125px ">Opening Amount</th>
+                                                    <th class="text-end w-125px ">Transaction Debit</th>
+                                                    <th class="text-end w-125px ">Transaction Credit</th>
+                                                    <th class="text-end w-125px">Closing Amount</th>
+                                                    <th class="text-end w-125px">Net Amount</th>
+                                                    <th class="text-end w-125px">KPI</th>
+                                                    <th class="text-start w-10px min-w-10px"></th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+                                                <tr ng-focus="FocusGrid($event,'InventoryGeneral')" ng-repeat-start="gridModelInventory in InventoryGeneral track by $index"
+                                                    class="ng-scope" ng-init="currentTransaction3 = $parent.start; $parent.start=$parent.start+1;">
+
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModelInventory.TransactionTypeName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModelInventory.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModelInventory.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModelInventory.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModelInventory.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModelInventory.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModelInventory.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <div class="controls text-center">
+                                                            <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                               data-bs-toggle="collapse" href="#collapseExample{{currentTransaction3}}"
+                                                               role="button" aria-expanded="false" aria-controls="collapseExample{{currentTransaction3}}">
+                                                                <i ng-if="gridModelInventory.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                                <i ng-if="!gridModelInventory.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr ng-if="gridModelInventory.MCGridInventoryDocumentType.length > 0" class="ng-scope collapse" id="collapseExample{{currentTransaction3}}" colspan="100%">
+                                                    <td class="feeStructure p-0" colspan="100%">
+                                                        <div class="table-responsive py-3 ">
+                                                            <table id="GridTable" class="table border table-bordered gy-3 gs-7  overflow-hidden mb-0">
+                                                                <thead class="bg-th-head table-light">
+                                                                    <tr class="text-start fw-semibold fs-6 text-gray-800">
+                                                                        <th class="text-start min-w-250px ">Document Type</th>
+                                                                        <th class="text-end w-100px ">Opening Amount</th>
+                                                                        <th class="text-end w-100px ">Transaction Debit</th>
+                                                                        <th class="text-end w-100px ">Transaction Credit</th>
+                                                                        <th class="text-end w-125px ">Closing Amount</th>
+                                                                        <th class="text-end w-125px ">Net Amount</th>
+                                                                        <th class="text-end w-125px ">KPI</th>
+                                                                        <th class="text-start w-10px min-w-10px"> </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="">
+
+                                                                    <tr ng-repeat-start="gridInventoryModel in gridModelInventory.MCGridInventoryDocumentType track by $index" class="ng-scope" ng-init="currentFeeCycle = $parent.start; $parent.start=$parent.start+1;">
+
+                                                                        <td class="text-start">
+                                                                            <span ng-bind="gridInventoryModel.DocumentTypeName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridInventoryModel.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridInventoryModel.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridInventoryModel.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridInventoryModel.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridInventoryModel.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridInventoryModel.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+
+                                                                    </tr>
+                                                                    <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr ng-repeat-end="" class="ng-scope"></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </section>
+                            <h3>Stock</h3>
+                            <section style="background-color:white ;width:100%">
+                                <div style="width:100%" class="fullcolumn-layout ng-scope" ng-if="Stock != null &amp;&amp; Stock.length > 0">
+                                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto; overflow-x: auto;">
+                                        <table style="width:100%" class="table table-rounded border table-bordered gy-3 gs-7">
+                                            <thead class="bg-th-head table-light ">
+                                                <tr class="text-start fw-semibold fs-6 text-gray-800">
+
+                                                    <th class="text-start min-w-100px ">Type Name</th>
+                                                    <th class="text-end w-125px ">Opening Amount</th>
+                                                    <th class="text-end w-125px ">Transaction Debit</th>
+                                                    <th class="text-end w-125px ">Transaction Credit</th>
+                                                    <th class="text-end w-125px">Closing Amount</th>
+                                                    <th class="text-end w-125px">Net Amount</th>
+
+                                                    <th class="text-end w-125px">KPI</th>
+                                                    <th class="text-start w-10px min-w-10px"></th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+
+                                                <tr ng-focus="FocusGrid($event,'Stock')" ng-repeat-start="gridModelStock in Stock track by $index"
+                                                    class="ng-scope" ng-init="currentTransaction4 = $parent.start; $parent.start=$parent.start+1;">
+
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModelStock.TypeName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModelStock.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModelStock.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModelStock.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModelStock.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModelStock.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModelStock.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <div class="controls text-center">
+                                                            <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                               data-bs-toggle="collapse" href="#collapseExample{{currentTransaction4}}"
+                                                               role="button" aria-expanded="false" aria-controls="collapseExample{{currentTransaction4}}">
+                                                                <i ng-if="gridModelStock.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                                <i ng-if="!gridModelStock.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                            </a>
+                                                        </div>
+
+                                                    </td>
+                                                </tr>
+
+                                                <tr ng-if="gridModelStock.MCGridStockAccount.length > 0" class="ng-scope collapse" id="collapseExample{{currentTransaction4}}" colspan="100%">
+                                                    <td class="feeStructure p-0" colspan="100%">
+                                                        <div class="table-responsive py-3 bg-light ">
+                                                            <table id="GridTable" class="table border gy-3 gs-7 table-bordered overflow-hidden mb-0">
+                                                                <thead class="bg-th-head table-light">
+                                                                    <tr class="text-start fw-semibold fs-6 text-gray-800">
+                                                                        <th class="text-start min-w-250px ">Account Name</th>
+                                                                        <th class="text-end w-100px ">Opening Amount</th>
+                                                                        <th class="text-end w-100px ">Transaction Debit</th>
+                                                                        <th class="text-end w-100px ">Transaction Credit</th>
+                                                                        <th class="text-end w-125px ">Closing Amount</th>
+                                                                        <th class="text-end w-125px ">Net Amount</th>
+                                                                        <th class="text-end w-125px ">KPI</th>
+
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="">
+
+                                                                    <tr ng-repeat-start="gridStockAccountModel in gridModelStock.MCGridStockAccount track by $index" class="ng-scope" ng-init="currentStock = $parent.start; $parent.start=$parent.start+1;">
+
+                                                                        <td class="text-start">
+                                                                            <span ng-bind="gridStockAccountModel.AccountName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridStockAccountModel.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridStockAccountModel.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridStockAccountModel.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridStockAccountModel.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridStockAccountModel.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridStockAccountModel.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+
+                                                                    </tr>
+                                                                    <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr ng-repeat-end="" class="ng-scope"></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </section>
+                            <h3>Fee Cancelled</h3>
+                            <section style="background-color:white ;width:100%">
+                                <div style="width:100%" class="fullcolumn-layout ng-scope" ng-if="FeeCancelled != null &amp;&amp; FeeCancelled.length > 0">
+                                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto; overflow-x: auto;">
+                                        <table style="width:100%" class="table table-rounded border table-bordered gy-3 gs-7">
+                                            <thead class="bg-th-head table-light">
+                                                <tr class="text-start fw-semibold fs-6 text-gray-800">
+
+                                                    <th class="text-start min-w-100px ">Fee Type</th>
+                                                    <th class="text-end w-125px ">Opening Amount</th>
+                                                    <th class="text-end w-125px ">Transaction Debit</th>
+                                                    <th class="text-end w-125px ">Transaction Credit</th>
+                                                    <th class="text-end w-125px">Closing Amount</th>
+                                                    <th class="text-end w-125px">Net Amount</th>
+                                                    <th class="text-end w-125px">KPI</th>
+                                                    <th class="text-start w-10px min-w-10px"></th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+
+                                                <tr ng-focus="FocusGrid($event,'FeeCancelled')" ng-repeat-start="gridFeeCancelled in FeeCancelled track by $index"
+                                                    class="ng-scope" ng-init="currentTransaction6 = $parent.start; $parent.start=$parent.start+1;">
+
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridFeeCancelled.FeeTypeName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridFeeCancelled.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridFeeCancelled.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridFeeCancelled.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridFeeCancelled.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridFeeCancelled.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridFeeCancelled.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <div class="controls text-center">
+                                                            <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                               data-bs-toggle="collapse" href="#collapseExample{{currentTransaction6}}"
+                                                               role="button" aria-expanded="false" aria-controls="collapseExample{{currentTransaction6}}">
+                                                                <i ng-if="gridFeeCancelled.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                                <i ng-if="!gridFeeCancelled.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                            </a>
+                                                        </div>
+
+                                                    </td>
+                                                </tr>
+
+                                                <tr ng-if="gridFeeCancelled.MCGridFeeDueFeeCycle.length > 0" class="ng-scope collapse" id="collapseExample{{currentTransaction6}}" colspan="100%">
+                                                    <td class="feeStructure p-0" colspan="100%">
+                                                        <div class="table-responsive py-3 bg-light ">
+                                                            <table id="GridTable" class="table border table-bordered gy-3 gs-7  overflow-hidden mb-0">
+                                                                <thead class="bg-th-head border-bottom-1 border-gray-200">
+                                                                    <tr class="text-start fw-semibold fs-6 text-gray-800">
+                                                                        <th class="text-start min-w-250px ">Fee Cycle</th>
+                                                                        <th class="text-end w-100px ">Opening Amount</th>
+                                                                        <th class="text-end w-100px ">Transaction Debit</th>
+                                                                        <th class="text-end w-100px ">Transaction Credit</th>
+                                                                        <th class="text-end w-125px ">Closing Amount</th>
+                                                                        <th class="text-end w-125px ">Net Amount</th>
+                                                                        <th class="text-end w-125px ">KPI</th>
+                                                                        <th class="text-start w-10px min-w-10px"> </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="">
+
+                                                                    <tr ng-repeat-start="gridFeeCancelledCycleModel in gridFeeCancelled.MCGridFeeDueFeeCycle track by $index" class="ng-scope" ng-init="currentFeeCancellCycle = $parent.start; $parent.start=$parent.start+1;">
+
+                                                                        <td class="text-start">
+                                                                            <span ng-bind="gridFeeCancelledCycleModel.FeeCycleName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridFeeCancelledCycleModel.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridFeeCancelledCycleModel.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridFeeCancelledCycleModel.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridFeeCancelledCycleModel.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridFeeCancelledCycleModel.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridFeeCancelledCycleModel.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <div class="controls text-center">
+                                                                                <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                                                   data-bs-toggle="collapse" href="#collapseExample{{currentFeeCancellCycle}}" role="button" aria-expanded="false" aria-controls="collapseExample{{currentFeeCancellCycle}}">
+                                                                                    <i ng-if="gridFeeCancelledCycleModel.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                                                    <i ng-if="!gridFeeCancelledCycleModel.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                                                </a>
+                                                                            </div>
+                                                                        </td>
+
+                                                                    </tr>
+                                                                    <tr ng-if="gridFeeCancelledCycleModel.MCGridFeeDueFeeMaster.length > 0" class="ng-scope collapse" id="collapseExample{{currentFeeCancellCycle}}" colspan="100%">
+                                                                        <td class="feeStructure p-0" colspan="100%">
+                                                                            <div class="table-responsive py-3 bg-light ">
+                                                                                <table id="GridTable" class="table border table-bordered gy-3 gs-7  overflow-hidden mb-0">
+                                                                                    <thead class="bg-th-head border-bottom-1 border-gray-200">
+                                                                                        <tr class="text-start fw-semibold fs-6 text-gray-800">
+                                                                                            <th class="text-start min-w-250px ">Fee</th>
+                                                                                            <th class="text-end w-100px ">Fee Amount</th>
+                                                                                            <th class="text-end w-100px">Account Amount</th>
+                                                                                            <th class="text-end w-125px ">Net Amount</th>
+                                                                                            <th class="text-end w-125px ">KPI</th>
+
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody class="">
+                                                                                        <tr ng-repeat-start="gridFeeCancelledMasterModel in gridFeeCancelledCycleModel.MCGridFeeDueFeeMaster track by $index" class="ng-scope" ng-init="currentFeeCancellCycle = $parent.start; $parent.start=$parent.start+1;">
+
+                                                                                            <td class="text-start">
+                                                                                                <span ng-bind="gridFeeCancelledMasterModel.FeeMasterName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridFeeCancelledMasterModel.FeeAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridFeeCancelledMasterModel.AccountAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridFeeCancelledMasterModel.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridFeeCancelledMasterModel.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+
+                                                                                        </tr>
+                                                                                        <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr ng-repeat-end="" class="ng-scope"></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </section>
+                            <h3>Accounts Cancelled</h3>
+                            <section style="background-color:white ;width:100%">
+                                <div style="width:100%" class="fullcolumn-layout ng-scope" ng-if="AccountsCancelled != null &amp;&amp; AccountsCancelled.length > 0">
+                                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto; overflow-x: auto;">
+                                        <table style="width:100%" class="table table-rounded border table-bordered gy-3 gs-7">
+                                            <thead class="bg-th-head table-light">
+                                                <tr class="text-start fw-semibold fs-6 text-gray-800">
+
+                                                    <th class="text-start min-w-100px ">Trans.Type</th>
+                                                    <th class="text-end w-125px">Opening Amount</th>
+                                                    <th class="text-end w-125px">Transaction Debit</th>
+                                                    <th class="text-end w-125px">Transaction Credit</th>
+                                                    <th class="text-end w-125px">Closing Amount</th>
+                                                    <th class="text-end w-125px">Net Amount</th>
+                                                    <th class="text-end w-125px">KPI</th>
+                                                    <th class="text-start w-10px min-w-10px"></th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+                                                <tr ng-focus="FocusGrid($event,'AccountsCancelled')" ng-repeat-start="gridAccountsCancelled in AccountsCancelled track by $index"
+                                                    class="ng-scope" ng-init="currentTransaction7 = $parent.start; $parent.start=$parent.start+1;">
+
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridAccountsCancelled.TransactionTypeName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridAccountsCancelled.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridAccountsCancelled.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridAccountsCancelled.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridAccountsCancelled.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridAccountsCancelled.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridAccountsCancelled.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <div class="controls text-center">
+                                                            <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                               data-bs-toggle="collapse" href="#collapseExample{{currentTransaction7}}"
+                                                               role="button" aria-expanded="false" aria-controls="collapseExample{{currentTransaction7}}">
+                                                                <i ng-if="gridAccountsCancelled.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                                <i ng-if="!gridAccountsCancelled.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                            </a>
+                                                        </div>
+
+                                                    </td>
+                                                </tr>
+                                               @*  ng-if="gridAccountsCancelled.MCGridInventoryDocumentType.length > 0" *@
+                                                <tr ng-if="gridAccountsCancelled.MCGridInventoryDocumentType.length > 0" class="ng-scope collapse" id="collapseExample{{currentTransaction7}}" colspan="100%">
+                                                    <td class="feeStructure p-0" colspan="100%">
+                                                        <div class="table-responsive py-3 bg-light ">
+                                                            <table id="GridTable" class="table border table-bordered gy-3 gs-7  overflow-hidden mb-0">
+                                                                <thead class="bg-th-head border-bottom-1 border-gray-200">
+                                                                    <tr class="text-start fw-semibold fs-6 text-gray-800">
+                                                                        <th class="text-start min-w-250px ">Document Type</th>
+                                                                        <th class="text-end w-100px">Opening Amount</th>
+                                                                        <th class="text-end w-100px">Transaction Debit</th>
+                                                                        <th class="text-end w-100px">Transaction Credit</th>
+                                                                        <th class="text-end w-125px">Closing Amount</th>
+                                                                        <th class="text-end w-125px">Net Amount</th>
+                                                                        <th class="text-end w-125px">KPI</th>                                                                       
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="">
+
+                                                                    <tr ng-repeat-start="gridAccountsCancelCycleModel in gridAccountsCancelled.MCGridInventoryDocumentType track by $index" class="ng-scope" ng-init="currentAccountCancelCycle = $parent.start; $parent.start=$parent.start+1;">
+
+                                                                        <td class="text-start">
+                                                                            <span ng-bind="gridAccountsCancelCycleModel.DocumentTypeName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridAccountsCancelCycleModel.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridAccountsCancelCycleModel.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridAccountsCancelCycleModel.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridAccountsCancelCycleModel.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridAccountsCancelCycleModel.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridAccountsCancelCycleModel.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>                                                                      
+
+                                                                    </tr>
+                                                                   
+                                                                    <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr ng-repeat-end="" class="ng-scope"></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </section>
+                            <h3>Inventory Cancelled</h3>
+                            <section style="background-color:white ;width:100%">
+                                <div style="width:100%" class="fullcolumn-layout ng-scope" ng-if="InventoryCancelled != null &amp;&amp; InventoryCancelled.length > 0">
+                                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto; overflow-x: auto;">
+                                        <table style="width:100%" class="table table-rounded border  gy-3 gs-7">
+                                            <thead class="bg-th-head table-light">
+                                                <tr class="text-start fw-semibold fs-6 text-gray-800">
+
+                                                    <th class="text-start min-w-100px ">Trans.Type Name</th>
+                                                    <th class="text-end w-125px ">Opening Amount</th>
+                                                    <th class="text-end w-125px ">Transaction Debit</th>
+                                                    <th class="text-end w-125px ">Transaction Credit</th>
+                                                    <th class="text-end w-125px">Closing Amount</th>
+                                                    <th class="text-end w-125px">Net Amount</th>
+                                                    <th class="text-end w-125px">KPI</th>
+                                                    <th class="text-start w-10px min-w-10px"></th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+                                                <tr ng-focus="FocusGrid($event,'InventoryCancelled')" ng-repeat-start="gridInventoryCancelled in InventoryCancelled track by $index"
+                                                    class="ng-scope" ng-init="currentTransaction8 = $parent.start; $parent.start=$parent.start+1;">
+
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridInventoryCancelled.TransactionTypeName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridInventoryCancelled.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridInventoryCancelled.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridInventoryCancelled.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridInventoryCancelled.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridInventoryCancelled.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridInventoryCancelled.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <div class="controls text-center">
+                                                            <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                               data-bs-toggle="collapse" href="#collapseExample{{currentTransaction8}}"
+                                                               role="button" aria-expanded="false" aria-controls="collapseExample{{currentTransaction8}}">
+                                                                <i ng-if="gridInventoryCancelled.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                                <i ng-if="!gridInventoryCancelled.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                            </a>
+                                                        </div>
+
+                                                    </td>
+                                                </tr>
+
+                                                <tr ng-if="gridInventoryCancelled.MCGridInventoryDocumentType.length > 0" class="ng-scope collapse" id="collapseExample{{currentTransaction8}}" colspan="100%">
+                                                    <td class="feeStructure p-0" colspan="100%">
+                                                        <div class="table-responsive py-3 ">
+                                                            <table id="GridTable" class="table border table-bordered gy-3 gs-7  overflow-hidden mb-0">
+                                                                <thead class="bg-th-head table-light">
+                                                                    <tr class="text-start fw-semibold fs-6 text-gray-800">
+                                                                        <th class="text-start min-w-250px ">Document Type</th>
+                                                                        <th class="text-end w-125px ">Opening Amount</th>
+                                                                        <th class="text-end w-125px">Transaction Debit</th>
+                                                                        <th class="text-end w-100px ">Transaction Credit</th>
+                                                                        <th class="text-end w-125px ">Closing Amount</th>
+                                                                        <th class="text-end w-125px ">Net Amount</th>
+                                                                        <th class="text-end w-125px ">KPI</th>
+
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="">
+                                                                    <tr ng-repeat-start="gridInventoryDocumentTypeModel in gridInventoryCancelled.MCGridInventoryDocumentType track by $index" class="ng-scope" ng-init="currentFeeCycle = $parent.start; $parent.start=$parent.start+1;">
+
+                                                                        <td class="text-start">
+                                                                            <span ng-bind="gridInventoryDocumentTypeModel.DocumentTypeName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridInventoryDocumentTypeModel.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridInventoryDocumentTypeModel.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridInventoryDocumentTypeModel.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridInventoryDocumentTypeModel.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridInventoryDocumentTypeModel.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridInventoryDocumentTypeModel.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+
+
+                                                                    </tr>
+                                                                    <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr ng-repeat-end="" class="ng-scope"></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </section>
+                            <h3>Mismatched Entries of Fees</h3>
+                            <section>
+                                <div class="fullcolumn-layout ng-scope" ng-if="FeeMismatched != null &amp;&amp; FeeMismatched.length > 0">
+                                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto; overflow-x: auto;">
+                                        <table style="width:100%" class="table table-rounded border table-bordered gy-3 gs-7    overflow-hidden">
+                                            <thead class="bg-th-head ">
+                                                <tr class="text-start fw-semibold fs-6 text-gray-800">
+
+                                                    <th class="text-start min-w-100px ">Type</th>
+                                                    <th class="text-start w-125px ">Branch</th>
+                                                    <th class="text-start w-125px ">Admission No.</th>
+                                                    <th class="text-start w-125px ">Student</th>
+                                                    <th class="text-start w-125px ">Invoice No</th>
+                                                    <th class="text-start w-125px ">Invoice Date</th>
+
+                                                    <th class="text-start w-125px">Fee Name</th>
+                                                    <th class="text-end w-125px ">Amount</th>
+                                                    <th class="text-start w-125px">Remarks</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+                                                <!-- ngRepeat: gridModel in FeeCollectionHistories track by $index -->
+                                                <tr ng-focus="FocusGrid($event,'FeeMismatched')" ng-repeat="gridModel in FeeMismatched track by $index"
+                                                    class="ng-scope" ng-init="currentTransaction = $parent.start; $parent.start=$parent.start+1;">
+
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.FeeTypeName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.SchoolName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.AdmissionNumber" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.StudentName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.InvoiceNo" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.InvoiceNo" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.InvoiceDateString" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.FeeName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModel.Amount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.Remarks" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </section>
+                            <h3>Mismatched Entries of Accounts & Inventories</h3>
+                            <section>
+                                <div class="fullcolumn-layout ng-scope" ng-if="AccountMismatched != null &amp;&amp; AccountMismatched.length > 0">
+                                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto; overflow-x: auto;">
+                                        <table style="width:100%" class="table table-rounded border table-bordered gy-3 gs-7  overflow-hidden">
+                                            <thead class="bg-th-head ">
+                                                <tr class="text-start fw-semibold fs-6 text-gray-800">
+
+                                                    <th class="text-start min-w-100px ">Tran Type Name</th>
+                                                    <th class="text-start min-w-100px ">Document Type Name</th>
+                                                    <th class="text-start w-125px ">Branch</th>
+                                                    <th class="text-start w-125px ">Tran Date</th>
+                                                    <th class="text-start w-125px">Tran No.</th>
+                                                    <th class="text-start w-125px">Voucher No.</th>
+                                                    <th class="text-start w-125px">Narration</th>
+                                                    <th class="text-end w-125px">Amount</th>
+                                                    <th class="text-start w-125px">Remarks</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+
+                                                <tr ng-focus="FocusGrid($event,'AccountMismatched')" ng-repeat="gridModel in AccountMismatched track by $index"
+                                                    class="ng-scope" ng-init="currentTransaction = $parent.start; $parent.start=$parent.start+1;">
+
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.TranTypeName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.DocumentTypeName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.Branch" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.TranDateString" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.TranNo" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.VoucherNo" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.Narration" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridModel.Amount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridModel.Remarks" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </section>
+                            <h3>Accounts General</h3>
+                            <section style="background-color:white ;width:100%">
+                                <div style="width:100%" class="fullcolumn-layout ng-scope" ng-if="AccountsGeneral != null &amp;&amp; AccountsGeneral.length > 0">
+                                    <div class="table-responsive" style="max-height: 500px; overflow-y: auto; overflow-x: auto;">
+                                        <table style="width:100%" class="table table-rounded  border table-bordered gy-3 gs-7">
+                                            <thead class="bg-th-head table-light ">
+                                                <tr class="text-start fw-semibold fs-6 text-gray-800">
+
+                                                    <th class="text-start min-w-100px ">Main Group</th>
+                                                    <th class="text-end w-125px">Opening Amount</th>
+                                                    <th class="text-end w-125px ">Transaction Debit</th>
+                                                    <th class="text-end w-125px ">Transaction Credit</th>
+                                                    <th class="text-end w-125px">Closing Amount</th>
+                                                    <th class="text-end w-125px">Net Amount</th>
+                                                    <th class="text-end w-125px">KPI</th>
+                                                    <th class="text-start w-10px min-w-10px"></th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody class="fw-semibold text-gray-600">
+                                                <tr ng-focus="FocusGrid($event,'AccountsGeneral')" ng-repeat-start="gridAccountsGeneral in AccountsGeneral track by $index"
+                                                    class="ng-scope" ng-init="currentTransaction10 = $parent.start; $parent.start=$parent.start+1;">
+
+                                                    <td class="text-start">
+                                                        <span ng-bind="gridAccountsGeneral.MainGroupName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridAccountsGeneral.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridAccountsGeneral.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridAccountsGeneral.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridAccountsGeneral.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridAccountsGeneral.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <span ng-bind="gridAccountsGeneral.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                    </td>
+                                                    <td class="text-end">
+                                                        <div class="controls text-center">
+                                                            <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                               data-bs-toggle="collapse" href="#collapseExample{{currentTransaction10}}"
+                                                               role="button" aria-expanded="false" aria-controls="collapseExample{{currentTransaction10}}">
+                                                                <i ng-if="gridAccountsGeneral.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                                <i ng-if="!gridAccountsGeneral.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                            </a>
+                                                        </div>
+
+                                                    </td>
+                                                </tr>
+                                                @* ng-if="gridAccountsGeneral.MCGridAccountGeneralSubGroup.length > 0" *@
+                                                <tr  class="ng-scope collapse" id="collapseExample{{currentTransaction10}}" colspan="100%">
+                                                    <td class="feeStructure p-0" colspan="100%">
+                                                        <div class="table-responsive py-3 ">
+                                                            <table id="GridTable" class="table border table-bordered gy-3 gs-7  overflow-hidden mb-0">
+                                                                <thead class="bg-th-head border-bottom-1 border-gray-200">
+                                                                    <tr class="text-start fw-semibold fs-6 text-gray-800">
+                                                                        <th class="text-start min-w-250px ">Sub Group</th>
+                                                                        <th class="text-end w-100px ">Opening Amount</th>
+                                                                        <th class="text-end w-100px">Transaction Debit</th>
+                                                                        <th class="text-end w-100px ">Transaction Credit</th>
+                                                                        <th class="text-end w-125px ">Closing Amount</th>
+                                                                        <th class="text-end w-125px ">Net Amount</th>
+                                                                        <th class="text-end w-125px ">KPI</th>
+                                                                        <th class="text-start w-10px min-w-10px"> </th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody class="">
+
+                                                                    <tr ng-repeat-start="gridGeneralSubGroup in gridAccountsGeneral.MCGridAccountGeneralSubGroup track by $index" class="ng-scope" ng-init="currentSubGroup = $parent.start; $parent.start=$parent.start+1;">
+
+                                                                        <td class="text-start">
+                                                                            <span ng-bind="gridGeneralSubGroup.SubGroupName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridGeneralSubGroup.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridGeneralSubGroup.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridGeneralSubGroup.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridGeneralSubGroup.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridGeneralSubGroup.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+                                                                        <td class="text-end">
+                                                                            <span ng-bind="gridGeneralSubGroup.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                        </td>
+
+
+                                                                        <td class="text-end">
+                                                                            <div class="controls text-center">
+                                                                                <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px"
+                                                                                   data-bs-toggle="collapse" href="#collapseExample{{currentSubGroup}}" role="button" aria-expanded="false" aria-controls="collapseExample{{currentSubGroup}}">
+                                                                                    <i ng-if="gridGeneralSubGroup.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                                                    <i ng-if="!gridGeneralSubGroup.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                                                </a>
+                                                                            </div>
+                                                                        </td>
+
+                                                                    </tr>
+                                                                   @*  ng-if="gridGeneralSubGroup.MCGridAccountGeneralGroup.length > 0" *@
+                                                                    <tr  class="ng-scope collapse" id="collapseExample{{currentSubGroup}}" colspan="100%">
+                                                                        <td class="feeStructure p-0" colspan="100%">
+                                                                            <div class="table-responsive py-3 bg-light ">
+                                                                                <table id="GridTable" class="table border table-bordered gy-3 gs-7  overflow-hidden mb-0">
+                                                                                    <thead class="bg-th-head border-bottom-1 table-bordered">
+                                                                                        <tr class="text-start fw-semibold fs-6 text-gray-800">
+                                                                                            <th class="text-start min-w-100px ">Group</th>
+                                                                                            <th class="text-end w-100px ">Opening Amount</th>
+                                                                                            <th class="text-end w-100px ">Transaction Debit</th>
+                                                                                            <th class="text-end w-100px ">Transaction Credit</th>
+                                                                                            <th class="text-end w-125px ">Closing Amount</th>
+                                                                                            <th class="text-end w-125px ">Net Amount</th>
+                                                                                            <th class="text-end w-125px ">KPI</th>
+
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody class="">
+                                                                                        <tr ng-repeat-start="gridGroup in gridGeneralSubGroup.MCGridAccountGeneralGroup track by $index" class="ng-scope" ng-init="currentGroup = $parent.start; $parent.start=$parent.start+1;">
+
+                                                                                            <td class="text-start">
+                                                                                                <span ng-bind="gridGroup.GroupName" class="text-gray-800 fw-semibold ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridGroup.OpeningAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridGroup.TransactionDebit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridGroup.TransactionCredit|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridGroup.ClosingAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridGroup.DifferenceAmount|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+                                                                                            <td class="text-end">
+                                                                                                <span ng-bind="gridGroup.DifferencePlusKPI|number:2" class="text-gray-800 fw-semibold currSign d-flex justify-content-between ng-binding"></span>
+                                                                                            </td>
+
+                                                                                        </tr>
+                                                                                        <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                                <tr ng-repeat-end="" class="ng-scope"></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        @*<script>
+                        $("#example-basic").steps({        $("#example-basic").steps({
+                        headerTag: "h3",
+                        bodyTag: "section",
+                        transitionEffect: "slideLeft",
+                        autoFocus: true
+                        });
+                        </script>*@
+                    </div>
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+

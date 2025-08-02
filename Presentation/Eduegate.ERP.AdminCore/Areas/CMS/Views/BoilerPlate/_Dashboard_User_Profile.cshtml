@@ -1,0 +1,144 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_UserProfile";
+    var documentTypeID = Model.GetParameterValue<string>("DocumentTypeID");
+}
+
+<div id="@windowName" style="height: 100%;" template="_Dashboard_User_Profile" ng-controller="DashboardController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+    <script src="javascript/main.js"></script>
+
+    <div class="card" style="height:100%;">
+        <div class="card-header border-0 pt-5">
+            <div class="col-md-6 text-left">
+                <span class="text-gray-500 fs-8 d-block fw-bold">Current time</span>
+                <h1 id="time"></h1>
+            </div>
+            <div class="col-md-6 text-right">
+                <span class="text-gray-500 fs-8 d-block fw-bold">Current date</span>
+                <h6 id="date"></h6>
+            </div>
+        </div>
+
+        <!--begin::Body-->
+        <div class="card-body pt-15 px-0">
+            <!--begin::Member-->
+            <div class="d-flex flex-column text-center mb-1 px-9">
+                <!--begin::Photo-->
+                <div class="symbol symbol-80px symbol-lg-150px mb-1 symbol-circle">
+                    <img ng-src="/Content/ReadContentsByID?contentID={{UserProfile.ProfileImage}}" onerrorsrc="/Images/studentavatar.png" class="" alt="" style="    object-fit: cover;     object-position: right top;">
+                </div>
+                <!--end::Photo-->
+                <!--begin::Info-->
+                <div class="text-center">
+                    <!--begin::Name-->
+                    <a class="text-gray-800 fw-bold text-hover-primary fs-4">
+                        {{UserProfile.EmployeeName}}
+                    </a>
+                    <!--end::Name-->
+                    <!--begin::Position-->
+                    <span class="text-muted d-block fw-semibold">
+                        {{UserProfile.Designation}}
+                    </span>
+                    <!--end::Position-->
+                </div>
+                <!--end::Info-->
+            </div>
+            <!--end::Member-->
+            <!--begin::Row-->
+            <div class="row px-9 mb-4">
+                <!--begin::Col-->
+                @*Comented Temporory*@
+                @*<div class="col-md-6 text-center">
+                        <div class="text-gray-800 fw-bold fs-3">
+                            <span class="m-0 counted">{{UserProfile.DateOfBirthString}}</span>
+                        </div>
+
+                        <span class="text-gray-500 fs-8 d-block fw-bold">DOB</span>
+                    </div>*@
+
+                <!--end::Col-->
+            </div>
+            <!--end::Row-->
+            <!--begin::Navbar-->
+            <div class="m-0">
+                <ul class="nav nav-pills nav-pills-custom flex-column border-transparent fs-5 fw-bold">
+                    <!--begin::Nav item-->
+
+                    <li class="nav-item mt-5">
+                        <a class="nav-link text-muted text-active-primary ms-0 py-0 me-10 ps-9 border-0 active">
+                            <span class="text-gray-500 fs-8 d-block fw-bold">Emp Code</span>
+                            <i class="ki-duotone ki-row-horizontal fs-3 text-muted me-3"><span class="path1"></span><span class="path2"></span></i>
+                            {{UserProfile.EmployeeCode}}
+                            <!--begin::Bullet-->
+                            <span class="bullet-custom position-absolute start-0 top-0 w-3px h-100 bg-primary rounded-end"></span>
+                            <!--end::Bullet-->
+                        </a>
+                    </li>
+
+                    <li class="nav-item mt-5">
+                        <a class="nav-link text-muted text-active-primary ms-0 py-0 me-10 ps-9 border-0 active">
+                            <span class="text-gray-500 fs-8 d-block fw-bold">Email</span>
+                            <i class="ki-duotone ki-row-horizontal fs-3 text-muted me-3"><span class="path1"></span><span class="path2"></span></i>
+                            {{UserProfile.WorkEmail}}
+                            <!--begin::Bullet-->
+                            <span class="bullet-custom position-absolute start-0 top-0 w-3px h-100 bg-primary rounded-end"></span>
+                            <!--end::Bullet-->
+                        </a>
+                    </li>
+
+
+
+                    @*Commented temperory*@
+                    <!--<li class="nav-item mt-5">
+    <a class="nav-link text-muted text-active-primary ms-0 py-0 me-10 ps-9 border-0 active">
+        <i class="ki-duotone ki-row-horizontal fs-3 text-muted me-3"><span class="path1"></span><span class="path2"></span></i>
+
+        {{UserProfile.WorkMobileNo}}-->
+                    <!--begin::Bullet-->
+                    <!--<span class="bullet-custom position-absolute start-0 top-0 w-3px h-100 bg-primary rounded-end"></span>-->
+                    <!--end::Bullet-->
+                    <!--</a>
+    </li>-->
+
+                </ul>
+            </div>
+            <!--end::Navbar-->
+        </div>
+        <!--end::Body-->
+    </div>
+
+    <script>
+        // Function to display current date and time
+        function displayDateTime() {
+            // Create a new Date object
+            var currentDate = new Date();
+
+            // Get the current date as a string
+            var date = currentDate.toDateString();
+
+            // Get the current time formatted as "06:33 PM"
+            var time = currentDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+
+            // Update the HTML elements with the current date and time
+            document.getElementById("date").innerHTML = date;
+            document.getElementById("time").innerHTML = time; // This already includes AM/PM
+        }
+
+        // Call the function to display the initial date and time
+        displayDateTime();
+
+                // Call the displayDateTime function every second
+        setInterval(displayDateTime, 1000);
+    </script>
+    <style>
+        h1 {
+            text-align: left;
+            text-transform: uppercase;
+            color: #4CAF50;
+            font-size: 38px;
+        }
+    </style>
+</div>
+    

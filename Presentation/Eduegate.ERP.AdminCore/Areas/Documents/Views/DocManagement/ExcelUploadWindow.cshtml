@@ -1,0 +1,84 @@
+﻿@using Eduegate.ERP.Admin.Globalization;
+@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    ViewBag.Title = "Excel Upload Window";
+
+    var windowName = "window_" + Guid.NewGuid().ToString();
+}
+
+<div ng-controller="UploadFileController" ng-init="Init('@windowName', @Newtonsoft.Json.JsonConvert.SerializeObject(Model), '@ViewBag.ViewName')">
+    <div class="d-flex justify-content-center">
+        <div class="spinner-border d-none" role="status" id="spinner">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <form id="excelUploadDropzone" ng-click="TriggerUploadExcelFile($event);" method="post" action="~/Documents/DocManagement/UploadExcelDocument" enctype="multipart/form-data" class="dropzone uploadWidgetForm h-100px">
+            @* <div class="dz-message dz-message-continer" data-dz-message> *@
+            <div class="dz-message-continer" data-dz-message>
+                <div class="dz-message-title">
+                    @ResourceHelper.GetValue("Browse your Excel file.")
+                </div>
+            </div>
+            <div class="fallback">
+                <input ng-model="uploadedExcelDocuments" onchange="UploadExcelFiles(this)" name="excelFile" type="file" accept=".xls,.xlsx" multiple />
+            </div>
+        </form>
+    </div>
+
+    <div class="col-lg-5 d-flex flex-end">
+
+        <div class="">
+            <button id="postExcelUploads" type="button" ng-disabled="uploadedExcelInfo.length < 0" class="btn btn-sm btn-primary" value="Save"
+                    ng-click="SaveUploadedExcelFile($event);" title="Save Excel">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="14" viewBox="0 0 13 14" fill="none">
+                    <path d="M2.49236 4.10233L5.97755 0.232595C6.04348 0.159383 6.12407 0.100845 6.21408 0.0607752C6.30408 0.0207059 6.40151 0 6.50003 0C6.59856 0 6.69598 0.0207059 6.78599 0.0607752C6.876 0.100845 6.95658 0.159383 7.02251 0.232595L10.5078 4.10233C10.6326 4.2409 10.6973 4.42337 10.6875 4.6096C10.6778 4.79582 10.5945 4.97055 10.4559 5.09535C10.3173 5.22014 10.1349 5.28478 9.94863 5.27504C9.7624 5.2653 9.58767 5.18198 9.46288 5.04341L7.20316 2.53451V10.2258C7.20316 10.4123 7.12908 10.5912 6.99722 10.723C6.86535 10.8549 6.68651 10.929 6.50003 10.929C6.31355 10.929 6.13471 10.8549 6.00285 10.723C5.87099 10.5912 5.79691 10.4123 5.79691 10.2258V2.53454L3.53735 5.04349C3.47556 5.11211 3.40085 5.16788 3.3175 5.20762C3.23415 5.24737 3.14378 5.2703 3.05157 5.27512C2.95935 5.27994 2.86709 5.26655 2.78005 5.23572C2.69301 5.20488 2.61289 5.1572 2.54428 5.09541C2.47566 5.03361 2.41989 4.9589 2.38015 4.87555C2.34041 4.7922 2.31747 4.70184 2.31265 4.60962C2.30783 4.51741 2.32122 4.42514 2.35205 4.3381C2.38289 4.25106 2.43057 4.17095 2.49236 4.10233ZM11.5029 12.2652H1.37451C1.18803 12.2652 1.00919 12.3393 0.877327 12.4711C0.745466 12.603 0.671387 12.7818 0.671387 12.9683C0.671387 13.1548 0.745466 13.3336 0.877327 13.4655C1.00919 13.5974 1.18803 13.6715 1.37451 13.6715H11.5029C11.6893 13.6715 11.8682 13.5974 12 13.4655C12.1319 13.3336 12.206 13.1548 12.206 12.9683C12.206 12.7818 12.1319 12.603 12 12.4711C11.8682 12.3393 11.6893 12.2652 11.5029 12.2652Z" fill="white" />
+                </svg>
+                Save
+            </button>
+        </div>
+        <br />
+        <br />
+        <div class="">
+            <button id="postExcelUploads" type="button" class="btn btn-sm btn-primary me-4" value="Get Formatted Excel" title="Get Formatted Excel" ng-click="DownloadExcelTemplate()">
+                <svg width="13" height="14" viewBox="0 0 29 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.3978 0C6.84684 0 0.456839 8.1 0.186839 8.451C0.0656913 8.60837 0 8.8014 0 9C0 9.1986 0.0656913 9.39163 0.186839 9.549C0.456839 9.9 6.84684 18 14.3978 18C21.9488 18 28.3388 9.9 28.6088 9.549C28.73 9.39163 28.7957 9.1986 28.7957 9C28.7957 8.8014 28.73 8.60837 28.6088 8.451C28.3388 8.1 21.9488 0 14.3978 0ZM14.3978 16.2C8.79084 16.2 3.59784 10.8 2.06784 9C3.59784 7.2 8.78184 1.8 14.3978 1.8C20.0138 1.8 25.1978 7.2 26.7278 9C25.1978 10.8 20.0138 16.2 14.3978 16.2Z" fill="white"></path>
+                    <path d="M18.898 8.09998C19.0466 8.09986 19.1928 8.06297 19.3236 7.9926C19.4545 7.92224 19.5658 7.82058 19.6478 7.69671C19.7298 7.57284 19.7799 7.4306 19.7935 7.28268C19.8072 7.13476 19.784 6.98576 19.726 6.84898C19.2309 5.86313 18.4691 5.03599 17.5272 4.46163C16.5853 3.88727 15.5012 3.58874 14.398 3.59998C12.9659 3.59998 11.5924 4.1689 10.5797 5.1816C9.56697 6.1943 8.99805 7.56781 8.99805 8.99998C8.99805 10.4321 9.56697 11.8057 10.5797 12.8184C11.5924 13.831 12.9659 14.4 14.398 14.4C15.5012 14.4112 16.5853 14.1127 17.5272 13.5383C18.4691 12.964 19.2309 12.1368 19.726 11.151C19.784 11.0142 19.8072 10.8652 19.7935 10.7173C19.7799 10.5694 19.7298 10.4271 19.6478 10.3032C19.5658 10.1794 19.4545 10.0777 19.3236 10.0074C19.1928 9.93699 19.0466 9.9001 18.898 9.89998C18.7767 9.91271 18.6541 9.89818 18.5391 9.85745C18.4241 9.81672 18.3197 9.75082 18.2335 9.66457C18.1472 9.57831 18.0813 9.47388 18.0406 9.3589C17.9998 9.24392 17.9853 9.12129 17.998 8.99998C17.9853 8.87866 17.9998 8.75603 18.0406 8.64105C18.0813 8.52607 18.1472 8.42164 18.2335 8.33538C18.3197 8.24913 18.4241 8.18323 18.5391 8.1425C18.6541 8.10178 18.7767 8.08725 18.898 8.09998Z" fill="white"></path>
+                </svg>
+                Format
+            </button>
+        </div>
+    </div>
+
+    <div class="w-1px h-1px" style=" visibility: hidden;">
+        <div class="row gy-0 g-xl-2  dropDivClass" id="dropDiv">
+
+            <div class="col-lg-1 ">
+                <div id="kt_search_map" class="w-100 h-100 card-rounded leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0" style="position: relative;">
+                    <div class="imgsuploaded">
+                        <div class="upload-imgwrap dropzone-previews h-100px border" id="previews">
+                            <div class="dz-preview dz-processing dz-image-preview" ng-repeat="docInfo in uploadedDocInfo">
+                                <div>
+                                    <input name="filename" />
+                                    <select name="filetype"></select>
+                                </div>
+                                <div class="dz-image">
+
+                                    <img data-dz-thumbnail="" ng-src="{{docInfo.FilePath}}" />
+                                </div>
+                                <a data-dz-remove="" class="dz-remove" ng-click="DeleteUploadedDcuments(docInfo);">Cancel upload</a>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,521 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0058)https://pearl.mograsys.com/PPN/onlineadmissionenquiry.html -->
+<html ng-app="App" xmlns="http://www.w3.org/1999/xhtml" class="ng-scope">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css">
+        @charset "UTF-8";
+
+        [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak, .ng-hide:not(.ng-hide-animate) {
+            display: none !important;
+        }
+
+        ng\:form {
+            display: block;
+        }
+
+        .ng-animate-shim {
+            visibility: hidden;
+        }
+
+        .ng-anchor {
+            position: absolute;
+        }
+    </style>
+    <title></title>
+    <link href="./onlineadmissionenquiry_assets/bootstrap.min.js" />
+    <link href="./onlineadmissionenquiry_assets/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="./onlineadmissionenquiry_assets/bootstrap-theme.min.css" rel="stylesheet" type="text/css">
+    <link href="./onlineadmissionenquiry_assets/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="./onlineadmissionenquiry_assets/style.min.css" rel="stylesheet">
+    <link href="./onlineadmissionenquiry_assets/datepicker.css" rel="stylesheet">
+    <link href="./onlineadmissionenquiry_assets/datepicker.min.css" rel="stylesheet">
+    <link href="./onlineadmissionenquiry_assets/sweetalert.css" rel="stylesheet">
+    <link rel="stylesheet" href="./onlineadmissionenquiry_assets/bootstrap.min.css">
+    <script src="./onlineadmissionenquiry_assets/jquery.min.js"></script>
+    <script src="./onlineadmissionenquiry_assets/bootstrap.min.js"></script>
+    <!-- <script src="./onlineadmissionenquiry_assets/jquery.min.js(1)"></script> -->
+    <!-- <script src="./onlineadmissionenquiry_assets/bootstrap.min.js(1)"></script> -->
+    <script src="./onlineadmissionenquiry_assets/angular.min.js"></script>
+    <script src="./onlineadmissionenquiry_assets/angular-ui-router.min.js"></script>
+    <script src="./onlineadmissionenquiry_assets/angular-route.min.js"></script>
+    <script src="./onlineadmissionenquiry_assets/angular-cookies.min.js"></script>
+    <script src="./onlineadmissionenquiry_assets/angular-gettext.min.js"></script>
+    <script src="./onlineadmissionenquiry_assets/jquery.unveil.min.js"></script>
+    <script src="./onlineadmissionenquiry_assets/bootstrap-datepicker.js"></script>
+    <script src="./onlineadmissionenquiry_assets/sweetalert.min.js"></script>
+
+    <style>
+
+        @font-face {
+            font-family: 'Material Icons';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Material Icons'), local('MaterialIcons-Regular'), url(https://fonts.gstatic.com/s/materialicons/v12/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2) format('woff2');
+        }
+
+        .materialist-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;            
+            vertical-align: middle;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+
+        @font-face {
+            font-family: 'Material Icons';
+            font-style: normal;
+            font-weight: 400;
+            src: local('Material Icons'), local('MaterialIcons-Regular'), url(https://fonts.gstatic.com/s/materialicons/v12/2fcrYFNaTjcS6g4U3t-Y5ZjZjT5FdEJ140U2DJYC3mY.woff2) format('woff2');
+        }
+
+        .materialist2-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            vertical-align: middle;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .card {
+            border: none;
+        }
+
+        hr {
+            color: #bd051c;
+            border-top: 2px solid;
+        }
+
+        .full-sec {
+            width: 90%;
+            margin: 0 auto;
+            background: red;
+            background: #ffffff;
+            padding: 65px 55px;
+            box-shadow: 5px 5px 20px #f2f2f2;
+            height: 530px;
+        }
+
+            .full-sec input {
+                height: 45px;
+            }
+
+            .full-sec select {
+                height: 45px;
+            }
+
+            .full-sec .btn-primary {
+                color: #fff;
+                background-color: #bd051c;
+                border-color: #bd051c;
+                font-size: 16px;
+                padding: 10px 40px;
+                margin: 20px 10px !important;
+            }
+
+        .fr-btn {
+            margin: 0 auto;
+            display: block;
+            text-align: center;
+        }
+    </style>
+    <script>
+
+        angular.module('App', ['gettext'])
+            .controller('UploadController', ['$scope', '$http', '$location', 'gettextCatalog', function ($scope, $http, $location, gettextCatalog) {
+
+                var searchObject = $location.search();
+                // alert(searchObject.foo);
+
+                // $scope.apiurl = 'http://localhost:9091/SIMSAPI/';https://api.mograsys.com/ppapi/
+                //$scope.apiurl = 'http://localhost/Eduegate.PublicAPI/api/CRM/';
+
+                $scope.schoolUrl = window.location.href;
+                var conStr = $scope.schoolUrl.substring($scope.schoolUrl.indexOf('/') + 2, $scope.schoolUrl.indexOf('.'));
+                if (conStr == 'www' || conStr == 'WWW') {
+                    $scope.schoolUrl = window.location.href;
+
+                    var conStr = $scope.schoolUrl.split('.')[1];
+                    tp.defaults.headers.common['schoolId'] = conStr;
+
+                }
+                else {
+                    $http.defaults.headers.common['schoolId'] = 'pearl';
+                }
+                //   $http.defaults.headers.common['schoolId']='asd'
+
+                $scope.edt = {};
+
+                //$scope.apiurl = 'http://localhost/Eduegate.PublicAPI/api/CRM/';
+                //$scope.apiurl = 'http://api.pearlschool.org/api/CRM/';
+                //$http.get($scope.apiurl + "GetDeafaultSchool").then(function (res) {
+                //    $scope.school = res.data
+                //    $http.get($scope.apiurl + "GetAcademicYear?schoolID=" + $scope.school).then(function (res) {
+                //        $scope.academicYears = res.data
+                //    });
+                //    $http.get($scope.apiurl + "GetClasses?schoolID=" + $scope.school).then(function (res) {
+                //        $scope.grades = res.data
+                //    });
+                //});
+
+                //$http.get($scope.apiurl + "GetLeadSource").then(function (res) {
+                //    $scope.about_lst = res.data
+
+                //});
+           
+                var url = "../Home/GetLeadSource";
+                //var url = utility.myHost + "Home/GetDynamicLookUpData?lookType=School&defaultBlank=false";
+                $http({ method: 'Get', url: url })
+                    .then(function (result) {
+                        $scope.about_lst = result.data;
+
+                    }, function () {
+
+                    });
+
+                var url = "../Home/GetNationalities";
+                    $http({ method: 'Get', url: url })
+                        .then(function (result5) {
+                            $scope.Nationalities = result5.data;
+                }, function () {
+
+                });
+
+                // var url = "http://localhost/Eduegate.ERP.School.Portal//Home/GetDynamicLookUpData?lookType=School&defaultBlank=false";
+                //var url = "../Home/GetDynamicLookUpData?lookType=School&defaultBlank=false";
+                //$http({ method: 'Get', url: url })
+                //    .then(function (result) {
+                //        $scope.Schools = result.data;
+
+                var url = "../Home/GetDeafaultSchool";
+                $http({ method: 'Get', url: url })
+                    .then(function (result3) {
+                        $scope.SchoolID = result3.data;
+                        //$scope.edt.school=  $scope.Schools.find(x => x.Key = $scope.SchoolID );
+
+                        var url1 = "../Home/GetAcademicYearBySchool?schoolID=" + $scope.SchoolID;
+                        $http({ method: 'Get', url: url1 })
+                            .then(function (result1) {
+                                $scope.academicYears = result1.data.Response;
+
+                                var url2 = "../Home/GetClasses?schoolID=" + $scope.SchoolID;
+                                //var url = utility.myHost + "Home/GetDynamicLookUpData?lookType=School&defaultBlank=false";
+                                $http({ method: 'Get', url: url2 })
+                                    .then(function (result2) {
+                                        $scope.grades = result2.data;
+
+                                    }, function () {
+
+                                    });
+                            }, function () {
+
+                            });
+
+                    }, function () {
+
+                    });
+
+                //}, function () {
+
+                //});
+
+
+
+
+
+
+
+                $scope.RegisterUser = function (edt) {
+                    $("#submitBtn").prop("disabled", true);
+                    //  $scope.getPassword()
+
+                    $scope.sendData = [];
+                    console.log(edt);
+                    console.log($scope.password);;
+
+                    var day = edt.dob1.split('-')[0];
+                    var month = edt.dob1.split('-')[1];
+                    var year = edt.dob1.split('-')[2];
+
+                    edt.dob = year + '-' + month + '-' + day;
+                    // edt.password = $scope.password;
+                    // AddEnquirySiso
+                    var data = {
+                        'Dob1': edt.dob, 'Sname': edt.sname, 'Referal_code': edt.referal_code.Key,
+                        'Email': edt.email, 'Mobile': edt.mobile, 'Pname': edt.pname, 'Grade': edt.grade.Key,
+                        'Academic_year': edt.academic_year.Key, 'Gender': edt.gender, "SchoolID": $scope.SchoolID,
+                        'Referal_code': edt.referal_code.Key, 'Nationality': edt.nationality.Key,
+                    };
+                    $http.post("../Home/AddLead", data).success(function (data) {
+                        if (data.IsError) {
+                            swal({ title: "Alert", text: data.Message, imageUrl: "../Images/error-icon.png", });
+                            $("#submitBtn").prop("disabled", false);
+                            return;
+                        }
+                        $scope.p_data = data;
+
+                        if ($scope.p_data) {
+                            // swal({ text: " Sucessfully" });
+                            $scope.edt = {}
+                            swal({ title: "Alert", text: data.Message, imageUrl: "../Images/done.png", });
+                            $("#submitBtn").prop("disabled", false);
+
+                        } else {
+                            // swal({ text: "Not Registered" });
+                            swal({ title: "Alert", text: "Error occured, please contacts to customer service", imageUrl: "../Images/error-icon.png", });
+                            $("#submitBtn").prop("disabled", false);
+                            return;
+                        }
+
+                    });
+                }
+                ///---------------------------- API// ----------------------------
+                // $scope.SchoolChanges = function (school) {
+
+                //    var url1 = "../Home/GetAcademicYear?schoolID=" + school.Key;
+                //    $http({ method: 'Get', url: url1 })
+                //        .then(function (result1) {
+                //            $scope.academicYears = result1.data;
+
+
+                //            var url2 = "../Home/GetClasses?schoolID=" + school.Key;
+                //            //var url = utility.myHost + "Home/GetDynamicLookUpData?lookType=School&defaultBlank=false";
+                //            $http({ method: 'Get', url: url2 })
+                //                .then(function (result2) {
+                //                    $scope.grades = result2.data;
+
+                //                }, function () {
+
+                //                });
+                //        }, function () {
+
+                //        });
+                //};
+                //$scope.RegisterUser = function (edt) {
+                //    //  $scope.getPassword()
+
+                //    $scope.sendData = [];
+                //    console.log(edt);
+                //    console.log($scope.password);;
+
+                //    var day = edt.dob1.split('-')[0];
+                //    var month = edt.dob1.split('-')[1];
+                //    var year = edt.dob1.split('-')[2];
+
+                //    edt.dob = year + '-' + month + '-' + day;
+                //    // edt.password = $scope.password;
+                //    // AddEnquirySiso
+                //    var data = {
+                //        'Dob1': edt.dob, 'Sname': edt.sname, 'Referal_code': edt.referal_code.Key,
+                //        'Email': edt.email, 'Mobile': edt.mobile, 'Pname': edt.pname, 'Grade': edt.grade.Key,
+                //        'Academic_year': edt.academic_year.Key, 'Gender': edt.gender, "SchoolID": $scope.school
+                //    };
+                //    $http.post($scope.apiurl + "AddLead", data).success(function (data) {
+                //        if (data.IsError) {
+                //            swal({ title: "Alert", text: data.Message, imageUrl: "assets/img/notification-alert.png", });
+                //            return;
+                //        }
+                //        $scope.p_data = data;
+
+                //        if ($scope.p_data) {
+                //            // swal({ text: " Sucessfully" });
+                //            $scope.edt = {}
+                //            swal({ title: "Alert", text: " Registered Successfully", imageUrl: "assets/img/check.png", });
+
+                //        } else {
+                //            // swal({ text: "Not Registered" });
+                //            swal({ title: "Alert", text: "Error occured, please contacts to customer service", imageUrl: "assets/img/notification-alert.png", });
+                //        }
+
+                //    });
+                //}
+                //---------------------------------------------
+                $scope.datechange = function (str) {
+                    var day = str.split('/')[1];
+                    var month = str.split('/')[0];
+                    var year = str.split('/')[2];
+                    $scope.edt['dob1'] = day + '-' + month + '-' + year;
+
+                }
+
+                jQuery('*[data-datepicker="true"] input[type="text"]').datepicker({
+                    todayBtn: true,
+                    orientation: "top left",
+                    autoclose: true,
+                    todayHighlight: true,
+
+                });
+                jQuery(document).on('touch click', '*[data-datepicker="true"] .add-on', function (e) {
+                    jQuery('input[type="text"]', jQuery(this).parent()).focus();
+                });
+
+            }])
+
+
+        var specialKeys = new Array();
+        specialKeys.push(8); //Backspace
+        function IsNumeric(e) {
+            var keyCode = e.which ? e.which : e.keyCode
+            var ret = ((keyCode >= 48 && keyCode <= 57) || specialKeys.indexOf(keyCode) != -1);
+            //document.getElementById("error").style.display = ret ? "none" : "inline";
+            return ret;
+        }
+
+    </script>
+</head>
+<body data-new-gr-c-s-check-loaded="14.1043.0" data-gr-ext-installed="">
+    <div ng-controller="UploadController" class="ng-scope">
+        <!--  <form class="pure-form">
+            <fieldset>
+                <legend>Change Password</legend>
+
+                <input type="password" placeholder="Password" id="password" ng-required="true">
+                <input type="password" placeholder="Confirm Password" id="confirm_password" ng-required="true">
+
+                <button type="submit" class="pure-button pure-button-primary">Confirm</button>
+            </fieldset>
+        </form>-->
+        <!-- <hr> -->
+        <div class="container">
+            <div class="row">
+                <!-- <div class="col-sm-10 col-sm-push-1 col-md-6 col-md-push-3 col-lg-6 col-lg-push-3"> -->
+                <div class="full-sec">
+                    <div class="card-group" style="box-shadow: 10px 10px 10px grey;">
+                        <form method="post" ng-submit="RegisterUser(edt);" class="ng-pristine ng-invalid ng-invalid-required ng-valid-maxlength ng-valid-email">
+
+                            <div class="col-md-6">
+                                <div class="card ">
+                                    <div class="card-block">
+                                        <div class="center">
+                                            <h4 class="m-b-0"><span class="icon-text">Student Details</span></h4>
+                                        </div>
+                                        <hr>
+                                        <div class="form-group">
+                                            <input type="text" class="form-control ng-pristine ng-untouched ng-invalid ng-invalid-required" placeholder="Name" ng-required="true" ng-model="edt.sname" required="required" style="text-transform:uppercase">
+                                        </div>
+                                        <div class="form-group">
+                                            <select id="cmb_cur" name="cmb_cur" class="form-control select2-sm ng-pristine ng-untouched ng-invalid ng-invalid-required" ng-model="edt.gender" ng-required="true" required="required">
+                                                <option value="">Select Gender</option>
+                                                <option value="M">Male</option>
+                                                <option value="F">Female</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <div data-datepicker="true" style="width: auto">
+                                                <input type="text" autocomplete="off" id="dp_joinDate" placeholder="Date of Birth" ng-change="datechange(edt.dob1)" name="tentJoindate" class="form-control input-sm ng-pristine ng-untouched ng-invalid ng-invalid-required" ng-model="edt.dob1" ng-required="true" required="required">
+                                                <span class="add-on" style="height: 30px; padding-top: 0px"><!--<span class="arrow"></span><i class="fa fa-th"></i>--></span>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <select id="Select2" name="cmb_cur" class="form-control select2-sm ng-pristine ng-untouched ng-invalid ng-invalid-required" ng-model="edt.nationality"
+                                                    ng-options="nationalities as nationalities.Value for nationalities in Nationalities" ng-required="true" required="required">
+                                                <option value="" class="" selected="selected">Select Nationality</option>
+
+                                            </select>
+                                        </div>
+                                        <!--<div class="form-group">
+                                            <select id="Select3" name="cmb_cur" class="form-control select2-sm ng-pristine ng-untouched ng-invalid ng-invalid-required" ng-model="edt.school" ng-change="SchoolChanges(edt.school)"
+                                                    ng-options="School as School.Value for School in Schools" ng-required="true" required="required">
+                                                <option value="" class="" selected="selected">Select School</option>
+
+                                            </select>
+                                        </div>-->
+                                        <div class="form-group">
+                                            <select id="Select2" name="cmb_cur" class="form-control select2-sm ng-pristine ng-untouched ng-invalid ng-invalid-required" ng-model="edt.academic_year"
+                                                    ng-options="academicYear as academicYear.Value for academicYear in academicYears" ng-required="true" required="required">
+                                                <option value="" class="" selected="selected">Select Year</option>
+
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <select id="Select1" name="cmb_cur" class="form-control select2-sm ng-pristine ng-untouched ng-invalid ng-invalid-required"
+                                                    ng-model="edt.grade"
+                                                    ng-options="grade as grade.Value
+                                                    for grade in grades"
+                                                    ng-required="true" required="required">
+                                                <option value="" class="" selected="selected">Select Grade</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-block ">
+                                        <div class="center">
+                                            <h4 class="m-b-0">Parent  Details</h4>
+                                        </div>
+                                        <hr>
+                                        <div class="form-group">
+                                            <input type="text" class="form-control ng-pristine ng-untouched ng-invalid ng-invalid-required" ng-required="true" autocomplete="off" placeholder="Name" ng-model="edt.pname" required="required" style="text-transform:uppercase">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" class="form-control ng-pristine ng-untouched ng-invalid ng-invalid-required ng-valid-maxlength" ng-required="true" autocomplete="off" placeholder="Mobile number" maxlength="25" onkeypress="return IsNumeric(event);" ng-model="edt.mobile" required="required">  <!--onkeypress="return IsNumeric(event);"--><!--ng-pattern="\\d+"-->
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="email" class="form-control ng-pristine ng-untouched ng-valid-email ng-invalid ng-invalid-required" ng-required="true" autocomplete="off" placeholder="Email Address" ng-model="edt.email" required="required">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <select id="txt_hear_school" name="txt_hear_school" data-role="dropdownlist" class="form-control input-sm ng-pristine ng-untouched ng-invalid ng-invalid-required"
+                                                    ng-options="referal_code as referal_code.Value  for referal_code in about_lst" ng-model="edt.referal_code" style="font-size: 12px;" ng-required="true" required="required">
+                                                <option value="" class="" selected="selected">How did you hear about the school</option>
+                                            </select>
+                                        </div>
+                                        <!-- <div class="form-group">
+                                            <button type="submit" class="btn btn-primary">Register</button>
+                                        </div> -->
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="fr-btn">
+                                    <div class="form-group">
+                                        <button type="submit" class="btn btn-primary"  id="submitBtn">Register</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+    <br><br>
+
+
+
+
+
+
+</body>
+<grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration>
+</html>

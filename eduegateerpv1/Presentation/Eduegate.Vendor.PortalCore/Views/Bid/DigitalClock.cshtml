@@ -1,0 +1,59 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "Digital Clock";
+}
+
+<div id="clock" class="shadow rounded">8:10:45</div>
+
+<script>
+    setInterval(showTime, 1000);
+    function showTime() {
+        let time = new Date();
+        let hour =
+            time.getHours();
+        let min =
+            time.getMinutes();
+        am_pm = "AM";
+
+        if (hour >= 12) {
+            if (hour > 12)
+                hour -= 12;
+            am_pm = "PM";
+        } else if (hour == 0) {
+            hr = 12;
+            am_pm = "AM";
+        }
+
+        hour =
+            hour < 10
+                ? "0" + hour
+                : hour;
+        min =
+            min < 10
+                ? "0" + min
+                : min;
+
+        let currentTime =
+            hour +
+            ":" +
+            min +
+            "   " +
+            am_pm;
+
+        document.getElementById(
+            "clock"
+        ).innerHTML =
+            currentTime;
+    }
+
+    showTime();
+</script>
+<style>
+    #clock {
+        font-size: 70px;
+        margin: 4px;
+        text-align: center;
+        border: 2px solid #dbdbdb;
+        font-weight:500;
+    }
+</style>

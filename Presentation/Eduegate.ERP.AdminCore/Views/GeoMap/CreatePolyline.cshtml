@@ -1,0 +1,81 @@
+﻿@{
+    Layout = null;
+}
+<div id="CreateCreatePolyline" class="windowcontainer" style="height:inherit">
+    <div ng-controller="CreatePolylineController as vm" style="height:inherit">
+        <div class="window-tab preload-overlay" style="display:block;">
+            <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+        </div>
+
+        <div class="panel-body panel">
+            <div class="row">
+                <div class="col gy-5">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="page_subtitles">
+                                <h4>
+                                    <a class="collapsed" data-toggle="collapse">
+                                        School area settings on google map
+                                    </a>
+                                </h4>
+                            </div>
+                            <div>
+                                <label class="addprodleft control-label">
+                                    School
+                                </label>
+                                <div class="controls">
+                                    <select ng-model="SelectedSchoolID" ng-change="vm.LoadSchoolSetting(SelectedSchoolID, vm.map)">
+                                        <i class="fa fa-caret-down"></i>
+                                        <option ng-repeat="data in vm.Schools" value={{data.Key}}>{{data.Value}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div style="margin-top:10px">
+                                <button class="button-orange" ng-click="vm.SaveSchoolSetting(SelectedSchoolID, BranchID, AreaID)">Save</button>
+                                <button class="button-orange" ng-click="vm.ClearSchoolSetting(SelectedSchoolID, BranchID, AreaID)">Clear</button>
+                            </div>
+                            <div class="map-container my-4">
+                                <ng-map zoom="7" on-click="vm.addMarkerAndPath()" id="map" style="">
+                                    <shape name="polyline" id="polyline"
+                                           path="{{vm.SchoolSettingPath}}"
+                                           stroke-color="#FF0000"
+                                           stroke-opacity="1.0"
+                                           stroke-weight="3">
+                                    </shape>
+                                </ng-map>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+       
+
+           
+               
+                
+        </div>
+       
+
+    </div>
+</div>
+<style>
+/* Map container styles */
+.map-container {
+    position: relative;  /* This allows positioning of child elements like markers or overlays */
+    width: 100%;         /* Adjust to desired width, or use a fixed value like 600px */
+    height: 500px;       /* Height is required for the map to render */
+    /* max-width: 1000px;   /* Optional, limit maximum width */ */
+    margin: 0 auto;      /* Center container on page if needed */
+    overflow: hidden;    /* Hide any overflow if needed */
+    border-radius: 8px;  /* Optional, rounded corners */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Optional, adds a shadow effect */
+}
+
+/* Google Map specific styles if needed */
+.map-container #map {
+    width: 100%;  /* Ensure map takes full width of the container */
+    height: 100%; /* Ensure map takes full height of the container */
+}
+
+</style>

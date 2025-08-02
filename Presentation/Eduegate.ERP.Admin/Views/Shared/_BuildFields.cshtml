@@ -1,0 +1,51 @@
+﻿@model System.Collections.Generic.List<Eduegate.Web.Library.ViewModels.BaseMasterViewModel>
+@using Eduegate.Framework.Mvc.Attributes
+@using System.Reflection;
+@using Eduegate.Framework.Mvc.Attributes;
+
+@{
+    int index = 0;
+    
+    foreach (var model in Model)
+    {
+        var modelContainerType = (ContainerTypeAttribute)model.GetType().GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+        var title = (System.ComponentModel.DisplayNameAttribute)model.GetType().GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+        model.NamePrefix = modelContainerType.GridBindingPrefix + "[{{$index}}].";
+        var lazyLoadAttribute2 = (LazyLoadAttribute)model.GetType().GetCustomAttributes(typeof(LazyLoadAttribute)).FirstOrDefault();
+
+        var lazyLoadDataUrl = "";
+        if (lazyLoadAttribute2 != null)
+        {
+            lazyLoadDataUrl = lazyLoadAttribute2.DataUrl;
+        }
+        
+        switch(modelContainerType.ContainerType)
+        {
+            case Eduegate.Framework.Enums.ContainerTypes.Tab:
+                
+                <div class="panel-body horizontal-tabview">
+                    <div class="productcreteheader">@title.DisplayName</div>
+                        <div class="horizontal-tabheader">
+                            <ul ng-repeat="@modelContainerType.BindingPrefix in CRUDModel.ViewModel.@(modelContainerType.BindingPrefix) track by $index">
+                                <li ng-click="ClickTabItem(CRUDModel.ViewModel, '@(modelContainerType.BindingPrefix)_TABINDEX',$index, '@lazyLoadDataUrl')"
+                                    ng-class="{show: SelectTabItem(CRUDModel.ViewModel,'@(modelContainerType.BindingPrefix)_TABINDEX',$index, '@lazyLoadDataUrl')}" data-tab="1">
+                                    @*<span class="tab-delete" ng-click="DeleteItem(CRUDModel.ViewModel.@(modelContainerType.BindingPrefix),$index)">x</span>*@
+                                    @title.DisplayName - <span class="customer-id">{{$index + 1}}</span>
+                                </li>
+                            </ul>
+                            <span class="addcontacts"><a class="button-orange" href="#" ng-click="AddNewItem(CRUDModel.ViewModel.@(modelContainerType.BindingPrefix))">
+                                <i class="fa fa-plus"></i></a></span>
+                        </div>
+                    <div class="htab-content" ng-repeat="@modelContainerType.GridBindingPrefix in CRUDModel.ViewModel.@(modelContainerType.BindingPrefix) track by $index">
+                        <div ng-class="{show: SelectTabItem(CRUDModel.ViewModel, '@(modelContainerType.BindingPrefix)_TABINDEX',$index)}" class="horizontal-tabcontent" data-tab="$index + 1" id="@(modelContainerType.BindingPrefix) + $index + 1">
+                            <div class="container-left alignleft @(string.IsNullOrEmpty(modelContainerType.Css) ? string.Empty : modelContainerType.Css)">
+                                @Html.Partial("_BuildField", model)
+                            </div><!--horizontal-tabcontent-->
+                        </div><!--htab-content-->
+                    </div>
+                </div>
+                index++;
+                break;
+        }
+    }
+}

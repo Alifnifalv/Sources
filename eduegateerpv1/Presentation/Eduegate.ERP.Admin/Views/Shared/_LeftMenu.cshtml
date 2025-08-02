@@ -1,0 +1,150 @@
+﻿@using Eduegate.Web.Library.ViewModels.MenuLinks;
+
+@{
+    //var menuDto = new Eduegate.Service.Client.MenuServiceClient(ViewBag.CallContext).GetERPMenu(Eduegate.Services.Contracts.Enums.MenuLinkTypes.ERPNavigation);
+    //var menuTree = MenuLinkViewModel.BuildMenuLinks(menuDto);
+
+}
+
+@helper TreeView(List<MenuLinkItemViewModel> items, bool isChild = false)
+{
+    if (items != null)
+    {
+        foreach (var item in items)
+        {
+            <li @Html.Raw(item.HtmlAttributes)>
+                @if (!string.IsNullOrEmpty(item.IconImage))
+                {
+                    <a href="#" id="menuLink_@item.MenuID">
+                        <span>
+                            <img src="@item.IconImage" alt="@item.Title" />
+                            <label>@item.MenuName</label>
+                        </span>
+                    </a>
+                }
+                else
+                {
+                    <a href="#" title="@item.Title" id="menuLink_@item.MenuID">
+                        <span>@item.MenuName</span><span class="lmenu-iconlinks">
+
+                            @if (!string.IsNullOrEmpty(item.HtmlAttributes2))
+                            {
+                                <i title="Open in new tab" class="fa fa-folder iconlink zoomin" @Html.Raw(item.HtmlAttributes2)></i>
+                            }
+
+                            @if (!string.IsNullOrEmpty(item.HtmlAttributes1))
+                            {
+                                <i class="fa fa-plus-circle iconlink zoomin" aria-hidden="true" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Create")" @Html.Raw(item.HtmlAttributes1)></i>
+                            }
+                        </span>
+                    </a>
+                }
+
+                @if (item.HasChild)
+                {
+                    <ul>
+                        @TreeView(item.SubItems, true)
+                    </ul>
+                }
+            </li>
+        }
+    }
+}
+
+<script type="text/ng-template" id="menuTree">
+
+</script>
+
+<div class="bodyleftnav active col-md-2 d-block bg-light sidebar" ng-controller="LeftMenuController">
+    <div class="sidebar-sticky">
+        <div class="searchmenu">
+            <input type="text" placeholder="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Search Menu")"
+                   ng-model="$root.MenuSearchText"
+                   ng-keydown="FilterMenu($event)" />
+            <span ng-click="FilterMenu($event);">
+                <i class="fa fa-search"
+                   aria-hidden="true">
+                </i>
+            </span>
+        </div>
+        <ul>
+            <li heirarchy="{{menu.Hierarchy}}" ng-repeat="menu in MenuItems"
+                ng-class="{'parent_li': menu.SubItems.length > 0, 'nosubitem': menu.SubItems.length == 0}"
+                ng-click="FireEvent($event, menu.HtmlAttributes, menu.Parameters, menu)">
+                <a href="#" id="menuLink_{{menu.MenuID}}" ng-if="menu.IconImage != null">
+                    <span class="spanstyle">
+                        <img src="{{menu.IconImage}}" alt="{{menu.Title}}" ng-if="menu.IconImage != null" />
+                        <label>{{menu.MenuName}}</label>
+                    </span>
+                </a>
+
+                <a href="#" title="{{menu.Title}}" id="menuLink_{{menu.MenuID}}" ng-if="menu.IconImage == null">
+                    <span>{{menu.MenuName}}</span><span class="lmenu-iconlinks">
+                        <i ng-if="menu.HtmlAttributes2" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Open in new tab")" class="fa fa-folder iconlink zoomin" {{menu.HtmlAttributes2}}></i>
+                        <i ng-if="menu.HtmlAttributes1" class="fa fa-plus-circle iconlink zoomin" aria-hidden="true" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Create")"
+                           ng-click="FireEvent($event, menu.HtmlAttributes1, menu.Parameters, menu)"></i>
+                    </span>
+                </a>
+
+                <ul ng-if="menu.SubItems">
+                    <li heirarchy="{{menu.Hierarchy}}" ng-repeat="childMenu in menu.SubItems"
+                        ng-class="{'submenu': (childMenu.SubItems.length > 0), 'nosubitem': (childMenu.SubItems.length == 0)}"
+                        ng-click="FireEvent($event, childMenu.HtmlAttributes, childMenu.Parameters, childMenu)">
+                        <a href="#" title="{{childMenu.Title}}" id="menuLink_{{childMenu.MenuID}}">
+                            <span>{{childMenu.MenuName}}</span><span class="lmenu-iconlinks">
+                                <i ng-if="childMenu.HtmlAttributes2" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Open in new tab")"
+                                   class="fa fa-folder iconlink zoomin" {{childMenu.HtmlAttributes2}}></i>
+                                <i ng-if="childMenu.HtmlAttributes1" class="fa fa-plus-circle iconlink zoomin"
+                                   aria-hidden="true" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Create")" ng-click="FireEvent($event, childMenu.HtmlAttributes1, childMenu.Parameters, childMenu)">
+                                </i>
+                            </span>
+                        </a>
+
+                        <ul ng-if="childMenu.SubItems">
+                            <li heirarchy="{{childMenu.Hierarchy}}" ng-repeat="childMenu2 in childMenu.SubItems"
+                                ng-class="{'submenu': (childMenu2.SubItems.length > 0), 'nosubitem': (childMenu2.SubItems.length == 0)}"
+                                ng-click="FireEvent($event, childMenu2.HtmlAttributes, childMenu2.Parameters, childMenu2)">
+                                <a href="#" title="{{childMenu2.Title}}" id="menuLink_{{childMenu2.MenuID}}">
+                                    <span>{{childMenu2.MenuName}}</span><span class="lmenu-iconlinks">
+                                        <i ng-if="childMenu2.HtmlAttributes2" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Open in new tab")"
+                                           class="fa fa-folder iconlink zoomin" {{childMenu2.HtmlAttributes2}}
+                                           style="display:block"></i>
+                                        <i ng-if="childMenu2.HtmlAttributes1" class="fa fa-plus-circle iconlink zoomin" aria-hidden="true"
+                                           title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Create")" ng-click="FireEvent($event, childMenu2.HtmlAttributes1, childMenu2.Parameters, childMenu2)"
+                                           style="display:block"></i>
+                                    </span>
+                                </a>
+
+                                <ul ng-if="childMenu2.SubItems">
+                                    <li heirarchy="{{childMenu2.Hierarchy}}" ng-repeat="childMenu3 in childMenu2.SubItems"
+                                        ng-class="{'submenu': (childMenu3.SubItems.length > 0), 'nosubitem': (childMenu3.SubItems.length == 0)}"
+                                        ng-click="FireEvent($event, childMenu3.HtmlAttributes, childMenu3.Parameters, childMenu3)">
+                                        <a href="#" title="{{childMenu3.Title}}" id="menuLink_{{childMenu3.MenuID}}">
+                                            <span>{{childMenu3.MenuName}}</span><span class="lmenu-iconlinks">
+                                                <i ng-if="childMenu3.HtmlAttributes2" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Open in new tab")"
+                                                   class="fa fa-folder iconlink zoomin" {{childMenu3.HtmlAttributes2}}
+                                                   style="display:block"></i>
+                                                <i ng-if="childMenu3.HtmlAttributes1" class="fa fa-plus-circle iconlink zoomin"
+                                                   aria-hidden="true" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Create")"
+                                                   ng-click="FireEvent($event, childMenu3.HtmlAttributes1, childMenu3.Parameters, childMenu3)"
+                                                   style="display:block"></i>
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+<style>
+    .spanstyle {
+        float: left;
+    }
+    .Layout_ar .spanstyle {
+        float: right;
+    }
+</style>

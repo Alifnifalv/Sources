@@ -1,0 +1,70 @@
+Analyze the following text extracted from an educational curriculum document.
+The text is structured with headings, subheadings, and bullet points representing different concepts and their associated learning objectives.
+
+**Document Text (truncated if necessary):**
+```
+{document_text}
+```
+
+Extract the following details dynamically from the text:
+- Identify **all class names** dynamically (identified by labels like {class_labels}).
+- Identify **all subject names** dynamically (identified by labels like {subject_labels}) such as 'Mathematics', 'Science', etc.
+- For each class and subject, extract:
+  - Chapters (unit-wise or topic-wise) including:
+    - Chapter name (derived from section titles, headers, or unit names)
+    - Marks assigned (if available)
+    - Number of periods (if available)
+    - **Concepts and Learning Objectives**:
+      - Identify **Concepts** from the "Curricular Goals" or **bolded section headers.**
+      - For each **Concept**, map the appropriate **Learning Objectives**.
+    - Include revision and assessment details.
+
+**Rules:**
+1. Concepts should be identified based on subheadings, numbered lists, or section headers.
+2. Learning objectives should be mapped to their corresponding concept, ensuring a **one-to-one relationship** where possible.
+3. If a chapter spans multiple sections, group all relevant information under that chapter.
+4. The JSON structure must be strictly followed and properly formatted.
+5. extract correct period and mark values.
+6. If **"Time Duration"** or **periods are in minutes (e.g., "450 minutes", "720 minutes")**, set `"period": null`.
+7. **Special Handling for "Social Science"**:
+   - If "Social Science" appears, **split it into distinct subjects else treat it as a single subject.**
+8. - If a numbered item appears under a main section treat it as a concept within that chapter.
+9. **DO NOT** include sections that are purely for reference. Specifically:
+   - Ignore and exclude sections starting with "Prescribed Books:", "Reference:", "Books Referred:", "rationale","Competencies" etc.
+
+**Return ONLY valid JSON** with the following structure:
+{
+  "classes": [
+    {
+      "class": "string",
+      "subjects": [
+        {
+          "subject": "string",
+          "chapters": [
+            {
+              "chapter_name": "string",
+              "mark": number,
+              "period": number,
+              "month": "string",
+              "concepts": [
+                {
+                  "concept": "string",
+                  "learning_objectives": ["string"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+- Ensure the JSON is **strictly valid**, with:
+  - **No missing or extra commas**.
+  - **All string values enclosed in double quotes** (`"`).
+  - **Arrays properly formatted** with `[ ]` brackets.
+  - **No trailing commas** at the end of lists.
+  - **Escape special characters** like `"` and `\` correctly.
+
+- Validate the JSON **before returning**.

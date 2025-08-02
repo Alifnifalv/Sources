@@ -1,0 +1,298 @@
+﻿using Eduegate.Domain.Entity;
+using Eduegate.Domain.Entity.School.Models.School;
+using Eduegate.Framework.Contracts.Common;
+using Eduegate.Hub.Client;
+using Eduegate.PublicAPI.Common;
+using Eduegate.Services.Contracts.Communications;
+using Eduegate.Services.Contracts.Mutual;
+using Eduegate.Services.MobileAppWrapper;
+using Hangfire;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using SignalRChat.Hubs;
+using Eduegate.Services.Contracts.School.Students;
+using Eduegate.Services.Contracts.Payroll;
+using System.Linq;
+using System.Threading.Tasks;
+using Eduegate.Domain.Entity.Models;
+using Eduegate.Domain;
+
+namespace Eduegate.Public.Api.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CommunicationController : ApiControllerBase
+    {
+        private readonly ILogger<SchoolController> _logger;
+        private readonly dbEduegateERPContext _dbContext;
+        private readonly IBackgroundJobClient _backgroundJobs;
+        private readonly RealtimeClient _realtimeClient;
+        private readonly IHttpContextAccessor _accessor;
+        private readonly IHubContext<ChatHub> _hubContext;
+
+        public CommunicationController(ILogger<SchoolController> logger, IHttpContextAccessor context,
+            dbEduegateERPContext dbContext, IBackgroundJobClient backgroundJobs,
+            IServiceProvider serviceProvider, RealtimeClient realtimeClient,
+            IHttpContextAccessor accessor, IHubContext<ChatHub> hubContext) : base(context)
+        {
+            _logger = logger;
+            _dbContext = dbContext;
+            _backgroundJobs = backgroundJobs;
+            _realtimeClient = realtimeClient;
+            _accessor = accessor;   
+            _hubContext = hubContext; // Injecting the SignalR HubContext
+        }
+        [HttpPost]
+        [Route("SaveComment")]
+        public CommentDTO SaveComment(CommentDTO comment)
+        {
+            // Save the comment using the communication service
+            var savedComment = new CommunicationService(CallContext).SaveComment(comment);
+
+            // Broadcast the comment via SignalR after saving
+            if (savedComment != null)
+            {
+                string parentCommentText = null;
+                if (comment.ParentCommentID.HasValue)
+                {
+                    var parentComment = _dbContext.Comments
+                        .Where(c => c.CommentIID == comment.ParentCommentID.Value)
+                        .Select(c => c.Comment1)
+                        .FirstOrDefault();
+
+                    parentCommentText = parentComment;
+                }
+                savedComment.ParentCommentText = parentCommentText;
+
+                _hubContext.Clients.All.SendAsync("ReceiveMessage",
+                    savedComment.CommentIID,
+                    savedComment.FromLoginID,
+                    savedComment.ToLoginID,
+                    savedComment.CreatedBy,
+                    savedComment.CommentText,
+                    savedComment.IsRead,
+                    comment.ParentCommentID, // Pass parent comment ID
+                    parentCommentText ,
+                    savedComment.PhotoContentID,
+                    savedComment.ReferenceID
+
+                );
+
+                // Notify clients that the parent list might have been updated
+                _hubContext.Clients.All.SendAsync("ParentListUpdated", savedComment.ToLoginID);
+                _hubContext.Clients.All.SendAsync("TeacherListUpdated", savedComment.ToLoginID);
+            }
+
+            return savedComment;
+        }
+
+
+        [HttpGet]
+        [Route("GetTeacherEmailByParentLoginID")]
+        public List<StudentChatDTO> GetTeacherEmailByParentLoginID()
+        {
+            return new CommunicationService(CallContext).GetTeacherEmailByParentLoginID();
+        }
+
+        [HttpGet]
+        [Route("GetParentDetailsByTeacherLoginID")]
+        public List<GuardianDTO> GetParentDetailsByTeacherLoginID()
+        {
+            return new CommunicationService(CallContext).GetParentListByLoginID();
+        }
+        
+
+
+        [HttpGet]
+        [Route("GetComments")]
+        public List<CommentDTO> GetChats(int entityTypeID, long? fromLoginID, long? toLoginID , int page, int pageSize , int studentID)
+        {
+            var entityType = (Eduegate.Infrastructure.Enums.EntityTypes)entityTypeID;
+            return new CommunicationService(CallContext).GetChats(entityType,  fromLoginID, toLoginID, page, pageSize , studentID);
+        }
+
+        //[HttpPost]
+        //[Route("MarkCommentAsRead")]
+        //public IActionResult MarkCommentAsRead(long commentId)
+        //{
+        //    try
+        //    {
+        //        var isUpdated = new CommunicationService(CallContext).MarkCommentAsRead(commentId, context.LoginID);
+
+        //        if (isUpdated)
+        //        {
+        //            return Ok(new { operationResult = 1 });
+        //        }
+        //        else
+        //        {
+        //            return BadRequest(new { operationResult = 0, message = "Failed to mark comment as read" });
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Eduegate.Logger.LogHelper<MutualBL>.Fatal(ex.Message, ex);
+        //        return StatusCode(500, new { operationResult = 0, message = "Internal server error" });
+        //    }
+        //}
+
+        [HttpGet]
+        [Route("GetParentsWithLatestMessageByTeacherLoginID")]
+        public List<GuardianDTO> GetActiveParentListByLoginID(long teacherLoginId)
+        {
+            var parentList =  new CommunicationService(CallContext).GetActiveParentListByLoginID();
+            _hubContext.Clients.All.SendAsync("TeacherListUpdated", teacherLoginId);
+
+            return parentList;
+
+        }
+
+        [HttpGet]
+        [Route("GetTeachersWhoMessagedByParentLoginID")]
+        public List<StudentChatDTO> GetTeachersWhoMessagedByParentLoginID(long parentLoginID)
+        {
+            var teacherList = new CommunicationService(CallContext).GetTeachersWhoMessagedByParentLoginID();
+
+            // Notify clients that the teacher list has been updated
+            _hubContext.Clients.All.SendAsync("TeacherListUpdated", parentLoginID);
+
+            return teacherList;
+        }
+
+        [HttpPost]
+        [Route("MarkCommentAsRead")]
+        public async Task<IActionResult> MarkCommentAsRead([FromBody] dynamic data)
+        {
+            int commentIID = data.commentIID;
+            var comment = _dbContext.Comments.FirstOrDefault(c => c.CommentIID == commentIID);
+            if (comment != null && !comment.IsRead)
+            {
+                comment.IsRead = true;
+                comment.UpdatedDate = DateTime.Now;
+                _dbContext.SaveChanges();
+
+                // Send real-time notification with IsRead status
+                await _hubContext.Clients.User(comment.FromLoginID.ToString())
+                    .SendAsync("MessageRead", comment.CommentIID, comment.ToLoginID, comment.IsRead);
+            }
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("GetParentDetailsByLoginID")]
+        public GuardianDTO GetParentDetailsByLoginID(long loginID)
+        {
+            var ParentDetailsByLoginID = new CommunicationService(CallContext).GetParentDetailsByLoginID(loginID);
+
+            return ParentDetailsByLoginID;
+
+        }
+
+
+        [HttpGet]
+        [Route("GetIsEnableCommunication")]
+        public bool? GetIsEnableCommunication(long loginID)
+        {
+            var ParentDetailsByLoginID = new CommunicationService(CallContext).GetIsEnableCommunication(loginID);
+
+            return ParentDetailsByLoginID;
+
+        }
+
+        [HttpPost]
+        [Route("MarkEnableCommunication")]
+        public async Task<IActionResult> MarkEnableCommunication(long LoginID, bool enableCommunication)
+        {
+            // Call the service method and await its result
+            var isSuccess = await new CommunicationService(CallContext).MarkEnableCommunication(LoginID, enableCommunication);
+
+            // Return an appropriate IActionResult based on the result
+            if (isSuccess.HasValue && isSuccess.Value)
+            {
+                return Ok(new { success = true, message = "Communication status updated successfully." });
+
+            }
+            else
+            {
+                return NotFound(new { success = false, message = "Teacher not found." });
+            }
+        }
+
+        [HttpGet]
+        [Route("GetParentsByTeacherLoginIDGroupedByClass")]
+        public Dictionary<string, List<GuardianDTO>> GetParentsByTeacherLoginIDGroupedByClass()
+        {
+            return new CommunicationService(CallContext).GetParentsByTeacherLoginIDGroupedByClass();
+        }
+
+
+        [HttpPost("SaveBroadcast")]
+        public List<CommentDTO> SaveBroadcast([FromBody] BroadcastRequestDTO request)
+        {
+            return new CommunicationService(CallContext).SaveCommentsWithBroadcast(request.Comment, request.BroadcastLoginIDs);
+        }
+
+
+
+        [HttpPost("SaveBroadcastList")]
+        public List<BroadCastDTO> SaveBroadcastList(List<BroadCastDTO> broadcastLoginIDs)
+        {
+            return new CommunicationService(CallContext).SaveBroadcastList(broadcastLoginIDs);
+        }
+
+
+        [HttpGet("GetBroadcastDetailsById")]
+        public BroadCastDTO GetBroadcastDetailsById(long broadcastLoginIDs)
+        {
+            return new CommunicationService(CallContext).GetBroadcastDetailsById(broadcastLoginIDs);
+        }
+
+        [HttpGet("GetBroadcastDetailsByUserId")]
+        public List<BroadCastDetailsDTO> GetBroadcastDetailsByUserId(long userId)
+        {
+            return new CommunicationService(CallContext).GetBroadcastDetailsByUserId(userId);
+        }
+
+        [HttpGet("GetStudentsByBroadCastID")]
+        public List<GuardianDTO> GetStudentsByBroadCastID(long broadcastID)
+        {
+            return new CommunicationService(CallContext).GetStudentsByBroadCastID(broadcastID);
+        }
+
+        [HttpPost("UpdateBroadcastList")]
+        public List<BroadCastDTO> UpdateBroadcastList(List<BroadCastDTO> broadcastLoginIDs)
+        {
+            return new CommunicationService(CallContext).UpdateBroadcastList(broadcastLoginIDs);
+        }
+
+        public class SimplePushNotification
+        {
+            public string Title { get; set; }
+            public string Message { get; set; }
+        }
+
+
+        [HttpPost("SendPushNotifications")]
+        public IActionResult SendPushNotifications([FromBody] SimplePushNotification payload)
+        {
+            try
+            {
+                var result = new CommunicationService(CallContext)
+                    .SendPushNotifications(payload.Title, payload.Message, claimSetID: 1); // You can hardcode or map this
+
+                return Ok(new { success = true, message = result });
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = ex.InnerException?.Message ?? ex.Message;
+                Eduegate.Logger.LogHelper<string>.Fatal($"Push notification failed. Error: {errorMessage}", ex);
+                return StatusCode(500, new { success = false, message = errorMessage });
+            }
+        }
+
+    }
+}

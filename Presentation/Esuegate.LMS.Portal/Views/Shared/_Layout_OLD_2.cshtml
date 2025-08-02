@@ -1,0 +1,166 @@
+﻿@{
+    var client = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENTINSTANCE");
+    var clientFullName = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENT_FULL_NAME");
+}
+
+<!DOCTYPE html>
+<html ng-app="Eduegate.Signup.Portal">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Eduegate.Signup</title>
+
+    <script src="~/Scripts/jquery-3.4.1.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.prettyPhoto.js" asp-append-version="true"></script>
+    <script src="~/Scripts/draggable/draggable.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.custom.js" asp-append-version="true"></script>
+    <script src="~/app/CustomValidation.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js" asp-append-version="true"></script>
+    @* <script src="~/Scripts/bootstrap.js" asp-append-version="true"></script> *@
+    <script src="~/Scripts/bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/respond.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-route.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-animate.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-sanitize.js" asp-append-version="true"></script>
+    <script src="~/Scripts/i18n/angular-locale_en.js" asp-append-version="true"></script>
+    <script src="~/Scripts/tmhDynamicLocale.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-filter.min.js" asp-append-version="true"></script>
+
+    <script src="~/app/app.js" asp-append-version="true"></script>
+    <script src="~/app/CustomValidation.js" asp-append-version="true"></script>
+    <script src="~/app/print.min.js" asp-append-version="true"></script>
+    <script src="~/app/ReportController.js" asp-append-version="true"></script>
+    <script src="~/app/schedule.js" asp-append-version="true"></script>
+    <script src="~/app/util.js" asp-append-version="true"></script>
+
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Content/Site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Content/styles-gray.css" asp-append-version="true" />
+
+    <link href="~/Content/dashboard/dashboard.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/Content/dashboard/docs.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/Content/dashboard/style.bundle.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/Content/datatables.bundle.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/Content/fullcalendar.bundle.css" rel="stylesheet" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Content/Style.css" asp-append-version="true" />
+
+    <script type="text/javascript" src="~/Scripts/Chart.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/Scripts/datatables.bundle.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/Scripts/fullcalendar.bundle.js" asp-append-version="true"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet" type="text/css" asp-append-version="true" />
+
+    <script src="~/app/utility.js" asp-append-version="true"></script>
+
+    <script src="~/Scripts/anime.min.js" asp-append-version="true"></script>
+
+    <script src="~/Scripts/site.js" asp-append-version="true"></script>
+    @*<script src="~/Content/dashboard/dashboard.js" asp-append-version="true"></script>*@
+    <script src="~/Scripts/Custom.js"></script>
+
+    <script src="~/app/Controller/LayoutController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/LayoutHeaderController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/login-controller.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/ResetController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/SignupController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/MeetingRequestListController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/MeetingRequestController.js" asp-append-version="true"></script>
+
+    <script src="~/Scripts/moment.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-moment.min.js" asp-append-version="true"></script>
+
+</head>
+<body>
+    <div style="text-align:center;" class="pt-1">
+        @await Html.PartialAsync("~/Views/Shared/_GlobalInfoMessage.cshtml")
+    </div>
+    <div id="layout" ng-controller="LayoutHeaderController" ng-init="Init()">
+        <div class="header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <!-- Search Box -->
+                <circle cx="24" cy="24" r="24" fill="white" />
+                <path d="M22.8741 14C28.3182 14 32.7483 18.4366 32.7483 23.8807C32.7483 26.3076 31.8645 28.5291 30.4062 30.2505L35.75 35.5943C35.8283 35.67 35.8908 35.7607 35.9338 35.8609C35.9767 35.9611 35.9992 36.0688 36 36.1779C36.0008 36.2869 35.9798 36.3949 35.9383 36.4957C35.8968 36.5965 35.8356 36.688 35.7583 36.7649C35.681 36.8417 35.5892 36.9024 35.4881 36.9433C35.3871 36.9843 35.2789 37.0047 35.1699 37.0033C35.0609 37.0019 34.9533 36.9788 34.8533 36.9353C34.7533 36.8918 34.6631 36.8289 34.5877 36.7501L29.2472 31.4095C27.5255 32.8691 25.3022 33.7548 22.8741 33.7548C17.43 33.7548 12.9999 29.3247 12.9999 23.8807C12.9999 18.4366 17.43 14 22.8741 14ZM22.8741 15.7242C18.3592 15.7242 14.7176 19.3658 14.7176 23.8807C14.7176 28.3956 18.3592 32.0355 22.8741 32.0355C27.389 32.0355 31.0306 28.3956 31.0306 23.8807C31.0306 19.3658 27.389 15.7242 22.8741 15.7242Z" fill="#696969" />
+            </svg>&emsp;&emsp;
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+
+                <!-- Notification -->
+                <circle cx="24" cy="24" r="24" fill="white" />
+                <path d="M35.6302 29.9357C35.3715 29.4737 35.0572 29.0116 34.7061 28.5218C33.8704 27.4783 33.2912 26.2533 33.0149 24.9453L32.6267 19.4929C32.3957 15.2695 29.9282 11 25.021 11H22.9694C18.0622 11 15.5763 15.2696 15.3267 19.4837L14.9386 24.9453C14.6635 26.2649 14.0844 27.5022 13.2474 28.5588C12.9332 29.0393 12.619 29.4829 12.4064 29.8988C12.1783 30.2049 12.0402 30.5687 12.0075 30.9491C11.9749 31.3295 12.049 31.7115 12.2216 32.052C12.423 32.4097 12.7197 32.7044 13.0786 32.9035C13.4376 33.1025 13.8447 33.1981 14.2547 33.1795H21.3891C21.2371 33.5982 21.1883 34.0475 21.2468 34.4891C21.3052 34.9307 21.4692 35.3518 21.7249 35.7166C21.9806 36.0814 22.3204 36.3792 22.7156 36.5848C23.1108 36.7904 23.5497 36.8978 23.9952 36.8978C24.4407 36.8978 24.8796 36.7904 25.2748 36.5848C25.67 36.3792 26.0099 36.0814 26.2656 35.7166C26.5212 35.3518 26.6853 34.9307 26.7437 34.4891C26.8021 34.0475 26.7533 33.5982 26.6013 33.1795H33.7357C34.1495 33.1945 34.5593 33.0934 34.9186 32.8876C35.2779 32.6818 35.5724 32.3796 35.7688 32.0151C35.9416 31.6899 36.0201 31.323 35.9956 30.9557C35.9711 30.5883 35.8446 30.2351 35.6302 29.9357ZM24.9194 34.1036C24.9194 34.2864 24.8652 34.4651 24.7636 34.6171C24.6621 34.769 24.5177 34.8875 24.3489 34.9574C24.18 35.0274 23.9942 35.0457 23.8149 35.01C23.6357 34.9744 23.471 34.8863 23.3418 34.7571C23.2125 34.6278 23.1245 34.4632 23.0888 34.2839C23.0532 34.1047 23.0715 33.9188 23.1414 33.75C23.2114 33.5811 23.3298 33.4368 23.4818 33.3352C23.6338 33.2337 23.8124 33.1795 23.9952 33.1795C24.2403 33.1795 24.4754 33.2768 24.6487 33.4502C24.822 33.6235 24.9194 33.8585 24.9194 34.1036ZM34.1608 31.1741C34.1608 31.248 34.0037 31.3312 33.7727 31.3312H14.2547C14.0237 31.3312 13.9036 31.248 13.8666 31.1741C13.8296 31.1002 13.8666 30.9985 13.959 30.8506C14.2085 30.4255 14.495 29.9819 14.7907 29.5383C15.7149 28.2076 16.639 26.692 16.7777 25.0747L17.175 19.613C17.3691 16.4894 19.0048 12.8483 22.9694 12.8483H25.021C28.9856 12.8483 30.6213 16.4894 30.8154 19.6223L31.2128 25.0747C31.3237 26.7105 32.3125 28.2076 33.2367 29.5383C33.5324 29.9819 33.8189 30.4625 34.1146 30.9338C34.144 30.9655 34.164 31.0048 34.1721 31.0473C34.1803 31.0898 34.1764 31.1337 34.1608 31.1741Z" fill="#696969" />
+                <circle cx="30" cy="13" r="4" fill="#B43A3A" />
+            </svg>&emsp;&emsp;
+            <div class="profileTabHeader p-2">
+                <svg class="profilePhoto" width="41" height="41" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <circle id="Ellipse" cx="20.5" cy="20.5" r="20.5" fill="url(#pattern0_145_139)" />
+                    <defs>
+                        <pattern id="pattern0_145_139" patternContentUnits="objectBoundingBox" width="1" height="1">
+                            <use xlink:href="#image0_145_139" transform="translate(-0.00251256) scale(0.00502513)" />
+                        </pattern>
+                        <image id="image0_145_139" width="200" height="199" xlink:href="data:image/png;base64,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" />
+                    </defs>
+                </svg>
+                <div class="profileInfo">
+                    <label class="pt-4">{{HeaderInfoModel.LoginEmailID}}</label>
+                    <p class="headerMail"><span ng-if="HeaderInfoModel.LoginUserID">(<span ng-bind="HeaderInfoModel.LoginUserID"></span>)</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar">
+            <img class="signup-icon" src="~/Clients/@client/Images/signup-logo.png" />
+            <div class="pt-10">
+                <a class="menu-link" href="~/">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+                        <path d="M7.32287 0H1.38537C0.621437 0 0 0.621437 0 1.38537V4.94787C0 5.71194 0.621437 6.33338 1.38537 6.33338H7.32287C8.08694 6.33338 8.70838 5.71194 8.70838 4.94787V1.38537C8.70838 0.621437 8.08694 0 7.32287 0Z" fill="#8964D8" />
+                        <path d="M7.32287 7.91663H1.38537C0.621437 7.91663 0 8.53806 0 9.30214V17.6146C0 18.3786 0.621437 19 1.38537 19H7.32287C8.08694 19 8.70838 18.3786 8.70838 17.6146V9.30214C8.70838 8.53806 8.08694 7.91663 7.32287 7.91663Z" fill="#8964D8" />
+                        <path d="M17.6145 12.6666H11.677C10.9129 12.6666 10.2915 13.2881 10.2915 14.0521V17.6146C10.2915 18.3786 10.9129 19 11.677 19H17.6145C18.3784 19 18.9999 18.3786 18.9999 17.6146V14.0521C18.9999 13.2881 18.3784 12.6666 17.6145 12.6666Z" fill="#8964D8" />
+                        <path d="M17.6145 0H11.677C10.9129 0 10.2915 0.621437 10.2915 1.38537V9.69787C10.2915 10.4619 10.9129 11.0834 11.677 11.0834H17.6145C18.3784 11.0834 18.9999 10.4619 18.9999 9.69787V1.38537C18.9999 0.621437 18.3784 0 17.6145 0Z" fill="#8964D8" />
+                    </svg>
+                    &ensp; Home
+                </a>
+                <a class="menu-link" href="#" ng-click="MeetingRequestTabClick()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="21" height="18" viewBox="0 0 21 18" fill="none">
+                        <path d="M10.8036 10.832C13.3425 9.13831 14.0278 5.70694 12.3341 3.16781C10.6403 0.628849 7.20912 -0.0564002 4.67016 1.63726C2.13105 3.33107 1.4458 6.76229 3.13945 9.30141C3.54384 9.90751 4.06406 10.4276 4.67016 10.832C1.93558 11.4857 0.00480653 13.9278 0 16.7395C0 17.0447 0.247375 17.2922 0.552588 17.2922H14.921C15.2262 17.2922 15.4738 17.0449 15.4738 16.7395C15.4688 13.9278 13.5382 11.4857 10.8036 10.832ZM3.31585 6.2395C3.31585 3.79795 5.29517 1.81846 7.73688 1.81846C10.1784 1.81846 12.1579 3.79795 12.1579 6.2395C12.1579 8.68121 10.1786 10.6605 7.73688 10.6605C5.29629 10.6578 3.31857 8.68009 3.31585 6.2395ZM1.1361 16.1869C1.42032 13.671 3.54704 11.7689 6.07895 11.7659H9.39464C11.9266 11.7689 14.0533 13.671 14.3377 16.1869H1.1361Z" fill="#515151" />
+                        <path d="M20.4474 8.45002H18.7895V6.79225C18.7895 6.48704 18.5421 6.2395 18.2369 6.2395C17.9315 6.2395 17.6841 6.48688 17.6841 6.79225V8.45002H16.0262C15.721 8.45002 15.4736 8.69756 15.4736 9.00277C15.4736 9.30798 15.721 9.55536 16.0262 9.55536H17.6841V11.2133C17.6841 11.5185 17.9315 11.7659 18.2369 11.7659C18.5421 11.7659 18.7895 11.5185 18.7895 11.2133V9.55536H20.4474C20.7526 9.55536 21 9.30798 21 9.00277C21 8.69756 20.7526 8.45002 20.4474 8.45002Z" fill="#515151" />
+                    </svg>
+                    &ensp; Meeting Requests
+                </a>
+                <a class="menu-link" href="#" ng-click="AccountTabClick()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M9.84371 4.20203C7.98486 4.20203 6.47241 5.71448 6.47241 7.57364C6.47241 9.43248 7.98486 10.9453 9.84371 10.9453C11.7025 10.9453 13.215 9.43248 13.215 7.57364C13.215 5.71448 11.7025 4.20203 9.84371 4.20203ZM9.84371 9.63243C8.70841 9.63243 7.78491 8.70893 7.78491 7.57364C7.78491 6.43834 8.70841 5.51453 9.84371 5.51453C10.979 5.51453 11.9025 6.43834 11.9025 7.57364C11.9025 8.70895 10.979 9.63243 9.84371 9.63243Z" fill="#515151" />
+                        <path d="M9.83798 0.161987C4.41335 0.161987 0 4.57533 0 9.99997C0 13.0189 1.3693 15.7215 3.51645 17.5275C3.51797 17.5288 3.51921 17.5302 3.52074 17.5314C5.23138 18.9686 7.43412 19.838 9.83798 19.838C13.2631 19.838 16.3893 18.1031 18.2004 15.1974C19.1732 13.6388 19.6875 11.8412 19.6875 9.99997C19.6875 8.15811 19.1732 6.36079 18.2007 4.80252C16.3893 1.89682 13.2631 0.161987 9.83798 0.161987ZM4.71071 16.7951C4.94903 16.188 5.30295 15.6313 5.76173 15.1731C6.66343 14.2714 7.86442 13.7747 9.14424 13.7747H10.5429C12.5199 13.7747 14.2745 15.0078 14.9719 16.8108C13.5173 17.9082 11.7322 18.5254 9.83798 18.5254C7.91225 18.5255 6.13961 17.8761 4.71071 16.7951ZM17.0869 14.5027C16.7739 15.0049 16.4046 15.4542 16.008 15.8718C15.0094 13.8229 12.8917 12.4622 10.5429 12.4622H9.14424C7.51387 12.4622 5.98283 13.0954 4.83375 14.2451C4.35915 14.7193 3.97615 15.2779 3.68235 15.8825C2.21812 14.351 1.3125 12.281 1.3125 9.99997C1.3125 5.29888 5.13689 1.47449 9.83798 1.47449C12.8068 1.47449 15.5167 2.97828 17.0872 5.4969C17.9296 6.84721 18.375 8.40421 18.375 9.99997C18.375 11.5957 17.9296 13.1524 17.0869 14.5027Z" fill="#515151" />
+                    </svg>
+                    &ensp; Account
+                </a>
+
+                <div style="padding-top: 20rem !important;">
+                    <a class="menu-link" ng-click="SettingTabClick()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" fill="none">
+                            <path d="M11.48 21H9.52C8.85763 21 8.2985 20.5039 8.21975 19.845L8.01062 18.2035C7.59325 18.0679 7.19075 17.9008 6.80838 17.7056L5.50113 18.7215C4.97088 19.1319 4.2245 19.0846 3.76425 18.6112L2.38613 17.2331C1.91625 16.7773 1.869 16.0309 2.27938 15.5015L3.29525 14.1934C3.09925 13.811 2.93213 13.4085 2.79737 12.9911L1.15237 12.782C0.496125 12.7015 0 12.1424 0 11.48V9.52C0 8.85763 0.496125 8.2985 1.155 8.21975L2.7965 8.01062C2.93213 7.59325 3.09925 7.19075 3.29438 6.80838L2.27938 5.50113C1.86812 4.97088 1.91625 4.22363 2.3905 3.76338L3.76863 2.38525C4.2245 1.91538 4.97175 1.869 5.50025 2.2785L6.8075 3.29525C7.18988 3.10013 7.59237 2.933 8.01062 2.79737L8.21975 1.15237C8.2985 0.496125 8.85763 0 9.52 0H11.48C12.1424 0 12.7015 0.496125 12.7802 1.155L12.9894 2.7965C13.4076 2.93213 13.8101 3.09925 14.1925 3.29438L15.4998 2.2785C16.0309 1.86813 16.7764 1.91537 17.2366 2.38963L18.6147 3.76775C19.0846 4.22363 19.1319 4.97 18.7215 5.49937L17.7056 6.8075C17.9016 7.18988 18.0688 7.59238 18.2035 8.00975L19.8485 8.21887C20.5039 8.2985 21 8.85763 21 9.52V11.48C21 12.1424 20.5039 12.7015 19.845 12.7802L18.2035 12.9894C18.0679 13.4068 17.9008 13.8092 17.7056 14.1916L18.7215 15.4989C19.1327 16.0291 19.0846 16.7755 18.6104 17.2358L17.2323 18.6139C16.7764 19.0837 16.0291 19.1319 15.5006 18.7206L14.1925 17.7048C13.8101 17.9007 13.4076 18.0679 12.9902 18.2026L12.7811 19.8476C12.7015 20.5039 12.1424 21 11.48 21ZM6.76375 16.7475C6.83638 16.7475 6.91075 16.7659 6.97725 16.8026C7.45937 17.0721 7.98175 17.2891 8.5295 17.4466C8.6975 17.4947 8.82088 17.6383 8.84275 17.8115L9.08775 19.7365C9.114 19.9561 9.30387 20.125 9.52 20.125H11.48C11.6961 20.125 11.886 19.9561 11.9114 19.7409L12.1573 17.8124C12.1791 17.6391 12.3025 17.4956 12.4705 17.4475C13.0182 17.29 13.5406 17.073 14.0227 16.8035C14.1759 16.7178 14.3666 16.7326 14.504 16.8403L16.0352 18.0303C16.2111 18.1667 16.4579 18.1554 16.6084 18.0005L17.9953 16.6136C18.1536 16.4596 18.1659 16.2129 18.0294 16.0361L16.8394 14.5049C16.7318 14.3666 16.7169 14.1768 16.8026 14.0236C17.0721 13.5415 17.2891 13.0191 17.4466 12.4714C17.4947 12.3034 17.6383 12.18 17.8115 12.1581L19.7365 11.9131C19.9561 11.886 20.125 11.6961 20.125 11.48V9.52C20.125 9.30387 19.9561 9.114 19.7409 9.08862L17.8124 8.84275C17.6391 8.82088 17.4956 8.6975 17.4475 8.5295C17.29 7.98175 17.073 7.45937 16.8035 6.97725C16.7178 6.82412 16.7318 6.63425 16.8403 6.496L18.0303 4.96475C18.1676 4.788 18.1554 4.54125 18.0014 4.3925L16.6145 3.00563C16.4614 2.84637 16.2137 2.83412 16.037 2.9715L14.5057 4.1615C14.3666 4.26912 14.1768 4.284 14.0236 4.19825C13.5433 3.92875 13.0209 3.71262 12.4714 3.55425C12.3034 3.50612 12.18 3.36262 12.1581 3.18937L11.9131 1.26438C11.886 1.04388 11.6961 0.875 11.48 0.875H9.52C9.30387 0.875 9.114 1.04387 9.08862 1.25912L8.84275 3.18762C8.82088 3.36087 8.6975 3.50437 8.5295 3.55337C7.98 3.71087 7.45762 3.92788 6.97725 4.1965C6.82412 4.28312 6.63425 4.26737 6.49512 4.16062L4.96387 2.97062C4.78712 2.83325 4.54125 2.8455 4.39162 2.9995L3.00475 4.38725C2.84637 4.54125 2.83413 4.788 2.97062 4.96475L4.16062 6.496C4.26825 6.63425 4.28312 6.82412 4.19737 6.97725C3.927 7.45937 3.71087 7.98175 3.55337 8.5295C3.50525 8.6975 3.36175 8.82088 3.1885 8.84275L1.2635 9.08775C1.04387 9.114 0.875 9.30387 0.875 9.52V11.48C0.875 11.6961 1.04387 11.886 1.25912 11.9114L3.18762 12.1573C3.36087 12.1791 3.50437 12.3025 3.5525 12.4705C3.71 13.0182 3.927 13.5406 4.1965 14.0227C4.28225 14.1759 4.26825 14.3658 4.15975 14.504L2.96975 16.0352C2.83238 16.212 2.84462 16.4587 2.99863 16.6075L4.3855 17.9944C4.53863 18.1528 4.7845 18.165 4.963 18.0285L6.49425 16.8385C6.57387 16.779 6.66838 16.7475 6.76375 16.7475Z" fill="#515151" />
+                            <path d="M10.5 14.875C8.08763 14.875 6.125 12.9124 6.125 10.5C6.125 8.08763 8.08763 6.125 10.5 6.125C12.9124 6.125 14.875 8.08763 14.875 10.5C14.875 12.9124 12.9124 14.875 10.5 14.875ZM10.5 7C8.56975 7 7 8.56975 7 10.5C7 12.4303 8.56975 14 10.5 14C12.4303 14 14 12.4303 14 10.5C14 8.56975 12.4303 7 10.5 7Z" fill="#515151" />
+                        </svg>
+                        &ensp; Settings
+                    </a>
+                    <a class="menu-link" ng-click="Signout()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right svgMenulink" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
+                            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+                        </svg>
+                        &ensp; Log out
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            @RenderBody()
+        </div>
+        <div class="footer">
+            &copy; @clientFullName
+        </div>
+
+        @* @RenderSection("Scripts", required: false) *@
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,120 @@
+﻿@model System.Reflection.PropertyInfo
+@using Eduegate.Framework.Mvc.Attributes
+@using System.Reflection;
+@using Eduegate.Framework.Mvc.Attributes;
+@using Eduegate.Framework.Mvc.HtmlHelpers;
+
+@{
+    var select2Details = (Select2Attribute)Model.GetCustomAttributes(typeof(Select2Attribute)).FirstOrDefault();
+    var lazyLoad = (LazyLoadAttribute)Model.GetCustomAttributes(typeof(LazyLoadAttribute)).FirstOrDefault();
+    string validationString = ViewBag.ModelAttributes;
+
+    if (lazyLoad != null)
+    {
+        if (select2Details.IsFreeText)
+        {
+            <ui-select @(select2Details.IsMultiple ? "multiple" : string.Empty) tagging="@(select2Details.IsTagUpper ? "tagTransform" : "tagTransformExact")" style="width: 100%;"
+                       on-select="UniqueTag($item)" ng-model="@ViewBag.RowName.@Model.Name"
+                       ng-init="FieldSettings('@Model.Name', @ViewBag.RowName, $select, $select)"
+                       theme="select2" class="pos-txt" ng-change='@(select2Details.IsFreeText)' sortable="true">
+                <ui-select-match placeholder="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("SelectNew/Existtag...")">{{$item.Value}}</ui-select-match>
+                <ui-select-choices repeat="data in @(string.IsNullOrEmpty(lazyLoad.DynamicDataSource) ? lazyLoad.BindingPrefix : lazyLoad.DynamicDataSource) track by $index"
+                                   refresh="RefreshSelect2('@lazyLoad.DataUrl',$select, '@lazyLoad.BindingPrefix', @ViewBag.RowName, @lazyLoad.IsLoadOnce.ToString().ToLower())"
+                                   refresh-delay="50">{{data.Value}}</ui-select-choices>
+            </ui-select>
+        }
+        else
+        {
+            if (select2Details.IsChangeEventRequired)
+            {
+                <ui-select @(select2Details.IsMultiple ? "multiple" : string.Empty) style="width: 100%;" ng-model="@ViewBag.RowName.@Model.Name" theme="select2" class="pos-txt"
+                           on-select="onSelected($select)"
+                           ng-init="FieldSettings('@Model.Name', @ViewBag.RowName, $select)"
+                           ng-change="@(string.IsNullOrEmpty(select2Details.OnSelectChangeEvent) ? "OnChangeProductSelect2" : select2Details.OnSelectChangeEvent)('@select2Details.ValueField', '@select2Details.DataType', $select, '@(select2Details.IsMultiple ? "multiple" : "single")', @ViewBag.RowName, $index+1);"
+                           @(Html.Raw(select2Details.OptionalAttribute1)) sortable="true">
+                    <ui-select-match placeholder="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Search")">{{@(select2Details.IsMultiple ? "$item" : "$select.selected").Value}}</ui-select-match>
+                    <ui-select-choices repeat="data in @(string.IsNullOrEmpty(lazyLoad.DynamicDataSource) ? lazyLoad.BindingPrefix : lazyLoad.DynamicDataSource) @(lazyLoad.IsLoadOnce ? "| filter:$select.search" : "track by $index")"
+                                       refresh="RefreshSelect2('@lazyLoad.DataUrl',$select, '@lazyLoad.BindingPrefix', @ViewBag.RowName, @lazyLoad.IsLoadOnce.ToString().ToLower())"
+                                       refresh-delay="50">{{data.Value}}</ui-select-choices>
+                </ui-select>
+            }
+            else
+            {
+                <ui-select @(select2Details.IsMultiple ? "multiple" : string.Empty) style="width: 100%;" ng-model="@ViewBag.RowName.@Model.Name" theme="select2" class="pos-txt"
+                           ng-init="FieldSettings('@Model.Name', @ViewBag.RowName, $select)"
+                           on-select="onSelected($select)" @(Html.Raw(select2Details.OptionalAttribute1)) sortable="true">
+                    <ui-select-match placeholder="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Search")">{{@(select2Details.IsMultiple ? "$item" : "$select.selected").Value}}</ui-select-match>
+                    <ui-select-choices repeat="data in @(string.IsNullOrEmpty(lazyLoad.DynamicDataSource) ? lazyLoad.BindingPrefix: lazyLoad.DynamicDataSource) @(lazyLoad.IsLoadOnce ? "| filter:$select.search" : "track by $index")"
+                                       refresh="RefreshSelect2('@lazyLoad.DataUrl',$select, '@lazyLoad.BindingPrefix', @ViewBag.RowName, @lazyLoad.IsLoadOnce.ToString().ToLower())"
+                                       refresh-delay="50">{{data.Value}}</ui-select-choices>
+                </ui-select>
+            }
+        }
+
+        <input type="hidden" class="val_input" value="{{@ViewBag.RowName.@Model.Name}}" @Html.GetValidationAttributes(validationString, string.Empty) @Html.Raw((select2Details.OptionalAttribute1))>
+        @Html.ValidationMessage(Model.Name, new { @ng_show = (ViewBag.RowName) + "." + Model.Name + " == null" })
+    }
+    else if (select2Details.IsFreeText)
+    {
+        var select2lookUpType = (LookUpAttribute)Model.GetCustomAttributes(typeof(LookUpAttribute)).FirstOrDefault();
+
+        <ui-select multiple tagging="@(select2Details.IsTagUpper ? "tagTransform" : "tagTransformExact")" style="width: 100%;" on-select="UniqueTag($item)" ng-model="@ViewBag.RowName.@Model.Name"
+                   ng-init="FieldSettings('@Model.Name', @ViewBag.RowName, $select)"
+                   theme="select2" class="pos-txt" ng-disabled="disabled" @(Html.Raw(select2Details.OptionalAttribute1)) sortable="true">
+            <ui-select-match placeholder="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("SelectNew/Existtag...")">{{$item.Value}}</ui-select-match>
+            <ui-select-choices repeat="tag in @select2lookUpType.DataSource | propsFilter: {Value: $select.search}">
+                <div ng-bind-html="tag.Value | highlight: $select.search"></div>
+            </ui-select-choices>
+        </ui-select>
+        <input type="hidden" class="val_input" value="{{@ViewBag.RowName.@Model.Name}}" @Html.GetValidationAttributes(validationString, string.Empty) @Html.Raw((select2Details.OptionalAttribute1))>
+        @Html.ValidationMessage(Model.Name, new { @ng_show = (ViewBag.RowName) + "." + Model.Name + " == null" })
+    }
+    else
+    {
+        var select2lookUpType = (LookUpAttribute)Model.GetCustomAttributes(typeof(LookUpAttribute)).FirstOrDefault();
+
+        if (select2Details.IsChangeEventRequired)
+        {
+            <ui-select @(select2Details.IsMultiple ? "multiple" : string.Empty) style="width: 100%;" ng-model="@ViewBag.RowName.@Model.Name"
+                       ng-init="FieldSettings('@Model.Name', @ViewBag.RowName, $select)"
+                       theme="select2" class="pos-txt" ng-change="@(string.IsNullOrEmpty(select2Details.OnSelectChangeEvent) ?
+                       "OnChangeSelect2('" + select2Details.ValueField + "', '" +  select2Details.DataType + "', $select, '" +
+                       (select2Details.IsMultiple ? "multiple" : "single") + "');" : "" + select2Details.OnSelectChangeEvent + "")" 
+                       @(Html.Raw(select2Details.OptionalAttribute1)) sortable="true">
+                <ui-select-match placeholder="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Search")">{{@(select2Details.IsMultiple ? "$item" : "$select.selected").Value}}</ui-select-match>
+                <ui-select-choices repeat="data in @select2lookUpType.DataSource | filter:$select.search">{{data.Value}}</ui-select-choices>
+            </ui-select>
+        }
+        else
+        {
+            <ui-select @(select2Details.IsMultiple ? "multiple" : string.Empty) style="width: 100%;" ng-model="@ViewBag.RowName.@Model.Name"
+                       ng-init="FieldSettings('@Model.Name', @ViewBag.RowName, $select)"
+                       theme="select2" class="pos-txt" @(Html.Raw(select2Details.OptionalAttribute1)) sortable="true">
+                <ui-select-match placeholder="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Search")">{{@(select2Details.IsMultiple ? "$item" : "$select.selected").Value}}</ui-select-match>
+                <ui-select-choices repeat="data in @select2lookUpType.DataSource | filter:$select.search">{{data.Value}}</ui-select-choices>
+            </ui-select>
+        }
+        <input type="hidden" class="val_input" value="{{@ViewBag.RowName.@Model.Name}}" @Html.GetValidationAttributes(validationString, string.Empty) @Html.Raw((select2Details.OptionalAttribute1))>
+        @Html.ValidationMessage(Model.Name, new { @ng_show = (ViewBag.RowName) + "." + Model.Name + " == null" })
+    }
+
+
+    var quickView = (QuickSmartViewAttribute)Model.GetCustomAttributes(typeof(QuickSmartViewAttribute)).FirstOrDefault();
+
+    if (quickView != null)
+    {
+        <a class="button-orange detailviews" href="#" title="View Details" ng-click="ShowQuickSmartView('@quickView.ViewName', @ViewBag.RowName.@(Model.Name).Key)">
+            <i class="fa fa-ellipsis-h"></i>
+        </a>
+    }
+
+
+    var quickCreateView = (QuickCreateAttribute)Model.GetCustomAttributes(typeof(QuickCreateAttribute)).FirstOrDefault();
+
+    if (quickCreateView != null)
+    {
+        <a class="button-orange" href="#" title="Quick Create" ng-click="Create('@quickCreateView.ViewName')">
+            <i class="fa fa-plus"></i>
+        </a>
+    }
+}

@@ -1,0 +1,31 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+    var documentTypeID = Model.GetParameterValue<string>("DocumentTypeID");
+}
+
+<div id="@windowName" template="_TransactionCount" ng-controller="BoilerPlateController" 
+     ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+ 
+    <div class="fullWidth widget card card-1">
+       
+        <div ng-controller="TransactionCountBoilerPlateController"
+             ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName', '@(documentTypeID)',@(Model.GetParameterValue<string>("DateFrom")),@(Model.GetParameterValue<string>("DateTo")), @(Model.GetParameterValue<bool>("IsLive").ToString().ToLower()))"
+             class="fullwidth alignleft">
+            <i class="bg-icon text-center fa fa-cart-arrow-down"></i>
+            <div class="fullwidth alignleft statusTitle textcenter"><h5>@(Model.GetParameterValue<string>("Header1"))</h5></div>
+            <div class="statusfield">
+                <h4>@(Model.GetParameterValue<string>("Header2"))</h4>
+                <label ng-bind="TransactionDetails.TransactionCount">0</label>
+            </div>
+            <div class="statusfield">
+                <h4>@(Model.GetParameterValue<string>("Header3"))</h4>
+                <label ng-bind="TransactionDetails.Amount">0</label>
+            </div>
+        </div>
+        
+    </div>
+</div>
+    

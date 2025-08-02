@@ -1,0 +1,74 @@
+﻿@model Eduegate.Web.Library.ViewModels.CRUDViewModel
+@using Eduegate.Framework.Mvc.Attributes
+@using System.Reflection;
+@using Eduegate.Framework.Mvc.Attributes;
+@using Eduegate.Framework.Extensions;
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+    var container = (ContainerTypeAttribute)Model.ViewModel.GetType().GetCustomAttribute(typeof(ContainerTypeAttribute));
+}
+<div class="windowcontainer" id="@(Model.IID == 0 && string.IsNullOrEmpty(Model.IID2) ? "Create" : "Edit")@(Model.Name)">
+    <div id="@windowName">
+        <form id="crud@(Model.Name)_form">
+            <div class="wrapperdiv" id="crud@(Model.Name)" ng-app="CRUDAPP" ng-controller="@(string.IsNullOrEmpty(Model.JsControllerName) ? "CRUDOldController" : Model.JsControllerName) as CRUD" data-ng-init="Init('@windowName',@Newtonsoft.Json.JsonConvert.SerializeObject(Model), '@Model.Name', @(!string.IsNullOrEmpty(Model.IID2) ? "'" + Model.IID2 + "'" : Model.IID.ToString()))">
+
+                <div class="window-tab preload-overlay" style="display:block;">
+                    <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+                </div>
+
+                @{
+                    await Html.RenderPartialAsync("~/Views/CRUDOld/MasterHeader.cshtml", Model);
+                }
+
+                <center> <span id="Load" class="fa fa-spinner fa-pulse waypoint" style="font-size:40px; display:none"></span></center>
+
+                @*TODO: Javascript should move to angular binding or Javascript*@
+                <script>
+                    $(function () {
+                        $('body').on('click', function (e) {
+                            if ($(e.target).closest('.quickviewpanel').length === 0 && $(e.target).closest('ul.squick-view li').length === 0 && $(e.target).closest('.detailviews').length === 0) {
+                                $('.quickviewpanel').removeClass('slide');
+                                $('ul.squick-view li').removeClass('active');
+                            }
+                        });
+
+                        $('.popup.fl-advsearch').draggable({
+                            handle: ".productcreteheader"
+                        });
+                    });
+                </script>
+
+                @{
+                    await Html.RenderPartialAsync("~/Views/CRUDOld/QuickSmartViewTemplate.cshtml");
+                }
+
+                <div class="pagecontent" ng-class="{'quick-summary-wrap' : QuickSmartView.length > 0}">
+
+                    @await Html.PartialAsync("~/Views/Shared/_InfoMessage.cshtml")
+
+                    <div class="pagecontent-inner">
+                        @{
+                            if (Model != null)
+                            {
+                                if (container != null)
+                                {
+                                    await Html.RenderPartialAsync("~/Views/CRUDOld/BuildContainerFrame.cshtml", Model);
+                                }
+                            }
+
+                            await Html.RenderPartialAsync("~/Views/CRUDOld/BuildContainerContent.cshtml", Model);
+                        }
+                    </div>
+
+                    <div id="advanceSearchForCRUD" class="popup fl-advsearch" data-popup-type="flowlayout-advsearch"></div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,282 @@
+﻿@model Eduegate.Web.Library.ViewModels.SupplierViewModel
+
+@{
+    Layout = null;
+}
+
+<div id="CreateSupplier" class="windowcontainer">
+    <div ng-model="SupplierModel" ng-controller="SupplierController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model));">
+        @*<div class="pagenav"><a class="pagenav-leftmargin">Supplier </a>/<a> List </a> /<span> Edit </span></div>*@
+        <div class="pageheader">
+            <span> Supplier Maintenance</span>
+            <div class="alignright menugroup">
+                <div class="button-orange alignright" ng-click="LoadSupplierList();">
+                    <a>
+                        <i class="fa fa-eye"></i>
+                        <span>Supplier List</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="pagecontent">
+            <div class="pagecontent-inner">
+                <div class="pagecontent-column columnleft">
+                    <div class="productcreateleftnav productcreateleftrightmaxheight">
+                        <div class="producttab-space">
+                            <div class="bs-example">
+                                <ul class="nav nav-tabs nav-tabsmobile" id="myTab">
+                                    <li id="liSupplierInfo" class="tab-header active" ng-click="LoadSupplierInfoSection('#liSupplierInfo', true);">
+                                        <a>Supplier Details <span class="toggle-arrow"><i class="fa fa-angle-right" aria-hidden="true"></i></span></a>
+                                        <div ng-show="IsSupplierDetailSection" class="tab-pane fade in active">
+                                            <form name="Supplier" novalidate="novalidate">
+                                                <div class="productcreteheader">Supplier Details</div>
+                                                <div class="panel-body form-horizontal">
+                                                    <div class="container-left alignleft">
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Title</label>
+                                                            <div class="controls brand">
+                                                                <select name="TitleID" ng-model="SupplierModel.TitleID" required>
+                                                                    <option value="" selected="selected">Title*</option>
+                                                                    <option ng-repeat="title in TitleMasters" ng-selected="SupplierModel.TitleID == title.TitleIID" value="{{title.TitleIID}}">{{title.TitleName}}</option>
+                                                                </select>
+                                                                <i class="dropdownarrow fa fa-caret-down"></i>
+                                                                <span class="cufon" style="color: red;" ng-show="submitted && Supplier.TitleID.$error.required">Title is required.</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">First Name</label>
+                                                            <div class="controls">
+                                                                <input name="FirstName" ng-model="SupplierModel.FirstName" type="text" ng-value="SupplierModel.FirstName" required>
+                                                                <span class="cufon" style="color: red;" ng-show="submitted && Supplier.FirstName.$error.required">FirstName is required.</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Middle Name</label>
+                                                            <div class="controls">
+                                                                <input name="MiddleName" ng-model="SupplierModel.MiddleName" type="text" ng-value="SupplierModel.MiddleName">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Last Name</label>
+                                                            <div class="controls">
+                                                                <input name="LastName" ng-model="SupplierModel.LastName" type="text" ng-value="SupplierModel.LastName" required>
+                                                                <span class="cufon" style="color: red;" ng-show="submitted && Supplier.LastName.$error.required">LastName is required.</span>
+                                                            </div>
+                                                        </div>
+
+                                                        @*new field*@
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Vendor CR</label>
+                                                            <div class="controls">
+                                                                <input name="VendorCR" ng-model="SupplierModel.VendorCR" type="text" ng-value="SupplierModel.VendorCR">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">CR Expiry</label>
+                                                            @*<div class="controls">
+                                                                    <input name="CRExpiry" ng-model="SupplierModel.CRExpiry" type="text" ng-value="SupplierModel.CRExpiry">
+                                                                </div>*@
+                                                            <div class="controls datetime_picker">
+
+                                                                <input type="text" id="CRExpiryDatePicker" ng-model="SupplierModel.CRExpiry" class="dpicker form-control" customdatepicker />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">PM Responsible</label>
+                                                            <div class="controls">
+                                                                <ui-select name="KeyValueEmployee" multiple ng-model="SupplierModel.KeyValueEmployees" theme="select2" class="pos-txt" ui-select-required>
+                                                                    <ui-select-match placeholder="Select">{{$item.Value}}</ui-select-match>
+                                                                    <ui-select-choices repeat="employee in employees|filter:$select.search">
+                                                                        {{employee.Value}}
+                                                                    </ui-select-choices>
+                                                                </ui-select>
+                                                                <span class="cufon" style="color: red;" ng-show="submitted && Supplier.KeyValueEmployee.$error.uiSelectRequired">PM is required.</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Vendor Nick name</label>
+                                                            <div class="controls">
+                                                                <input name="VendorNickName" ng-model="SupplierModel.VendorNickName" type="text" ng-value="SupplierModel.VendorNickName">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Company Location</label>
+                                                            <div class="controls">
+                                                                <input name="CompanyLocation" ng-model="SupplierModel.CompanyLocation" type="text" ng-value="SupplierModel.CompanyLocation">
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </li>
+                                    <li class="tab-header" id="liContactInfo" ng-click="LoadContactInfoSection('#liContactInfo', true);">
+                                        <a>Contacts <span class="toggle-arrow"><i class="fa fa-angle-right" aria-hidden="true"></i></span></a>
+                                        <div ng-show="IsContactSection" class="tab-pane fade active in">
+                                            <form name="Contact" novalidate="novalidate">
+                                                <div class="productcreteheader" style="font-size:18px;">Contacts</div>
+                                                <div class="panel-body supplier-contacts" ng-repeat="contact in SupplierModel.Contacts">
+                                                    <div class="container-left options alignleft">
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Building NO</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="BuildingNo" ng-model="contact.BuildingNo" ng-value="contact.BuildingNo" />
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Floor</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="Floor" ng-model="contact.Floor" ng-value="contact.Floor">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Block</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="Block" ng-model="contact.Block" ng-value="contact.Block">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Address Name</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="AddressName" ng-model="contact.AddressName" ng-value="contact.AddressName" required>
+                                                                <span class="cufon" style="color: red;" ng-show="submitted && Contact.AddressName.$error.required">Address name is required.</span>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Address Line1</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="AddressLine1" ng-model="contact.AddressLine1" ng-value="contact.AddressLine1" required>
+                                                                <span class="cufon" style="color: red;" ng-show="submitted && Contact.AddressLine1.$error.required">Address line1 is required.</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Address Line2</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="AddressLine2" ng-model="contact.AddressLine2" ng-value="contact.AddressLine2">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Country</label>
+                                                            <div class="controls brand">
+                                                                <select name="CountryID" ng-model="contact.CountryID" ng-change="CountrySelected(contact, contact.CountryID)" required>
+                                                                    <option value="" selected="selected">Country*</option>
+                                                                    <option ng-repeat="country in CountryMasters" ng-selected="contact.CountryID == country.CountryID" value="{{country.CountryID}}">{{country.CountryName}}</option>
+                                                                </select>
+                                                                <i class="dropdownarrow fa fa-caret-down"></i>
+                                                                <span class="cufon" style="color: red;" ng-show="submitted && Contact.CountryID.$error.required">Country is required.</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">State</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="State" ng-model="contact.State" ng-value="contact.State">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">City</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="City" ng-model="contact.City" ng-value="contact.City" required>
+                                                                <span class="cufon" style="color: red;" ng-show="submitted && Contact.City.$error.required">City is required.</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Postal Code</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="PostalCode" ng-model="contact.PostalCode" ng-value="contact.PostalCode">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Telephone Code</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="TelephoneCode" ng-model="contact.TelephoneCode" ng-value="contact.TelephoneCode" required>
+                                                                <span class="cufon" style="color: red;" ng-show="submitted && Contact.TelephoneCode.$error.required">Telephone Code is required.</span>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Telephone Number</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="TelephoneNumber" ng-model="contact.PhoneNo1" ng-value="contact.PhoneNo1" numbers-only="numbers-only" required>
+                                                                <span class="cufon" style="color: red;" ng-show="submitted && Contact.TelephoneNumber.$error.required">Telephone number is required.</span>
+                                                            </div>
+
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Mobile No 1</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="MobileNo1" ng-model="contact.MobileNo1" ng-value="contact.MobileNo1">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Mobile No 2</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="MobileNo2" ng-model="contact.MobileNo2" ng-value="contact.MobileNo2">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Email</label>
+                                                            <div class="controls">
+                                                                <input type="email" name="AlternateEmailID1" ng-model="contact.AlternateEmailID1" ng-value="contact.AlternateEmailID1" required>
+                                                                <span class="cufon" style="color: red;" ng-show="submitted && Contact.AlternateEmailID1.$error.required">Email is required.</span>
+                                                                <span class="cufon" style="color:red" ng-show="submitted && Contact.AlternateEmailID1.$error.email">Invalid email address!</span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Alternate Email</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="AlternateEmailID2" ng-model="contact.AlternateEmailID2" ng-value="contact.AlternateEmailID2">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group">
+                                                            <label class="addprodleft control-label">Website</label>
+                                                            <div class="controls">
+                                                                <input type="text" name="WebsiteURL1" ng-model="contact.WebsiteURL1" ng-value="contact.WebsiteURL1">
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="submitcreateform" align="center">
+                <button class="submitcreateform-style" type="submit" ng-click="SaveSupplier();">Submit</button>
+                <button class="submitcreateform-style" type="submit" ng-click="LoadSupplierList();">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

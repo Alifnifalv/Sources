@@ -1,0 +1,99 @@
+﻿@using Eduegate.Domain;
+@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+
+@{
+	string model = Model.IsChild ? "ChildModel" : "RowModel";
+	var rowEvent = "\"" + model + ".RowClick('" + (!string.IsNullOrEmpty(Model.ViewFullPath) ? Model.ViewFullPath : string.IsNullOrEmpty(Model.ControllerName) ? Model.ViewName.ToString() : Model.ControllerName)
+				+ "', $index, $event, Row," + (Model.IsDetailedView ? "true" : "false") + "," + (Model.IsReloadSummarySmartViewAlways ? "true" : "false") + ");\"";
+	var imagePath = new Eduegate.Domain.Setting.SettingBL(null).GetSettingValue<string>("ImageHostUrl");
+}
+
+<script>
+	$(function() {
+		$(".grid-sortable", $('#@(ViewBag.WindowName)')).sortable({
+			scroll: true,
+			tolerance: 'pointer',
+			helper: 'original',
+			placeholder: "highlight",
+			over: function(event, ui) {
+				ui.item.data('sortableItem').scrollParent = ui.placeholder.parent();
+				ui.item.data('sortableItem').overflowOffset = ui.placeholder.parent().offset();
+			}
+		});
+	});
+</script>
+
+<div class="table-container">
+	<div class="table-scroller">
+		<ul class="grid-sortable pad10 list-table">
+			<li ng-repeat="Row in @(model).rows" data-rowid="moreDetails1" class="mainrow"
+				ng-click=@(Html.Raw(Model.IsRowClickForMultiSelect ? "\"" + "MultiSelectClick(Row)\"" : rowEvent))>
+				<div id="myDiv" class="pad10 fullwidth fullheight displayBlock boxShadow mainrow-item" style=" height: contain;">
+					@if (Model.IsMultilineEnabled)
+					{
+						<label class="checkboxwrap">
+							<input type="checkbox" data-role="none" ng-model="Row.IsRowSelected" ng-click="@(model).RowSelection($event, Row)">
+							<span class="checkboxinner"></span>
+						</label>
+					}
+
+					@foreach (var cell in Model.HeaderList.Where(a => a.ColumnName != "RowCategory" && a.DataType != "image"))
+					{
+						if (cell.IsVisible)
+						{
+							switch (cell.DataType.ToLower().Trim())
+							{
+								case "datetime":
+									<span ng-bind="Row.@cell.ColumnName  | date:@(model).DateTimeFormat"></span>
+									break;
+								case "date":
+									<span ng-bind="Row.@cell.ColumnName  | date:@(model).DateFormat"></span>
+									break;
+								case "imagecolumn":
+									<a prettyp class="lightbox" ng-href="{{@(model).GetImageUrl('@imagePath',Row.@cell.ColumnName)}}" rel="prettyPhoto[]">
+										<img ng-src="{{@(model).GetImageUrl('@imagePath',Row.@cell.ColumnName)}}" style="width:auto ;height:50px; min-width:60px" />
+									</a>
+									break;
+								default:
+									if (!string.IsNullOrEmpty(cell.ColumnName))
+									{
+										<span class="main" ng-bind="Row.@cell.ColumnName"></span>
+									}
+									break;
+							}
+						}
+						else
+						{
+							<input type="hidden" ng-bind="Row.@cell.ColumnName">
+						}
+					}
+
+					<span style="float:right;display:flex">
+						@foreach (var cell in Model.HeaderList.Where(a => a.DataType == "image" && !string.IsNullOrEmpty(a.Expression)))
+						{
+							<a>
+								<i @Html.Raw(cell.Expression)></i>
+							</a>
+						}
+					</span>
+				</div>
+			</li>
+		</ul>
+		<div>
+			<center ng-if="@(model).IsLoading == true">
+				<i class="content-load fa fa-circle-o-notch fa-pulse waypoint"
+				   style="font-size:20px;"></i>
+			</center>
+			<div ng-if="@(model).rows.length == 0 && @(model).IsLoading == false">
+				<center>
+					<span>No records found!!</span>
+				</center>
+			</div>
+		</div>
+		<div class="transparent-overlay" ng-click="RowModel.ClosePopup($event);"></div>
+		<div class="popup gridpopupfields" data-popup-type="gridpopupfields">
+			<div class="popup-wrap" id="popupContainer">
+			</div>
+		</div>
+	</div>
+</div>

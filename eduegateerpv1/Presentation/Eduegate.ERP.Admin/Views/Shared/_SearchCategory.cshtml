@@ -1,0 +1,36 @@
+﻿
+<div class="productcreteheader">Category<button value="Submit" type="button" class="submitcreateform-style">Next</button></div>
+<div class="panel-body">
+    <div class="form-horizontal">
+        <div class="container-left alignleft">
+            <div class="form-group">
+                <label class="addprodleft control-label">Category<span class="redcolor">*</span></label>
+                <div class="controls">
+                    <ui-select id="ProductCategory" name="ProductCategory" multiple style="width:100%;" ng-model="ProductModel.SelectedCategory" theme="select2" class="pos-txt">
+                        <ui-select-match placeholder="Select Category">{{$item.CategoryName.Text}}</ui-select-match>
+                        <ui-select-choices repeat="categories in availableCategories|filter:$select.search" refresh="GetCategoryList($select.search)"
+                                           refresh-delay="50">{{categories.CategoryName.Text}}</ui-select-choices>
+                    </ui-select>
+                    <span class="cufon" style="color:red" ng-show="submitted && ProductModel.SelectedCategory.length <=0">Category is required</span>
+                    <button class="button-orange addprod-option addcat" title="Add New Category">+</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="addprodleft control-label">Tag</label>
+                <div id="ProductTag" class="controls">
+
+                    <ui-select multiple tagging="tagTransform" on-select="UniqueTag($item)" ng-model="ProductModel.SelectedTags" theme="select2" ng-disabled="disabled" style="width: 100%;">
+                        <ui-select-match placeholder="Select New/Exist tag...">{{$item.TagName}}</ui-select-match>
+                        <ui-select-choices repeat="tag in AvailableTags | propsFilter: {TagName: $select.search}">
+                            <div ng-bind-html="tag.TagName | highlight: $select.search"></div>
+                        </ui-select-choices>
+                    </ui-select>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+

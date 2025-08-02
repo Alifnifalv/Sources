@@ -1,0 +1,26 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div id="@windowName" tempalte="_QuickLaunch" ng-controller="BoilerPlateQuickLanuchController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+    <div class="card card-flush h-xl-100 ng-scope">
+        <div class="card-header">
+            <h3 class="card-title align-items-start flex-column">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Quick Launch")</h3>
+        </div>
+        <div class="card-body">
+            <div id="qiklaunch">
+                <ul id="bxslider1" class="carousel">
+                    <li ng-repeat="menu in DataSource.QuickLaunch">
+                        <a rel="external" data-role="none" ng-click="$root.FireEvent($event, menu.ActionLink,menu.MenuTitle)">
+                            <i class="fa  fa-angle-double-right"></i>
+                            <label>{{menu.MenuTitle}}</label>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

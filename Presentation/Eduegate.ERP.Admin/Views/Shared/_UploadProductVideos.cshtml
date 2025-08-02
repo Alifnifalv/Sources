@@ -1,0 +1,39 @@
+﻿<div class="productcreteheader">Upload Product Videos</div>
+<div class="panel-body">
+    <div class="upload-preview">
+        <form method="post" ng-click="TriggerVideoUploadFile();" action="Product/UploadProductVideos" enctype="multipart/form-data" id="mydropzone" class="dropzone" style="cursor: pointer;">
+            <center> Click here to Upload files</center>
+            <div class="fallback">
+                <input type="file" ng-model="uploadvideoNames" onchange="angular.element(this).scope().UploadVideoFiles(this)" id="UploadVideoFile" multiple accept="video/*">
+            </div>
+        </form>
+        @*<span class="cufon" style="color:red" ng-show="submitted && IsProductImageRequired">Minimum one image is required</span>*@
+        <div class="imgsuploaded">
+            <h2>Preview</h2>
+            @*<input type="submit" value="Upload" class="upload-button button-blue">*@
+            <div class="upload-imgwrap dropzone-previews" id="previews">
+                <div class="dz-preview dz-processing dz-image-preview" ng-repeat="videoInfo in uploadVideosInfo">
+                    <div class="dz-image" style="width:150px;">
+                        <video width="150" controls>
+                            <source ng-src="{{videoInfo.FilePath}}" type="video/*">
+                        </video>
+                        <a class="dz-remove" ng-click="DeleteUploadedVideos(videoInfo);">Cancel upload</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="imgsuploaded uploaded">
+        <h2>Uploaded Videos</h2>
+        <div class="upload-imgwrap dropzone-previews" id="previews">
+            <div class="dz-preview dz-processing dz-image-preview" ng-repeat="uploadedVideo in ProductModel.UploadVideoFiles">
+                <div class="dz-image" style="width:150px;">
+                    <video width="150" controls>
+                        <source ng-src="{{uploadedVideo.FilePath}}" type="video/*">
+                    </video>
+                </div>
+                <a class="dz-remove" ng-click="DeleteUploadedVideos(videoInfo);">Cancel upload</a>
+            </div>
+        </div>
+    </div>
+</div>

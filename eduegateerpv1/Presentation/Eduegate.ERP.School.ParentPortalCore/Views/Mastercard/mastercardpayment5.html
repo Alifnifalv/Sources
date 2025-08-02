@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://test-cbq.mtf.gateway.mastercard.com/checkout/version/61/checkout.js"
+            data-error="errorCallback"
+            data-cancel="cancelCallback"
+            data-complete="completeCallback">
+    </script>
+
+    <script>
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderID = urlParams.get('orderID');
+        const orderRef = urlParams.get('orderRef');
+        const amount = urlParams.get('amount');
+        const customerEmail = urlParams.get('customerEmail');
+        const customerPhone = urlParams.get('customerPhone');
+        const sessionID = urlParams.get('SessionID');
+
+        function errorCallback(error) {
+            //$.ajax({
+            //    type: "POST",
+            //    url: 'https:/testportal.almadinahypermarket.ae:90/MobileAppWrapper/LogService.svc/LogPaymentLog',
+            //    data: JSON.stringify({ 'ResponseLog': +  '"' + JSON.stringify(error) + '"' }),
+            //    complete: function () {
+
+            //    }
+            //});
+            //setTimeout(function () {
+                window.location = "http://testapi.almadinahypermarket.ae:91/ExternalPages/clients/almadina/mastercardpayments/mastercardpayment-cancel.html";
+            //});
+
+        }
+
+        function cancelCallback() {
+            //$.ajax({
+            //    type: "POST",
+            //    url: 'https://testportal.almadinahypermarket.ae:90/MobileAppWrapper/LogService.svc/LogPaymentLog',
+            //    data: { 'RequestLog': 'Payment cancelled!!!', 'TrackID': orderID, 'LogAction': 'Cancel' },
+            //    complete: function () {
+
+            //    }
+            //});
+
+            //setTimeout(function () {
+                window.location = "http://testapi.almadinahypermarket.ae:91/ExternalPages/clients/almadina/mastercardpayments/mastercardpayment-failure.html";
+            //});
+        }
+
+        function completeCallback(data, b) {
+
+            //$.ajax({
+            //    type: "POST",
+            //    url: 'http://localhost/SkienSuite.Services/MobileAppWrapper/LogService.svc/LogPaymentLog',
+            //    data: JSON.stringify({ 'ResponseLog': +  '"' + JSON.stringify(data) + '"', 'TrackID': orderID, 'LogAction': 'Complete' }),
+            //    complete: function () {
+
+            //    }
+            //});
+
+            var data1 = data;
+            var b1 = b;
+
+            //setTimeout(function () {
+                window.location = "http://testapi.almadinahypermarket.ae:91/ExternalPages/clients/almadina/mastercardpayments/mastercardpayment-success.html?data=" + data1 + "&b=" + b1;
+            //});
+        }
+
+        Checkout.configure(
+            {
+                merchant: 'TESTcbq_Podar',
+                order:
+                {
+                    amount: function () {
+                        //Dynamic calculation of amount
+                        return amount;
+                    },
+                    currency: 'QAR',
+                    description: 'Online Order',
+                    id: function () { return orderID; },//Dynamic order id for testing
+                    reference: function () { return orderRef; }
+                },
+
+                interaction:
+                {
+                    merchant:
+                    {
+                        name: 'Podar Pearl',
+                        address: {
+                            line1: 'Al Madina Hypermarket',
+                            line2: 'Abu Dhabi'
+                        },
+                        email: 'hyper@almadingroup@ae',
+                        phone: '025857777',
+                        logo: 'https://parent.pearlschool.org/img/PaymentLogo.png'
+                    },
+                    operation: 'PURCHASE',
+                    displayControl: {
+                        billingAddress: 'HIDE',
+                        shipping: 'HIDE'
+                    }
+                },
+
+                session:
+                {
+                    id: function () { return sessionID; }
+                }
+            });
+    </script>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .standalone {
+            display: flex;
+            height: 100%;
+            width: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo img {
+            max-width: 100px;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="standalone">
+        <div class="logo">
+            <img src="https://parent.pearlschool.org/img/PODARLOGO-01.png" />
+        </div>
+    </div>
+    <script type="text/javascript">
+        Checkout.showPaymentPage();
+    </script>
+</body>
+</html>

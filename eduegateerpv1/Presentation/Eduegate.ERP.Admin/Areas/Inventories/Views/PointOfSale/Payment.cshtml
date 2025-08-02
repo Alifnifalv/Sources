@@ -1,0 +1,120 @@
+﻿
+@{
+    var currencyCode = Eduegate.Framework.Extensions.ConfigurationExtensions.GetAppConfigValue("DEFAUTCURRENCY");
+    int decimalPlaces = 2;
+
+    if (currencyCode == "80")
+    {
+        decimalPlaces = 3;
+    }
+}
+
+<span class="close">X</span>
+<div class="popup-title">Payment</div>
+<div class="paytotal">
+    <span class="subtotal"><label>Total :</label> {{PosModel.Payment.Amount.toFixed(@decimalPlaces)}}</span>
+
+    @if (ViewBag.HASDELIVERY == true)
+    {
+        <span class="amtrecd">
+            <label>Delivery Charge :</label>
+            <input type="text" ng-model="PosModel.DeliveryCharge" valid-decimal ng-blur="getTotalByDeliveryCharge();" />
+        </span>
+    }
+
+    <span class="amtrecd"><label>Amount Received :</label> 
+    <input type="text" id="amountReceived" ng-focus="PosModel.Payment.AmountReceived =  (PosModel.Payment.Amount - PosModel.Payment.AmountPaid).toFixed(@decimalPlaces)" ng-model="PosModel.Payment.AmountReceived" valid-decimal></span>
+    <input type="hidden" value="{{PosModel.Payment.CalcRemainingAmount  = (PosModel.Payment.Amount - PosModel.Payment.AmountPaid - PosModel.Payment.AmountReceived).toFixed(@decimalPlaces)}}" />
+    <input type="hidden" value="{{PosModel.Payment.RemainingAmount  = PosModel.Payment.CalcRemainingAmount >= 0 ? PosModel.Payment.CalcRemainingAmount : 0}}" />
+    <span><label>Balance to be Recieved:</label> {{PosModel.Payment.RemainingAmount.toFixed(@decimalPlaces)}}</span>
+    <input type="hidden" value="{{PosModel.Payment.ReturnAmount =   PosModel.Payment.TotalAmountReceived - PosModel.Payment.Amount}}" />
+    <input type="hidden" value="{{PosModel.Payment.BalanceAmount = PosModel.Payment.ReturnAmount >=0 ? PosModel.Payment.ReturnAmount :0   }}" />
+    <span><label>Balance to be Returned:</label> {{PosModel.Payment.BalanceAmount.toFixed(@decimalPlaces)}}</span>
+
+</div>
+<div class="sub-title">Payment By :</div>
+<div class="payment_options">
+    <span class="inputwrapper">
+        <input type="radio" id="paycash" name="paymethod">
+        <label for="paycash" payment-methodId="@((short)Eduegate.Services.Contracts.Enums.EntityTypeEntitlements.CustomerCash)" payment-method="@(Eduegate.Services.Contracts.Enums.EntityTypeEntitlements.CustomerCash)" ng-click="SubmitPay('paycash');">Cash</label>
+    </span>
+    <span class="inputwrapper">
+        <input type="radio" id="payOnAccount" name="paymethod">
+        <label for="payOnAccount" payment-methodId="@((short)Eduegate.Services.Contracts.Enums.EntityTypeEntitlements.CustomerCredit)" payment-method="@(Eduegate.Services.Contracts.Enums.EntityTypeEntitlements.CustomerCredit)" ng-click="SubmitPay('payOnAccount');">Credit</label>
+    </span>
+
+    <span class="inputwrapper" style="float: right">
+        <label for="payOnAccount" ng-click="ClearPay();">Clear</label>
+    </span>
+
+    @*<span class="inputwrapper">
+            <input type="radio" id="payKNET" name="paymethod">
+            <label for="payKNET" payment-methodId="@((short)Eduegate.Services.Contracts.Enums.PaymentMethodTypes.KNET)" payment-method="@(Eduegate.Services.Contracts.Enums.PaymentMethodTypes.KNET)" ng-click="SubmitPay('payKNET');">KNET</label>
+        </span>
+        <span class="inputwrapper">
+            <input type="radio" id="payVISA" name="paymethod">
+            <label for="payVISA" payment-methodId="@((short)Eduegate.Services.Contracts.Enums.PaymentMethodTypes.VISA)" payment-method="@(Eduegate.Services.Contracts.Enums.PaymentMethodTypes.VISA)" ng-click="SubmitPay('payVISA');">VISA</label>
+        </span>
+        <span class="inputwrapper">
+            <input type="radio" id="payMasterCard" name="paymethod">
+            <label for="payMasterCard" payment-methodId="@((short)Eduegate.Services.Contracts.Enums.PaymentMethodTypes.MasterCard)" payment-method="@(Eduegate.Services.Contracts.Enums.PaymentMethodTypes.MasterCard)" ng-click="SubmitPay('payMasterCard');">Master Card</label>
+        </span>
+        <span class="inputwrapper">
+            <input type="radio" id="payBankTransfer" name="paymethod">
+            <label for="payBankTransfer" payment-methodId="@((short)Eduegate.Services.Contracts.Enums.PaymentMethodTypes.BankTransfer)" payment-method="@(Eduegate.Services.Contracts.Enums.PaymentMethodTypes.BankTransfer)" ng-click="SubmitPay('payBankTransfer');">Bank Transfer</label>
+        </span>
+        <span class="inputwrapper">
+            <input type="radio" id="payCheque" name="paymethod">
+            <label for="payCheque" payment-methodId="@((short)Eduegate.Services.Contracts.Enums.PaymentMethodTypes.Cheque)" payment-method="@(Eduegate.Services.Contracts.Enums.PaymentMethodTypes.Cheque)" ng-click="SubmitPay('payCheque');">Cheque</label>
+        </span>*@
+</div>
+<div id="divPaymentMethods" class="fullwidth alignleft paddingbtm10 divPaymentMethods">
+	<div class="tableHeader col-xs-12 nopadding">
+		<table class="listing currentsale pos">
+			<thead>
+				<tr>
+					<th class="medium-col-width">Payment method</th>
+					<th class="medium-col-width text-right">Amount</th>
+					<th class="medium-col-width">Date</th>
+					<th></th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+	<div class="tableBody col-xs-12 nopadding">
+		<table class="listing currentsale pos">
+			<tbody>
+				<tr ng-repeat="item in PosModel.TransactionPaymentMethods">
+					<td class="medium-col-width">{{item.PaymentMethodName}}</td>
+                    <td class="medium-col-width text-right">{{item.Amount.toFixed(@decimalPlaces)}}</td>
+					<td class="medium-col-width wrapWord">{{item.PaymentDate|date:'dd-MMM-yyyy'}}</td>
+					<td class="text-right"><i class="fa fa-trash delete" title="delete" ng-click="RemoveItemFromPaymentGrid($index);"></i></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="tableFooter col-xs-12 nopadding">
+		<table class="listing currentsale pos">
+			<tfoot>
+				<tr class="grandtotal">
+					<td colspan="2">Total: {{PosModel.Payment.Amount.toFixed(@decimalPlaces)}}</td>
+                    <td>
+                        <input type="hidden" value="{{PosModel.Payment.AmountPaid = (PosModel.TransactionPaymentMethods|sumByKey:'Amount')}}" />
+                        Paid: {{PosModel.Payment.TotalAmountReceived.toFixed(@decimalPlaces)}}
+                    </td>
+					<td></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+    
+</div>
+<div class="fullwidth alignleft paddingbtm10">
+    <div class="pull-right">
+        <button class="button-green button" ng-click="ClosePaymentScreen();">
+            Back to Sale
+        </button>
+        <button class="button-orange button" ng-click="ConfirmPayment();"> Confirm</button>
+    </div>
+    <span style="color:red;" ng-if="message != null">{{message}}</span>
+</div>

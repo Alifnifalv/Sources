@@ -1,0 +1,179 @@
+﻿@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+
+    ViewData["Title"] = "Table Information";
+    // var tables = ViewBag.Tables;
+}
+
+<div id="TableInformation" class="settings" ng-controller="DataManagementController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName', 'time')">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Table Information</h2>
+        </div>
+        <div class="card-body">
+            <div class="settings-sublist toggleview">
+                <h4 class="settings-subtitle active" ng-click="TitleClick($event)">Archive Tables</h4>
+                <div class="sublist-grid fullwidth alignleft" style="display: block;">
+                    <table cellpadding="0" cellspacing="0" class="grid">
+                        <thead>
+                            <tr>
+                                <th class="textleft">SL. No.</th>
+                                <th class="textleft">Table Name</th>
+                                <th class="textleft">Size (MB)</th>
+                                <th class="textcenter">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="table in Tables | filter:{IsForArchive:1} track by $index">
+                                <td class="textleft">
+                                    {{ $index + 1 }}
+                                </td>
+                                <td class="textleft">
+                                    {{ table.TableName }}
+                                </td>
+                                <td class="textleft">
+                                    {{ table.Size }}
+                                </td>
+
+                                <td class="textcenter">
+                                    <button type="button" class="btn btn-primary btn-sm me-2" ng-disabled="!table.IsForArchive" ng-click="ModifyTables(table,'')">Archive</button>
+                                    <button type="button" class="btn btn-primary btn-sm" ng-click="ScheduleTables(table,'Schedule')">Schedule</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="settings-sublist toggleview">
+                <h4 class="settings-subtitle active" ng-click="TitleClick($event)">Non-Archive Tables</h4>
+                <div class="sublist-grid fullwidth alignleft" style="display: block;">
+                    <table cellpadding="0" cellspacing="0" class="grid">
+                        <thead>
+                            <tr>
+                                <th class="textleft">SL. No.</th>
+                                <th class="textleft">Table Name</th>
+                                <th class="textleft">Size (MB)</th>
+                                @* <th class="textcenter">Actions</th> *@
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="table in Tables | filter:{IsForArchive:0} track by $index">
+                                <td class="textleft">
+                                    {{ $index + 1 }}
+                                </td>
+                                <td class="textleft">
+                                    {{ table.TableName }}
+                                </td>
+                                <td class="textleft">
+                                    {{ table.Size }}
+                                </td>
+
+                                @* <td class="textcenter">
+                                    <button type="button" class="btn btn-primary btn-sm" ng-disabled="!table.IsForArchive" ng-click="ModifyTables(table)">Archive</button>
+                                    <button type="button" class="btn btn-primary btn-sm" ng-click="ScheduleTables(table)">Schedule</button>
+                                </td> *@
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div id="globalPopup" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Archive Tables</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="CancelModify()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to archive the table as of {{ TillDate }}?</p>
+                    <button class="btn btn-primary" ng-click="ConfirmModify(table)">Confirm</button>
+                    <button class="btn btn-secondary" ng-click="CancelModify()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="globalPopupSchedule" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Archive Tables</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="CancelSchedule()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to archive the table as of {{ TillDate }}?</p>
+@*                     <div class="w-50">
+                        <select id="subscriptionTypeID" name="multipleSelect" data_ng_model="scheduleTypes.SubscriptionTypeID" ng-change="ScheduleChanges(scheduleTypes.SubscriptionTypeID)" style="display: block;" class=" my-2 form-select  form-select-lg form-select-solid js-example-basic-single allergies" ng-options="scheduleTypes as scheduleTypes.SubscriptionName for scheduleTypes in ScheduleTypes" required>
+                        </select>
+                    </div> *@
+                    <div class="fieldWrapper" style="text-align: left;">
+                        <span>
+                            <label>Select the schedule date for archive</label>
+                            <label style="color: red;">*</label>
+                        </span>
+                        <input type="date" placeholder="Subsciption Start date" required="" id="SubsciptionStartDateString" data_ng_model="subscriptionForm.SubsciptionStartDateString" name="SubsciptionStartDateString" class="form-control bg-transparent" ng-change="DateChanges('Table')" min="{{minDate | date:'yyyy-MM-dd'}} " />
+                    </div>
+                    <button class="btn btn-primary" ng-click="ConfirmSchedule(table,SubsciptionStartDateString)">Confirm</button>
+                    <button class="btn btn-secondary" ng-click="CancelSchedule()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .card {
+        border: 1px solid #ddd; /* Adjust border style and color as desired */
+    }
+
+    .toggleview {
+        box-shadow: 0 10px 10px rgba(0,0,0,0.19), 0 2px 2px rgba(0,0,0,0.23);
+        background: #fff;
+        color: #333;
+    }
+
+        .toggleview .settings-subtitle {
+            border: 1px solid #fff;
+            padding: 10px 10px 10px 30px;
+            float: left;
+            width: 100%;
+            background: #f5f5f5;
+            color: #333;
+            border-radius: 4px;
+            margin: 0;
+            font-weight: normal;
+        }
+
+            .toggleview .settings-subtitle.active, .toggleview .settings-subtitle:hover {
+                background: linear-gradient(to right, #f5f5f5 0%, #e2e2e2 100%);
+            }
+
+            .toggleview .settings-subtitle.active {
+                margin-bottom: 0;
+            }
+
+    .toggleview {
+        margin-bottom: 6px;
+        color: #333;
+    }
+
+        .toggleview .settings-subtitle:before {
+            top: 8px;
+            font-weight: normal;
+            left: 8px;
+        }
+</style>

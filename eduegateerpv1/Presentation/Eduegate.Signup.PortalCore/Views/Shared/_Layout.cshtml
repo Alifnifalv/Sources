@@ -1,0 +1,322 @@
+﻿@{
+    var client = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENTINSTANCE");
+    var clientFullName = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENT_FULL_NAME");
+    var clientWebsite = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENT_WEBSITE");
+}
+
+<!DOCTYPE html>
+<html ng-app="Eduegate.Signup.Portal">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Eduegate.Signup</title>
+
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Content/Site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Content/styles-gray.css" asp-append-version="true" />
+
+    <link href="~/Content/dashboard/dashboard.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/Content/dashboard/docs.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/Content/dashboard/style.bundle.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/Content/datatables.bundle.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/Content/fullcalendar.bundle.css" rel="stylesheet" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Content/Style.css" asp-append-version="true" />
+
+    <script src="~/Scripts/jquery-3.4.1.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.prettyPhoto.js" asp-append-version="true"></script>
+    <script src="~/Scripts/draggable/draggable.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.custom.js" asp-append-version="true"></script>
+    <script src="~/app/CustomValidation.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js" asp-append-version="true"></script>
+    @* <script src="~/Scripts/bootstrap.js" asp-append-version="true"></script> *@
+    <script src="~/Scripts/bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/respond.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-route.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-animate.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-sanitize.js" asp-append-version="true"></script>
+    <script src="~/Scripts/i18n/angular-locale_en.js" asp-append-version="true"></script>
+    <script src="~/Scripts/tmhDynamicLocale.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-filter.min.js" asp-append-version="true"></script>
+
+    <script src="~/app/app.js" asp-append-version="true"></script>
+    <script src="~/app/CustomValidation.js" asp-append-version="true"></script>
+    <script src="~/app/print.min.js" asp-append-version="true"></script>
+    <script src="~/app/ReportController.js" asp-append-version="true"></script>
+    <script src="~/app/schedule.js" asp-append-version="true"></script>
+    <script src="~/app/util.js" asp-append-version="true"></script>
+
+
+
+    <script type="text/javascript" src="~/Scripts/Chart.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/Scripts/datatables.bundle.js" asp-append-version="true"></script>
+    <script type="text/javascript" src="~/Scripts/fullcalendar.bundle.js" asp-append-version="true"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet" type="text/css" asp-append-version="true" />
+
+    <script src="~/app/utility.js" asp-append-version="true"></script>
+
+    <script src="~/Scripts/anime.min.js" asp-append-version="true"></script>
+
+    <script src="~/Scripts/site.js" asp-append-version="true"></script>
+    @*<script src="~/Content/dashboard/dashboard.js" asp-append-version="true"></script>*@
+    <script src="~/Scripts/Custom.js"></script>
+
+    <script src="~/app/Controller/LayoutController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/LayoutHeaderController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/login-controller.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/ResetController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/SignupController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/MeetingRequestListController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/MeetingRequestController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/UserProfileController.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/MeetingRemarksController.js" asp-append-version="true"></script>
+
+    <script src="~/Scripts/moment.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-moment.min.js" asp-append-version="true"></script>
+    <script src="~/Content/scripts.bundle.js" asp-append-version="true"></script>
+
+</head>
+<body>
+    <div ng-controller="LayoutHeaderController" ng-init="Init()">
+        <div class="overlaydiv"></div>
+        <div class="d-flex flex-column flex-root">
+            <div class="docs-page d-flex flex-row flex-column-fluid">
+                <div id="kt_docs_aside" class="docs-aside" data-kt-drawer="true" data-kt-drawer-name="aside" data-kt-drawer-activate="{default: true, lg: false}" data-kt-drawer-overlay="true" data-kt-drawer-width="{default:'200px', '300px': '250px'}" data-kt-drawer-direction="start" data-kt-drawer-toggle="#kt_docs_aside_toggle" style="">
+                    <!--begin::Logo-->
+                    <div class="docs-aside-logo flex-column-auto h-75px">
+                        <a>
+                            <img alt="Logo" src="~/Clients/@client/Images/signup-logo.png" class="h-50px">
+                        </a>
+                    </div>
+                    <div id="Overlay" class="loaderoverlay">
+                        <div class="d-flex justify-content-center align-items-center vh-100">
+                            <div id="ButtonLoader" class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    @await Html.PartialAsync("~/Views/Shared/_GlobalInfoMessage.cshtml")
+                    <div class="docs-aside-menu flex-column-fluid">
+                        <div class="hover-scroll-overlay-y mt-5 mb-5 mt-lg-0 mb-lg-5 pe-lg-n2 me-lg-2" id="kt_docs_aside_menu_wrapper" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_docs_aside_logo" data-kt-scroll-wrappers="#kt_docs_aside_menu" data-kt-scroll-offset="10px" style="height: 668px;">
+                            <!--begin::Menu-->
+                            <div class="menu menu-column menu-title-gray-800 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500" id="#kt_docs_aside_menu" data-kt-menu="true">
+                                <div class="menu-item">
+                                    <div style="background: rgba(218, 218, 218, 0.60);" ng-if="IsHome">
+                                        <a class="menu-link" href="~/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+                                                <path d="M7.32287 0H1.38537C0.621437 0 0 0.621437 0 1.38537V4.94787C0 5.71194 0.621437 6.33338 1.38537 6.33338H7.32287C8.08694 6.33338 8.70838 5.71194 8.70838 4.94787V1.38537C8.70838 0.621437 8.08694 0 7.32287 0Z" fill="#8964D8" />
+                                                <path d="M7.32287 7.91663H1.38537C0.621437 7.91663 0 8.53806 0 9.30214V17.6146C0 18.3786 0.621437 19 1.38537 19H7.32287C8.08694 19 8.70838 18.3786 8.70838 17.6146V9.30214C8.70838 8.53806 8.08694 7.91663 7.32287 7.91663Z" fill="#8964D8" />
+                                                <path d="M17.6145 12.6666H11.677C10.9129 12.6666 10.2915 13.2881 10.2915 14.0521V17.6146C10.2915 18.3786 10.9129 19 11.677 19H17.6145C18.3784 19 18.9999 18.3786 18.9999 17.6146V14.0521C18.9999 13.2881 18.3784 12.6666 17.6145 12.6666Z" fill="#8964D8" />
+                                                <path d="M17.6145 0H11.677C10.9129 0 10.2915 0.621437 10.2915 1.38537V9.69787C10.2915 10.4619 10.9129 11.0834 11.677 11.0834H17.6145C18.3784 11.0834 18.9999 10.4619 18.9999 9.69787V1.38537C18.9999 0.621437 18.3784 0 17.6145 0Z" fill="#8964D8" />
+                                            </svg>
+                                            &ensp;<span class="menu-label"><strong>Home</strong></span>
+                                        </a>
+                                    </div>
+                                    <div ng-if="!IsHome">
+                                        <a class="menu-link" href="~/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                                <path d="M6.93745 6.00005H1.31245C0.58873 6.00005 0 5.41132 0 4.68745V1.31245C0 0.58873 0.58873 0 1.31245 0H6.93745C7.66132 0 8.25005 0.58873 8.25005 1.31245V4.68745C8.25005 5.41132 7.66132 6.00005 6.93745 6.00005ZM1.31245 1.125C1.20905 1.125 1.125 1.20905 1.125 1.31245V4.68745C1.125 4.791 1.20905 4.87505 1.31245 4.87505H6.93745C7.041 4.87505 7.12505 4.791 7.12505 4.68745V1.31245C7.12505 1.20905 7.041 1.125 6.93745 1.125H1.31245Z" fill="#515151" />
+                                                <path d="M6.93745 18H1.31245C0.58873 18 0 17.4113 0 16.6875V8.81253C0 8.08867 0.58873 7.49994 1.31245 7.49994H6.93745C7.66132 7.49994 8.25005 8.08867 8.25005 8.81253V16.6875C8.25005 17.4113 7.66132 18 6.93745 18ZM1.31245 8.62494C1.20905 8.62494 1.125 8.70898 1.125 8.81253V16.6875C1.125 16.7909 1.20905 16.875 1.31245 16.875H6.93745C7.041 16.875 7.12505 16.7909 7.12505 16.6875V8.81253C7.12505 8.70898 7.041 8.62494 6.93745 8.62494H1.31245Z" fill="#515151" />
+                                                <path d="M16.6876 18H11.0626C10.3387 18 9.75 17.4113 9.75 16.6875V13.3125C9.75 12.5887 10.3387 11.9999 11.0626 11.9999H16.6876C17.4113 11.9999 18 12.5887 18 13.3125V16.6875C18 17.4113 17.4113 18 16.6876 18ZM11.0626 13.1249C10.959 13.1249 10.875 13.209 10.875 13.3125V16.6875C10.875 16.7909 10.959 16.875 11.0626 16.875H16.6876C16.791 16.875 16.875 16.7909 16.875 16.6875V13.3125C16.875 13.209 16.791 13.1249 16.6876 13.1249H11.0626Z" fill="#515151" />
+                                                <path d="M16.6876 10.5H11.0626C10.3387 10.5 9.75 9.91132 9.75 9.18745V1.31245C9.75 0.58873 10.3387 0 11.0626 0H16.6876C17.4113 0 18 0.58873 18 1.31245V9.18745C18 9.91132 17.4113 10.5 16.6876 10.5ZM11.0626 1.125C10.959 1.125 10.875 1.20905 10.875 1.31245V9.18745C10.875 9.291 10.959 9.37505 11.0626 9.37505H16.6876C16.791 9.37505 16.875 9.291 16.875 9.18745V1.31245C16.875 1.20905 16.791 1.125 16.6876 1.125H11.0626Z" fill="#515151" />
+                                            </svg>
+                                            &ensp; <span class="menu-label">Home</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="menu-item">
+                                    <div style="background: rgba(218, 218, 218, 0.60);" ng-if="IsMeetingRequest">
+                                        <a class="menu-link" href="#" ng-click="MeetingRequestTabClick()">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="18" viewBox="0 0 21 18" fill="none">
+                                                <path d="M20.4473 7.89455H18.7893V6.23652C18.7893 5.93129 18.542 5.6839 18.2367 5.6839C17.9315 5.6839 17.684 5.93129 17.684 6.23652V7.89455H16.0262C15.721 7.89455 15.4736 8.14195 15.4736 8.44718C15.4736 8.75241 15.721 8.9998 16.0262 8.9998H17.684V10.6578C17.684 10.9631 17.9315 11.2105 18.2367 11.2105C18.542 11.2105 18.7893 10.9631 18.7893 10.6578V8.9998H20.4473C20.7525 8.9998 20.9998 8.75241 20.9998 8.44718C20.9998 8.14195 20.7525 7.89455 20.4473 7.89455Z" fill="#8964D8" />
+                                                <path d="M12.7101 5.68396C12.7101 8.43106 10.4832 10.6579 7.73648 10.6579C4.98956 10.6579 2.7627 8.43106 2.7627 5.68396C2.7627 2.93686 4.98956 0.710022 7.73648 0.710022C10.4832 0.710022 12.7101 2.93686 12.7101 5.68396Z" fill="#8964D8" />
+                                                <path d="M11.0526 11.7633H4.07769C1.82568 11.7633 0 13.5889 0 15.8411V15.8413V16.7372C0 17.0425 0.247375 17.29 0.552589 17.29H14.921C15.2262 17.29 15.4736 17.0425 15.4736 16.7372V16.1846C15.4736 13.7428 13.4943 11.7633 11.0526 11.7633Z" fill="#8964D8" />
+                                            </svg>
+                                            &ensp;<span class="menu-label"><strong>Meeting Requests</strong></span>
+                                        </a>
+                                    </div>
+                                    <div ng-if="!IsMeetingRequest">
+                                        <a class="menu-link" href="#" ng-click="MeetingRequestTabClick()">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="18" viewBox="0 0 21 18" fill="none">
+                                                <path d="M10.8036 10.832C13.3425 9.13831 14.0278 5.70694 12.3341 3.16781C10.6403 0.628849 7.20912 -0.0564002 4.67016 1.63726C2.13105 3.33107 1.4458 6.76229 3.13945 9.30141C3.54384 9.90751 4.06406 10.4276 4.67016 10.832C1.93558 11.4857 0.00480653 13.9278 0 16.7395C0 17.0447 0.247375 17.2922 0.552588 17.2922H14.921C15.2262 17.2922 15.4738 17.0449 15.4738 16.7395C15.4688 13.9278 13.5382 11.4857 10.8036 10.832ZM3.31585 6.2395C3.31585 3.79795 5.29517 1.81846 7.73688 1.81846C10.1784 1.81846 12.1579 3.79795 12.1579 6.2395C12.1579 8.68121 10.1786 10.6605 7.73688 10.6605C5.29629 10.6578 3.31857 8.68009 3.31585 6.2395ZM1.1361 16.1869C1.42032 13.671 3.54704 11.7689 6.07895 11.7659H9.39464C11.9266 11.7689 14.0533 13.671 14.3377 16.1869H1.1361Z" fill="#515151" />
+                                                <path d="M20.4474 8.45002H18.7895V6.79225C18.7895 6.48704 18.5421 6.2395 18.2369 6.2395C17.9315 6.2395 17.6841 6.48688 17.6841 6.79225V8.45002H16.0262C15.721 8.45002 15.4736 8.69756 15.4736 9.00277C15.4736 9.30798 15.721 9.55536 16.0262 9.55536H17.6841V11.2133C17.6841 11.5185 17.9315 11.7659 18.2369 11.7659C18.5421 11.7659 18.7895 11.5185 18.7895 11.2133V9.55536H20.4474C20.7526 9.55536 21 9.30798 21 9.00277C21 8.69756 20.7526 8.45002 20.4474 8.45002Z" fill="#515151" />
+                                            </svg>
+                                            &ensp;<span class="menu-label">Meeting Requests</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="menu-item">
+                                    <div style="background: rgba(218, 218, 218, 0.60);" ng-if="IsProfile">
+                                        <a class="menu-link" href="#" ng-click="AccountTabClick()">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                <path d="M9.83962 4.20752C7.98317 4.20752 6.46777 5.71631 6.46777 7.5728C6.46777 9.43586 7.98317 10.9446 9.83962 10.9446C11.6961 10.9446 13.2115 9.43585 13.2115 7.5728C13.2115 5.71631 11.6961 4.20752 9.83962 4.20752Z" fill="#8964D8" />
+                                                <path d="M9.83343 0.166565C4.41491 0.166565 0 4.57487 0 10C0 13.0176 1.37106 15.7203 3.51615 17.5243V17.5309C5.22835 18.9675 7.43249 19.8334 9.83343 19.8334C13.2578 19.8334 16.3803 18.1016 18.1909 15.1955C19.1683 13.6342 19.68 11.8434 19.68 10C19.68 8.15664 19.1683 6.3592 18.1909 4.80445C16.3803 1.89837 13.2578 0.166565 9.83343 0.166565ZM17.0823 14.5002C16.7674 15.0053 16.4 15.4514 15.9998 15.8712C15.0027 13.8245 12.8838 12.46 10.5419 12.46H9.13808C7.51121 12.46 5.98272 13.0963 4.83472 14.2443C4.35585 14.7166 3.97536 15.2742 3.68015 15.8777C2.21728 14.3493 1.312 12.2829 1.312 10C1.312 5.30302 5.13649 1.47856 9.83343 1.47856C12.8051 1.47856 15.5078 2.98079 17.0823 5.49984C17.9219 6.8512 18.368 8.40592 18.368 10C18.368 11.5941 17.9219 13.1488 17.0823 14.5002Z" fill="#8964D8" />
+                                            </svg>
+                                            &ensp;<span class="menu-label"><strong>Account</strong></span>
+                                        </a>
+                                    </div>
+                                    <div ng-if="!IsProfile">
+                                        <a class="menu-link" href="#" ng-click="AccountTabClick()">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                <path d="M9.84371 4.20203C7.98486 4.20203 6.47241 5.71448 6.47241 7.57364C6.47241 9.43248 7.98486 10.9453 9.84371 10.9453C11.7025 10.9453 13.215 9.43248 13.215 7.57364C13.215 5.71448 11.7025 4.20203 9.84371 4.20203ZM9.84371 9.63243C8.70841 9.63243 7.78491 8.70893 7.78491 7.57364C7.78491 6.43834 8.70841 5.51453 9.84371 5.51453C10.979 5.51453 11.9025 6.43834 11.9025 7.57364C11.9025 8.70895 10.979 9.63243 9.84371 9.63243Z" fill="#515151" />
+                                                <path d="M9.83798 0.161987C4.41335 0.161987 0 4.57533 0 9.99997C0 13.0189 1.3693 15.7215 3.51645 17.5275C3.51797 17.5288 3.51921 17.5302 3.52074 17.5314C5.23138 18.9686 7.43412 19.838 9.83798 19.838C13.2631 19.838 16.3893 18.1031 18.2004 15.1974C19.1732 13.6388 19.6875 11.8412 19.6875 9.99997C19.6875 8.15811 19.1732 6.36079 18.2007 4.80252C16.3893 1.89682 13.2631 0.161987 9.83798 0.161987ZM4.71071 16.7951C4.94903 16.188 5.30295 15.6313 5.76173 15.1731C6.66343 14.2714 7.86442 13.7747 9.14424 13.7747H10.5429C12.5199 13.7747 14.2745 15.0078 14.9719 16.8108C13.5173 17.9082 11.7322 18.5254 9.83798 18.5254C7.91225 18.5255 6.13961 17.8761 4.71071 16.7951ZM17.0869 14.5027C16.7739 15.0049 16.4046 15.4542 16.008 15.8718C15.0094 13.8229 12.8917 12.4622 10.5429 12.4622H9.14424C7.51387 12.4622 5.98283 13.0954 4.83375 14.2451C4.35915 14.7193 3.97615 15.2779 3.68235 15.8825C2.21812 14.351 1.3125 12.281 1.3125 9.99997C1.3125 5.29888 5.13689 1.47449 9.83798 1.47449C12.8068 1.47449 15.5167 2.97828 17.0872 5.4969C17.9296 6.84721 18.375 8.40421 18.375 9.99997C18.375 11.5957 17.9296 13.1524 17.0869 14.5027Z" fill="#515151" />
+                                            </svg>
+                                            &ensp;<span class="menu-label">Account</span>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="menu-item">
+                                    <div style="background: rgba(218, 218, 218, 0.60);" ng-if="IsMeetingRemarks">
+                                        <a class="menu-link" href="#" ng-click="MeetingRemarksTabClick()">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="19" viewBox="0 0 18 19" fill="none">
+                                                <path d="M16.2687 7.75424C16.1288 7.69073 15.9669 7.72586 15.86 7.84295L13.5448 10.3678C13.3873 10.54 13.1881 10.6558 12.9706 10.7034L11.0956 11.1125C10.722 11.1948 10.3441 11.0653 10.0797 10.7773C9.81308 10.486 9.69808 10.0713 9.77205 9.66865L10.1028 7.86369H4.12501C3.91773 7.86369 3.75 7.68072 3.75 7.45459C3.75 7.22847 3.91773 7.04549 4.12501 7.04549H10.4202C10.4332 7.02973 10.4408 7.0099 10.4546 6.99475L11.9083 5.40913H4.12501C3.91773 5.40913 3.75 5.22615 3.75 5.00003C3.75 4.77391 3.91773 4.59093 4.12501 4.59093H12.3751C12.4549 4.59093 12.5248 4.62414 12.5856 4.67047L15.0191 2.01613C15.2242 1.792 15.4725 1.61581 15.7574 1.49197C15.8871 1.43563 15.9771 1.30501 15.9911 1.15359C16.0057 1.0018 15.9412 0.854372 15.8248 0.770458C15.578 0.593464 15.2931 0.5 15.0001 0.5H1.50002C0.673105 0.500115 0 1.23402 0 2.13648V18.0909C0 18.2563 0.0915474 18.4057 0.231435 18.4688C0.277595 18.49 0.326639 18.5 0.374979 18.5C0.472397 18.5 0.568339 18.4585 0.640129 18.3801L4.2803 14.4091H15.0001C15.827 14.4091 16.5001 13.6752 16.5001 12.7727V8.13216C16.5001 7.96678 16.4085 7.81736 16.2687 7.75424ZM8.62504 10.3182H4.12501C3.91773 10.3182 3.75 10.1352 3.75 9.90912C3.75 9.683 3.91773 9.50002 4.12501 9.50002H8.62504C8.83232 9.50002 9.00005 9.683 9.00005 9.90912C9.00005 10.1353 8.83232 10.3182 8.62504 10.3182Z" fill="#8964D8" />
+                                                <path d="M16.5646 2.13647C16.1859 2.13647 15.8161 2.30388 15.5495 2.59509L10.985 7.57367C10.9322 7.63082 10.8971 7.70349 10.8824 7.78261L10.5074 9.82885C10.4825 9.96308 10.5213 10.1017 10.61 10.1984C10.681 10.2759 10.7769 10.3182 10.8751 10.3182C10.8993 10.3182 10.9242 10.3154 10.9483 10.3102L12.8226 9.90114C12.8959 9.88515 12.9625 9.84641 13.0145 9.78927L17.5797 4.80991C17.5797 4.80991 17.5797 4.80991 17.5797 4.80953C17.847 4.5179 18.0001 4.1144 18.0001 3.7025C18.0002 2.83881 17.3564 2.13647 16.5646 2.13647ZM15.9698 5.40913L15 4.35111L15.5302 3.77265L16.5002 4.83074L15.9698 5.40913Z" fill="#8964D8" />
+                                            </svg>
+                                            &ensp;<span class="menu-label"><strong>Meeting Remarks</strong></span>
+                                        </a>
+                                    </div>
+                                    <div ng-if="!IsMeetingRemarks">
+                                        <a class="menu-link" href="#" ng-click="MeetingRemarksTabClick()">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="18" viewBox="0 0 20 18" fill="none">
+                                                <path d="M4.49992 4.90909H13.4999C13.726 4.90909 13.909 4.72611 13.909 4.49998C13.909 4.27386 13.726 4.09088 13.4999 4.09088H4.49992C4.2738 4.09088 4.09082 4.27386 4.09082 4.49998C4.09086 4.72615 4.27384 4.90909 4.49992 4.90909Z" fill="#515151" />
+                                                <path d="M9.40901 9H4.49992C4.2738 9 4.09082 9.18298 4.09082 9.4091C4.09082 9.63523 4.2738 9.81821 4.49992 9.81821H9.40901C9.63513 9.81821 9.81811 9.63523 9.81811 9.4091C9.81811 9.18298 9.63513 9 9.40901 9Z" fill="#515151" />
+                                                <path d="M18.0703 1.63637C18.0466 1.63637 18.0236 1.64232 18 1.64343V1.63637C18 0.733908 17.2657 0 16.3636 0H1.63637C0.734292 0 0 0.733908 0 1.63637V17.5909C0 17.7563 0.0998692 17.9057 0.252473 17.9688C0.302829 17.99 0.356331 18 0.409065 18C0.515339 18 0.620002 17.9585 0.698317 17.8801L4.66938 13.9091H16.3636C17.2657 13.9091 18 13.1752 18 12.2727V5.48736L19.1777 4.30983C19.1777 4.30983 19.1777 4.30983 19.1777 4.30945C19.4694 4.01782 19.6363 3.61431 19.6363 3.20241C19.6363 2.33872 18.934 1.63637 18.0703 1.63637ZM17.1818 12.2727C17.1818 12.7237 16.815 13.0909 16.3636 13.0909H4.49998C4.39133 13.0909 4.28743 13.134 4.21073 13.2107L0.818168 16.6033V1.63637C0.818168 1.18535 1.18493 0.818206 1.63634 0.818206H16.3636C16.8151 0.818206 17.1818 1.18535 17.1818 1.63637V1.91581C17.1041 1.96919 17.0298 2.02791 16.9629 2.09499L12.5117 6.54546H4.49998C4.27386 6.54546 4.09088 6.72844 4.09088 6.95456C4.09088 7.18069 4.27386 7.36367 4.49998 7.36367H11.8554L11.4625 9.32883C11.4354 9.46307 11.4777 9.60171 11.5744 9.69836C11.6519 9.77587 11.7566 9.81821 11.8636 9.81821C11.89 9.81821 11.9172 9.81541 11.9435 9.81023L13.9882 9.40113C14.0681 9.38513 14.1408 9.3464 14.1975 9.28925L17.1818 6.30545V12.2727ZM13.7069 8.62327L12.3854 8.88774L12.6499 7.56459L16.3634 3.85102L17.4215 4.90905L13.7069 8.62327ZM18.5992 3.73136L18 4.33062L16.9419 3.27252L17.5413 2.67307C17.6803 2.53443 17.8729 2.45454 18.0703 2.45454C18.4825 2.45454 18.8181 2.79012 18.8181 3.20241C18.8182 3.39897 18.7382 3.59195 18.5992 3.73136Z" fill="#515151" />
+                                            </svg>
+                                            &ensp;<span class="menu-label">Meeting Remarks</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="docs-aside-menu flex-column-fluid">
+                        <div class="hover-scroll-overlay-y mt-5 mb-5 mt-lg-0 mb-lg-5 pe-lg-n2 me-lg-2" id="kt_docs_aside_menu_wrapper" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_docs_aside_logo" data-kt-scroll-wrappers="#kt_docs_aside_menu" data-kt-scroll-offset="10px" style="height: 668px;">
+                            <!--begin::Menu-->
+                            <div class="menu menu-column menu-title-gray-800 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-500" id="#kt_docs_aside_menu" data-kt-menu="true">
+                                <div class="menu-item">
+                                    <a class="menu-link" ng-click="Signout()">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right svgMenulink" viewBox="0 0 16 16">
+                                            <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
+                                            <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+                                        </svg>
+                                        &ensp;<span class="menu-label">Log out</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="docs-wrapper d-flex flex-column flex-row-fluid">
+                    <div class="d-flex flex-column flex-root app-root" id="kt_app_root">
+                        <!--begin::Page-->
+                        <div class="app-page flex-column flex-column-fluid " id="kt_app_page">
+                            <div class="app-header" id="kt_app_wrapper">
+
+                                <div class="app-container  container-fluid d-flex align-items-stretch justify-content-end ">
+
+                                    <div class="sidebar-menu-icon-wrap d-lg-none" id="kt_docs_aside_toggle">
+
+                                        <div class="sidebar-menu-icon">
+
+                                            <span></span>
+
+                                            <span></span>
+
+                                            <span></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="profileTabHeader p-2">
+                                        <svg class="profilePhoto" width="41" height="41" viewBox="0 0 41 41" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                            <circle id="Ellipse" cx="20.5" cy="20.5" r="20.5" fill="url(#pattern0_145_139)" />
+                                            <defs>
+                                                <pattern id="pattern0_145_139" patternContentUnits="objectBoundingBox" width="1" height="1">
+                                                    <use xlink:href="#image0_145_139" transform="translate(-0.00251256) scale(0.00502513)" />
+                                                </pattern>
+                                                <image id="image0_145_139" width="200" height="199" xlink:href="data:image/png;base64,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" />
+                                            </defs>
+                                        </svg>
+                                        <div class="profileInfo">
+                                            <label class="pt-4 header-name">
+                                                <span ng-if="HeaderInfoModel.Parent.GuardianFirstName" ng-bind="HeaderInfoModel.Parent.GuardianFirstName"></span>
+                                                <span ng-if="HeaderInfoModel.Parent.GuardianMiddleName" ng-bind="HeaderInfoModel.Parent.GuardianMiddleName"></span>
+                                                <span ng-if="HeaderInfoModel.Parent.GuardianLastName" ng-bind="HeaderInfoModel.Parent.GuardianLastName"></span>
+                                            </label>
+                                            <p class="header-mail">
+                                                <span ng-if="HeaderInfoModel.LoginEmailID" ng-bind="HeaderInfoModel.LoginEmailID"></span>
+                                            </p>
+                                        </div>
+                                        <ul style="list-style-type: none;" class="pt-3">
+                                            <li class="dropdown">
+                                                <a class="nav-link" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="8" viewBox="0 0 16 8" fill="none">
+                                                        <path d="M15.8045 0.180451C15.5439 -0.0601503 15.1225 -0.0601503 14.8619 0.180451L7.99998 6.51448L1.13812 0.180451C0.877474 -0.0601503 0.456139 -0.0601503 0.195488 0.180451C-0.0651627 0.421052 -0.0651627 0.809977 0.195488 1.05058L7.52868 7.81969C7.65868 7.93968 7.82933 8 8.00001 8C8.1707 8 8.34135 7.93968 8.47135 7.81969L15.8045 1.05058C16.0652 0.809977 16.0652 0.421052 15.8045 0.180451Z" fill="#515151" />
+                                                    </svg>
+                                                </a>
+                                                <ul class="dropdown-menu profileDropdown">
+                                                    <li class="m-3">
+                                                        <a class="dropdown-item" href="#" ng-click="AccountTabClick()">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                                <path d="M9.84371 4.20203C7.98486 4.20203 6.47241 5.71448 6.47241 7.57364C6.47241 9.43248 7.98486 10.9453 9.84371 10.9453C11.7025 10.9453 13.215 9.43248 13.215 7.57364C13.215 5.71448 11.7025 4.20203 9.84371 4.20203ZM9.84371 9.63243C8.70841 9.63243 7.78491 8.70893 7.78491 7.57364C7.78491 6.43834 8.70841 5.51453 9.84371 5.51453C10.979 5.51453 11.9025 6.43834 11.9025 7.57364C11.9025 8.70895 10.979 9.63243 9.84371 9.63243Z" fill="#515151" />
+                                                                <path d="M9.83798 0.161987C4.41335 0.161987 0 4.57533 0 9.99997C0 13.0189 1.3693 15.7215 3.51645 17.5275C3.51797 17.5288 3.51921 17.5302 3.52074 17.5314C5.23138 18.9686 7.43412 19.838 9.83798 19.838C13.2631 19.838 16.3893 18.1031 18.2004 15.1974C19.1732 13.6388 19.6875 11.8412 19.6875 9.99997C19.6875 8.15811 19.1732 6.36079 18.2007 4.80252C16.3893 1.89682 13.2631 0.161987 9.83798 0.161987ZM4.71071 16.7951C4.94903 16.188 5.30295 15.6313 5.76173 15.1731C6.66343 14.2714 7.86442 13.7747 9.14424 13.7747H10.5429C12.5199 13.7747 14.2745 15.0078 14.9719 16.8108C13.5173 17.9082 11.7322 18.5254 9.83798 18.5254C7.91225 18.5255 6.13961 17.8761 4.71071 16.7951ZM17.0869 14.5027C16.7739 15.0049 16.4046 15.4542 16.008 15.8718C15.0094 13.8229 12.8917 12.4622 10.5429 12.4622H9.14424C7.51387 12.4622 5.98283 13.0954 4.83375 14.2451C4.35915 14.7193 3.97615 15.2779 3.68235 15.8825C2.21812 14.351 1.3125 12.281 1.3125 9.99997C1.3125 5.29888 5.13689 1.47449 9.83798 1.47449C12.8068 1.47449 15.5167 2.97828 17.0872 5.4969C17.9296 6.84721 18.375 8.40421 18.375 9.99997C18.375 11.5957 17.9296 13.1524 17.0869 14.5027Z" fill="#515151" />
+                                                            </svg>
+                                                            &ensp;<span class="menu-label">Account</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="m-3">
+                                                        <a class="dropdown-item" style="color: #8E3131;" ng-click="Signout()">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right svgMenulink" viewBox="0 0 16 16">
+                                                                <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
+                                                                <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+                                                            </svg>
+                                                            &ensp;<span class="menu-label">Log out</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            @RenderBody()
+
+                            <!--Footer::Start-->
+                            <div id="kt_app_footer" class="app-footer ">
+                                <!--begin::Footer container-->
+                                <div class="app-container  container-fluid d-flex flex-column flex-md-row flex-center flex-md-stack py-3 ">
+                                    <!--begin::Copyright-->
+                                    <div class="text-gray-900 order-2 order-md-1">
+                                        <span class="text-muted fw-semibold me-1"><span ng-bind="CurrentYear"></span>©</span>
+                                        <a href="@clientWebsite" target="_blank" class="text-gray-800 text-hover-primary">@clientFullName</a>
+                                    </div>
+                                    <!--end::Copyright-->
+                                    <!--begin::Menu-->
+                                    <ul class="menu menu-gray-600 menu-hover-primary fw-semibold order-1">
+                                        @* <li class="menu-item"><a href="https://keenthemes.com" target="_blank" class="menu-link px-2">About</a></li>
+
+                                        <li class="menu-item"><a href="https://devs.keenthemes.com" target="_blank" class="menu-link px-2">Support</a></li> *@
+                                    </ul>
+                                    <!--end::Menu-->
+                                </div>
+                                <!--end::Footer container-->
+                            </div>
+                            <!--Footer::End-->
+                        </div>
+                        <!--end::Page-->
+                    </div>
+                </div>
+                <!--end::Wrapper-->
+
+
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,102 @@
+﻿@model List<Eduegate.Web.Library.ViewModels.SettingConfigureGroupViewModel>
+@{
+    Layout = null;
+}
+
+@{
+    ViewBag.Title = "SmartSettings";
+}
+
+<div id="SmartSettings" class="windowcontainer smartSettings" ng-controller="SmartSettingController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model), 'SmartSettings', $event)">
+    <div class="window-tab preload-overlay" style="display:block;">
+        <div class="preloader"><img src="~/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+    </div>
+    @await Html.PartialAsync("~/Views/Shared/_InfoMessage.cshtml")
+    <div class="pageheadername">
+        <div><img src="~/Images/DataManage.png" />&nbsp;Data Management</div>
+    </div>
+    <hr class="noMargin noBorderTop borderBtmE4" />
+    <div class="pagecontent full-width displayFlex">
+        <div class="smartMenus">
+            <div class="bodyleftnav active displayFlex">
+                <ul>
+                    <li class="parent_li hasSubMenu">
+                        <a href="#" class="open">
+                            <span><label>Data Management</label></span>
+                        </a>
+                        <ul style="display:block;">
+                            <li>
+                                <a href="#" ng-click="LoadScreen($event,'Home/CustomDashbaord?pageID=113',DataManagement)">
+                                    <span>Dashboard </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" ng-click="LoadScreen($event,'DataManagements/DataManagement/ServerInformation')">
+                                    <span>Server Details </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" ng-click="LoadScreen($event,'DataManagements/DataManagement/TableInformation')">
+                                    <span>Table Details </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" ng-click="LoadScreen($event,'DataManagements/DataManagement/BackupView')">
+                                    <span>Backups </span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" ng-click="LoadScreen($event,'DataManagements/DataManagement/ScheduleView')">
+                                    <span>Schedules </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>                   
+                </ul>
+            </div>
+        </div>
+        <div class="smartmenu_Content flexAuto padLeft10">
+            <div class="smartmenu_Content_Wrap fullwidth fullheight">
+                <div class="smartmenu_Content_Inner fullwidth inheritedUI">
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="dynamicPopoverOverlay"></div>
+    <div class="popup pagePopup" data-popup-type="dynamicPopover" id="dynamicPopover">
+        <div class="popup-wrap">
+            <span class="close">X</span>
+            <div id="dynamicPopoverContainer" class="dynamicPopoverContainer"></div>
+        </div>
+    </div>
+</div>
+<style>
+    .displayFlex {
+        display: flex !important;
+    }
+
+    .padLeft10 {
+        padding-left: 10px !important;
+    }
+
+    .flexAuto {
+        flex: auto;
+    }
+</style>
+<script>
+    $(function () {
+        $("body").on('click', 'li.hasSubMenu > a', function () {
+            var closestSubItem = $(this).closest("li").find("> ul");
+            $(this).toggleClass("open");
+            if ($(this).hasClass("open")) {
+                closestSubItem.slideDown("fast");
+            }
+            else {
+                closestSubItem.slideUp("fast");
+            }
+        });
+    })
+</script>
+
+

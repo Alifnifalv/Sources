@@ -1,0 +1,166 @@
+﻿<div class="pos-options">
+    <div class="order-details">
+        <div>
+            <label>Products</label>
+            <span id="spanProductName" class="inputwrap">
+                <ui-select ng-model="ProductPrice" theme="select2" style="width:400px;height:26px;" ng-change="SelectItemFromSelect2Ctrl(ProductPrice, $select, 'sku');">
+                    <ui-select-match placeholder="Select Product">{{$select.selected.Name}}</ui-select-match>
+                    <ui-select-choices repeat="productPrice in ProductPriceList | filter:$select.search">{{productPrice.SKU}}</ui-select-choices>
+                </ui-select>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="panel-body">
+    <table class="listing tablegrid" cellpadding="0" cellspacing="0" border="0">
+
+        <thead>
+            <tr>
+                <th class="textleft ex-large-col-width">SKU</th>
+                <th class="textleft medium-col-width">Part Number</th>
+                <th class="textleft medium-col-width">Barcode</th>
+                @*<th class="textleft">Product Name</th>*@
+                @*<th class="textleft">Customer Group</th>
+                    <th class="textleft">Quantity</th>
+                    <th class="textleft">Price</th>
+                    <th class="textleft">Price %</th>*@
+                <th class="textright"> </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr ng-repeat="productPrice in ProductPriceModel.SKUPrice" class="toggleparentrow">
+                <td colspan="4" class="nopadding">
+                    <table cellpadding="0" cellspacing="0" class="listing tablegrid">
+                        <tr>
+                            <td ng-click="RowSelect($event, $index,'product');" class="textleft ex-large-col-width">{{productPrice.ProductPriceSKU}}</td>
+                            <td ng-click="RowSelect($event, $index,'product');" class="textleft medium-col-width">{{productPrice.PartNumber}}</td>
+                            <td ng-click="RowSelect($event, $index,'product');" class="textleft medium-col-width">{{productPrice.Barcode}}</td>
+                            <td class="textright">
+                                <i class="fa fa-trash delete" title="delete" ng-click="RemoveSKUItem(productPrice.ProductPriceListItemMapIID,productPrice.ProductSKUID);"></i>
+                            </td>
+                        </tr>
+                        <tr ng-show="$index == ProductRowIndex">
+                            <td colspan="4">
+                                <div class="priceinfo-details">
+                                    <div class="membergroup alignleft">
+                                        <div class="summary-toggle">
+                                            <div class="sum_toggleheader" ng-click="ToggleGroup($event)">SKU level</div>
+                                            <div class="sum_togglecontent alignleft fullwidth">
+                                                <div class="fullwidth alignleft">
+                                                    <table class="data-grid" cellpadding="0" cellspacing="0">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Price</th>
+                                                                <th>Percentage</th>
+                                                                <th class="small-col-width last"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td><input type="text" ng-model="productPrice.Price" ng-disabled="productPrice.QuantityPrice.length > 0" /></td>
+                                                                <td><input type="text" ng-model="productPrice.PricePercentage" ng-disabled="productPrice.QuantityPrice.length > 0" /></td>
+                                                                <td class="medium-col-width last textcenter"> <span class="quantity-btn button-orange" ng-click="ToggleQuantity($event,$index, ModelQuantityStructure , productPrice.QuantityPrice)">Quantity Price</span></td>
+                                                            </tr>
+                                                            <tr class="quantity-toggle">
+                                                                <td colspan="3" class="nopadding">
+                                                                    <div class="quantity-fieldswrap fullwidth alignleft">
+                                                                        <table class="quantityfields fullwidth">
+                                                                            <thead>
+                                                                                <tr>
+                                                                                    <th>Quantity</th>
+                                                                                    <th>Price</th>
+                                                                                    <th>Percentage</th>
+                                                                                    <th class="medium-col-width"></th>
+                                                                                </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                                <tr ng-repeat="quantity in productPrice.QuantityPrice">
+                                                                                    <td><input type="text" /></td>
+                                                                                    <td><input type="text" /></td>
+                                                                                    <td><input type="text" /></td>
+                                                                                    <td class="medium-col-width textcenter">
+                                                                                        <span class="button-orange qtybtn" ng-click="InsertGridRow($index, ModelQuantityStructure , productPrice.QuantityPrice)"><i class="fa fa-plus"></i></span>
+                                                                                        <span class="button-orange qtybtn" ng-click="RemoveGridRow($index, ModelQuantityStructure , productPrice.QuantityPrice)"><i class="fa fa-minus"></i></span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="membergroup alignright">
+                                        <div class="summary-toggle">
+                                            <div class="sum_toggleheader" ng-click="ToggleGroup($event)">Customer Groups(for multi pricing)</div>
+                                            <div class="sum_togglecontent alignleft fullwidth">
+                                                <div class="fullwidth alignleft">
+                                                    <div class="innertoggle" ng-repeat="group in productPrice.CustomerGroups">
+                                                        <div class="sum_innerheader" ng-bind="group.GroupName" ng-click="ToggleInnerGroup($event)"></div>
+                                                        <div class="sum_innercontent alignleft fullwidth">
+                                                            <table class="data-grid" cellpadding="0" cellspacing="0">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Price</th>
+                                                                        <th>percentage</th>
+                                                                        <th class="small-col-width last"></th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td><input type="text" ng-model="group.Price" ng-disabled="group.QuantityPrice.length > 0" /></td>
+                                                                        <td><input type="text" ng-model="group.PricePercentage" ng-disabled="group.QuantityPrice.length > 0" /></td>
+                                                                        <td class="small-col-width last textcenter"> <span class="quantity-btn button-orange" ng-click="ToggleQuantity($event, $index, ModelQuantityStructure , group.QuantityPrice)">Quantity Price</span></td>
+                                                                    </tr>
+                                                                    <tr class="quantity-toggle">
+                                                                        <td colspan="3" class="nopadding">
+                                                                            <div class="quantity-fieldswrap fullwidth alignleft">
+                                                                                <table class="quantityfields fullwidth">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th>Quantity</th>
+                                                                                            <th>Price</th>
+                                                                                            <th>Percentage</th>
+                                                                                            <th class="medium-col-width"></th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr ng-repeat="quantity in group.QuantityPrice">
+                                                                                            <td><input type="text" /></td>
+                                                                                            <td><input type="text" /></td>
+                                                                                            <td><input type="text" /></td>
+                                                                                            <td class="textcenter">
+                                                                                                <span class="button-orange qtybtn" ng-click="InsertGridRow($index, ModelQuantityStructure , group.QuantityPrice)"><i class="fa fa-plus"></i></span>
+                                                                                                <span class="button-orange qtybtn" ng-click="RemoveGridRow($index, ModelQuantityStructure , group.QuantityPrice)"><i class="fa fa-minus"></i></span>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+
+            </tr>
+        </tbody>
+    </table>
+</div>
+

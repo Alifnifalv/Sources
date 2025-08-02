@@ -1,0 +1,129 @@
+﻿@* @model Eduegate.Web.Library.ViewModels.AccountTransactions.FinancialYearClosing.FinancialYearClosingViewModel *@
+
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div id="AuditDump" class="windowcontainer"
+     ng-controller="AuditDumpController"
+     ng-init="init('@windowName')">
+    <div class="main-page row g-0">
+
+        <div class="window-tab preload-overlay" style="display:none;">
+            <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+        </div>
+        <div class="col-md-12">
+            <div class="app-content  flex-column-fluid p-0">
+                <div class="row gy-0 g-xl-2">
+                    <div class="card rounded">
+                        <div class="card-header fs-2 p-5">
+                            Audit Dump
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <div class="w-25">
+                                    <span class="form-group">
+                                        <span class="controls w-75">
+                                            <label>Fiscal Year </label>
+                                            <span class="">
+                                                <ui-select style="width: 100%;"
+                                                           ng-model="MainData.FiscalYear"
+                                                           ng-change="FieldChanges()"
+                                                           theme="select2"
+                                                           class="pos-txt"
+                                                           sortable="true"
+                                                           name="SelectedPrvFY"
+                                                           id="SelectedPrvFY">
+                                                    <!-- Display selected fiscal year -->
+                                                    <ui-select-match placeholder="Select Fiscal Year">{{$select.selected.Value}}</ui-select-match>
+                                                    <!-- Loop through FiscalYears and display each option -->
+                                                    <ui-select-choices repeat="year in FiscalYears | filter: $select.search">
+                                                        {{year.Value}}
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </span>
+                                        </span>
+                                    </span>
+                                </div>
+                                <div class="w-25">
+                                    <span class="form-group">
+                                        <span class="controls w-75">
+                                            <label>Company Name </label>
+                                            <span class="">
+                                                <ui-select multiple ng-model="MainData.Companies" ng-change="FieldChanges()" style="width: 100%;" theme="select2"
+                                                           name="SelectedCompanies" id="SelectedCompanies">
+                                                    <ui-select-match placeholder="Search">{{$item.Value}}</ui-select-match>
+                                                    <ui-select-choices repeat="data in Company | filter:$select.search">
+                                                        {{data.Value}}
+                                                    </ui-select-choices>
+                                                </ui-select>
+                                            </span>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <div class="w-25 d-flex flex-column">
+                                    <label>Start Date </label>
+                                    <span class="controls ">
+                                        <input type="text" class="form-control" ng-model="MainData.StartDate" ng-change="FieldChanges()" skien-datepicker>
+                                    </span>
+                                </div>
+                                <div class="w-25 d-flex flex-column">
+                                    <label>End Date </label>
+                                    <span class="controls ">
+                                        <input type="text" class="form-control" ng-model="MainData.EndDate" ng-change="FieldChanges()" skien-datepicker>
+                                    </span>
+                                </div>
+                                <div class="w-25 d-flex flex-column">
+                                    <label>Is Consolidated </label>
+                                    <span class="">
+                                        <input type="checkbox" ng-model="MainData.IsConsolidated" ng-change="FieldChanges()" />
+                                    </span>
+                                </div>
+                            </div>
+                            <table class="table table-striped">
+                                <thead class="fw-bold">
+                                    <tr>
+                                        <th scope="col"></th>
+                                        <th scope="col">Type</th>
+                                        @* <th scope="col">Preview</th> *@
+                                        <th scope="col">Download</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="data in AuditData">
+                                        <th scope="row">{{$index + 1}}</th>
+                                        <td>{{data.Value}}</td>
+                                        @* <td>
+                                            <button ng-click="DownloadReports(data.Key, StartDate, EndDate)">
+                                                <span class="symbol-label">
+                                                    <img src="~/Images/download.svg" style="height: 10px;width: 10px;" />
+                                                </span>
+                                            </button>
+                                        </td> *@
+                                        <td>
+                                            <button ng-click="DownloadDatas(data.Key)" ng-disabled="!IsAllSelected">
+                                                <span class="symbol-label">
+                                                    <img src="~/Images/download.svg" style="height: 10px;width: 10px;" />
+                                                </span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/ng-template" id="nestedTreeView">
+</script>

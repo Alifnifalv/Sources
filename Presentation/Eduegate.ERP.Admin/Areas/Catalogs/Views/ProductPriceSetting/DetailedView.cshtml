@@ -1,0 +1,374 @@
+﻿@using Eduegate.Services.Contracts.Enums
+@using Eduegate.Web.Library.ViewModels
+@using Eduegate.Web.Library.ViewModels.Catalog
+
+@{
+    Layout = null;
+    var viewIID = Eduegate.Services.Contracts.Enums.SearchView.Product;
+    var windowName = "window_" + Guid.NewGuid();
+}
+
+<div id="@windowName" class="summary-wrap" ng-controller="SummaryViewProductPriceSettingController" ng-init="SummaryViewInitChild('@windowName', '@viewIID', @ViewBag.IID,'@DynamicViews.ProductDetails', @Newtonsoft.Json.JsonConvert.SerializeObject(new ProductPriceSettingQuantityViewModel()), @Newtonsoft.Json.JsonConvert.SerializeObject(new ProductSKUPriceCustomerGroupViewModel()));">
+    <div class="preload-overlay" style="display:block;">
+        <div class="preloader">
+            <img src="~/Images/preloader.gif" width="32" height="32" alt="Loading" />
+            <div class="loadertextwrap">
+                <div id="Loadertext">
+                    <div id="fadetext_1" class="loadingtext">L</div>
+                    <div id="fadetext_2" class="loadingtext">o</div>
+                    <div id="fadetext_3" class="loadingtext">a</div>
+                    <div id="fadetext_4" class="loadingtext">d</div>
+                    <div id="fadetext_5" class="loadingtext">i</div>
+                    <div id="fadetext_6" class="loadingtext">n</div>
+                    <div id="fadetext_7" class="loadingtext">g</div>
+                    <div id="fadetext_8" class="loadingtext">.</div>
+                    <div id="fadetext_9" class="loadingtext">.</div>
+                    <div id="fadetext_10" class="loadingtext">.</div>
+                </div>
+                <span class="canceloperation" ng-click="CloseSummaryPanel($event);">Cancel</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="summary-header">
+        <div class="summary-controls">
+            <ul class="summary-tab">
+                <li class="summary-tab-list active" title="Product Detail" content-tab="productdetail"><i class="fa fa-file-text"></i></li>
+            </ul>
+            <div class="alignright panelcontrols">
+                <span class="remove" ng-click="CloseSummaryPanel($event);">x</span>
+                <span class="minmax"></span>
+            </div>
+        </div>
+    </div>
+    <div class="quickviewwrap">
+        <div id="productdetail" class="summarytab-content show">
+            <h4>Product Price settings</h4>
+            <div class="summary-tab-inner">
+
+                <div class="summary-content">
+
+                    @Html.Partial("~/Views/Shared/_InfoMessage.cshtml")
+
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">ID</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductDetails).ProductIID"></span>
+                            @*<i class="fa fa-pencil" title="Edit" ng-click="Edit('Product', ViewModels.@(DynamicViews.ProductDetails).ProductIID)"></i>*@
+                        </div>
+
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Name</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductDetails).ProductName"></span>
+                        </div>
+
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Code</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductDetails).ProductCode"></span>
+                        </div>
+                    </div>
+
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Created</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductDetails).Created"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Updated</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.ProductDetails).Updated"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" data-slide="skudetails" ng-click="GetDynamicViewGrid('@DynamicViews.ProductSKUMaps', ViewModels.@(DynamicViews.ProductDetails).ProductIID, false, $event)">SKU Details</div>
+                    <div class="sum_togglecontent" data-slide="skudetails">
+                        <table class="data-grid">
+                            <thead>
+                                <tr>
+                                    <th>SKU Name</th>
+                                    <th>BarCode</th>
+                                    <th>Part Number</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="grid in ViewModels.@(DynamicViews.ProductSKUMaps)">
+                                    <td><span ng-bind="grid.SKUName"></span> </td>
+                                    <td><span ng-bind="grid.BarCode"></span></td>
+                                    <td> <span ng-bind="grid.PartNo"></span> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" data-slide="history-costprice">SKU Historical Cost price</div>
+                    <div class="sum_togglecontent" data-slide="history-costprice">
+                        <table class="data-grid fullwidth">
+                            <thead>
+                                <tr>
+                                    <th>SKU Name</th>
+                                    <th>BarCode</th>
+                                    <th>Latest</th>
+                                    <th>Avg: of last 6 months</th>
+                                    <th>Avg: of current year</th>
+                                    <th>Avg: of last 1 year</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr class="ng-scope">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" data-slide="history-sellingprice">SKU Historical Selling price</div>
+                    <div class="sum_togglecontent" data-slide="history-sellingprice">
+                        <table class="data-grid fullwidth">
+                            <thead>
+                                <tr>
+                                    <th>SKU Name</th>
+                                    <th>BarCode</th>
+                                    <th>Latest</th>
+                                    <th>Avg: of last 6 months</th>
+                                    <th>Avg: of current year</th>
+                                    <th>Avg: of last 1 year</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr class="ng-scope">
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" data-slide="sp-settings" ng-click="GetProductPriceSettings('@DynamicViews.ProductPriceSetting', ViewModels.@(DynamicViews.ProductDetails).ProductIID);">Price setting</div>
+                    <div class="sum_togglecontent" data-slide="sp-settings">
+
+                        <span id="spanPriceList" class="inputwrap">
+                            <ui-select id="PriceList" theme="select2" class="pos-txt" style="width:400px; height:26px;" ng-model="ProductPrice" ng-change="SelectProductPriceSettingPrice('@DynamicViews.ProductPriceSetting', ViewModels.@(DynamicViews.ProductDetails).ProductIID, @Newtonsoft.Json.JsonConvert.SerializeObject(new ProductPriceSettingViewModel()), $select);">
+                                <ui-select-match placeholder="Search PriceList">{{$select.selected.Value}}</ui-select-match>
+                                <ui-select-choices repeat="productPrice in ProductPriceLists | filter:$select.search">{{productPrice.Value}}</ui-select-choices>
+                            </ui-select>
+                        </span>
+
+                        <div class="fullwidth alignleft textright paddingbtm5 paddingtop5">                         
+                            <button class="button-green button">Apply to SKU’s</button>
+							<button class="button-green button" ng-click="CancelClick($event, ViewModels.@(DynamicViews.ProductDetails));">Cancel</button>
+							<button class="button-orange" ng-click="SaveProductPriceSettings('@DynamicViews.ProductPriceSetting', ViewModels.@(DynamicViews.ProductDetails).ProductIID);">Save</button>
+                        </div>
+                        <table class="data-grid" cellpadding="0" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th class="medium-col-width">PriceList Name</th>
+                                    <th class="small-col-width">Selling Price</th>
+                                    <th class="small-col-width">Discount</th>
+                                    <th class="medium-col-width">Discount Percentage</th>
+                                    <th class="medium-col-width"></th>
+                                    <th class="small-col-width last"></th>
+                                </tr>
+                            </thead>
+                            <tbody ng-repeat="productPriceSetting in ViewModels.@(DynamicViews.ProductPriceSetting)">
+                                <tr>
+                                    <td class="medium-col-width"><span ng-bind="productPriceSetting.PriceDescription"></span></td>
+                                    <td class="small-col-width"><input type="text" class="ng-pristine" ng-model="productPriceSetting.Price"></td>
+                                    <td class="small-col-width"><input type="text" class="ng-pristine" ng-model="productPriceSetting.Discount"></td>
+                                    <td class="small-col-width"><input type="text" class="ng-pristine" ng-model="productPriceSetting.DiscountPercentage"></td>
+                                    <td class="medium-col-width textcenter">
+                                        <span class="quantity-btn button-orange" ng-click="ToggleQuantity($event, $index, ModelQuantityStructure, productPriceSetting.QuantityPrice)">Quantity Price</span>
+                                    </td>
+                                    <td class="small-col-width last textcenter">
+                                        <span class="button-orange qtybtn" ng-click="RemoveGridRow($event, $index, @Newtonsoft.Json.JsonConvert.SerializeObject(new ProductPriceSettingViewModel()), ViewModels.@(DynamicViews.ProductPriceSetting))">
+                                            <i class="fa fa-minus"></i>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr class="quantity-toggle">
+                                    <td colspan="6" class="nopadding">
+                                        <div class="quantity-fieldswrap fullwidth alignleft">
+                                            <table class="quantityfields fullwidth">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="medium-col-width">Quantity</th>
+                                                        <th class="medium-col-width">Discount</th>
+                                                        <th class="medium-col-width">Discount percentage</th>
+                                                        <th class="small-col-width"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr class="ng-scope" ng-repeat="quantityPrice in productPriceSetting.QuantityPrice">
+                                                        <td class="medium-col-width"><input type="text" class="ng-pristine" ng-model="quantityPrice.Quantity"></td>
+                                                        <td class="medium-col-width"><input type="text" class="ng-pristine" ng-model="quantityPrice.Discount"></td>
+                                                        <td class="medium-col-width"><input type="text" class="ng-pristine" ng-model="quantityPrice.DiscountPercentage"></td>
+                                                        <td class="small-col-width textcenter">
+                                                            <span class="button-orange qtybtn" ng-click="InsertGridRow($event, $index, ModelQuantityStructure, productPriceSetting.QuantityPrice)">
+                                                                <i class="fa fa-plus"></i>
+                                                            </span>
+                                                            <span class="button-orange qtybtn" ng-click="RemoveGridRow($event, $index, ModelQuantityStructure, productPriceSetting.QuantityPrice)">
+                                                                <i class="fa fa-minus"></i>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" data-slide="multipricing" ng-click="GetPriceSettingCustomerGroups(true, '@DynamicViews.CustomerGroup', ViewModels.@(DynamicViews.ProductDetails).ProductIID)">Customer Groups(for multi pricing)</div>
+                    <div class="sum_togglecontent" data-slide="multipricing">
+                        <div class="fullwidth alignleft textright paddingbtm5">
+
+                            <span id="spanPriceListCustomerGroup" class="inputwrap alignleft textleft">
+                                <ui-select id="PriceList" theme="select2" class="pos-txt" style="width:400px; height:26px;" ng-model="ProductPrice" ng-change="SelectPriceListForCustomerGroup(true, '@DynamicViews.CustomerGroup', ViewModels.@(DynamicViews.ProductDetails).ProductIID, @Newtonsoft.Json.JsonConvert.SerializeObject(new ProductSKUPriceCustomerGroupViewModel()), $select);">
+                                    <ui-select-match placeholder="Search PriceList">{{$select.selected.Value}}</ui-select-match>
+                                    <ui-select-choices repeat="productPrice in ProductPriceLists | filter:$select.search">{{productPrice.Value}}</ui-select-choices>
+                                </ui-select>
+                            </span>
+                            <div class="fullwidth alignleft textright paddingbtm5 paddingtop5">
+                                <input type="button" value="Save" class="button-orange" ng-click="SavePriceSettingCustomerGroups(true, '@DynamicViews.CustomerGroup', ViewModels.@(DynamicViews.ProductDetails).ProductIID);" />
+                                <input type="button" value="Cancel" class="button-orange" ng-click="ResetPriceSettingCustomerGroups(true, '@DynamicViews.CustomerGroup', ViewModels.@(DynamicViews.ProductDetails).ProductIID);" />
+                                <input type="button" value="Apply to SKU’s" class="button-orange" />
+                            </div>
+                        </div>
+                        <div class="fullwidth alignleft">
+                            <div class="innertoggle ng-scope" ng-repeat="customerGroup in ViewModels.@(DynamicViews.CustomerGroup)">
+                                <div class="sum_innerheader ng-binding" ng-click="ToggleInnerGroup($event)" ng-bind-html="customerGroup.GroupName"></div>
+                                <div class="sum_innercontent fullwidth">
+                                    <table class="data-grid" cellpadding="0" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <th class="medium-col-width">PriceList Name</th>
+                                                <th class="small-col-width">Price</th>
+                                                <th class="small-col-width">Discount</th>
+                                                <th class="medium-col-width">Discount Percentage</th>
+                                                <th class="medium-col-width"></th>
+                                                <th class="small-col-width last"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody ng-repeat="cgp in customerGroup.CustomerGroupPrices">
+                                            <tr>
+                                                <td class="medium-col-width" ng-bind-html="cgp.PriceListName"></td>
+                                                <td class="small-col-width"><input type="text" class="ng-pristine" ng-model="cgp.Price"></td>
+                                                <td class="small-col-width"><input type="text" class="ng-pristine" ng-model="cgp.Discount"></td>
+                                                <td class="medium-col-width"><input type="text" class="ng-pristine" ng-model="cgp.DiscountPercentage"></td>
+                                                <td class="medium-col-width textcenter">
+                                                    <span class="quantity-btn button-orange" ng-click="ToggleQuantity($event, $index, CustomerGroupModel, cgp.QuantityPrice)">Quantity Price</span>
+                                                </td>
+                                                <td class="small-col-width last textcenter">
+                                                    <span class="button-orange qtybtn" ng-click="RemoveCustomerGridRow($event, $index, @Newtonsoft.Json.JsonConvert.SerializeObject(new ProductSKUPriceCustomerGroupViewModel()), '@DynamicViews.CustomerGroup', customerGroup.CustomerGroupPrices)">
+                                                        <i class="fa fa-minus"></i>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr class="quantity-toggle">
+                                                <td colspan="6" class="nopadding">
+                                                    <div class="quantity-fieldswrap fullwidth alignleft">
+                                                        <table class="quantityfields fullwidth">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th class="medium-col-width">Quantity</th>
+                                                                    <th class="medium-col-width">Discount</th>
+                                                                    <th class="medium-col-width">Discount percentage</th>
+                                                                    <th class="small-col-width"></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr class="ng-scope" ng-repeat="quantityPrice in cgp.QuantityPrice">
+                                                                    <td class="medium-col-width"><input type="text" ng-model="quantityPrice.Quantity"></td>
+                                                                    <td class="medium-col-width"><input type="text" ng-model="quantityPrice.Discount"></td>
+                                                                    <td class="medium-col-width"><input type="text" ng-model="quantityPrice.DiscountPercentage"></td>
+                                                                    <td class="textcenter small-col-width">
+                                                                        <span class="button-orange qtybtn" ng-click="InsertGridRow($event, $index, CustomerGroupModel, cgp.QuantityPrice)"><i class="fa fa-plus"></i></span>
+                                                                        <span class="button-orange qtybtn" ng-click="RemoveGridRow($event, $index, CustomerGroupModel, cgp.QuantityPrice)"><i class="fa fa-minus"></i></span>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $('#@windowName .summary-panel .remove').on('click', function () {
+            $('.pagecontent', '#@windowName').removeClass('summaryview');
+        });
+
+        @*$('#@windowName .summary-toggle .sum_toggleheader').on('click', function () {
+            $(this).parent().toggleClass('show');
+
+            if ($(this).parent().hasClass('show')) {
+                $(this).parent().addClass('show');
+                $(this).parent().find('.sum_togglecontent').slideDown('fast');
+            }
+            else {
+                $(this).parent().removeClass('show');
+                $(this).parent().find('.sum_togglecontent').slideUp('fast');
+            }
+        });*@
+        $('#@windowName .summary-toggle .sum_toggleheader').on('click', function () {
+            var dataslide = $(this).attr('data-slide');
+            $(this).toggleClass('show');
+            if ($(this).hasClass('show')) {
+                $(".sum_togglecontent[data-slide='" + dataslide + "']").slideDown('fast');
+            }
+            else {
+                $(".sum_togglecontent[data-slide='" + dataslide + "']").slideUp('fast');
+            }
+        });
+
+
+        $('#@windowName .summarytab-content.first').show();
+
+        $('#@windowName .summary-tab .summary-tab-list').on('click', function () {
+            $('.summary-tab-list', '#@windowName').removeClass('active');
+            $('.summarytab-content', '#@windowName').hide();
+            $(this).addClass('active');
+            $('#' + $(this).attr('content-tab'), '#@windowName').fadeIn('medium');
+        });
+
+        $('#@windowName').parents('.pagecontent').addClass("minimize-fields priceview"); //Added one class to increase width for the smart view
+
+    });
+</script>
+
+

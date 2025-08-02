@@ -1,0 +1,20 @@
+﻿@using Eduegate.Framework.Mvc.Attributes
+@using System.Reflection;
+@using Eduegate.Framework.Mvc.Attributes;
+
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div class="windowcontainer schedule" id="CreateAppointments" ng-controller="AppointmentController as appointment">
+    <div id="@windowName">
+        <daypilot-scheduler id="dp" config="config" events="appointment.events" publish-as="appointment.scheduler">
+        </daypilot-scheduler>
+    </div>
+</div>

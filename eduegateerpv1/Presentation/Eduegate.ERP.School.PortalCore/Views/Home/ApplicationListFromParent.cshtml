@@ -1,0 +1,98 @@
+﻿
+@{
+    ViewBag.Title = "ApplicationListFromParent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="bg-light d-flex flex-column" style="flex:1;" ng-controller="SiblingApplicationListController" ng-init="init('','')">
+
+    <section class="home-section-wrap">
+        <div class="container-xxl">
+            <div class="row row-eq-height">
+                <!-- Nav tabs -->
+                <!-- Tab panes -->
+
+                <div class="p-md-sm-0  fontawesome-demo">
+                    <div class="container-custom container-xxl d-flex flex-column-fluid p-md-sm-0">
+                        <div class="content d-flex flex-row flex-row-fluid" id="kt_content">
+                            <div class="d-flex flex-column flex-row-fluid">
+                                <div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6" id="kt_toolbar">
+                                    <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2">
+                                        <h1 class="d-flex text-dark fw-bold m-0 fs-3">Application List</h1>
+                                        <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+                                            <li class="breadcrumb-item text-gray-600">
+                                                <a class="text-gray-600 text-hover-primary">Home</a>
+                                            </li>
+                                            <li class="breadcrumb-item text-gray-500">Application List</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="flex-column-fluid">
+                                    <div class=" g-5 g-lg-8 mb-5 mb-xl-0">
+
+
+                                        @*<table data-role="table" class="ui-responsive ">*@
+                                        <div class="table-responsive table-responsive-custom">
+                                            <table class="table table-striped table-bordered table-hover table-checkable order-column valign-middle">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Application No.</th>
+                                                        <th>Name</th>
+                                                        <th>Contact No.</th>
+                                                        <th>Date</th>
+                                                        <th>Status</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                    <tr ng-repeat="application in Applications">
+                                                        <td ng-bind="application.ApplicationNumber"></td>
+                                                        <td>
+                                                            <span ng-bind="application.FirstName"></span><span> </span><span ng-bind="application.MiddleName"></span>
+                                                            <span> </span><span ng-bind="application.LastName"></span>
+                                                        </td>
+                                                        <td ng-bind="application.MobileNumber"></td>
+                                                        <td><span>{{application.CreatedDate | date:'dd/MM/yyyy'}}</span></td>
+
+                                                        <td> <span style="color:orange" ng-bind="application.ApplicationStatusDescription"></span> </td>
+                                                        <td>
+                                                            <a href="NewSiblingApplication?Id={{application.ApplicationIID}}">
+                                                                <span class="edit" ng-if="application.ApplicationStatusID !=4 && application.ApplicationStatusID !=5 && application.ApplicationStatusID !=7 && application.ApplicationStatusID !=8 && application.ApplicationStatusID !=9 && application.ApplicationStatusID !=10" ng-hide="edit"><i class="material-icons small" title="edit">edit</i></span>
+                                                            </a>
+                                                            @*<a href="DeleteSiblingApplication?Id={{application.ApplicationIID}}">
+                    <span class="delete" ng-if="application.ApplicationStatusID !=4 && application.ApplicationStatusID !=5 && application.ApplicationStatusID !=7 && application.ApplicationStatusID !=8 && application.ApplicationStatusID !=9 && application.ApplicationStatusID !=10" ng-hide="delete" ng-click="Delete(application.ApplicationIID)"><i class="material-icons small" title="delete">delete</i> </span>
+                </a>*@
+                                                        </td>
+                                                    </tr>
+                                                    <tr id="ApplicationListOverlay" class="preload-overlay center">
+                                                        <td id="ApplicationListOverlayButtonLoader" class="preloadImg" colspan="12">
+                                                            <img src="~/Images/preloader.gif" alt="loader" />
+                                                            <br /><label>Loading...</label>
+                                                        </td>
+                                                    </tr>
+                                                    <tr ng-if="Applications.length == 0 && !ShowPreLoader">
+                                                        <td colspan="6"> <p class="text-center">No application found..</p></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gy-5 g-xl-10">
+                        <div class="col-xl-4 mb-5 mb-xl-10">
+                        </div>
+
+                    </div>
+                </div>
+
+            </div><!--pageContent-->
+        </div><!--pageContainer-->
+    </section>
+</div>
+

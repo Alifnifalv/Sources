@@ -1,0 +1,110 @@
+﻿@model Eduegate.ERP.Admin.Models.LoginViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Log in";
+    var settings = new Eduegate.Service.Client.SettingServiceClient(null);
+    var isMultiCompany = Eduegate.Framework.Extensions.ConfigurationExtensions.GetAppConfigValueWithDefault<bool>("IsMultiCompany", false);
+}
+<!DOCTYPE html>
+<html lang="en" ng-app="Eduegate.ERP.School.Portal">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <meta name="description" content="Responsive Admin Template" />
+    <meta name="author" content="RedstarHospital" />
+    <title>Smart University | Bootstrap Responsive Admin Template</title>
+    <!-- google font -->
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet"
+          type="text/css" />
+    <!-- icons -->
+    <link href="~/Design_v02/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="~/Design_v02/plugins/iconic/css/material-design-iconic-font.min.css">
+    <!-- bootstrap -->
+    <link href="~/Design_v02/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- style -->
+    <link rel="stylesheet" href="~/Design_v02/css/pages/extra_pages.css">
+    <!-- favicon -->
+    <link rel="shortcut icon" href="~/Design_v02/img/favicon.ico" />
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/angular")
+
+    @Scripts.Render("~/bundles/appmodels")
+    @Scripts.Render("~/bundles/plugins")
+    @Scripts.Render("~/bundles/others")
+    @Scripts.Render("~/bundles/jslinq")
+    @Scripts.Render("~/bundles/highchart")
+</head>
+
+<body ng-controller="LoginController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+    <div class="limiter">
+        <div class="container-login100 page-background">
+            <div class="wrap-login100">
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmLogin", @ng_submit = "Signin($event);" }))
+                {
+                    <span class="login100-form-logo">
+                        <img alt="" src="~/Design_v02/img/logo-2.png">
+                    </span>
+                    <span class="login100-form-title p-b-34 p-t-27">
+                        Log in
+                    </span>
+                    <div class="wrap-input100 validate-input" data-validate="Enter username">
+                        <input class="input100 required" type="text" name="Email" id="Email" placeholder="Enter the registered email" ng_model="LoginModel.Email" ng_keyup="EmailKeyup();">
+                        <span class="focus-input100" data-placeholder="&#xf207;"></span>
+                        @Html.ValidationMessageFor(m => m.Email, null, new { @class = "validateError fullWidth fLeft text-left" })
+                    </div>
+                    <div class="wrap-input100 validate-input" data-validate="Enter password">
+                        <input class="input100 required" type="password" name="Password" id="Password" placeholder="Password" ng_model="LoginModel.Password" ng_keyup="PasswordKeyup();" ,>
+                        <span class="focus-input100" data-placeholder="&#xf191;"></span>
+                        @Html.ValidationMessageFor(m => m.Password, null, new { @class = "validateError fullWidth fLeft text-left" })
+                    </div>
+                    <span class="field-validation-error textleft ng-cloak" ng-show="IsEmailPasswordIncorrect">Email/Password is incorrect!</span>
+                    <div class="contact100-form-checkbox">
+                        <input class="input-checkbox100" id="ckb1" type="checkbox" name="remember-me">
+                        <label class="label-checkbox100" for="ckb1">
+                            Remember me
+                        </label>
+                    </div>
+                    <div class="container-login100-form-btn">
+                        <input type="submit" class="login100-form-btn" value="Submit" id="submitbtn" />
+                    </div>
+                    <div class="text-center p-t-30">
+                        <a class="txt1" href="Account/ResetPassword">
+                            Forgot Password?
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <!-- start js include path -->
+    <script src="~/Design_v02/plugins/jquery/jquery.min.js"></script>
+    <!-- bootstrap -->
+    <script src="~/Design_v02/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Design_v02/js/pages/extra-pages/pages.js"></script>
+    <!-- end js include path -->
+
+
+    <script type="text/javascript">
+       utility.myHost = "@string.Format("{0}://{1}{2}/", Request.Url.Scheme, Request.Url.Authority, HttpRuntime.AppDomainAppVirtualPath)";
+        $.validator.unobtrusive.parse($('#frmLogin'));
+
+        ////Disable Back Button In All Browsers.
+        //function DisableBackButtonAllBrowsers() {
+        //    window.history.forward()
+        //};
+        //DisableBackButtonAllBrowsers();
+        //window.onload = DisableBackButtonAllBrowsers;
+        //window.onpageshow = function (evts) { if (evts.persisted) DisableBackButtonAllBrowsers(); };
+        //window.onunload = function () { void (0) };
+        $("#target").submit(function (event) {
+            $("#LoginOverlay").show();
+            $("#submitbtn").trigger();
+        });
+    </script>
+</body>
+
+</html>

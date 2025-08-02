@@ -1,0 +1,487 @@
+﻿@{
+    ViewBag.Title = "ApplicationForm";
+    var IsError = ViewBag.IsError;
+    var ErrorMessage = ViewBag.ErrorMessage;
+}
+
+<div class="bg-light d-flex flex-column" style="flex:1;" ng-controller="CoachingFormController" ng-init="init()">
+    <section class="home-section-wrap">
+        <div class="container">
+            <div class="row row-eq-height">
+
+                <div class="tab-pane  fontawesome-demo">
+                    <div class="container-custom container-xxl d-flex flex-column-fluid  p-md-sm-0">
+                        <div class="content d-flex flex-row flex-row-fluid" id="kt_content">
+                            <div class="d-flex flex-column flex-row-fluid">
+                                <div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6" id="kt_toolbar">
+                                    <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2">
+                                        <h1 class="d-flex text-dark fw-bold m-0 fs-3">New application</h1>
+                                        <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+                                            <li class="breadcrumb-item text-gray-600">
+                                                <a class="text-gray-600 text-hover-primary" href="~/FormBuilder/Index">Home</a>
+                                            </li>
+                                            <li class="breadcrumb-item text-gray-500">New application</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div id="CoachingFormOverlay" class="preload-overlay center">
+                                    <span id="CoachingFormOverlayButtonLoader" class="preloadImg">
+                                        <img src="~/Images/preloader.gif" alt="loader" />
+                                        <br /><label>Loading...</label>
+                                    </span>
+                                </div>
+                                @if (IsError != null && IsError == true)
+                                {
+                                    <div id="ErrorMessage">
+                                        <span style="color:red;">
+                                            @ErrorMessage
+                                        </span>
+                                    </div>
+                                }
+                                <div class="flex-column-fluid">
+
+                                    <div class="row g-5 g-lg-8 mb-5 mb-xl-0">
+                                        <div class="content d-flex flex-row flex-row-fluid">
+                                            <div class="card">
+
+                                                <div class="card-body">
+                                                    <form action="~/FormBuilder/CoachingFormSubmit" method="post" id="coachingForm">
+                                                        <div class="row align-items-center g-3">
+                                                            <input type="hidden" class="form-control" id="FormID" name="FormID" value="1" />
+                                                            <input type="hidden" class="form-control" id="ApplicationStatus" name="ApplicationStatus" value="Applied" />
+                                                            <input type="hidden" class="form-control" id="ApplicationStatusID" name="ApplicationStatusID" value="1" />
+                                                            <input type="hidden" class="form-control" id="ParentID" name="ParentID" value="{{StudentCoachingApplication.ParentID}}" />
+
+                                                            <div class="mb-4 col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Student</label>
+                                                                <input type="hidden" class="form-control" id="StudentName" name="StudentName" value="{{StudentCoachingApplication.StudentName}}" />
+                                                                <input type="hidden" class="form-control" id="AdmissionNumber" name="AdmissionNumber" value="{{StudentCoachingApplication.AdmissionNumber}}" />
+                                                                <select class="form-control" required="" aria-required="true" name="StudentID" id="StudentID"
+                                                                        ng-options="item as item.Value for item in Students track by item.Key"
+                                                                        ng-model="StudentCoachingApplication.Student" autofocus tabindex="0" ng-change="StudentChanges(StudentCoachingApplication)">
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="w-100"><H4><b>Admission details</b></H4></div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">School/Campus</label>
+                                                                <input type="hidden" class="form-control" id="SchoolID" name="SchoolID" value="{{StudentCoachingApplication.SchoolID}}" />
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.SchoolName" id="SchoolName" name="SchoolName" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Academic year</label>
+                                                                <input type="hidden" class="form-control" id="AcademicYearID" name="AcademicYearID" value="{{StudentCoachingApplication.AcademicYearID}}" />
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.AcademicYearName" id="AcademicYearName" name="AcademicYearName" value="{{AcademicYearName}}" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Curriculam</label>
+                                                                <input type="hidden" class="form-control" id="Curriculam" name="Curriculam" value="{{StudentCoachingApplication.Curriculam}}" />
+                                                                <select class="form-control" required="" aria-required="true" name="CurriculamID" id="CurriculamID"
+                                                                        ng-options="item as item.Value for item in SchoolSyllabus track by item.Key"
+                                                                        ng-model="StudentCoachingApplication.Curriculams" autofocus tabindex="0" ng-change="CurriculamChanges(StudentCoachingApplication)"></select>
+                                                            </div>
+
+                                                            <div class="w-100"></div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <input type="hidden" class="form-control" id="ClassID" name="ClassID" value="{{StudentCoachingApplication.ClassID}}" />
+                                                                <input type="hidden" class="form-control" id="SectionID" name="SectionID" value="{{StudentCoachingApplication.SectionID}}" />
+                                                                <label for="exampleFormControlInput1" class="form-label">Grade</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.Grade" id="Grade" name="Grade" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Registration date</label>
+                                                                <input type="hidden" class="form-control" id="RegistrationDate" name="RegistrationDate" value="{{StudentCoachingApplication.RegistrationDate}}" />
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.RegistrationDateString" id="RegistrationDateString" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Blood group</label>
+                                                                <input type="text" class="form-control" required="" aria-required="true" ng-model="StudentCoachingApplication.BloodGroup" id="BloodGroup" name="BloodGroup" />
+                                                            </div>
+
+                                                            <div class="w-100"><H4><b>Personal details</b></H4></div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Gender</label>
+                                                                <input type="hidden" class="form-control" id="GenderID" name="GenderID" value="{{StudentCoachingApplication.GenderID}}" />
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.Gender" id="Gender" name="Gender" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Religion</label>
+                                                                <input type="hidden" class="form-control" id="ReligionID" name="ReligionID" value="{{StudentCoachingApplication.ReligionID}}" />
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.Religion" id="Religion" name="Religion" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Date of birth</label>
+                                                                <input type="hidden" class="form-control" id="DateOfBirth" name="DateOfBirth" value="{{StudentCoachingApplication.DateOfBirth}}" />
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.DateOfBirthString" id="DateOfBirthString" readonly />
+                                                            </div>
+
+                                                            <div class="w-100"></div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Birth country</label>
+                                                                <input type="hidden" class="form-control" id="BirthCountryID" name="BirthCountryID" value="{{StudentCoachingApplication.BirthCountryID}}" />
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.BirthCountry" id="BirthCountry" name="BirthCountry" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Nationality</label>
+                                                                <input type="hidden" class="form-control" id="NationalityID" name="NationalityID" value="{{StudentCoachingApplication.NationalityID}}" />
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.Nationality" id="Nationality" name="Nationality" readonly />
+                                                            </div>
+
+                                                            <div class="w-100"></div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Second language</label>
+                                                                <input type="hidden" class="form-control" id="SecondLanguageID" name="SecondLanguageID" value="{{StudentCoachingApplication.SecondLanguageID}}" />
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.SecondLanguage" id="SecondLanguage" name="SecondLanguage" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Third language</label>
+                                                                <input type="hidden" class="form-control" id="ThirdLanguageID" name="ThirdLanguageID" value="{{StudentCoachingApplication.ThirdLanguageID}}" />
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.ThirdLanguage" id="ThirdLanguage" name="ThirdLanguage" readonly />
+                                                            </div>
+
+                                                            <div class="w-100"><H4><b>Passport details</b></H4></div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Passport number</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.PassportNumber" id="PassportNumber" name="PassportNumber" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Passport expiry date</label>
+                                                                <input type="hidden" class="form-control" id="PassportExpiryDate" name="PassportExpiryDate" value="{{StudentCoachingApplication.PassportExpiryDate}}" />
+                                                                <input type="date" placeholder="Passport expiry date" required="" ng-model="StudentCoachingApplication.PassportExpiryDateString" id="PassportExpiryDateString" class="form-control" />
+                                                            </div>
+
+                                                            <div class="w-100"></div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">National id</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.NationalID" id="NationalID" name="NationalID" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">National id expiry date</label>
+                                                                <input type="hidden" class="form-control" id="NationalIDExpiryDate" name="NationalIDExpiryDate" value="{{StudentCoachingApplication.NationalIDExpiryDate}}" />
+                                                                <input type="date" placeholder="National id expiry date" required="" ng-model="StudentCoachingApplication.NationalIDExpiryDateString" id="NationalIDExpiryDateString" class="form-control" />
+                                                            </div>
+
+                                                            <div class="w-100"><H4><b>Contact details</b></H4></div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Primary contact</label>
+                                                                <input type="hidden" class="form-control" id="PrimaryContactID" name="PrimaryContactID" value="{{StudentCoachingApplication.PrimaryContactID}}" />
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.PrimaryContact" id="PrimaryContact" name="PrimaryContact" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">P.O Box</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.POBoxNumber" id="POBoxNumber" name="POBoxNumber" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Primary address</label>
+                                                                <textarea class="form-control" ng-model="StudentCoachingApplication.PrimaryAddress" id="PrimaryAddress" name="PrimaryAddress" readonly></textarea>
+                                                            </div>
+
+                                                            <div class="w-100"><H4><b>Father's details</b></H4></div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Name</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.FatherName" id="FatherName" name="FatherName" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Mobile number</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.FatherMobileNumber" id="FatherMobileNumber" name="FatherMobileNumber" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Designation</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.FatherDesignation" id="FatherDesignation" name="FatherDesignation" readonly />
+                                                            </div>
+
+                                                            <div class="w-100"></div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Company</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.FatherCompanyName" id="FatherCompanyName" name="FatherCompanyName" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">National id</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.FatherNationalID" id="FatherNationalID" name="FatherNationalID" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Email id</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.FatherEmailID" id="FatherEmailID" name="FatherEmailID" readonly />
+                                                            </div>
+
+                                                            <div class="w-100"><H4><b>Mother's details</b></H4></div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Name</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.MotherName" id="MotherName" name="MotherName" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Mobile number</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.MotherMobileNumber" id="MotherMobileNumber" name="MotherMobileNumber" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Designation</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.MotherDesignation" id="MotherDesignation" name="MotherDesignation" readonly />
+                                                            </div>
+
+                                                            <div class="w-100"></div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Company</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.MotherCompanyName" id="MotherCompanyName" name="MotherCompanyName" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">National id</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.MotherNationalID" id="MotherNationalID" name="MotherNationalID" readonly />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Email id</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.MotherEmailID" id="MotherEmailID" name="MotherEmailID" readonly />
+                                                            </div>
+
+                                                            <div class="w-100"><H4><b>Sibling details</b></H4></div>
+
+                                                            <div ng-if="StudentCoachingApplication.Siblings.length == 0">
+                                                                <label>No sibling details found</label>
+                                                            </div>
+                                                            <div ng-repeat="sibling in StudentCoachingApplication.Siblings track by $index" class="row">
+                                                                <span class="mb-4 form-group col-md-auto col-xl-4">
+                                                                    <label for="exampleFormControlInput1" class="form-label">Admission number</label>
+                                                                    <input type="hidden" class="form-control" id="SiblingStudentID" name="SiblingStudentID" value="{{sibling.SiblingStudentID}}" />
+                                                                    <input type="text" class="form-control" ng-model="sibling.SiblingAdmissionNumber" id="SiblingAdmissionNumber" name="SiblingAdmissionNumber" readonly />
+                                                                </span>
+
+                                                                <span class="mb-4 form-group col-md-auto col-xl-4">
+                                                                    <label for="exampleFormControlInput1" class="form-label">Name</label>
+                                                                    <input type="text" class="form-control" ng-model="sibling.SiblingName" id="SiblingName" name="SiblingName" readonly />
+                                                                </span>
+
+                                                                <span class="mb-4 form-group col-md-auto col-xl-4">
+                                                                    <label for="exampleFormControlInput1" class="form-label">Grade</label>
+                                                                    <input type="hidden" class="form-control" id="SiblingClassID" name="SiblingClassID" value="{{sibling.SiblingClassID}}" />
+                                                                    <input type="hidden" class="form-control" id="SiblingStudentID" name="SiblingSectionID" value="{{sibling.SiblingSectionID}}" />
+                                                                    <input type="text" class="form-control" ng-model="sibling.SiblingGrade" id="SiblingGrade" name="SiblingGrade" readonly />
+                                                                </span>
+                                                            </div>
+
+                                                            <div class="w-100"><H4><b>Previous school details</b></H4></div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">School name</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.PreviousSchoolName" id="PreviousSchoolName" name="PreviousSchoolName" />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Curriculam</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.PreviousSchoolCurriculam" id="PreviousSchoolCurriculam" name="PreviousSchoolCurriculam" />
+                                                            </div>
+
+                                                            <div class="mb-4 form-group col-md-auto col-xl-4">
+                                                                <label for="exampleFormControlInput1" class="form-label">Grade</label>
+                                                                <input type="text" class="form-control" ng-model="StudentCoachingApplication.PreviousSchoolGrade" id="PreviousSchoolGrade" name="PreviousSchoolGrade" />
+                                                            </div>
+
+                                                            <div class="w-100"></div>
+
+                                                            <div class="content d-flex flex-row flex-row-fluid">
+                                                                <div class="card">
+
+                                                                    <div class="card-body">
+                                                                        <div class=" pb-lg-20">
+                                                                            <!--begin::Title-->
+                                                                            <h2 class="fw-bold text-dark mb-8">
+                                                                                IIT & MEDICAL PACE PROGRAM FEE POLICY
+                                                                            </h2>
+                                                                            <!--end::Title-->
+                                                                            <!--begin::List-->
+                                                                            <ol class="fs-5 fw-semibold mb-6 ms-4" style="text-align: justify; text-justify: inter-word;">
+                                                                                <li>
+                                                                                    <span class="text-gray-700">
+                                                                                        Students studying for Classes 8 to 10 are eligible for Foundation Program.
+                                                                                    </span>
+                                                                                </li>
+                                                                                <li class="my-2">
+                                                                                    <span class="text-gray-700">
+                                                                                        Students studying for Class XI and XII should themselves chose suitable coaching program such as IIT or Medical.
+                                                                                    </span>
+                                                                                </li>
+                                                                                <li class="my-2">
+                                                                                    <span class="text-gray-700">
+                                                                                        Maximum two installments are available for payment of fees;
+                                                                                        first installment should be paid at the time of enrollment and second installment on or
+                                                                                        before 1st September of relevant academic year.
+                                                                                    </span>
+                                                                                </li>
+                                                                                <li class="my-2">
+                                                                                    <span class="text-gray-700">
+                                                                                        School transport will not be available for the evening classes.
+                                                                                        Students can request transports after evening classes on additional payment provided
+                                                                                        it is available at that time for the area requested.
+                                                                                    </span>
+                                                                                </li>
+                                                                                <li class="my-2">
+                                                                                    <span class="text-gray-700">
+                                                                                        Full Term Fee will be applied irrespective of the start date.
+                                                                                    </span>
+                                                                                </li>
+                                                                                <li class="my-2">
+                                                                                    <span class="text-gray-700">
+                                                                                        Timing will be decided by the coaching faculty and school will not have any say in the timings.
+                                                                                    </span>
+                                                                                </li>
+                                                                                <li class="my-2">
+                                                                                    <span class="text-gray-700">
+                                                                                        Students should decide what is the best program suitable for them and Podar Pearl School is not responsible for their preferences.
+                                                                                    </span>
+                                                                                </li>
+                                                                                <li class="my-2">
+                                                                                    <span class="text-gray-700">
+                                                                                        NO REFUND OF FEES UNDER ANY CIRCUMSTANCES.
+                                                                                    </span>
+                                                                                </li>
+                                                                            </ol>
+                                                                            <div style="text-align: justify; text-justify: inter-word;">
+                                                                                <div class="w-100"><H4><b><u>DECLARATION</u></b></H4></div>
+                                                                                <p>
+                                                                                    I, the undersigned the parent/guardian, hereby confirm and confess that it is my sole desire to enroll my ward for IIT/Medical PACE Program,
+                                                                                    a coaching program specifically meant for the students to get prepared for all India Medical and Engineering Programs for which the school
+                                                                                    has only facilitated this coaching program for my ward to get trained on my request. I understand that the Podar Pearl School has only made
+                                                                                    arrangement for coaching and recruited expert faculties from India from IIT/Medical PACE Coaching Centers and the fees for the above coaching
+                                                                                    is paid to PACE Coaching Centers account thru the Podar Pearl School. I further confirm that Podar Pearl School is in no way responsible for
+                                                                                    academic performance of my ward nor responsible for any refunds or other financial obligations. The fees I am paying for this coaching is in
+                                                                                    addition to the school fees and I am not entitled for any refund even if my ward did not continue for the program under any circumstances.
+                                                                                    I further declare that all the details given are true, correct and complete. I also understand the critical need for this information to remain
+                                                                                    current and undertake to ensure that it is updated whenever necessary. I have read and understood the contents of this form and understand that
+                                                                                    this and all other requested documents form part of the admission process to the above program. I agree to support the School Behavior Policy,
+                                                                                    Code of Conduct, Uniform Rules and any sanctions that may be deemed appropriate concerning my children. I undertake to read the school regulations
+                                                                                    and policies on the school website and to ensure that we, as a family, abide by them in an effort to uphold the reputation of the school.
+                                                                                    We are aware of the fact that, periodically, photographs are taken in the school and we give full permission for our child to be included in the
+                                                                                    photographs even if they are published in school promotional material or media. In the event of an emergency, to make every effort to contact the
+                                                                                    parents. If this is not possible the child will be taken either to his/her family doctor, or to the nearest hospital for treatment.
+                                                                                </p>
+                                                                            </div>
+                                                                            <div class="form-check form-check-custom form-check-solid">
+                                                                                <div class="form-check  col-md-auto col-md-12">
+                                                                                    <input class="form-check-input" type="checkbox" value="{{StudentCoachingApplication.IsSelectTermsAndConditions}}" id="IsSelectTermsAndConditions" name="IsSelectTermsAndConditions" ng-click="TermsAndConditionsClick(StudentCoachingApplication)">
+
+                                                                                    <label class="form-check-label" for="IsSelectTermsAndConditions">
+                                                                                        Furthermore, I hereby certify that I have read and understood the above fee policy and I agree to abide by the same.
+                                                                                    </label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <button type="submit" id="SubmitCoachingFormBtn" class="btn btn-danger btn-dark col-md-12">Submit</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row gy-5 g-xl-10">
+                        <div class="col-xl-4 mb-5 mb-xl-10"></div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+</div>
+
+<style>
+    .gfuSqG {
+        box-sizing: border-box;
+        border: 1px solid rgb(241, 245, 246);
+        border-radius: 0px 0px 4px 4px;
+        background-color: rgb(255, 255, 255);
+        box-shadow: rgb(28 47 58 / 20%) -2px 3px 13px 0px;
+        padding: 23px 17px 35px;
+    }
+
+    hr {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        border: 0;
+        border-top: 1px solid rgba(0,0,0,.1);
+    }
+</style>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $('#SubmitCoachingFormBtn').click(function () {
+            $(this).prop("disabled", true);
+
+            if ($('#IsSelectTermsAndConditions').prop("checked") == false) {
+
+                $("#IsSelectTermsAndConditions").focus();
+                $(this).prop("disabled", false);
+                callToasterPlugin('error', 'Select terms and conditions');
+                return false;
+            }
+            else if (!$("#StudentID").val() || $("#StudentID").val() == '?') {
+                $("#StudentID").focus();
+                $(this).prop("disabled", false);
+                callToasterPlugin('error', "Select any student!");
+                return false;
+            }
+            else if (!$("#CurriculamID").val() || $("#CurriculamID").val() == '?') {
+                $("#CurriculamID").focus();
+                $(this).prop("disabled", false);
+                callToasterPlugin('error', "Select any curriculam!");
+                return false;
+            }
+            else if (!$("#BloodGroup").val()) {
+                $("#BloodGroup").focus();
+                $(this).prop("disabled", false);
+                callToasterPlugin('error', "Blood group is required!");
+                return false;
+            }
+            else {
+                $('#coachingForm').submit();
+            }
+        });
+
+        if (ViewBag.IsError == true){
+            callToasterPlugin('error', 'Something went wrong, try again later!');
+        }
+
+    });
+
+</script>

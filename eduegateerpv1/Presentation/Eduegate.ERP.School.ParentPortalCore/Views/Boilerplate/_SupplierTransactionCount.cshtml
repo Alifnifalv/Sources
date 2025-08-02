@@ -1,0 +1,27 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+    var documentTypeID = Model.GetParameterValue<string>("DocumentTypeID");
+}
+
+<div id="@windowName" template="_TransactionCount" ng-controller="BoilerPlateController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+
+    <div class="col-md-4 widget @(Model.RuntimeParameters.Find(a => a.Key == "TitleCss").Value)">
+        <div class="stats-left ">
+            <h5>@(Model.GetParameterValue<string>("Header1"))</h5>
+            <h4>@(Model.GetParameterValue<string>("Header2"))</h4>
+            <h4>@(Model.GetParameterValue<string>("Header3"))</h4>
+        </div>
+        <div ng-controller="SupplierTransactionCountBoilerPlateController"
+             ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName', '@(documentTypeID)',@(Model.GetParameterValue<string>("DateFrom")),@(Model.GetParameterValue<string>("DateTo")), @(Model.GetParameterValue<bool>("IsLive").ToString().ToLower()))"
+             class="stats-right">
+            <br />
+            <label ng-bind="TransactionDetails.TransactionCount">0</label> <br />
+            <label ng-bind="TransactionDetails.Amount">0</label>
+        </div>
+        <div class="clearfix"> </div>
+    </div>
+</div>
+    

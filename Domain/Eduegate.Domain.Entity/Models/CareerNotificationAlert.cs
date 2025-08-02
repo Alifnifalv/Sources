@@ -1,0 +1,28 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Eduegate.Domain.Entity.Models
+{
+    [Table("CareerNotificationAlerts", Schema = "notification")]
+    public partial class CareerNotificationAlert
+    {
+        [Key]
+        public long NotificationAlertIID { get; set; }
+        public string Message { get; set; }
+        public Nullable<long> FromLoginID { get; set; }
+        public Nullable<long> ToLoginID { get; set; }
+        public Nullable<System.DateTime> NotificationDate { get; set; }
+        public Nullable<int> AlertStatusID { get; set; }
+        public Nullable<long> CreatedBy { get; set; }
+        public Nullable<long> UpdatedBy { get; set; }
+        public Nullable<System.DateTime> CreatedDate { get; set; }
+        public Nullable<System.DateTime> UpdatedDate { get; set; }
+        public DateTime? ExpiryDate { get; set; }
+        public Nullable<int> AlertTypeID { get; set; }
+        public Nullable<long> ReferenceID { get; set; }
+        public long? ReferenceScreenID { get; set; }
+        public bool? IsITCordinator { get; set; }
+    }
+}

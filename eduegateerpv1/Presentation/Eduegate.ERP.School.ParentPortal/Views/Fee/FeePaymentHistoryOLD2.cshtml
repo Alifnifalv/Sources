@@ -1,0 +1,212 @@
+﻿@{
+    ViewBag.Title = "FeePaymentHistoryOLD2";
+}
+
+<link href="~/Content/style.bundle.css" rel="stylesheet" type="text/css" />
+
+<div class="d-flex flex-column-reverse flex-lg-row col-lg-10">
+    <div class="flex-lg-row-fluid mb-10 mb-lg-0 me-lg-7 me-xl-10">
+
+        <div class="card">
+            <div class="content">
+                <div class="card-header pt-7 border-0">
+                    <!--begin::Title-->
+                    <div class="card-title align-items-start flex-column">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group row  margin-top-20">
+                                    <label class="control-label col-md-12" for="School">School</label>
+                                    <div class="input-icon right ps-0">
+                                        <i class="fa"></i>
+                                        <select class="form-control validate" required="" aria-required="true" name="SelectedSchool" id="SelectedSchool"
+                                                ng-options="item as item.Value for item in Schools track by item.Key" ng-model="SelectedSchool" autofocus tabindex="0" ng-change="SchoolChanges()"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group row  margin-top-20">
+                                    <label class="control-label col-md-12" for="SchoolAcademicyear">Academic Year</label>
+                                    <div class="input-icon right ps-0">
+                                        <i class="fa"></i>
+                                        <select class="form-control validate" required="" aria-required="true" name="SelectedAcademicYear" id="SelectedAcademicYear"
+                                                ng-options="item as item.Value for item in AcademicYears track by item.Key" ng-model="SelectedAcademicYear" ng-change="GetFeeCollectionHistory()"></select>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                        </div>
+                    </div>
+                    <!--end::Title-->
+                    <!--begin::Actions-->
+                    <div class="card-toolbar">
+                        <!--begin::Filters-->
+                        <div class="d-flex flex-stack flex-wrap gap-4">
+                            <button class="btn btn-primary w-100" type="submit" ng-click="DuePaymentClick()">
+                                Know your due
+                            </button>
+                        </div>
+                        <!--begin::Filters-->
+                    </div>
+                    <!--end::Actions-->
+                </div>
+                <div class="card-body">
+
+
+                    <div id="FeePaymentHistoryOverlay" class="preload-overlay center" ng-if="ShowPreLoader">
+                        <span id="FeePaymentHistoryOverlay" class="preloadImg">
+                            <img src="~/Images/preloaderWhite.gif" alt="loader" />
+                        </span>
+                    </div>
+                    <div class="alert alert-info text-center" ng-if="FeeCollectionHistories.length == 0 && !ShowPreLoader">
+                        <label>There is no collection details found!</label>
+                    </div>
+
+                    <div class="fullcolumn-layout" ng-if="FeeCollectionHistories != null && FeeCollectionHistories.length > 0">
+                        <div class="table-responsive">
+                            <table style="width:100%" class="table align-middle table-row-dashed fs-6 gy-3 dataTable no-footer">
+                                <thead>
+                                    <tr class="text-start text-gray-400 fw-semibold fs-7 text-uppercase gs-0">
+                                        <th class="text-start min-w-250px ">Student</th>
+                                        <th class="text-start min-w-100px ">Receipt No</th>
+                                        <th class="text-start min-w-100px ">Collection Date</th>
+                                        <th class="text-end w-100px ">Status</th>
+                                        <th class="text-end w-125px ">Amount</th>
+                                        <th class="text-start w-10px min-w-10px"> </th>
+
+                                    </tr>
+                                </thead>
+                                <tbody class="fw-semibold text-gray-600">
+                                    <tr ng-focus="FocusGrid($event,'FeeCollectionHistories')" ng-repeat-start="gridModel in FeeCollectionHistories track by $index" class="ng-scope"
+                                        ng-init="currentStudent = $parent.start; $parent.start=$parent.start+1;">
+
+                                        <td class="text-start">
+                                            <span ng-bind="gridModel.StudentName" class="text-gray-800 fw-semibold"></span>
+                                        </td>
+                                        <td class="text-start">
+                                            <span ng-bind="gridModel.FeeReceiptNo" class="ng-binding"></span>
+                                        </td>
+                                        <td class="text-start">
+                                            <span ng-bind="gridModel.CollectionDate" class="ng-binding"></span>
+                                        </td>
+                                        <td class="text-end">
+                                            <span ng-if="gridModel.FeeCollectionStatusID == gridModel.FeeCollectionCollectedStatusID">
+                                                <span class="badge py-3 px-4 fs-7 badge-light-primary">{{gridModel.FeeCollectionStatus}}</span>
+                                            </span>
+                                            <span ng-if="gridModel.FeeCollectionStatusID == gridModel.FeeCollectionDraftStatusID">
+                                                <span class="badge py-3 px-4 fs-7 badge-light-danger">{{gridModel.FeeCollectionStatus}}</span>
+                                            </span>
+                                        </td>
+                                        <td class="text-end">
+                                            <span ng-bind="gridModel.Amount|number:2" class="text-gray-800 fw-semibold"></span>
+                                        </td>
+
+                                        <td class="text-end">
+                                            <div class="controls text-center">
+                                                <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" data-bs-toggle="collapse" href="#collapseExample{{currentStudent}}" role="button" aria-expanded="false" aria-controls="collapseExample{{currentStudent}}">
+                                                    <i ng-if="gridModel.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                    <i ng-if="!gridModel.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                </a>
+                                            </div>
+
+                                        </td>
+                                    </tr>
+                                    <tr ng-if="gridModel.FeeCollectionTypeHistories.length > 0" class="collapse" id="collapseExample{{currentStudent}}">
+                                        <td class="feeStructure p-0" colspan="100%">
+                                            <div class="table-responsive">
+                                                <table id="GridTable" class="table  align-middle  fs-6 gy-3 dataTable no-footer mb-0 hover-border">
+                                                    <thead class="hover-bg">
+                                                        <tr>
+                                                            <th class="text-start min-w-250px"></th>
+                                                            <th class="text-start min-w-100px"></th>
+
+                                                            <th class="text-start w-100px ">Fee Type</th>
+                                                            <th class="text-end min-w-100px ">Fee Period</th>
+
+                                                            <th class="text-end w-125px ">Amount</th>
+                                                            <th class="text-start w-10px min-w-10px"> </th>
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody class="">
+                                                        <tr ng-repeat-start="gridTypeModel in gridModel.FeeCollectionTypeHistories track by $index" class="border-0">
+
+                                                            <td class="text-start">
+                                                            </td>
+                                                            <td class="text-start">
+                                                            </td>
+
+                                                            <td class="text-start">
+                                                                <span ng-bind="gridTypeModel.FeeMaster.Value" class="ng-binding"></span>
+                                                            </td>
+                                                            <td class="text-end">
+                                                                <span ng-bind="gridTypeModel.FeePeriod.Value" class="ng-binding"></span>
+                                                            </td>
+
+                                                            <td class="text-end">
+                                                                <span ng-bind="gridTypeModel.Amount|number:2" class="ng-binding currSign"></span>
+                                                            </td>
+                                                            <td class="text-start">
+                                                                <div class="controls text-center" ng-if="gridTypeModel.FeeMonthly.length > 0">
+                                                                    <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" ng-click="ExpandCollapase($event, gridTypeModel, 'IsExpand')">
+                                                                        <i ng-if="gridTypeModel.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                                        <i ng-if="!gridTypeModel.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                                    </a>
+                                                                </div>
+
+                                                            </td>
+
+                                                        </tr>
+                                                        <tr class="ng-scope" ng-if="gridTypeModel.FeeMonthly.length > 0" style="display:none;">
+                                                            <td class="feeStructure p-0" colspan="100%">
+                                                                <div class="table-responsive">
+                                                                    <table class="table align-middle  fs-6 gy-3 dataTable no-footer mb-0" align="right">
+
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th class="text-end min-w-250px ">Month</th>
+                                                                                <th class="text-end w-125px ">Amount</th>
+                                                                                <th class="text-start w-10px min-w-10px">
+                                                                                    <div class="controls text-center" ng-if="gridTypeModel.FeeMonthly.length > 0">
+                                                                                        <a class="btn btn-sm btn-icon  h-25px w-25px">
+                                                                                        </a>
+                                                                                    </div>
+                                                                                </th>
+                                                                            </tr>
+                                                                        </thead>
+
+                                                                        <tbody>
+
+                                                                            <tr ng-focus="FocusGrid($event,'gridModel.FeeMonthly')" ng-repeat-start="gridModelMonth in gridTypeModel.FeeMonthly track by $index" class="border-bottom-0">
+
+                                                                                <td class="text-end">
+                                                                                    <span ng-bind="gridModelMonth.MonthName" class="ng-binding"></span><span class="redcolor"></span>
+                                                                                </td>
+                                                                                <td class="text-end">
+                                                                                    <span ng-bind="gridModelMonth.Amount|number:2" class="ng-binding currSign"></span><span class="redcolor"></span>
+                                                                                </td>
+                                                                                <td></td>
+                                                                            </tr>
+
+                                                                            <tr ng-repeat-end="" class="ng-scope"></tr>
+
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                        <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr ng-repeat-end="" class="ng-scope"></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

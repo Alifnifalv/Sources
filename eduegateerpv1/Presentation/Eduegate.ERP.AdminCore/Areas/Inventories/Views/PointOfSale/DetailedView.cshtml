@@ -1,0 +1,247 @@
+﻿@using Eduegate.Services.Contracts.Enums
+
+@{
+    Layout = null;
+    var viewIID = Eduegate.Services.Contracts.Enums.SearchView.SalesInvoice;
+    var windowName = "window_" + Guid.NewGuid().ToString();
+}
+
+<div id="@windowName" class="summary-wrap" ng-controller="SummaryViewController" ng-init="SummaryViewInit('@windowName', '@viewIID', @ViewBag.IID,'@DynamicViews.SalesInvoice');">
+    <div class="preload-overlay" style="display:block;">
+        <div class="preloader">
+            <img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" />
+            <div class="loadertextwrap">
+                <div id="Loadertext">
+                    <div id="fadetext_1" class="loadingtext">L</div>
+                    <div id="fadetext_2" class="loadingtext">o</div>
+                    <div id="fadetext_3" class="loadingtext">a</div>
+                    <div id="fadetext_4" class="loadingtext">d</div>
+                    <div id="fadetext_5" class="loadingtext">i</div>
+                    <div id="fadetext_6" class="loadingtext">n</div>
+                    <div id="fadetext_7" class="loadingtext">g</div>
+                    <div id="fadetext_8" class="loadingtext">.</div>
+                    <div id="fadetext_9" class="loadingtext">.</div>
+                    <div id="fadetext_10" class="loadingtext">.</div>
+                </div>
+                <span class="canceloperation" ng-click="CloseSummaryPanel($event);">Cancel</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="summary-header">
+        <div class="summary-controls">
+            <ul class="summary-tab">
+                <li class="summary-tab-list active" title="Product Detail" content-tab="productdetail"><i class="fa fa-file-text"></i></li>
+                @*<li class="summary-tab-list" title="Sales" content-tab="sales"><i class="fa fa-bar-chart"></i></li>
+                    <li class="summary-tab-list" title="Purchase" content-tab="purchase"><i class="fa fa-shopping-cart"></i></li>
+                    <li class="summary-tab-list" title="Inventory" content-tab="inventory"><i class="fa fa-cube"></i></li>
+                    <li class="summary-tab-list" title="Operation" content-tab="operation"><i class="fa fa-cogs"></i></li>
+                    <li class="summary-tab-list" title="Accounts" content-tab="accounts"><i class="fa fa-list-alt"></i></li>*@
+                <li class="summary-tab-list" title="Customer Details" content-tab="CustomerDetails"><i class="fa fa-group"></i></li>
+                <li class="summary-tab-list" title="Delivery Details" content-tab="DeliveryDetails"><i class="fa fa-truck"></i></li>
+                <li class="summary-tab-list" title="Comments" content-tab="comments"><i class="fa fa-comments"></i></li>
+            </ul>
+            <div class="alignright panelcontrols">
+                <span class="remove" ng-click="CloseSummaryPanel($event);">x</span>
+                <span class="minmax"></span>
+            </div>
+        </div>
+    </div>
+    <div class="quickviewwrap">
+        <div id="productdetail" class="summarytab-content first">
+            <h4>Sales Invoice Details</h4>
+            <div class="summary-tab-inner">
+                <div class="summary-content">
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">ID</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).HeadIID"></span>
+                            <i class="fa fa-pencil" title="Edit" ng-click="Edit('PointOfSale', ViewModels.@(DynamicViews.SalesInvoice).HeadIID)"></i>
+                            <i class="fa fa-file-text" title="Report" ng-click="Print($event,'@viewIID','@viewIID Print Preview','%2fEduegate.Inventory.Reports%2f@(DynamicViews.SalesInvoice)', ViewModels.@(DynamicViews.SalesInvoice).HeadIID);"></i>
+                            <i class="fa fa-print" title="Print" ng-click="PrintTransaction($event,'@viewIID','@viewIID Print Preview','%2fEduegate.Inventory.Reports%2f@(DynamicViews.SalesInvoice)', ViewModels.@(DynamicViews.SalesInvoice).HeadIID);"></i>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Sales Invoice Number</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).TransactionNo"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Branch</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).BranchName"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Document</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).TransactionTypeName"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Entitlement</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).EntitlementName"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Delivery Type</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).DeliveryMethod"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Currency</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).CurrencyName"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Sales Man</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).EmployeeName"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Date</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).TransactionDate"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Delivery Date</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).DeliveryDate"></span>
+                        </div>
+                    </div>
+
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Created</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).CreatedDate"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Updated</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).UpdatedDate"></span>
+                        </div>
+                    </div>
+
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Document Status</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).DocumentStatus"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Processing Status</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).TransactionStatus"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" ng-click="GetDynamicViewGrid('@DynamicViews.PurchaseSKUMaps', ViewModels.@(DynamicViews.SalesInvoice).HeadIID, false, $event)">Product Details</div>
+                    <div class="sum_togglecontent">
+                        <table class="data-grid">
+                            <thead>
+                                <tr>
+                                    <th>SKUName</th>
+                                    <th>Quantity</th>
+                                    <th>unitPrice</th>
+                                    <th>BarCode</th>
+                                    <th>PartNumber</th>
+                                    @*<th>Created</th>
+                                        <th>SKUId</th>
+                                        <th>Updated</th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr ng-repeat="grid in ViewModels.@(DynamicViews.PurchaseSKUMaps)">
+                                    <td><span ng-bind="grid.SKU"></span></td>
+                                    <td><span ng-bind="grid.Quantity"></span></td>
+                                    <td><span ng-bind="grid.UnitPrice"></span></td>
+                                    <td><span ng-bind="grid.Barcode"></span></td>
+                                    <td><span ng-bind="grid.PartNo"></span></td>
+                                    @*<td > <span ng-bind="grid.CreatedDate"></span> </td>
+                                        <td ><span ng-bind="grid.UpdatedDate"></span> </td>*@
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="comments" class="summarytab-content">
+            <div class="summary-tab-inner">
+                @*@await Html.PartialAsync("~/Views/Mutual/Comment.cshtml", new Eduegate.Web.Library.ViewModels.CommentViewModel() { EntityType = Eduegate.Services.Contracts.Enums.EntityTypes.Ticket, ReferenceID = ViewBag.IID })*@
+                @{
+                    //TODO: Check later
+                    // Html.RenderAction("Comment", "Mutual", new { area = "", type = Eduegate.Services.Contracts.Enums.EntityTypes.Transaction, referenceID = ViewBag.IID });
+                }
+            </div>
+        </div>
+        <div id="CustomerDetails" class="summarytab-content">
+            <div class="summary-toggle">
+                <div class="sum_toggleheader" ng-click="GetDynamicView('@DynamicViews.Customer', ViewModels.@(DynamicViews.SalesInvoice).CustomerID, false, $event)">Customer Details - <span class="link-content" ng-bind="ViewModels.@(DynamicViews.SalesInvoice).Customer"></span> </div>
+
+                @{
+                    await Html.RenderPartialAsync("_CustomerDetails");
+                }
+            </div>
+        </div>
+
+        <div id="DeliveryDetails" class="summarytab-content">
+            <div class="summary-toggle">
+                <div class="sum_toggleheader" ng-click="ShowDeliveryDetails('@DynamicViews.InvoiceDeliveryDetails', ViewModels.@(DynamicViews.SalesInvoice).HeadIID, '@*googleMapDiv*@', false, $event)">Delivery Details</div>
+                <div class="sum_togglecontent">
+                    <div class="label-value-box-inner">
+                        <span class="label-style">Contact Person</span>
+                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.InvoiceDeliveryDetails).FirstName"></span>
+                    </div>
+                    <div class="label-value-box-inner">
+                        <span class="label-style">Phone Number</span>
+                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.InvoiceDeliveryDetails).MobileNo1"></span>
+                    </div>
+                    <div class="label-value-box-inner">
+                        <span class="label-style">Billing Address</span>
+                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.InvoiceDeliveryDetails).IsBillingAddress"></span>
+                    </div>
+                    <div class="label-value-box-inner">
+                        <span class="label-style">Shipping Address</span>
+                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.InvoiceDeliveryDetails).IsShippingAddress"></span>
+                    </div>
+                    <div class="label-value-box-inner">
+                        <span class="label-style">AWB No</span>
+                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.InvoiceDeliveryDetails).AWBNo"></span>
+                    </div>
+                    <div class="label-value-box-inner">
+                        <span class="label-style">Service Provider</span>
+                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.InvoiceDeliveryDetails).ProviderName"></span>
+                    </div>
+                    <div class="label-value-box-inner">
+                        <span class="label-style">Delivery Status</span>
+                        <span class="link-content" ng-bind="ViewModels.@(DynamicViews.InvoiceDeliveryDetails).DeliveryStatus"></span>
+                    </div>
+                    @*<div class="label-value-box-inner">
+                            <span class="label-style">Signature</span>
+                            <span class="link-content">-</span>
+                        </div>*@
+                    <div id="googleMapDiv" style="height: 350px;"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#@windowName .summary-panel .remove').on('click', function () {
+            $('.pagecontent', '#@windowName').removeClass('summaryview');
+        });
+
+        $('#@windowName .summary-toggle .sum_toggleheader').on('click', function () {
+            $(this).parent().toggleClass('show');
+
+            if ($(this).parent().hasClass('show')) {
+                $(this).parent().addClass('show');
+                $(this).parent().find('.sum_togglecontent').slideDown('fast');
+            }
+            else {
+                $(this).parent().removeClass('show');
+                $(this).parent().find('.sum_togglecontent').slideUp('fast');
+            }
+        });
+
+        $('#@windowName .summarytab-content.first').show();
+
+        $('#@windowName .summary-tab .summary-tab-list').on('click', function () {
+            $('.summary-tab-list', '#@windowName').removeClass('active');
+            $('.summarytab-content', '#@windowName').hide();
+            $(this).addClass('active');
+            $('#' + $(this).attr('content-tab'), '#@windowName').fadeIn('medium');
+        });
+    });
+</script>

@@ -1,0 +1,114 @@
+﻿@using Eduegate.Services.Contracts.Enums
+
+@{
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div id="@windowName" class="summary-toggle" ng-controller="ProductPriceSetting as priceSetting" ng-init="priceSetting.Init('@windowName')">
+    <div class="sum_toggleheader" data-slide="sp-settings" ng-click="priceSetting.GetProductPriceSettingForSKU('@DynamicViews.ProductSKUPriceSetting',@ViewBag.IID)">Price settings - @ViewBag.IID</div>
+
+    <div class="sum_togglecontent" data-slide="sp-settings">
+
+        <span id="spanPriceList" class="inputwrap">
+            <ui-select id="PriceList" theme="select2" class="pos-txt" style="width:400px; height:26px;" ng-model="priceSetting.ProductPrice" ng-change="priceSetting.SelectPriceList('@DynamicViews.ProductSKUPriceSetting', @ViewBag.IID, @Newtonsoft.Json.JsonConvert.SerializeObject(new Eduegate.Web.Library.ViewModels.ProductPriceSKUViewModel()), $select);">
+                <ui-select-match placeholder="Search PriceList">{{$select.selected.Value}}</ui-select-match>
+                <ui-select-choices repeat="productPrice in priceSetting.ProductPriceLists | filter:$select.search">{{productPrice.Value}}</ui-select-choices>
+            </ui-select>
+        </span>
+
+        <div class="fullwidth alignleft textright paddingbtm5 paddingtop5">           
+            <button class="button-green button" ng-click="priceSetting.CancelClick($event, priceSetting.ViewModels.@(DynamicViews.ProductSKUPriceSetting));">Cancel</button>
+			<button class="button-orange" ng-click="priceSetting.SaveSellingPriceSetting('@DynamicViews.ProductSKUPriceSetting', @ViewBag.IID);" >Save</button>
+		</div>
+        <table class="data-grid" cellpadding="0" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="small-col-width">PriceList Name</th>
+                    <th class="medium-col-width">Cost Price</th>
+                    <th class="medium-col-width">Selling Price</th>
+                    <th class="small-col-width">Discount</th>
+                    <th class="small-col-width">Discount %</th>
+                    <th class="small-col-width">Status</th>
+                    <th class="icon-col52"></th>
+                    <th class="icon-col52 last"></th>
+                </tr>
+            </thead>
+            <tbody ng-repeat="productSKUPriceSetting in priceSetting.ViewModels.@(DynamicViews.ProductSKUPriceSetting)">
+                <tr>
+                    <td class="small-col-width">
+                        <span ng-bind="productSKUPriceSetting.PriceDescription"></span>
+                    </td>
+                    <td class="medium-col-width">
+                        <span class="codewrap fieldwithicon">
+                            <input type="text" class="ng-pristine" ng-model="productSKUPriceSetting.Cost">
+                            <span class="gridicon" ng-click="priceSetting.GetDataHistory(1, productSKUPriceSetting.ProductPriceListItemMapIID, 'Cost', $event);" title="view log"><i class="fa fa-outdent" aria-hidden="true"></i></span>
+                        </span>
+                    </td>
+                    <td class="medium-col-width">
+                        <span class="codewrap fieldwithicon">
+                            <input type="text" class="ng-pristine" ng-model="productSKUPriceSetting.Price">
+                            <span class="gridicon" ng-click="priceSetting.GetDataHistory(1, productSKUPriceSetting.ProductPriceListItemMapIID, 'Price',$event);" title="view log"><i class="fa fa-outdent" aria-hidden="true"></i></span>
+                        </span>
+                    </td>
+                    <td class="small-col-width">
+                        <input type="text" class="ng-pristine" ng-model="productSKUPriceSetting.Discount">
+                    </td>
+
+                    <td class="small-col-width">
+                        <input type="text" class="ng-pristine" ng-model="productSKUPriceSetting.DiscountPercentage">
+                    </td>
+
+                    <td class="small-col-width">
+                        <span class="link-content">
+                            <select ng-model="productSKUPriceSetting.PriceListStatus.Key">
+                                <i class="fa fa-caret-down"></i>
+                                <option ng-repeat="status in priceSetting.PriceListStatuses" ng-selected="productSKUPriceSetting.PriceListStatus.Key == status.Key" value="{{status.Key}}">{{status.Value}}</option>
+                            </select>
+                        </span>
+                    </td>
+                    <td class="icon-col52 textcenter">
+                        <span class="button-orange" ng-click="priceSetting.ToggleQuantity($event, $index, ModelQuantityStructure, productSKUPriceSetting.QuantityPrice)" title="Quantity Price"><i class="fa qtyprice" aria-hidden="true"></i></span>
+                    </td>
+                    <td class="icon-col52 last textcenter">
+                        <span class="button-orange qtybtn" ng-click="priceSetting.RemoveGridRow($event, $index, @Newtonsoft.Json.JsonConvert.SerializeObject(new Eduegate.Web.Library.ViewModels.ProductPriceSKUViewModel()), ViewModels.@(DynamicViews.ProductSKUPriceSetting))">
+                            <i class="fa fa-minus"></i>
+                        </span>
+                    </td>
+                </tr>
+                <tr class="quantity-toggle">
+                    <td colspan="7" class="nopadding">
+                        <div class="quantity-fieldswrap fullwidth alignleft">
+                            <table class="quantityfields fullwidth">
+                                <thead>
+                                    <tr>
+                                        <th class="medium-col-width">Quantity</th>
+                                        <th class="medium-col-width">Discount</th>
+                                        <th class="medium-col-width">Discount percentage</th>
+                                        <th class="small-col-width"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="ng-scope" ng-repeat="quantityPrice in productSKUPriceSetting.QuantityPrice">
+                                        <td class="medium-col-width"><input type="text" ng-model="quantityPrice.Quantity"></td>
+                                        <td class="medium-col-width"><input type="text" ng-model="quantityPrice.Discount"></td>
+                                        <td class="medium-col-width"><input type="text" ng-model="quantityPrice.DiscountPercentage"></td>
+                                        <td class="small-col-width textcenter">
+                                            <span class="button-orange qtybtn" ng-click="priceSetting.InsertGridRow($event, $index, ModelQuantityStructure, productSKUPriceSetting.QuantityPrice)">
+                                                <i class="fa fa-plus"></i>
+                                            </span>
+                                            <span class="button-orange qtybtn" ng-click="priceSetting.RemoveGridRow($event, $index, ModelQuantityStructure, productSKUPriceSetting.QuantityPrice)">
+                                                <i class="fa fa-minus"></i>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+

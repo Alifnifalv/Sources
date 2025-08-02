@@ -1,0 +1,774 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+
+@{ 
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div style="background-color: #f5f5f5;" id="MarkEntry" class="windowcontainer" ng-controller="MarkController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName', 'mark')">
+    @*ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName', 'mark')"*@
+    <div class="window-tab preload-overlay" style="display:none;">
+        <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+    </div>
+
+    <div class="main-page row g-3 g-xl-5 mb-5 mb-xl-10">
+
+        <div class="prod-tab-wrap" style="min-height:0px !important;">
+            <div style="width:100%;"></div>
+            <div class="col-md-12 controls">
+                <div style="float:left;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>&nbsp;<span class="cufon" style="color:red;font-weight:700">&nbsp;</span></label>
+                            <select class="form-control" style="float:left;">
+                                <option>CBSE</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Academic Year<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                            <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.AcademicYear)">&nbsp;Required!</span>
+                            <select class="form-control" style="float:left;" name="AcademicYear" ng-model="SearchArgs.AcademicYear" ng-options="x as x.Value for x in AcademicYears" ng-change="ClearExams()">
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+                @*<div style="float:right;">
+                <input type="button" value="Marks Entry" class="btn btn-info" ng-click="onChangeTab('MarksEntryPanel')" />
+                <input type="button" value="Co-Scholastic Entry" class="btn btn-success" ng-click="onChangeTab('CoScholasticEntryPanel')" />
+                </div>*@
+            </div>
+        </div>
+        <div class="app-wrapper  flex-column flex-row-fluid ">
+            <div class="app-main flex-column flex-row-fluid">
+                <div class="app-main flex-column flex-row-fluid" id="kt_app_main">
+                    <!--begin::Content wrapper-->
+                    <div class="d-flex flex-column flex-column-fluid">
+
+
+                        <!--begin::Content-->
+                        <div id="kt_app_content" class="app-content ">
+
+                            <!--begin::Toolbar-->
+                            <div id="kt_app_toolbar" class="app-toolbar  d-flex flex-column mt-n5 mt-lg-n13 pb-6 ">
+                            </div>
+                            <!--end::Toolbar-->
+                            <!--begin::Row-->
+                            <div class="row gx-5 gx-xl-10">
+                                <!--begin::Col-->
+                                <div class="col-md-12 mb-5 mb-xl-10">
+                                    <!--begin::Chart widget 27-->
+                                    <div class="card card-flush h-xl-100">
+                                        <div class="card-body border-top p-9">
+                                            <!--begin::Input group-->
+
+
+                                            <div class="col-md-12">
+                                                <ul class="nav nav-tabs " style="column-gap:6px;">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" ng-class="{'tab-pane fade': isMarkEntry != false, 'tab-pane fade in active show': isMarkEntry == true}"
+                                                           data-toggle="tab" data-target="#MarksEntryPanel" aria-expanded="false" aria-controls="MarksEntryPanel"
+                                                           id="Tab_MarksEntry" href="#MarksEntryPanel" ng-click="onChangeTab('MarksEntryPanel')">Mark Entry</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" ng-class="{'tab-pane fade': isCoScholasticEntry != false, 'tab-pane fade in active show': isCoScholasticEntry == true}"
+                                                           data-toggle="tab" data-target="#CoScholasticEntryPanel" aria-expanded="false" aria-controls="CoScholasticEntryPanel"
+                                                           id="Tab_CoScholasticEntryPanel"
+                                                           href="#CoScholasticEntryPanel" ng-click="onChangeTab('CoScholasticEntryPanel')">Co-scholastic Entry</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" ng-class="{'tab-pane fade': isScholasticInternal != false, 'tab-pane fade in active show': isScholasticInternal == true}"
+                                                           data-toggle="tab" data-target="#ScholasticInternalPanel" aria-expanded="false" aria-controls="ScholasticInternalPanel"
+                                                           id="Tab_ScholasticInternal" href="#ScholasticInternalPanel" ng-click="onChangeTab('ScholasticInternalPanel')">Scholastic Internal Entry</a>
+                                                    </li>
+                                                </ul>
+                                                <div>
+
+                                                    <div id="MarksEntryPanel" @* class="tab-pane fade in active show" *@ ng-show="isMarkEntry">
+
+                                                @*         <div class="text-center m-13">
+                                                            <!--begin::Title-->
+                                                            <h1 class="mb-3">Mark Entry</h1>
+                                                            <!--end::Title-->
+                                                        </div> *@
+                                                        <div>
+                                                            <div class="row my-6">
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Class<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.Mark.ClassID)">&nbsp;Required!</span>
+                                                                            <ui-select name="MarkClass" ng-model="SearchArgs.Mark.ClassID" theme="select2" class="pos-txt" ng-change="loadMarkEntrySearchCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="class in Mark.Classes | filter:$select.search">
+                                                                                    {{class.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Section<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.Mark.SectionID)">&nbsp;Required!</span>
+                                                                            <ui-select name="MarkSection" ng-model="SearchArgs.Mark.SectionID" theme="select2" class="pos-txt" ng-change="loadMarkEntrySearchCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="Section in Mark.Sections | filter:$select.search">
+                                                                                    {{Section.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-6">
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Terms<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.Mark.TermID)">&nbsp;Required!</span>
+                                                                            <ui-select name="MarkTerm" ng-model="SearchArgs.Mark.TermID" theme="select2" class="pos-txt" ng-change="loadMarkEntrySearchCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="Term in Mark.Terms | filter:$select.search">
+                                                                                    {{Term.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Exam<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.Mark.ExamID)">&nbsp;Required!</span>
+                                                                            <ui-select name="MarkExam" ng-model="SearchArgs.Mark.ExamID" theme="select2" class="pos-txt" ng-change="loadMarkEntrySearchCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="Exam in Mark.Exams | filter:$select.search">
+                                                                                    {{Exam.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-6">
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Language Subject</label>
+                                                                            <ui-select name="MarkLanguageTypes" ng-model="SearchArgs.Mark.LanguageTypeID" theme="select2" class="pos-txt" ng-change="loadMarkEntrySearchCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="languageType in LanguageTypes | filter:$select.search">
+                                                                                    {{languageType.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                                @*<div class="col">
+                                                                <span class="form-group">
+                                                                <span class="controls">
+                                                                <label>Subject Map Type</label>
+                                                                <ui-select name="MarkSubjectMapTypes" ng-model="SearchArgs.Mark.SubjectMapTypeID" theme="select2" class="pos-txt" ng-change="loadMarkEntrySearchCriteria($select)">
+                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                <ui-select-choices repeat="subjectMapType in SubjectMapTypes | filter:$select.search">
+                                                                {{subjectMapType.Value}}
+                                                                </ui-select-choices>
+                                                                </ui-select>
+                                                                </span>
+                                                                </span>
+                                                                </div>*@
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Subject<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.Mark.SubjectID)">&nbsp;Required!</span>
+                                                                            <ui-select name="MarkSubject" ng-model="SearchArgs.Mark.SubjectID" theme="select2" class="pos-txt" ng-change="loadMarkEntrySearchCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="Subject in Mark.Subjects | filter:$select.search">
+                                                                                    {{Subject.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex flex-stack pt-10">
+                                                                <!--begin::Wrapper-->
+                                                                <div class="me-2">
+                                                                </div>
+                                                                <!--end::Wrapper-->
+                                                                <!--begin::Wrapper-->
+                                                                <div>
+                                                                    <button type="button" class="btn btn-sm  btn-primary  me-1" ng-click="GetMarkEntry()">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down  fs-3 me-1" viewBox="0 0 16 16">
+                                                                            <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
+                                                                        </svg>
+                                                                        Get Marks
+                                                                    </button>
+                                                                    <button type="button" class="btn btn-sm  btn-primary" ng-disabled="MarkEntry.length == 0" ng-click="SaveMarkEntry()">
+                                                                        <span class="indicator-label">
+                                                                            Save Entries
+
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download fs-3 ms-2 me-0" viewBox="0 0 16 16">
+                                                                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                                                                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+
+                                                                    <button type="button" class="btn btn-sm btn-primary" ng-click="ResetFields(MarksEntryPanel)">
+                                                                        Reset
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat  fs-3 ms-1 me-0" viewBox="0 0 16 16">
+                                                                            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
+                                                                            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
+                                                                        </svg>
+                                                                    </button>
+
+                                                                </div>
+                                                                <!--end::Wrapper-->
+                                                            </div>
+
+                                                        </div>
+                                                        <div class="row mt-4">
+                                                            <div class="col-md-12">
+                                                            <div class="controls fullcolumn-layout w-100 card rounded-3" ng-if="MarkEntry.length > 0" style="height: 25vw; overflow-y: auto;">
+                                                                <table class="ui celled table striped very basic small  compact"  style=" border-collapse: separate; border-spacing: 0;">
+                                                                        <thead style="position: sticky; top: 0;" class="z-index-3">
+
+                                                                        <tr style="background:#f5f5f5;">
+                                                                            <th class="w-60px">SL. No</th>
+                                                                            <th>Enroll No</th>
+                                                                            <th>Student Name</th>
+                                                                            <th>Status</th>
+                                                                            <th>
+                                                                                Max. Mark: {{MaxMark}}
+                                                                            </th>
+                                                                            <th>Total Mark in({{MarkConvertionFactor}})</th>
+                                                                            <th>
+                                                                                Grade
+                                                                            </th>
+
+                                                                        </tr>
+                                                                    </thead>
+
+                                                                    <tbody>
+                                                                        <tr ng-repeat="student in MarkEntry">
+                                                                            <td>{{$index +1}}</td>
+                                                                            <td>{{student.EnrolNo}}</td>
+                                                                            <td ng-bind="student.StudentName"></td>
+                                                                            <td>
+                                                                                <select class="form-control  ng-untouched ng-valid " ng-model="student.MarkStatusID">
+                                                                                    <option value="">Select</option>
+                                                                                    <option ng-repeat="lookUpdata in MarkStatuses" value={{lookUpdata.Key}}>{{lookUpdata.Value}}</option>
+                                                                                </select>
+                                                                            </td>
+
+                                                                            <td>
+                                                                                
+                                                                                <input type="text" class=" form-control" ng-model="student.MarksObtained" ng-blur="validateMark(student)">
+                                                                                </td>
+                                                                            @*<td>{{student.TotalPercentage}}</td>*@
+                                                                            <td>{{student.TotalMark}}</td>
+                                                                            <td>
+                                                                                <select class="form-control  ng-untouched ng-valid" ng-model="student.GradeID" ng-disabled="true">
+                                                                                    <option value="">Select</option>
+                                                                                    <option ng-repeat="lookUpdata in Mark.Grades" value={{lookUpdata.Key}}>{{lookUpdata.Value}}</option>
+                                                                                </select>
+                                                                            </td>
+
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div id="CoScholasticEntryPanel" @* class="tab-pane fade" *@ ng-show="isCoScholasticEntry" style="padding-bottom:20px;">
+                                                @*         <div class="text-center m-13">
+                                                            <!--begin::Title-->
+                                                            <h1 class="mb-3">Co-scholastic Entry</h1>
+                                                            <!--end::Title-->
+                                                        </div> *@
+                                                        <div>
+                                                            <div class="row my-6">
+                                                                <div class="col">
+
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Class<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.ClassID)">&nbsp;Required!</span>
+                                                                            <ui-select name="coClass" ng-model="SearchArgs.ClassID" theme="select2" class="pos-txt" ng-change="loadSearchCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="class in Classes | filter:$select.search">
+                                                                                    {{class.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+
+
+                                                                </div>
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Section<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.SectionID)">&nbsp;Required!</span>
+                                                                            <ui-select name="CoSection" ng-model="SearchArgs.SectionID" theme="select2" class="pos-txt" ng-change="loadSearchCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="Section in Sections | filter:$select.search">
+                                                                                    {{Section.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-6">
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Terms<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.TermID)">&nbsp;Required!</span>
+                                                                            <ui-select name="CoTerms" ng-model="SearchArgs.TermID" theme="select2" class="pos-txt" ng-change="loadSearchCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="Term in Terms | filter:$select.search">
+                                                                                    {{Term.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Exam<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.ExamID)">&nbsp;Required!</span>
+                                                                            <ui-select name="coExams" ng-model="SearchArgs.ExamID" theme="select2" class="pos-txt" ng-change="loadSearchCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="Exam in Exams | filter:$select.search">
+                                                                                    {{Exam.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-6">
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Language Subject</label>
+                                                                            <ui-select name="coLanguageTypes" ng-model="SearchArgs.LanguageTypeID" theme="select2" class="pos-txt" ng-change="loadSearchCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="languageType in LanguageTypes | filter:$select.search">
+                                                                                    {{languageType.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Isc/Msc</label>
+
+                                                                            <ui-select name="coSubjectMapTypes" ng-model="SearchArgs.SubjectMapTypeID" theme="select2" class="pos-txt" ng-change="loadSearchCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="subjectMapType in SubjectMapTypes | filter:$select.search">
+                                                                                    {{subjectMapType.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-6">
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Skill Sets<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.SkillSetID)">&nbsp;Required!</span>
+                                                                            <ui-select name="coSkillSets" ng-model="SearchArgs.SkillSetID" theme="select2" class="pos-txt" ng-change="loadSearchCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="SkillSet in SkillSets | filter:$select.search">
+                                                                                    {{SkillSet.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Skill Groups<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.SkillGroupID)">&nbsp;Required!</span>
+                                                                            <ui-select name="coSkillGroups" ng-model="SearchArgs.SkillGroupID" theme="select2" class="pos-txt" ng-change="loadSearchCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="SkillGroup in SkillGroups | filter:$select.search">
+                                                                                    {{SkillGroup.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-6">
+                                                                <div class="col-6">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Skills<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.SkillID)">&nbsp;Required!</span>
+                                                                            <ui-select name="coSkills" ng-model="SearchArgs.SkillID" theme="select2" class="pos-txt">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="Skill in Skills | filter:$select.search">
+                                                                                    {{Skill.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex flex-stack pt-10 mt-5" >
+                                                                <div class="s"></div>
+                                                                <div>
+                                                                <input type="button" value="Get Entries" class="btn btn-primary btn-sm" title="Get Entries" ng-click="GetCoScholasticEntry()" />
+                                                                <input type="button" value="Save Entries" class="btn btn-sm btn-primary" title="Save Entries" ng-disabled="CoScholasticEntry.length == 0" ng-click="SaveCoScholasticEntry()" />
+                                                                <input type="button" value="Reset" class="btn btn-sm btn-primary" title="Reset" ng-click="ResetCoScholasticFields(CoScholasticEntryPanel)" />
+                                                           </div>
+                                                            </div>
+                                                        </div>
+                                                        @*</div>*@
+
+                                                        <div class="row mt-4">
+                                                            <div class="col-md-12 ">
+                                                                <div class="controls fullcolumn-layout w-100 card rounded-3" ng-if="CoScholasticSkills.length > 0" style="height: 27vw; overflow-y: auto;">
+                                                                    <table class="ui celled table striped very basic small  compact" style=" border-collapse: separate; border-spacing: 0;">
+                                                                        <thead style="position: sticky; top: 0;" class="z-index-3">
+                                                                            <tr style="background:#f5f5f5;">
+                                                                                <th class="collapsing" rowspan="2">SL. No</th>
+                                                                                <th rowspan="2">Enroll No</th>
+                                                                                <th rowspan="2">Name</th>
+                                                                                <th rowspan="2">Status</th>
+                                                                                <th colspan="{{CoScholasticSkills.length}}">-{{SearchArgs.SkillGroups.Value}}</th>
+                                                                            </tr>
+                                                                            <tr style="background:#f5f5f5;">
+                                                                           
+                                                                                <th ng-repeat="skill in CoScholasticSkills">{{skill.SkillName}}</th>
+                                                                            </tr>
+                                                                        </thead>
+
+                                                                        <tbody>
+                                                                            <tr ng-repeat="student in CoScholasticEntry">
+                                                                                <td>{{$index +1}}</td>
+                                                                                <td>{{student.EnrolNo}}</td>
+                                                                                <td ng-bind="student.StudentName"></td>
+                                                                                <td>
+                                                                                    <select class="form-control  ng-untouched ng-valid " ng-model="student.MarkStatusID">
+                                                                                        <option value="">Select</option>
+                                                                                        <option ng-repeat="lookUpdata in MarkStatuses" value={{lookUpdata.Key}}>{{lookUpdata.Value}}</option>
+                                                                                    </select>
+                                                                                </td>
+                                                                                <td ng-repeat="skill in student.SkillGroups[0].Skills">
+
+                                                                                    <select class="form-control  ng-untouched ng-valid" ng-model="skill.GradeID">
+                                                                                        <option value="">Select</option>
+                                                                                        <option ng-repeat="lookUpdata in skill.MarkGradeMapList" value={{lookUpdata.Key}}>{{lookUpdata.Value}}</option>
+                                                                                    </select>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div id="ScholasticInternalPanel" @* class="tab-pane fade" *@ ng-show="isScholasticInternal" style="padding-bottom:20px;">
+                                                @*         <div class="text-center m-13">
+                                                            <!--begin::Title-->
+                                                            <h1 class="mb-3">Scholastic Internal Entry</h1>
+                                                            <!--end::Title-->
+                                                        </div> *@
+                                                        <div>
+                                                            <div class="row my-6">
+                                                                <div class="col">
+
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Class<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.Internal.IsFetched && isEmptyObject(SearchArgs.Internal.ClassID)">&nbsp;Required!</span>
+                                                                            <ui-select name="intClass" ng-model="SearchArgs.Internal.ClassID" theme="select2" class="pos-txt" ng-change="loadSearchScholIntrnCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="class in Classes | filter:$select.search">
+                                                                                    {{class.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+
+
+                                                                </div>
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Section<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.Internal.IsFetched && isEmptyObject(SearchArgs.Internal.SectionID)">&nbsp;Required!</span>
+                                                                            <ui-select name="intSection" ng-model="SearchArgs.Internal.SectionID" theme="select2" class="pos-txt" ng-change="loadSearchScholIntrnCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="Section in Sections | filter:$select.search">
+                                                                                    {{Section.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-6">
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Terms<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.Internal.IsFetched && isEmptyObject(SearchArgs.Internal.TermID)">&nbsp;Required!</span>
+                                                                            <ui-select name="intTerms" ng-model="SearchArgs.Internal.TermID" theme="select2" class="pos-txt" ng-change="loadSearchScholIntrnCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="Term in Terms | filter:$select.search">
+                                                                                    {{Term.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Exam<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.Internal.IsFetched && isEmptyObject(SearchArgs.Internal.ExamID)">&nbsp;Required!</span>
+                                                                            <ui-select name="intExams" ng-model="SearchArgs.Internal.ExamID" theme="select2" class="pos-txt" ng-change="loadSearchScholIntrnCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="Exam in Exams | filter:$select.search">
+                                                                                    {{Exam.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                           @*  <div class="row mb-6">
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Language Subject</label>
+                                                                            <ui-select name="intLanguageTypes" ng-model="SearchArgs.Internal.LanguageTypeID" theme="select2" class="pos-txt" ng-change="loadSearchScholIntrnCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="languageType in LanguageTypes | filter:$select.search">
+                                                                                    {{languageType.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div> *@
+                                                               @*  <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Isc/Msc</label>
+
+                                                                            <ui-select name="intSubjectMapTypes" ng-model="SearchArgs.Internal.SubjectMapTypeID" theme="select2" class="pos-txt" ng-change="loadSearchScholIntrnCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="subjectMapType in SubjectMapTypes | filter:$select.search">
+                                                                                    {{subjectMapType.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div> *@
+                                                            @* </div> *@
+                                                            <div class="row mb-6">
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Skill Sets<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.Internal.IsFetched && isEmptyObject(SearchArgs.Internal.SkillSetID)">&nbsp;Required!</span>
+                                                                            <ui-select name="intSkillSets" ng-model="SearchArgs.Internal.SkillSetID" theme="select2" class="pos-txt" ng-change="loadSearchScholIntrnCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="SkillSet in SkillSets | filter:$select.search">
+                                                                                    {{SkillSet.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Subject<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.Internal.IsFetched && isEmptyObject(SearchArgs.Internal.SubjectID)">&nbsp;Required!</span>
+                                                                            <ui-select name="intSubjects" ng-model="SearchArgs.Internal.SubjectID" theme="select2" class="pos-txt" ng-change="loadSearchScholIntrnCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="subject in Internal.Subjects | filter:$select.search">
+                                                                                    {{subject.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row mb-6">
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Skill Groups<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                                                            <span class="cufon" style="color:red" ng-show="SearchArgs.Internal.IsFetched && isEmptyObject(SearchArgs.Internal.SkillGroupID)">&nbsp;Required!</span>
+                                                                            <ui-select name="intSkillGroups" ng-model="SearchArgs.Internal.SkillGroupID" theme="select2" class="pos-txt" ng-change="loadSearchScholIntrnCriteria($select)">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="SkillGroup in SkillGroups | filter:$select.search">
+                                                                                    {{SkillGroup.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <span class="form-group">
+                                                                        <span class="controls">
+                                                                            <label>Skills</label>
+                                                                            <ui-select name="intSkills" ng-model="SearchArgs.Internal.SkillID" theme="select2" class="pos-txt">
+                                                                                <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                                                                <ui-select-choices repeat="Skill in Skills | filter:$select.search">
+                                                                                    {{Skill.Value}}
+                                                                                </ui-select-choices>
+                                                                            </ui-select>
+                                                                        </span>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="d-flex flex-stack pt-10">
+                                                                <!--begin::Wrapper-->
+                                                                <div class="me-2">
+                                                                </div>
+                                                                <!--end::Wrapper-->
+                                                                <!--begin::Wrapper-->
+                                                                <div>
+                                                                    <button type="button" class="btn btn-sm  btn-primary  me-1" ng-click="GetScholasticInternalEntry()">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-bar-down  fs-3 me-1" viewBox="0 0 16 16">
+                                                                            <path fill-rule="evenodd" d="M1 3.5a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5zM8 6a.5.5 0 0 1 .5.5v5.793l2.146-2.147a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 .708-.708L7.5 12.293V6.5A.5.5 0 0 1 8 6z" />
+                                                                        </svg>
+                                                                        Get Marks
+                                                                    </button>
+                                                                    <button type="button" class="btn btn-sm  btn-primary" ng-disabled="ScholasticInternalEntry.length == 0" ng-click="SaveScholasticInternalEntry()">
+                                                                        <span class="indicator-label">
+                                                                            Save Entries
+
+                                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download fs-3 ms-2 me-0" viewBox="0 0 16 16">
+                                                                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
+                                                                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z" />
+                                                                            </svg>
+                                                                        </span>
+                                                                    </button>
+
+                                                                    <button type="button" class="btn btn-sm btn-primary" ng-click="ResetScholasticInternals(ScholasticInternalPanel)">
+                                                                        Reset
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-repeat  fs-3 ms-1 me-0" viewBox="0 0 16 16">
+                                                                            <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z" />
+                                                                            <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z" />
+                                                                        </svg>
+                                                                    </button>
+
+                                                                </div>
+                                                                <!--end::Wrapper-->
+                                                            </div>
+                                                        </div>
+                                                        @*</div>*@
+
+                                                        <div class="row mt-4">
+                                                            <div class="col-md-12 ">
+                                                                <div class="controls fullcolumn-layout w-100 card rounded-3" ng-if="ScholasticInternalSkills.length > 0" style="height: 25vw; overflow-y: auto;">
+                                                                    <table class="ui celled table striped very basic small  compact" style=" border-collapse: separate; border-spacing: 0;">
+                                                                        <thead style="position: sticky; top: 0;" class="z-index-3">
+
+                                                                            <tr style="font-weight:bolder;background:#f5f5f5;">
+                                                                                <th rowspan="2">SL. No</th>
+                                                                                <th rowspan="2">Enroll No</th>
+                                                                                <th rowspan="2">Name</th>
+                                                                                <th rowspan="2">Status</th>
+                                                                                <th ng-repeat="skill in ScholasticInternalSkills" colspan="1">{{skill.SkillName}}</th>
+                                                                            </tr>
+                                                                            <tr style="font-weight:bolder;background:#f5f5f5;">
+                                                                       
+
+                                                                                <th ng-repeat="skill in ScholasticInternalSkills">
+                                                                                    <div class="d-flex gap-3">
+                                                                                        <div class="w-50">  Max. Mark:{{skill.MaxMark}}</div>
+                                                                                        <div class="w-50">Grade</div>
+                                                                                    </div>
+                                                                                       
+                                                                                        
+                                                                                </th>
+                                                                    </tr>
+                                                                    </thead>
+
+                                                                    <tbody>
+                                                                        <tr ng-repeat="student in ScholasticInternalEntry">
+                                                                            <td>{{$index +1}}</td>
+                                                                            <td>{{student.EnrolNo}}</td>
+                                                                            <td ng-bind="student.StudentName"></td>
+                                                                            <td>
+                                                                                <select class="form-control  ng-untouched ng-valid " ng-model="student.MarkStatusID">
+                                                                                    <option value="">Select</option>
+                                                                                    <option ng-repeat="lookUpdata in MarkStatuses" value={{lookUpdata.Key}}>{{lookUpdata.Value}}</option>
+                                                                                </select>
+                                                                            </td>
+
+                                                                            <td ng-repeat="skill in student.SkillGroups[0].Skills">
+                                                                                <div class="d-flex gap-3">
+                                                                                <input type="text" class="" ng-model="skill.MarksObtained" ng-blur="validateScholasticInternalMark(skill)">
+                                                                                            <select class="form-control  ng-untouched ng-valid" ng-model="skill.GradeID" ng-disabled="true">
+                                                                                                <option value="">Select</option>
+                                                                                                <option ng-repeat="lookUpdata in skill.MarkGradeMapList" value={{lookUpdata.Key}}>{{lookUpdata.Value}}</option>
+                                                                                            </select>
+                                                                                            </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                    </table>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!--end::Input group-->
+                                        </div>
+                                    </div>
+                                    <!--end::Chart widget 27-->
+
+
+                                </div>
+                            </div>
+                            <!--end::Row-->
+                            <!--begin::Row-->
+                            <div class="row gx-5 gx-xl-10">
+                            </div>
+
+                        </div>
+                        <!--end::Content-->
+                    </div>
+                    <!--end::Content wrapper-->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

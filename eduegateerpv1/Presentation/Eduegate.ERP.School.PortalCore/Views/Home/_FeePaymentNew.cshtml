@@ -1,0 +1,268 @@
+﻿@model Eduegate.Web.Library.School.Fees.FeePaymentViewModel
+
+@{
+    ViewBag.Title = "FeePayment";
+}
+
+<div class="d-flex flex-column-reverse flex-lg-row">
+    <div class="flex-lg-row-fluid mb-10 mb-lg-0 me-lg-7 me-xl-10">
+
+        @*<div class="card">
+            <div class="card-body">
+
+                <div class="month-slider-wrapper ">
+                    <header>
+                        <div class="card-toolbar pb-10 d-flex justify-content-end">
+                            <ul class="nav shortcuts">
+                                <li class="nav-item" role="presentation" data-min-range="12">
+                                    <a class="nav-link btn btn-sm btn-color-muted btn-active btn-active-secondary fw-bold px-4 me-1" data-bs-toggle="tab" href="#kt_table_widget_5_tab_1" aria-selected="true" role="tab">12 months</a>
+                                </li>
+                                <li class="nav-item" role="presentation" data-min-range="6">
+                                    <a class="nav-link btn btn-sm btn-color-muted btn-active btn-active-secondary fw-bold px-4 me-1" data-bs-toggle="tab" href="#kt_table_widget_5_tab_2" aria-selected="false" tabindex="-1" role="tab">6 months</a>
+                                </li>
+                                <li class="nav-item" role="presentation" data-min-range="3">
+                                    <a class="nav-link btn btn-sm btn-color-muted btn-active btn-active-secondary fw-bold px-4" data-bs-toggle="tab" href="#kt_table_widget_5_tab_3" aria-selected="false" tabindex="-1" role="tab">3 months</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </header>
+                    <div id="month-slider" class="slider slider-styled mt-lg-20 mb-lg-10"></div>
+                </div>
+
+                <div class="sample-submit-data mt-20">
+                        <p>
+                            <label for="month-range-min">Min:</label>
+                            <input name="month-range-min" type="text" value="" />
+                        </p>
+                        <p>
+                            <label for="month-range-min">Max:</label>
+                            <input name="month-range-max" type="text" value="" />
+                        </p>
+                    </div>
+
+            </div>
+            <div class="card-footer py-8">
+                <div class="row">
+                    <div class="col-lg-3"></div>
+                    <div class="col-lg-5 d-flex">
+                        <button type="button" id="kt_layout_builder_preview" class="btn btn-primary me-2">
+                            <span class="indicator-label">Calculate</span>
+                            <span class="indicator-progress">
+                                Please wait...
+                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                            </span>
+                        </button>
+                        <button type="button" id="kt_layout_builder_reset" class="btn btn-active-light btn-color-muted">
+                            <span class="indicator-label">Reset</span>
+                            <span class="indicator-progress">
+                                Please wait...
+                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                            </span>
+                        </button>
+
+                    </div>
+
+                    <div class="col-lg-4 ">
+                        <label class="d-flex">
+                            <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">Amount in period:</span>
+                            <span>
+                                <span class="displaylineBlock currSign"></span>
+
+                                <span ng-bind="GetTotalFeePayAmount(feePays)|number:2" class="ng-binding"></span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+        <div id="FeePaymentOverlay" class="preload-overlay center">
+            <span id="FeePaymentOverlay" class="preloadImg">
+                <img src="~/Images/preloaderWhite.GIF" alt="loader" />
+            </span>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table style="width:100%" class="table table-striped table-bordered table-checkable order-column valign-middle">
+
+                        <thead>
+                            <tr>
+                                <th class="textleft"> </th>
+                                <th class="medium-col-width">Student</th>
+                                <th class="feeStructure"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-focus="FocusGrid($event,'feePays')" ng-repeat-start="gridModel in feePays track by $index" class="ng-scope">
+                                <td class="textleft">
+                                    <div class="controls text-center">
+                                        <a small-col-width="" ng-click="ExpandCollapase($event, gridModel, 'IsExpand')">
+                                            <i ng-if="gridModel.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                            <i ng-if="!gridModel.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                        </a>
+                                    </div>
+
+                                </td>
+
+                                <td class="medium-col-width">
+                                    <span ng-bind="gridModel.Student" class="ng-binding"></span>
+
+                                </td>
+                                <td class="feeStructure">
+                                </td>
+                            </tr>
+                            <tr class="alert alert-info text-center" ng-if="gridModel.FeeTypes.length == 0">
+                                <td>There is no dues found!</td>
+                            </tr>
+                            <tr class="ng-scope" ng-if="gridModel.FeeTypes.length > 0">
+                                <td class="feeStructure" colspan="5">
+                                    <div class="table-responsive">
+                                        <table id="GridTable" class="table  table-bordered table-checkable order-column valign-middle">
+
+                                            <thead>
+                                                <tr>
+                                                    <th class="textleft"> </th>
+                                                    <th class="medium-col-width">Invoice No</th>
+                                                    <th class="medium-col-width">Invoice Date</th>
+                                                    <th>Fee Master</th>
+                                                    <th>Fee Period</th>
+                                                    <th class="textright">Amount</th>
+                                                    <th class="textleft">Is Paying Now</th>
+                                                    <th class="feeStructure"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+
+                                                <tr ng-focus="FocusGrid($event,'gridModel.FeeTypes')" ng-repeat-start="gridModel in gridModel.FeeTypes track by $index" class="ng-scope">
+                                                    <td class="textleft">
+                                                        <div class="controls text-center">
+                                                            <a small-col-width="" ng-click="ExpandCollapase($event, gridModel, 'IsExpand')">
+                                                                <i ng-if="gridModel.IsExpand" class="fa  fa fa-angle-double-down"></i>
+                                                                <i ng-if="!gridModel.IsExpand" class="fa  fa fa-angle-double-up"></i>
+                                                            </a>
+                                                        </div>
+                                                    </td>
+
+                                                    <td class="medium-col-width">
+                                                        <span ng-bind="gridModel.InvoiceNo" class="ng-binding"></span>
+                                                    </td>
+
+                                                    <td class="medium-col-width">
+                                                        <span ng-bind="gridModel.InvoiceDateString" class="ng-binding"></span>
+                                                    </td>
+
+                                                    <td>
+                                                        <span ng-bind="gridModel.FeeMaster" class="ng-binding"></span>
+                                                    </td>
+
+                                                    <td>
+                                                        <span ng-bind="gridModel.FeePeriod" class="ng-binding"></span>
+                                                    </td>
+                                                    <td class="textright">
+                                                        <span ng-bind="gridModel.Amount|number:2" class="ng-binding currSign"></span>
+                                                    </td>
+
+                                                    <td class="textright">
+                                                        <input type="checkbox" ng-model="gridModel.IsPayingNow" ng-change="UpdateParentFee(gridModel)">
+                                                    </td>
+                                                </tr>
+                                                @*<tr class="alert alert-info text-center" ng-if="gridModel.FeeMonthly.length == 0">
+                                                    
+                                                    <td><div>No month wise dues found!</div></td>
+                                                </tr>*@
+                                                <tr class="ng-scope" ng-if="gridModel.FeeMonthly.length > 0">
+                                                    <td class="feeStructure" colspan="5">
+                                                        <div class="table-responsive ">
+                                                            <table class="table table-striped table-bordered table-checkable order-column valign-middle" align="right">
+
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th class="textright">Month</th>
+                                                                        <th class="textright">Amount</th>
+                                                                        <th class="textright">Credit Note</th>
+                                                                        <th class="textright">Balance</th>
+                                                                        <th class="textright">Paying Now</th>
+                                                                    </tr>
+                                                                </thead>
+
+                                                                <tbody>
+
+                                                                    <tr ng-focus="FocusGrid($event,'gridModel.FeeMonthly')" ng-repeat-start="gridModelMonth in gridModel.FeeMonthly track by $index" class="ng-scope">
+
+                                                                        <td class="textright">
+                                                                            <span ng-bind="gridModelMonth.MonthName" class="ng-binding"></span><span class="redcolor"></span>
+                                                                        </td>
+
+                                                                        <td class="textright">
+                                                                            <span ng-bind="gridModelMonth.Amount|number:2" class="ng-binding currSign"></span><span class="redcolor"></span>
+                                                                        </td>
+
+                                                                        <td class="textright">
+                                                                            <span ng-bind="gridModelMonth.CreditNote|number:2" class="ng-binding currSign"></span><span class="redcolor"></span>
+                                                                        </td>
+
+                                                                        <td class="textright">
+                                                                            <span ng-bind="gridModelMonth.Balance|number:2" class="ng-binding currSign"></span><span class="redcolor"></span>
+                                                                        </td>
+
+                                                                        <td class="textright">
+                                                                            <input type="checkbox" ng-model="gridModelMonth.IsRowSelected" ng-change="UpdateParentFeeMonthWise(gridModel)">
+                                                                        </td>
+
+                                                                    </tr>
+
+                                                                    <tr ng-repeat-end="" class="ng-scope"></tr>
+
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr ng-repeat-end="" class="ng-scope"></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr ng-repeat-end="" class="ng-scope"></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-lg-auto min-w-lg-350px">
+        <div class="card ">
+            <div class="card-header d-flex align-items-center">
+                <h2 class="fs-2">Student Fee Detail</h2>
+
+            </div>
+            <!--begin::Card body-->
+            <div class="card-body p-10">
+
+                <div class="separator separator-dashed mb-8"></div>
+                <div class="mb-8">
+                    <label class="form-check form-switch form-switch-sm form-check-custom form-check-solid flex-stack mb-5">
+                        <span class="form-check-label ms-0 fw-bold fs-6 text-gray-700">Total amount:</span>
+                        <span>
+                            <span class="displaylineBlock currSign"></span>
+
+                            <span ng-bind="GetTotalFeePayAmount(feePays)|number:2"></span>
+                        </span>
+                    </label>
+                </div>
+                <div class="separator separator-dashed mb-8"></div>
+                <div class="mb-0">
+
+                    <button class="btn btn-primary w-100" type="submit" ng-click="FeePaymentClick()">
+                        Proceed to Pay
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

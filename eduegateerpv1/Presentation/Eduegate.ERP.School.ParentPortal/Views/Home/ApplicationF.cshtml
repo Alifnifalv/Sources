@@ -1,0 +1,1842 @@
+﻿
+@model Eduegate.Web.Library.School.Students.StudentApplicationViewModel
+@{
+    ViewBag.Title = "Attendance";
+}
+
+<!-- google font -->
+<link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet" type="text/css" />
+<!-- icons -->
+<link href="~/Design_v02/fonts/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+<link href="~/Design_v02/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+<link href="~/Design_v02/fonts/material-design-icons/material-icon.css" rel="stylesheet" type="text/css" />
+<!--bootstrap -->
+<link href="~/Design_v02/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<!-- Material Design Lite CSS -->
+<link rel="stylesheet" href="~/Design_v02/plugins/material/material.min.css">
+<link rel="stylesheet" href="~/Design_v02/css/material_style.css">
+<!-- steps -->
+<link rel="stylesheet" href="~/Design_v02/plugins/steps/steps.css">
+<!-- Theme Styles -->
+<link href="~/Design_v02/css/theme/light/theme_style.css" rel="stylesheet" id="rt_style_components" type="text/css" />
+<link href="~/Design_v02/css/theme/light/style.css" rel="stylesheet" type="text/css" />
+<link href="~/Design_v02/css/plugins.min.css" rel="stylesheet" type="text/css" />
+<link href="~/Design_v02/css/responsive.css" rel="stylesheet" type="text/css" />
+<link href="~/Design_v02/css/theme/light/theme-color.css" rel="stylesheet" type="text/css" />
+<!-- favicon -->
+<link rel="shortcut icon" href="~/Design_v02/img/favicon.ico" />
+
+<div class="page-wrapper">
+
+    <!-- start page container -->
+    <div class="page-container">
+
+        <!-- start page content -->
+        @Html.ActionLink("Click Here", "AnonymousDashbaord")
+        <div class="page-content-wrapper" ng-controller="ApplicationController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+            <div class="page-content">
+                <div class="page-bar">
+                    <div class="page-title-breadcrumb">
+                        <div class=" pull-left">
+                            <div class="page-title">Application Form</div>
+                        </div>
+                        <ol class="breadcrumb page-breadcrumb pull-right">
+                            <li>
+                                <i class="fa fa-home"></i>&nbsp;<a class="parent-item"
+                                                                   href="index.html">Home</a>&nbsp;<i class="fa fa-angle-right"></i>
+                            </li>
+                            <li class="active">Application Form</li>
+                        </ol>
+                    </div>
+                </div>
+                <!-- basic wizard -->
+                <div class="row" style="height:20px;overflow:hidden;display:none;">
+                    <div class="col-sm-12">
+                        <div class="card-box">
+                            <div class="card-head">
+                                <header>Basic Wizard nelson</header>
+                            </div>
+                            <div class="card-body ">
+                                <div id="wizard">
+                                    <h1>First Step</h1>
+                                    <div>First Content</div>
+                                    <h1>Second Step</h1>
+                                    <div>Second Content</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- wizard with validation-->
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="card-box">
+                           
+                            <div class="card-body ">
+                                <form id="example-advanced-form" action="#">
+                                    <h3>Course</h3>
+                                    <fieldset>
+                                        <div class="row">
+                                            <br />
+                                            <div class="formTitle col s12">
+                                                <span>School</span>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="School">Select locations of the school <span class="required"> * </span></label> <div class="input-icon right"><i class="fa"></i></div>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" required="" aria-required="true" name="School" id="School" ng-options="item as item.Value for item in Schools track by item.Key" ng-model="School" autofocus tabindex="0"></select>
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => m.School)
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    @*<select class="form-control validate" required="" aria-required="true" name="SchoolAcademicyear" id="SchoolAcademicyear"
+                                                        ng-options="item as item.Value for item in AcademicYears track by item.Key" ng-model="AcademicyearID"></select>*@
+                                                    <span><label class="control-label col-md-12" for="SchoolAcademicyear">Academic Year <span class="required"> * </span></label> <div class="input-icon right"><i class="fa"></i></div> </span>
+                                                    @*<div class="input-field col s8">*@
+                                                    <div class="input-icon right"><i class="fa"></i><div>@Model.SchoolAcademicyear</div></div>
+                                                    @*</div>*@
+                                                    @Html.ValidationMessageFor(m => m.SchoolAcademicyear)
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <br />
+                                            <div class="formTitle col s12">
+                                                <span>Class</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group row  margin-top-20">
+                                                <label class="control-label col-md-12" for="Class">Admission looking for <span class="required"> * </span></label> <div class="input-icon right"><i class="fa"></i></div>
+                                                <div class="input-icon right">
+                                                    <i class="fa"></i>
+                                                    <select class="form-control validate" required="" aria-required="true" name="ClassKey" id="ClassKey"
+                                                            ng-options="item as item.Value for item in Classes track by item.Key" ng-model="ClassKey"></select>
+                                                </div>
+                                                @Html.ValidationMessageFor(m => m.ClassKey)
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="form-group row  margin-top-20">
+                                                @*<select class="form-control validate" required="" aria-required="true" name="CurriculamString" id="CurriculamString"
+                                                    ng-options="item as item.Value for item in SchoolSyllabus track by item.Key" ng-model="CurriculamString"></select>*@
+                                                <span><label class="control-label col-md-12" for="CurriculamString">Curriculam</label> <div class="input-icon right"><i class="fa"></i></div></span>
+                                                <div>@Model.CurriculamString</div>
+                                            </div>
+                                        </div>
+
+                                    </fieldset>
+                                    <h3>Student</h3>
+                                    <fieldset>
+
+                                        <div class="row">
+                                            <br />
+                                            <div class="formTitle col s12">
+                                                <span>Student's Details(As per Passport)</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FirstName">First Name <span class="required"> * </span></label> <div class="input-icon right"><i class="fa"></i></div>
+                                                    <div class="input-icon right"><i class="fa"></i>@Html.TextBoxFor(m => m.FirstName, new { @class = "form-control validate", @required = "", @aria_required = "true", ng_model = "StudentApplication.FirstName", @capitalize = "", maxlength = "20", @autocomplete = "off" })</div>
+                                                    @Html.ValidationMessageFor(m => m.FirstName)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MiddleName">Middle Name</label> <div class="input-icon right"><i class="fa"></i></div><div class="input-icon right"><i class="fa"></i></div>
+                                                    @Html.TextBoxFor(m => m.MiddleName, new
+                                                    {
+                                                        @class = "form-control validate",@*@aria_required = "false",*@ng_model = "StudentApplication.MiddleName",
+@capitalize = "",
+maxlength = "20",
+@autocomplete = "off"
+})
+                                                    @Html.ValidationMessageFor(m => m.MiddleName)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="LastName">Last Name  <span class="required"> * </span></label> <div class="input-icon right"><i class="fa"></i></div>
+                                                    @Html.TextBoxFor(m => m.LastName, new { @class = "form-control validate", @required = "", @aria_required = "true", ng_model = "StudentApplication.LastName", @capitalize = "", maxlength = "20", @autocomplete = "off" })
+                                                    @Html.ValidationMessageFor(m => m.LastName)
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="Gender">Gender  <span class="required"> * </span></label> <div class="input-icon right"><i class="fa"></i></div>
+                                                    <select class="form-control validate" required="" aria-required="true" name="Gender" id="Gender"
+                                                            ng-options="item as item.Value for item in Genders track by item.Key" ng-model="Gender"></select>
+
+                                                    @Html.ValidationMessageFor(m => m.Gender)
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="DateOfBirthString">Date Of Birth  <span class="required"> * </span></label> <div class="input-icon right"><i class="fa"></i></div>
+                                                    @Html.TextBoxFor(m => m.DateOfBirthString, new { @class = "form-control validate datepicker validate dateofbirth date", @required = "", @aria_required = "true", @autocomplete = "off" })
+                                                    @Html.ValidationMessageFor(m => m.DateOfBirthString)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="StudentCoutryOfBrith">Country Of Birth  <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" required="" aria-required="true" name="StudentCoutryOfBrith" id="StudentCoutryOfBrith"
+                                                                ng-options="item as item.Value for item in Countries track by item.Key" ng-model="StudentCoutryOfBrith"></select>
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => m.StudentCoutryOfBrith)
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="Relegion">Religion</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" aria-required="false" name="Relegion" id="Relegion"
+                                                                ng-options="item as item.Value for item in Relegions track by item.Key" ng-model="Relegion" ng-change="RelegionChanges($select)"></select>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="Cast">Caste</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" aria-required="false" name="Cast" id="Cast"
+                                                                ng-options="item as item.Value for item in Casts track by item.Key" ng-model="Cast"></select>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="Community">Community</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" aria-required="false" name="Community" id="Community"
+                                                                ng-options="item as item.Value for item in Communitys track by item.Key" ng-model="Community"></select>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="Nationality">Nationality <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" required="" aria-required="true" name="Nationality" id="Nationality"
+                                                                ng-options="item as item.Value for item in Countries track by item.Key" ng-model="Nationality"></select>
+                                                    </div>
+
+
+                                                    @Html.ValidationMessageFor(m => m.Nationality)
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="AdhaarCardNo">Adhaar No.</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.AdhaarCardNo, new
+                                                        {
+                                                       @class = "form-control validate",
+                                                       @type = "text",
+                                                       maxlength = "12",
+                                                       id = "AdhaarCardNo",
+                                                       value = "",
+                                                       onkeypress = "javascript:return isNumber(event)",
+                                                       @autocomplete = "off",
+                                                            disabled = "disabled"
+                                                        })
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.AdhaarCardNo)
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="StudentPassportNo">Passport No.  <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.StudentPassportNo, new { @class = "form-control validate", @required = "", @aria_required = "true", maxlength = "12", @autocomplete = "off" })
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.StudentPassportNo)
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="StudentCountryofIssue"> Country Of Issue  <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" required="" aria-required="true" name="StudentCountryofIssue" id="StudentCountryofIssue"
+                                                                ng-options="item as item.Value for item in Countries track by item.Key" ng-model="StudentCountryofIssue"></select>
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => m.StudentCountryofIssue)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="PassportNoIssueString">Passport Issue Date  <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.PassportNoIssueString, new { @class = "form-control validate datepicker validate maxtodayDate date", @required = "", @aria_required = "true", @autocomplete = "off" })
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.PassportNoIssueString)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="PassportNoExpiryString">Passport Expiry Date  <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.PassportNoExpiryString, new { @class = "form-control validate datepicker validate date", @required = "", @aria_required = "true", @autocomplete = "off" })
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.PassportNoExpiryString)
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="StudentVisaNo">Visa No.</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.StudentVisaNo, new
+                                                        {
+                                                            @class = "form-control validate",@*@aria_required = "false",*@@type = "text",
+maxlength = "11",
+id = "StudentVisaNo",
+value = "",
+onkeypress = "javascript:return isNumber(event)",
+@autocomplete = "off"
+})
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="VisaExpiryDateString">Visa Expiry Date</label> <div class="input-icon right"><i class="fa"></i></div>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.VisaExpiryDateString, new
+                                                        {
+                                                            @class = "form-control validate datepicker validate date",
+                                                            @autocomplete = "off"@*@aria_required = "false"*@})
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20 padding-b-5">
+                                                    <label class="control-label col-md-12" for="StudentNationalID">National ID  <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.StudentNationalID, new { @class = "form-control validate", @type = "text", maxlength = "11", id = "StudentNationalID", value = "", onkeypress = "javascript:return isNumber(event)", @autocomplete = "off" })
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => m.StudentNationalID)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="StudentNationalIDNoIssueDateString">National ID Issue Date</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.StudentNationalIDNoIssueDateString, new
+                                                        {
+                                                            @class = "form-control validate datepicker validate maxtodayDate date",
+                                                            @autocomplete = "off"@*, @aria_required = "false"*@})
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="StudentNationalIDNoExpiryDateString">National ID Expiry Date</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.StudentNationalIDNoExpiryDateString, new
+                                                        {
+                                                       @class = "form-control validate datepicker validate date",
+                                                       @autocomplete = "off"@*,  @aria_required = "false"*@})
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="form-group row  margin-top-20">
+                                                <label class="control-label col-md-12" for="BloodGroup">BloodGroup</label>
+                                                <div class="input-icon right">
+                                                    <i class="fa"></i>
+                                                    <select class="form-control validate" aria-required="false" name="BloodGroup" id="BloodGroup"
+                                                            ng-options="item as item.Value for item in BloodGroups track by item.Key" ng-model="BloodGroup"></select>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="input-field col s6">
+                                                    <label class="control-label col-md-12" for="SecoundLanguageString">Second Language Option(from Grade 1 onward)</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" aria-required="false" name="SecoundLanguageString" id="SecoundLanguageString"
+                                                                ng-options="item as item.Value for item in Languages track by item.Key" ng-model="SecoundLanguageString"></select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="input-field col s6">
+                                                    <label class="control-label col-md-12" for="ThridLanguageString">Third Language Option(from Grade 5 onward)</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" aria-required="false" name="ThridLanguageString" id="ThridLanguageString"
+                                                                ng-options="item as item.Value for item in Languages track by item.Key" ng-model="ThridLanguageString"></select>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label>
+                                                        @Html.CheckBoxFor(m => m.IsMinority)
+                                                        <span for="IsMinority">Is Minority</span>
+                                                    </label> <div class="input-icon right"><i class="fa"></i></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label>
+                                                        @Html.CheckBoxFor(m => m.IsOnlyChildofParent)
+                                                        <span for="IsOnlyChildofParent">Is Only Child of Parent</span>
+                                                    </label> <div class="input-icon right"><i class="fa"></i></div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                    </fieldset>
+                                    <h3>Parents/Gurdian</h3>
+                                    <fieldset>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherFirstName"> First Name <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.FatherFirstName, new { @class = "form-control validate", @required = "", @aria_required = "true", ng_model = "StudentApplication.FatherFirstName", @capitalize = "", maxlength = "20", @autocomplete = "off" })
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => m.FatherFirstName)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherMiddleName"> Middle Name</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.FatherMiddleName, new
+                                                        {
+                                                            @class = "form-control validate",@*@aria_required = "false",*@ng_model = "StudentApplication.FatherMiddleName",
+@capitalize = "",
+maxlength = "20",
+@autocomplete = "off"
+})
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => m.FatherMiddleName)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherLastName"> Last Name <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.FatherLastName, new { @class = "form-control validate", @required = "", @aria_required = "true", ng_model = "StudentApplication.FatherLastName", @capitalize = "", maxlength = "20", @autocomplete = "off" })
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => m.FatherLastName)
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherStudentRelationShip">RelationShip <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" required="" aria-required="true" name="FatherStudentRelationShip" id="FatherStudentRelationShip"
+                                                                ng-options="item as item.Value for item in GaurdianTypes track by item.Key" ng-model="FatherStudentRelationShip"></select>
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => m.FatherStudentRelationShip)
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherCountry"> Nationality <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" required="" aria-required="true" name="FatherCountry" id="FatherCountry"
+                                                                ng-options="item as item.Value for item in Countries track by item.Key" ng-model="FatherCountry"></select>
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => m.FatherCountry)
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherOccupation"> Occupation</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.FatherOccupation, new
+                                                        {
+                                                            @class = "form-control validate",@*@aria_required = "false",*@maxlength = "25",
+@autocomplete = "off"
+})
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherCompanyName">Company Name</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.FatherCompanyName, new
+                                                        {
+                                                            @class = "form-control validate",@*@aria_required = "false",*@maxlength = "100",
+@autocomplete = "off"
+})
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherPassportNumber"> Passport No. <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.FatherPassportNumber, new { @class = "form-control validate", @required = "", @aria_required = "true", maxlength = "12", @autocomplete = "off" })
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.FatherPassportNumber)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherCountryofIssue"> Passport Issue Country <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" required="" aria-required="true" name="FatherCountryofIssue" id="FatherCountryofIssue"
+                                                                ng-options="item as item.Value for item in Countries track by item.Key" ng-model="FatherCountryofIssue"></select>
+                                                    </div>
+
+
+                                                    @Html.ValidationMessageFor(m => m.FatherCountryofIssue)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherPassportNoIssueString">Passport Issue Date <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.FatherPassportNoIssueString, new { @class = "form-control validate datepicker validate maxtodayDate", @aria_required = "true", @autocomplete = "off" })
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.FatherPassportNoIssueString)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherPassportNoExpiryString">Passport Expiry Date <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.FatherPassportNoExpiryString, new { @class = "form-control validate datepicker validate", @required = "", @aria_required = "true", @autocomplete = "off" })
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.FatherPassportNoExpiryString)
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherNationalID">National ID</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.FatherNationalID, new { @class = "form-control validate", @type = "text", maxlength = "11", id = "FatherNationalID", value = "", onkeypress = "javascript:return isNumber(event)", @autocomplete = "off" })
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.FatherNationalID)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherNationalDNoIssueDateString">National ID Issue Date</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.FatherNationalDNoIssueDateString, new
+                                                       {
+                                                           @class = "form-control validate datepicker validate date",
+                                                           @autocomplete = "off"@*, @aria_required = "false"*@})
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherNationalDNoExpiryDateString">National ID Expiry Date</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.FatherNationalDNoExpiryDateString, new
+                                                    {
+                                                        @class = "form-control validate datepicker validate date",
+                                                        @autocomplete = "off"@*, @aria_required = "false"*@})
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MobileNumber"> Mobile No. <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.MobileNumber, new
+                                                        {
+                                                            @type = "tel",
+                                                            @class = "form-control validate",
+                                                            @required = "",
+                                                            @aria_required = "true",
+                                                            maxlength = "13",@*@placeholder = "+974 xxxx xxxx ",*@id = "MobileNumber",
+value = "",
+onkeypress = "javascript:return isNumberc(event)",
+@autocomplete = "off"
+})
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.MobileNumber)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FatherMobileNumberTwo"> Other Mobile No.</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.FatherMobileNumberTwo, new
+                                                        {
+                                                            @type = "tel",
+                                                            @class = "form-control validate",@*@aria_required = "false",*@maxlength = "13",//@placeholder = "+974 xxxx xxxx ",id = "FatherMobileNumberTwo",value = "",
+onkeypress = "javascript:return isNumberc(event)",
+@autocomplete = "off"
+})
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.FatherMobileNumberTwo)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="EmailID"> Email ID <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.EmailID, new { @class = "form-control validate", @required = "", @aria_required = "true", @type = "email", maxlength = "50", @autocomplete = "off" })
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.EmailID)
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="input-field col s7">
+                                                    <label class="control-label col-md-12" for="CanYouVolunteerToHelpOneString">In which sphere Of School Life Can You Volunteer To Help ?</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" aria-required="false" name="CanYouVolunteerToHelpOneString" id="CanYouVolunteerToHelpOneString"
+                                                                ng-options="item as item.Value for item in VolunteerTypes track by item.Key" ng-model="CanYouVolunteerToHelpOneString"></select>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="PrimaryContact">Primary Contact <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" required="" aria-required="true" name="PrimaryContact" id="PrimaryContact"
+                                                                ng-options="item as item.Value for item in GaurdianTypes track by item.Key" ng-model="PrimaryContact"></select>
+                                                    </div>
+                                                    @Html.ValidationMessageFor(m => m.PrimaryContact)
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                    <h3>Mother</h3>
+                                    <fieldset>
+
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherFirstName">First Name <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.MotherFirstName, new { @class = "form-control validate", @required = "", @aria_required = "true", ng_model = "StudentApplication.MotherFirstName", @capitalize = "", maxlength = "20", @autocomplete = "off" })
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.MotherFirstName)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherMiddleName">Middle Name</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.MotherMiddleName, new
+                                                        {
+                                                            @class = "form-control validate",@*@aria_required = "false",*@ng_model = "StudentApplication.MotherMiddleName",
+@capitalize = "",
+maxlength = "20",
+@autocomplete = "off"
+})
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.MotherMiddleName)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherLastName">Last Name <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.MotherLastName, new { @class = "form-control validate", @required = "", @aria_required = "true", ng_model = "StudentApplication.MotherLastName", @capitalize = "", maxlength = "20", @autocomplete = "off" })
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.MotherLastName)
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        @*<div class="form-group row  margin-top-20">
+                                                <select class="form-control validate" required="" aria-required="true" name="MotherStudentRelationShip" id="MotherStudentRelationShip"
+                                                        ng-options="item as item.Value for item in GaurdianTypes track by item.Key" ng-model="MotherStudentRelationShip"></select>
+                                                <label class="control-label col-md-12" for="MotherStudentRelationShip">RelationShip <span class="required"> * </span></label> <div class="input-icon right"><i class="fa"></i></div>
+                                                @Html.ValidationMessageFor(m => m.MotherStudentRelationShip)
+                                            </div>*@
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherCountry">Nationality <span class="required"> * </span></label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" required="" aria-required="true" name="MotherCountry" id="MotherCountry"
+                                                                ng-options="item as item.Value for item in Countries track by item.Key" ng-model="MotherCountry"></select>
+                                                    </div>
+
+
+                                                    @Html.ValidationMessageFor(m => m.MotherCountry)
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherOccupation">Occupation</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.MotherOccupation, new
+                                                        {
+                                                            @class = "form-control validate",@*@aria_required = "false", *@maxlength = "25",
+@autocomplete = "off"
+})
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherCompanyName">Company Name</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.MotherCompanyName, new
+                                                        {
+                                                            @class = "form-control validate",@*@aria_required = "false",*@maxlength = "100",
+@autocomplete = "off"
+})
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherPassportNumber">Passport No.</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.MotherPassportNumber, new
+                                                        {
+                                                            @class = "form-control validate",@*@aria_required = "false",*@maxlength = "12",
+@autocomplete = "off"
+})
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.MotherPassportNumber)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherCountryofIssue">Passport Issue Country</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" aria-required="false" name="MotherCountryofIssue" id="MotherCountryofIssue"
+                                                                ng-options="item as item.Value for item in Countries track by item.Key" ng-model="MotherCountryofIssue"></select>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherPassportNoIssueString">Passport Issue Date</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.MotherPassportNoIssueString, new
+                                                        {
+                                                            @class = "form-control validate datepicker validate maxtodayDate",
+                                                            @autocomplete = "off"@*, @aria_required = "false"*@})
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherPassportNoExpiryString">Passport Expiry Date</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.MotherPassportNoExpiryString, new
+                                                   {
+                                                       @class = "form-control validate datepicker validate date",
+                                                       @autocomplete = "off"@*, @aria_required = "false"*@})
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherNationalID">National ID</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.MotherNationalID, new { @class = "form-control validate", @type = "text", maxlength = "11", id = "MotherNationalID", value = "", onkeypress = "javascript:return isNumber(event)", @autocomplete = "off" })
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.MotherNationalID)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherNationalDNoIssueDateString">National ID Issue Date</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.MotherNationalDNoIssueDateString, new
+                                                        {
+                                                            @class = "form-control validate datepicker validate date",
+                                                            @autocomplete = "off"@*, @aria_required = "false"*@})
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherNationaIDNoExpiryDateString">National ID Expiry Date</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.MotherNationaIDNoExpiryDateString, new
+                                                   {
+                                                       @class = "form-control validate datepicker validate date",
+                                                       @autocomplete = "off"@*, @aria_required = "false"*@})
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherEmailID">Email ID</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.MotherEmailID, new { @class = "form-control validate", @aria_required = "true", @type = "email", maxlength = "50", @autocomplete = "off" })
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.MotherEmailID)
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="MotherMobileNumber">Mobile No.</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.MotherMobileNumber, new
+                                                        {
+                                                            @type = "tel",
+                                                            @class = "form-control validate",@*@aria_required = "false",*@maxlength = "13",
+//@placeholder = "+974 xxxx xxxx ",
+id = "MotherMobileNumber",
+value = "",
+onkeypress = "javascript:return isNumberc(event)",
+@autocomplete = "off"
+})
+                                                    </div>
+
+                                                    @Html.ValidationMessageFor(m => m.MotherMobileNumber)
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <div class="input-field col s7">
+                                                <label class="control-label col-md-12" for="CanYouVolunteerToHelpTwoString">In which sphere Of School Life Can You Volunteer To Help ?</label>
+                                                <div class="input-icon right">
+                                                    <i class="fa"></i>
+                                                    <select class="form-control validate" aria-required="false" name="CanYouVolunteerToHelpTwoString" id="CanYouVolunteerToHelpTwoString"
+                                                            ng-options="item as item.Value for item in VolunteerTypes track by item.Key" ng-model="CanYouVolunteerToHelpTwoString"></select>
+                                                </div>
+
+
+                                            </div>
+                                        </div>
+
+                                    </fieldset>
+                                    <h3>Location/Address</h3>
+                                    <fieldset>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="formTitle col s12">
+                                                    <span>Location/Address Details</span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="BuildingNo">Building No.</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.BuildingNo, new
+                                                       {
+                                                           @class = "form-control validate"@*, @aria_required = "false"*@,
+maxlength = "10",
+@autocomplete = "off"
+})
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="FlatNo">Flat/Unit No.</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.FlatNo, new
+                                                        {
+                                                            @class = "form-control validate",
+                                                            @autocomplete = "off"@*, @aria_required = "false"*@,
+maxlength = "10"
+})
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="StreetNo">Street No.</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.StreetNo, new
+                                                    {
+                                                        @class = "form-control validate"@*, @aria_required = "false"*@,
+maxlength = "10",
+@autocomplete = "off"
+})
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="StreetName">Street Name</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.StreetName, new
+                                                        {
+                                                            @class = "form-control validate",@*@aria_required = "false",*@maxlength = "50",
+@autocomplete = "off"
+})
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="LocationNo">Zone/Location No.</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.LocationNo, new
+                                                    {
+                                                        @class = "form-control validate"@*, @aria_required = "false"*@,
+maxlength = "10",
+@autocomplete = "off"
+})
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="LocationName">Zone/Location Name</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.LocationName, new
+                                                        {
+                                                            @class = "form-control validate",@*@aria_required = "false",*@maxlength = "50",
+@autocomplete = "off"
+})
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="ZipNo">Zip No.</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.ZipNo, new
+                                                        {
+                                                            @class = "form-control validate",@*@aria_required = "false", *@maxlength = "8",
+id = "ZipNo",
+value = "",
+onkeypress = "javascript:return isNumber(event)",
+@autocomplete = "off"
+})
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="PostBoxNo">Post Box No.</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.PostBoxNo, new
+                                                        {
+                                                            @class = "form-control validate",@*@aria_required = "false",*@maxlength = "8",
+id = "PostBoxNo",
+value = "",
+onkeypress = "javascript:return isNumber(event)",
+@autocomplete = "off"
+})
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="City">City</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.City, new
+                                                        {
+                                                            @class = "form-control validate",@*@aria_required = "false",*@maxlength = "50",
+@autocomplete = "off"
+})
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="Country">Country</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" aria-required="false" name="Country" id="Country"
+                                                                ng-options="item as item.Value for item in Countries track by item.Key" ng-model="Country"></select>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div class="form-group row  margin-top-20" style="text-align:right">
+                                                    <label>
+                                                        @Html.CheckBoxFor(m => m.IsStudentStudiedBefore, new { ng_click = "previousCheckbox()", id = "IsStudentStudiedBefore", AutoPostBack = "true" })
+                                                        @*<input type="checkbox" id="IsStudentStudiedBefore" onclick="myFunction()">*@
+                                                        <span for="IsStudentStudiedBefore">If the student has studied before</span>
+                                                    </label> <div class="input-icon right"><i class="fa"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row" id="row1" hidden="">
+                                            <div class="formTitle col s12">
+                                                <span>Previous School Details</span>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="PreviousSchoolName">Previous School Name</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextAreaFor(m => m.PreviousSchoolName, new
+                                                        {
+                                                            @class = "materialize-textarea validate"@*, @required = "", @aria_required = "true"*@,
+maxlength = "50",
+@autocomplete = "off"
+})
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="PreviousSchoolName">Previous School Academic Year</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextBoxFor(m => m.PreviousSchoolAcademicYear, new
+                                                   {
+                                                       @class = "form-control validate",
+                                                       @type = "tel",
+                                                       onkeyup = "addHyphen(this)",
+                                                       value = "",
+                                                       onkeypress = "javascript:return isNumberc(event)",
+                                                       placeholder = "",
+                                                       maxlength = "9",
+                                                       @autocomplete = "off"
+                                                   })
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="PreviousSchoolSyllabus">Previous School Syllabus</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        <select class="form-control validate" @*required="" aria-required="true"*@ name="PreviousSchoolSyllabus" id="PreviousSchoolSyllabus"
+                                                                ng-options="item as item.Value for item in Syllabus track by item.Key" ng-model="PreviousSchoolSyllabus"></select>
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row" id="row2" hidden="">
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="PreviousSchoolClassClassKey">Previous School Class Completed</label> <div class="input-icon right"><i class="fa"></i></div>
+
+                                                    <select class="form-control validate" @*required="" aria-required="true"*@ id="PreviousSchoolClassClassKey" name="PreviousSchoolClassClassKey" ng-model="PreviousSchoolClassClassKey"
+                                                            ng-options="item as item.Value for item in Classes track by item.Key"></select>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-lg-6">
+                                                <div class="form-group row  margin-top-20">
+                                                    <label class="control-label col-md-12" for="PreviousSchoolAddress"> Previous School Address</label>
+                                                    <div class="input-icon right">
+                                                        <i class="fa"></i>
+                                                        @Html.TextAreaFor(m => m.PreviousSchoolAddress, new { @class = "materialize-textarea validate", maxlength = "200", @autocomplete = "off" })
+                                                    </div>
+
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                    @*<h3>Siblings</h3>
+                                    <fieldset>
+                                        <div class="col-lg-12 p-t-20">
+                                            <label class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect"
+                                                   for="checkbox-1">
+                                                <input type="checkbox" id="checkbox-1" name="acceptTerms"
+                                                       class="mdl-checkbox__input" required>
+                                                <span class="mdl-checkbox__label">
+                                                    I agree with the Terms and
+                                                    Conditions.
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </fieldset>*@
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- end page content -->
+        <!-- start chat sidebar -->
+        <div class="chat-sidebar-container" data-close-on-body-click="false">
+            <div class="chat-sidebar">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a href="#quick_sidebar_tab_1" class="nav-link active tab-icon" data-bs-toggle="tab">
+                            <i class="material-icons">chat</i>Chat
+                            <span class="badge badge-danger">4</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#quick_sidebar_tab_3" class="nav-link tab-icon" data-bs-toggle="tab">
+                            <i class="material-icons">settings</i>
+                            Settings
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <!-- Start User Chat -->
+                    <div class="tab-pane active chat-sidebar-chat in active show" role="tabpanel"
+                         id="quick_sidebar_tab_1">
+                        <div class="chat-sidebar-list">
+                            <div class="chat-sidebar-chat-users slimscroll-style" data-rail-color="#ddd"
+                                 data-wrapper-class="chat-sidebar-list">
+                                <div class="chat-header">
+                                    <h5 class="list-heading">Online</h5>
+                                </div>
+                                <ul class="media-list list-items">
+                                    <li class="media">
+                                        <img class="media-object" src="~/Design_v02/img/prof/prof3.jpg"
+                                             width="35" height="35" alt="...">
+                                        <i class="online dot"></i>
+                                        <div class="media-body">
+                                            <h5 class="media-heading">John Deo</h5>
+                                            <div class="media-heading-sub">Spine Surgeon</div>
+                                        </div>
+                                    </li>
+                                    <li class="media">
+                                        <div class="media-status">
+                                            <span class="badge badge-success">5</span>
+                                        </div> <img class="media-object" src="~/Design_v02/img/prof/prof1.jpg"
+                                                    width="35" height="35" alt="...">
+                                        <i class="busy dot"></i>
+                                        <div class="media-body">
+                                            <h5 class="media-heading">Rajesh</h5>
+                                            <div class="media-heading-sub">Director</div>
+                                        </div>
+                                    </li>
+                                    <li class="media">
+                                        <img class="media-object" src="~/Design_v02/img/prof/prof5.jpg"
+                                             width="35" height="35" alt="...">
+                                        <i class="away dot"></i>
+                                        <div class="media-body">
+                                            <h5 class="media-heading">Jacob Ryan</h5>
+                                            <div class="media-heading-sub">Ortho Surgeon</div>
+                                        </div>
+                                    </li>
+                                    <li class="media">
+                                        <div class="media-status">
+                                            <span class="badge badge-danger">8</span>
+                                        </div> <img class="media-object" src="~/Design_v02/img/prof/prof4.jpg"
+                                                    width="35" height="35" alt="...">
+                                        <i class="online dot"></i>
+                                        <div class="media-body">
+                                            <h5 class="media-heading">Kehn Anderson</h5>
+                                            <div class="media-heading-sub">CEO</div>
+                                        </div>
+                                    </li>
+                                    <li class="media">
+                                        <img class="media-object" src="~/Design_v02/img/prof/prof2.jpg"
+                                             width="35" height="35" alt="...">
+                                        <i class="busy dot"></i>
+                                        <div class="media-body">
+                                            <h5 class="media-heading">Sarah Smith</h5>
+                                            <div class="media-heading-sub">Anaesthetics</div>
+                                        </div>
+                                    </li>
+                                    <li class="media">
+                                        <img class="media-object" src="~/Design_v02/img/prof/prof7.jpg"
+                                             width="35" height="35" alt="...">
+                                        <i class="online dot"></i>
+                                        <div class="media-body">
+                                            <h5 class="media-heading">Vlad Cardella</h5>
+                                            <div class="media-heading-sub">Cardiologist</div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <div class="chat-header">
+                                    <h5 class="list-heading">Offline</h5>
+                                </div>
+                                <ul class="media-list list-items">
+                                    <li class="media">
+                                        <div class="media-status">
+                                            <span class="badge badge-warning">4</span>
+                                        </div> <img class="media-object" src="~/Design_v02/img/prof/prof6.jpg"
+                                                    width="35" height="35" alt="...">
+                                        <i class="offline dot"></i>
+                                        <div class="media-body">
+                                            <h5 class="media-heading">Jennifer Maklen</h5>
+                                            <div class="media-heading-sub">Nurse</div>
+                                            <div class="media-heading-small">Last seen 01:20 AM</div>
+                                        </div>
+                                    </li>
+                                    <li class="media">
+                                        <img class="media-object" src="~/Design_v02/img/prof/prof8.jpg"
+                                             width="35" height="35" alt="...">
+                                        <i class="offline dot"></i>
+                                        <div class="media-body">
+                                            <h5 class="media-heading">Lina Smith</h5>
+                                            <div class="media-heading-sub">Ortho Surgeon</div>
+                                            <div class="media-heading-small">Last seen 11:14 PM</div>
+                                        </div>
+                                    </li>
+                                    <li class="media">
+                                        <div class="media-status">
+                                            <span class="badge badge-success">9</span>
+                                        </div> <img class="media-object" src="~/Design_v02/img/prof/prof9.jpg"
+                                                    width="35" height="35" alt="...">
+                                        <i class="offline dot"></i>
+                                        <div class="media-body">
+                                            <h5 class="media-heading">Jeff Adam</h5>
+                                            <div class="media-heading-sub">Compounder</div>
+                                            <div class="media-heading-small">Last seen 3:31 PM</div>
+                                        </div>
+                                    </li>
+                                    <li class="media">
+                                        <img class="media-object" src="~/Design_v02/img/prof/prof10.jpg"
+                                             width="35" height="35" alt="...">
+                                        <i class="offline dot"></i>
+                                        <div class="media-body">
+                                            <h5 class="media-heading">Anjelina Cardella</h5>
+                                            <div class="media-heading-sub">Physiotherapist</div>
+                                            <div class="media-heading-small">Last seen 7:45 PM</div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End User Chat -->
+                    <!-- Start Setting Panel -->
+                    <div class="tab-pane chat-sidebar-settings" role="tabpanel" id="quick_sidebar_tab_3">
+                        <div class="chat-sidebar-settings-list slimscroll-style">
+                            <div class="chat-header">
+                                <h5 class="list-heading">Layout Settings</h5>
+                            </div>
+                            <div class="chatpane inner-content ">
+                                <div class="settings-list">
+                                    <div class="setting-item">
+                                        <div class="setting-text">Sidebar Position</div>
+                                        <div class="setting-set">
+                                            <select class="sidebar-pos-option form-control input-inline input-sm input-small ">
+                                                <option value="left" selected="selected">Left</option>
+                                                <option value="right">Right</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="setting-item">
+                                        <div class="setting-text">Header</div>
+                                        <div class="setting-set">
+                                            <select class="page-header-option form-control input-inline input-sm input-small ">
+                                                <option value="fixed" selected="selected">Fixed</option>
+                                                <option value="default">Default</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="setting-item">
+                                        <div class="setting-text">Footer</div>
+                                        <div class="setting-set">
+                                            <select class="page-footer-option form-control input-inline input-sm input-small ">
+                                                <option value="fixed">Fixed</option>
+                                                <option value="default" selected="selected">Default</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="chat-header">
+                                    <h5 class="list-heading">Account Settings</h5>
+                                </div>
+                                <div class="settings-list">
+                                    <div class="setting-item">
+                                        <div class="setting-text">Notifications</div>
+                                        <div class="setting-set">
+                                            <div class="switch">
+                                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
+                                                       for="switch-1">
+                                                    <input type="checkbox" id="switch-1" class="mdl-switch__input"
+                                                           checked>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="setting-item">
+                                        <div class="setting-text">Show Online</div>
+                                        <div class="setting-set">
+                                            <div class="switch">
+                                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
+                                                       for="switch-7">
+                                                    <input type="checkbox" id="switch-7" class="mdl-switch__input"
+                                                           checked>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="setting-item">
+                                        <div class="setting-text">Status</div>
+                                        <div class="setting-set">
+                                            <div class="switch">
+                                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
+                                                       for="switch-2">
+                                                    <input type="checkbox" id="switch-2" class="mdl-switch__input"
+                                                           checked>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="setting-item">
+                                        <div class="setting-text">2 Steps Verification</div>
+                                        <div class="setting-set">
+                                            <div class="switch">
+                                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
+                                                       for="switch-3">
+                                                    <input type="checkbox" id="switch-3" class="mdl-switch__input"
+                                                           checked>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="chat-header">
+                                    <h5 class="list-heading">General Settings</h5>
+                                </div>
+                                <div class="settings-list">
+                                    <div class="setting-item">
+                                        <div class="setting-text">Location</div>
+                                        <div class="setting-set">
+                                            <div class="switch">
+                                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
+                                                       for="switch-4">
+                                                    <input type="checkbox" id="switch-4" class="mdl-switch__input"
+                                                           checked>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="setting-item">
+                                        <div class="setting-text">Save Histry</div>
+                                        <div class="setting-set">
+                                            <div class="switch">
+                                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
+                                                       for="switch-5">
+                                                    <input type="checkbox" id="switch-5" class="mdl-switch__input"
+                                                           checked>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="setting-item">
+                                        <div class="setting-text">Auto Updates</div>
+                                        <div class="setting-set">
+                                            <div class="switch">
+                                                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
+                                                       for="switch-6">
+                                                    <input type="checkbox" id="switch-6" class="mdl-switch__input"
+                                                           checked>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end chat sidebar -->
+    </div>
+    <!-- end page container -->
+
+</div>
+
+<!-- start js include path -->
+<script src="~/Design_v02/plugins/jquery/jquery.min.js"></script>
+<script src="~/Design_v02/plugins/popper/popper.js"></script>
+<script src="~/Design_v02/plugins/jquery-blockui/jquery.blockui.min.js"></script>
+<script src="~/Design_v02/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+<script src="~/Design_v02/plugins/jquery-validation/js/jquery.validate.min.js"></script>
+<!-- bootstrap -->
+<script src="~/Design_v02/plugins/bootstrap/js/bootstrap.min.js"></script>
+<!-- steps -->
+<script src="~/Design_v02/plugins/steps/jquery.steps.js"></script>
+<script src="~/Design_v02/js/pages/steps/steps-data.js"></script>
+<!-- Common js-->
+<script src="~/Design_v02/js/app.js"></script>
+<script src="~/Design_v02/js/layout.js"></script>
+<script src="~/Design_v02/js/theme-color.js"></script>
+<!-- Material -->
+<script src="~/Design_v02/plugins/material/material.min.js"></script>
+<!-- end js include path -->
+<link rel="stylesheet" href="~/ToasterPlugin/simple-notify.min.css" />
+
+<script src="~/ToasterPlugin/simple-notify.min.js"></script>
+<script>
+    function callToasterPlugin(status, title) {
+        new Notify({
+            status: status,
+            title: title,
+            effect: 'fade',
+            speed: 300,
+            customClass: null,
+            customIcon: null,
+            showIcon: true,
+            showCloseButton: true,
+            autoclose: true,
+            autotimeout: 3000,
+            gap: 20,
+            distance: 20,
+            type: 1,
+            position: 'right top'
+        })
+    }
+    $(document).ready(function () {
+        var d = new Date().addYears(-3);
+        //alert(d);
+        $('select').formSelect();
+
+        $('#DateOfBirthString').datepicker({
+            format: 'dd/mm/yyyy',endDate: d
+        }); //endDate: '-18y' startDate: '-1d'startDate: '01/03/2021',
+        //endDate: '10/04/2021',
+
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy'
+        });
+        $("select[required]").css({
+            display: "inline",
+            height: 0,
+            padding: 0,
+            width: 0
+        });
+
+        $('#submitBtn').click(function () {
+            if ($('#StudSibApplication').valid()) {
+                $(this).prop("disabled", true);
+
+                if ($('#IsStudentStudiedBefore').prop("checked") == true) {
+
+                    if ($("#PreviousSchoolName").val() == null || $("#PreviousSchoolName").val() == "") {
+                        $("#PreviousSchoolName").focus();
+                        $(this).prop("disabled", false);
+                        return false;
+                    }
+
+                    else if ($("#PreviousSchoolAcademicYear").val() == null || $("#PreviousSchoolAcademicYear").val() == "") {
+                        $("#PreviousSchoolAcademicYear").focus();
+                        $(this).prop("disabled", false);
+                        return false;
+                    }
+                    else if ($("#PreviousSchoolAcademicYear").val().length > 10) {
+                        $("#PreviousSchoolAcademicYear").focus();
+                        $(this).prop("disabled", false);
+                        return false;
+                    }
+                    else if ($("#PreviousSchoolSyllabus").val() == null || $("#PreviousSchoolSyllabus").val() == "") {
+                        $("#PreviousSchoolSyllabus").focus();
+                        $(this).prop("disabled", false);
+                        return false;
+                    }
+
+                    else if ($("#PreviousSchoolClassClassKey").val() == null || $("#PreviousSchoolClassClassKey").val() == "") {
+                        $("#PreviousSchoolClassClassKey").focus();
+                        $(this).prop("disabled", false);
+                        return false;
+                    }
+
+                    else if ($("#PreviousSchoolAddress").val() == null || $("#PreviousSchoolAddress").val() == "") {
+                        $("#PreviousSchoolAddress").focus();
+                        $(this).prop("disabled", false);
+                        return false;
+                    }
+                    else {
+                        $('#StudSibApplication').submit();
+                    }
+
+                }
+                else {
+                    $('#StudSibApplication').submit();
+                }
+            }
+
+            else {
+                $(this).prop("disabled", false);
+
+                if ($("#School").val() == null || $("#School").val() == "") {
+                    //$("#School").focus();
+                    callToasterPlugin('error', 'Please Select School');
+                }
+                else if ($("#ClassKey").val() == null || $("#ClassKey").val() == "") {
+                    $("#ClassKey").focus();
+                    callToasterPlugin('error', 'Please Select Class');
+                }
+                else if ($("#FirstName").val() == null || $("#FirstName").val() == "") {
+                    $("#FirstName").focus();
+                    callToasterPlugin('error', 'Please Enter First Name');
+                }
+                else if ($("#LastName").val() == null || $("#LastName").val() == "") {
+                    $("#LastName").focus();
+                    callToasterPlugin('error', 'Please Enter Last Name');
+                }
+                else if ($("#Gender").val() == null || $("#Gender").val() == "") {
+                    $("#Gender").focus();
+                    callToasterPlugin('error', 'Please Select Gender');
+                }
+                else if ($("#DateOfBirthString").val() == null || $("#DateOfBirthString").val() == "") {
+                    $("#DateOfBirthString").focus();
+                    callToasterPlugin('error', 'Please Select Date of Birth');
+                }
+                else if ($("#StudentCoutryOfBrith").val() == null || $("#StudentCoutryOfBrith").val() == "") {
+                    $("#StudentCoutryOfBrith").focus();
+                    callToasterPlugin('error', 'Please Select Student Country of Birth');
+                }
+                else if ($("#Nationality").val() == null || $("#Nationality").val() == "") {
+                    $("#Nationality").focus();
+                    callToasterPlugin('error', 'Please Select Nationality');
+                }
+                else if ($("#AdhaarCardNo").val() != null && $("#AdhaarCardNo").val() != "") {
+                    if ($("#AdhaarCardNo").val().length != 12) {
+                        $("#AdhaarCardNo").focus();
+                        callToasterPlugin('error', 'Please Enter Valid Adhaar number');
+                    }
+                }
+                else if ($("#StudentPassportNo").val() == null || $("#StudentPassportNo").val() == "" || $("#StudentPassportNo").val().length != 12) {
+                    $("#StudentPassportNo").focus();
+                    callToasterPlugin('error', 'Please Enter Valid Student Passport Number');
+                }
+                else if ($("#StudentCountryofIssue").val() == null || $("#StudentCountryofIssue").val() == "") {
+                    $("#StudentCountryofIssue").focus();
+                    callToasterPlugin('error', 'Please Student Country of Issue');
+                }
+                else if ($("#PassportNoIssueString").val() == null || $("#PassportNoIssueString").val() == "") {
+                    $("#PassportNoIssueString").focus();
+                    callToasterPlugin('error', 'Please Enter Passport Issue Date');
+                }
+                else if ($("#PassportNoExpiryString").val() == null || $("#PassportNoExpiryString").val() == "") {
+                    $("#PassportNoExpiryString").focus();
+                    callToasterPlugin('error', 'Please Enter Passport Expiry Date');
+                }
+                else if ($("#StudentNationalID").val() == null || $("#StudentNationalID").val() == "" || $("#StudentNationalID").val().length != 11) {
+                    $("#StudentNationalID").focus();
+                    callToasterPlugin('error', 'Please Enter Valid Student National ID');
+                }
+                else if ($("#FatherFirstName").val() == null || $("#FatherFirstName").val() == "") {
+                    $("#FatherFirstName").focus();
+                    callToasterPlugin('error', 'Please Enter Father/Gurdian First Name');
+                }
+                else if ($("#FatherStudentRelationShip").val() == null || $("#FatherStudentRelationShip").val() == "") {
+                    $("#FatherStudentRelationShip").focus();
+                    callToasterPlugin('error', 'Please Select Student Relationship');
+                }
+                else if ($("#FatherCountry").val() == null || $("#FatherCountry").val() == "") {
+                    $("#FatherCountry").focus();
+                    callToasterPlugin('error', 'Please Enter Valid Student National ID');
+                }
+                else if ($("#FatherPassportNumber").val() == null || $("#FatherPassportNumber").val() == "" || $("#FatherPassportNumber").val().length != 12) {
+                    $("#FatherPassportNumber").focus();
+                    callToasterPlugin('error', 'Please Enter Father Valid Passport Number');
+                }
+                else if ($("#FatherCountryofIssue").val() == null || $("#FatherCountryofIssue").val() == "") {
+                    $("#FatherCountryofIssue").focus();
+                    callToasterPlugin('error', 'Please Enter Father Passport Issued Country');
+                }
+                else if ($("#FatherPassportNoIssueString").val() == null || $("#FatherPassportNoIssueString").val() == "") {
+                    $("#FatherPassportNoIssueString").focus();
+                    callToasterPlugin('error', 'Please Enter Father Passport Issue Date');
+                }
+                else if ($("#FatherPassportNoExpiryString").val() == null || $("#FatherPassportNoExpiryString").val() == "") {
+                    $("#FatherPassportNoExpiryString").focus();
+                    callToasterPlugin('error', 'Please Enter Father Passport Expiry Date');
+                }
+                else if ($("#MobileNumber").val() == null || $("#MobileNumber").val() == "" || $("#MobileNumber").val().length > 13) {
+                    $("#MobileNumber").focus();
+                    callToasterPlugin('error', 'Please Enter Valid Mobile number');
+                }
+                else if ($("#EmailID").val() == null || $("#EmailID").val() == "") {
+                    $("#EmailID").focus();
+                    callToasterPlugin('error', 'Please Enter Valid Email id');
+                }
+                else if ($("#PrimaryContact").val() == null || $("#PrimaryContact").val() == "") {
+                    $("#PrimaryContact").focus();
+                    callToasterPlugin('error', 'Please Enter Primary Contact');
+                }
+                else if ($("#MotherFirstName").val() == null || $("#MotherFirstName").val() == "") {
+                    $("#MotherFirstName").focus();
+                    callToasterPlugin('error', 'Please Enter Mother First Name');
+                }
+                else if ($("#MotherLastName").val() == null || $("#MotherLastName").val() == "") {
+                    $("#MotherLastName").focus();
+                    callToasterPlugin('error', 'Please Enter Mother Last Name');
+                }
+                else if ($("#MotherCountry").val() == null || $("#MotherCountry").val() == "") {
+                    $("#MotherCountry").focus();
+                    callToasterPlugin('error', 'Please Enter Mother Country');
+                }
+                return false;
+            }
+        });
+
+    });
+    //WRITE THE VALIDATION SCRIPT.
+    function isNumber(evt) {
+        var iKeyCode = (evt.which) ? evt.which : evt.keyCode
+        if (iKeyCode != 46 && iKeyCode > 31 && (iKeyCode < 48 || iKeyCode > 57))
+            return false;
+        return true;
+    }
+    // WRITE THE VALIDATION SCRIPT.
+    function isNumberc(evt) {
+        var iKeyCode = (evt.which) ? evt.which : evt.keyCode
+        if (iKeyCode != 46 && iKeyCode > 31 && (iKeyCode < 48 || iKeyCode > 57) && (iKeyCode != 43))
+            return false;
+        return true;
+    }
+    $(function () {
+        $("#Nationality").change(function () {
+            if ($(this).val() == 1) {
+                $("#AdhaarCardNo").removeAttr("disabled");
+                $("#AdhaarCardNo").focus();
+            } else {
+                $("#AdhaarCardNo").val('');
+                $("#AdhaarCardNo").attr("disabled", "disabled");
+            }
+        });
+    });
+    //$(function () {
+    //    $("#PassportNoExpiryString").change(function () {
+    //        var PassportNoIssueString = Date.parse $("#PassportNoIssueString").val();
+    //        var PassportNoExpiryString = $("#PassportNoExpiryString").val();
+    //        if (PassportNoIssueString > PassportNoExpiryString) {
+    //            alert("Invalide date formate");
+    //            $("#PassportNoExpiryString").val("");
+    //        }
+    //    });
+    //});
+    //Disable Back Button Start
+        utility.myHost = "@string.Format("{0}://{1}{2}/", Request.Url.Scheme, Request.Url.Authority, HttpRuntime.AppDomainAppVirtualPath)";
+        $.validator.unobtrusive.parse($('#frmLogin'));
+
+        //Disable Back Button In All Browsers.
+        function DisableBackButtonAllBrowsers() {
+            window.history.forward()
+        };
+
+        DisableBackButtonAllBrowsers();
+        window.onload = DisableBackButtonAllBrowsers;
+        window.onpageshow = function (evts) { if (evts.persisted) DisableBackButtonAllBrowsers(); };
+        window.onunload = function () { void (0) };
+    //Disable Back Button End
+
+    function addHyphen(element) {
+        let ele = document.getElementById(element.id);
+        ele = ele.value.split('-').join('');    // Remove dash (-) if mistakenly entered.
+
+        let finalVal = ele.match(/.{1,4}/g).join('-');
+        document.getElementById(element.id).value = finalVal;
+    }
+
+</script>

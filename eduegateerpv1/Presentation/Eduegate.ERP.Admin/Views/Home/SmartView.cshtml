@@ -1,0 +1,30 @@
+﻿@model Eduegate.Framework.PageRendererEngine.ViewModels.PageRedererViewModel
+@{ if (Request.IsAjaxRequest()) { Layout = null; }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div id="DashbaordWindow" class="windowcontainer SmartViewMenu" style="display:block" ng-controller="SmartViewController">
+ 	
+    <div class="smartviewflex alignleft fullwidth">
+        <div class="categorylisting listColumn" ng-repeat="(key, value) in MenuItems" ng-if="key != 'null'">
+            <div class="posmenu">
+                <ul>
+                    <li ng-repeat="menu in value" style="display:block !important;" ng-if="menu.ActionLink.length > 0 || menu.ActionLink1.length > 0 || menu.ActionLink2.length > 0">
+                        <span>
+                            <img src="{{menu.MenuIcon}}" alt="{{menu.Title}}" />
+                            <span ng-if="menu.MenuTitle != '' && menu.MenuTitle != null" ng-bind="menu.MenuTitle"></span>
+                            <span ng-if="menu.MenuTitle == '' || menu.MenuTitle == null" ng-bind="menu.MenuName"></span>
+                            <span class="lmenu-iconlinks">
+                                <i ng-if="menu.ActionLink" title="Open in new tab" class="fa fa-list iconlink zoomin" {{menu.ActionLink}} ng-click="FireEvent($event, menu.ActionLink, menu.Parameters)"></i>
+                                <i ng-if="menu.ActionLink2" title="Open in new tab" class="fa fa-folder iconlink zoomin" {{menu.ActionLink2}} ng-click="FireEvent($event, menu.ActionLink2, menu.Parameters)"></i>
+                                <i ng-if="menu.ActionLink1" class="fa fa-plus-circle iconlink zoomin" aria-hidden="true" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Create")" ng-click="FireEvent($event, menu.ActionLink1, menu.Parameters)"></i>
+                            </span>
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>       
+    </div>
+</div>

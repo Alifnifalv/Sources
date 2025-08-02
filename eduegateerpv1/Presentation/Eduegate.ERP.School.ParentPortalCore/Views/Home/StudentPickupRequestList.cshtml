@@ -1,0 +1,123 @@
+﻿@{
+    ViewBag.Title = "StudentPickupRequestList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="bg-light d-flex flex-column" style="flex:1;" ng-controller="StudentPickupRequestListController" ng-init="init()">
+
+    <section class="home-section-wrap">
+        <div class="container">
+            <div class="row row-eq-height">
+                <!-- Nav tabs -->
+                <!-- Tab panes -->
+
+                <div class="p-md-sm-0  fontawesome-demo">
+                    <div class="container-custom container-xxl d-flex flex-column-fluid  p-md-sm-0">
+                        <div class="content d-flex flex-row flex-row-fluid" id="kt_content">
+                            <div class="d-flex flex-column flex-row-fluid">
+                                <div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6" id="kt_toolbar">
+                                    <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2">
+                                        <h1 class="d-flex text-dark fw-bold m-0 fs-3" ng-click="loadMessages()">Pickup requests</h1>
+                                        <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+                                            <li class="breadcrumb-item text-gray-600">
+                                                <a class="text-gray-600 text-hover-primary" href="MyWards">Home</a>
+                                            </li>
+                                            <li class="breadcrumb-item text-gray-500">Pickup requests</li>
+                                        </ul>
+                                    </div>
+                                    <div class="d-flex align-items-center py-2">
+                                        <a class="btn btn-sm btn-primary" ng-click="NewStudentPickupRequestClick()">Pickup Request</a>
+                                    </div>
+                                </div>
+                                <div class="flex-column-fluid">
+                                    <div class=" g-5 g-lg-8 mb-5 mb-xl-0">
+                                        <div class="table-responsive table-responsive-custom">
+                                            <table class="table table-striped table-bordered table-hover table-checkable order-column valign-middle">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Request no.</th>
+                                                        <th>Request date</th>
+                                                        <th>Student</th>
+                                                        <th>Pickup by</th>
+                                                        <th>Pickup person</th>
+                                                        <th>Pickup date</th>
+                                                        <th>From time</th>
+                                                        <th>To time</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr ng-repeat="request in StudentsPickupRequests">
+                                                        <td>
+                                                            <span>
+                                                                <b style="color:darkslategray">Pick - {{request.StudentPickupRequestIID}}</b>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span>{{request.RequestStringDate}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span>{{request.Student.Value}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span>{{request.PickedByDescription}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span>{{request.FirstName}} {{request.MiddleName}} {{request.LastName}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span>{{request.PickStringDate}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span>{{request.FromStringTime}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span>{{request.ToStringTime}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <span style="color:darkorange">{{request.RequestStatus}}</span>
+                                                        </td>
+                                                        <td>
+                                                            <a ng-click="EditButtonClick()">
+                                                                <span class="edit" ng-if="request.RequestStatus == 'New'" ng-hide="edit">
+                                                                    <i class="material-icons small" title="edit">edit</i>
+                                                                </span>
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <div class="d-flex flex-stack flex-wrap gap-4" ng-if="request.RequestStatus == 'New'">
+                                                                <button class="btn btn-sm btn-primary w-100" type="submit" ng-click="CancelButtonClick(request)">
+                                                                    Cancel
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr ng-if="StudentsPickupRequests.length == 0 && !ShowPreLoader">
+                                                        <td colspan="6"> <p class="text-center">No request found.</p></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <div id="StudentPickupRequestListOverlay" class="preload-overlay center">
+                                                <span id="StudentPickupRequestListOverlayButtonLoader" class="preloadImg">
+                                                    <img src="~/Images/preloader.gif" alt="loader" />
+                                                    <br /><label>Loading...</label>
+                                                </span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gy-5 g-xl-10">
+                        <div class="col-xl-4 mb-5 mb-xl-10">
+                        </div>
+
+                    </div>
+                </div>
+
+            </div><!--pageContent-->
+        </div><!--pageContainer-->
+    </section>
+</div>

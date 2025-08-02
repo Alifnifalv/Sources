@@ -1,0 +1,127 @@
+﻿@model Eduegate.Web.Library.Chat.ViewModels.UserViewModel
+@{
+    if (Request.IsAjaxRequest())
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+
+    var hostUrl = System.Configuration.ConfigurationManager.AppSettings["ChatHostUrl"] != null ? System.Configuration.ConfigurationManager.AppSettings["ChatHostUrl"].ToString() : string.Empty;
+}
+
+<div id="chatPanelDiv" ng-controller="ChatController"
+     ng-init="HostUrl = '@hostUrl'; User = { UserID : '@Model.UserID', UserName : '@Model.UserName', UserRole : '@Model.UserRole.ToString()', CountryCode : '@Model.CountryCode', CultureCode :'@Model.CultureCode'};ONLINE=  'Online' ; OFFLINE='Offline';">
+
+    @if (Model.IsTitleRequired == true)
+    {
+        <div class="header-user" draggable>
+            <div align="center" class="header-logo"><img src="@hostUrl/Images/blink-chat-logo-@(string.IsNullOrEmpty(Model.CultureCode) ? "en" : Model.CultureCode).png"></div>
+            @*<div style="top: -34px; position: relative; float: right;" ng-click="events.CloseChatWindow($event, '@Model.IsTitleRequired.ToString()');">
+                    <img style="position: initial; opacity: initial;" class="close" src="@hostUrl/Images/cross-black.png">
+                </div>*@
+            <div class="controllers-wrap">
+                <div class="control-icons wbusers" ng-click="">
+                    <span><img src="@hostUrl/Images/wblogo.png" alt="ERP Online Users" title="ERP Online Users" /></span>
+                    <span class="count">100</span>
+                </div>
+                <div class="control-icons" ng-click="">
+                    <span><img src="@hostUrl/Images/webonlineusers.png" alt="Web Online Users" title="Web Online Users" /></span>
+                    <span class="count">100</span>
+                </div>
+                <div class="control-icons" ng-click="events.Settings($event, user);">
+                    <span><img src="@hostUrl/Images/chatsettings-icon.png" alt="Chat Settings" title="Chat Settings" /></span>
+                    <div class="chatsettingswindow"></div>
+                </div>
+                <div class="control-icons" ng-click="events.OpenHistoryChatWindow($event);">
+                    <span><img src="@hostUrl/Images/viewhistory.png" alt="viewhistory" title="View History" /></span>
+                </div>
+                <div class="control-icons" ng-click="">
+                    <span><img src="@hostUrl/Images/logout.png" alt="Log Out" title="Log Out" /></span>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div id="net_new" class="blink-chat-live-window-user" @*style="display: block; margin-right:0px; width: 100%; height: 100%; border:none; box-shadow:none; margin-top:-25px;"*@>
+        <div id="ChatMessageContainer">
+            <div class="chatswindow"></div>
+            @*<div class="header-cross"><img id="close" class="close" src="@hostUrl/Images/cross.png" ng-click="events.close($event);"></div>*@
+            <div class="user-list">
+                <div class="self-profile-img-name">
+                    <div class="self-img"><img class="user-img-circle" src="@hostUrl/Images/self-img.png"></div>
+                    <div class="self-name">
+                        <span class="name-stly" title="{{LoggedInUser.UserName}}">{{LoggedInUser.UserName}} ( {{LoggedInUser.CountryCode}} )</span><br>
+                        <span class="status-stly active">
+                            @*for inactive, please add class - inactive*@
+                        @*@WB.Globalization.ResourceHelper.GetValue("Online", Model.CultureCode)*@
+                            Online
+                    </span>
+                </div>
+            </div>
+            <div class="search">
+
+                <div class="search-box">
+                    <form class="type-name">
+                        <input id="search-input" type="text" placeholder="Type a name">
+                    </form>
+                    <div class="search-icon"><img src="@hostUrl/Images/search.png"></div>
+                </div>
+            </div>
+            <div class="contacts-header">Online User(s)</div>
+
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#online">Online</a></li>
+                <li><a data-toggle="tab" href="#recent">Recent</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div id="online" class="tab-pane fade in active">
+                    <div class="contacts-list">
+                        <div class="contact-img-name" ng-repeat="user in FilteredUsers" ng-click="events.UserSelection($event, user);">
+                            <div class="contact-img"><img class="user-img-circle" src="@hostUrl/Images/contact-msg-img.png"></div>
+                            <div class="contact-name" ng-bind="user.UserName + ' (' + user.CountryCode + ')'">
+                            </div>
+                            <span class="label label-success label-as-badge" ng-model="user.UreadMessages" ng-show="HasUnreadMessage($event, user)">1</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="recent" class="tab-pane fade">
+                    <div class="contacts-list">
+                        <div class="contact-img-name" ng-repeat="user in RecentUsers" ng-click="events.RecentUserSelection($event, user);">
+                            <div class="contact-img"><img class="user-img-circle" src="@hostUrl/Images/contact-msg-img.png"></div>
+                            <div class="contact-name" ng-bind="user.UserName + ' ' + user.CountryCode">
+                            </div>
+                            <span class="label label-success label-as-badge" ng-model="user.UreadMessages" ng-show="HasUnreadMessage($event, user)">1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" id="hdCheckWindow" />
+</div>
+
+</div>
+
+<div id="templates" style="display:none">
+    @Html.Partial("_ChatTemplates")
+</div>
+
+<script type="text/javascript">
+    var parentContainer = parent;
+
+    if ('@Model.IsTitleRequired' == 'False') {
+        //$("#net_new").css("margin-top", "0px");
+    }
+
+    @if (Model.IsTitleRequired) {
+        @*@Html.Raw("$('#chatPanelDiv').draggable({handle: '[draggable]'});");*@
+
+        @*@Html.Raw("$('#chatPanelDiv').resizable();");
+        @Html.Raw("$('.contacts-list').resizable();");*@
+    }
+
+</script>

@@ -1,0 +1,115 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Eduegate.Domain.Entity.School.Models
+{
+    [Table("RouteStopMaps", Schema = "schools")]
+    public partial class RouteStopMap
+    {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public RouteStopMap()
+        {
+            DriverScheduleLogs = new HashSet<DriverScheduleLog>();
+            StaffRouteStopMaps = new HashSet<StaffRouteStopMap>();
+            StaffRouteStopMaps1 = new HashSet<StaffRouteStopMap>();
+            StaffRouteStopMaps2 = new HashSet<StaffRouteStopMap>();
+            StudentRouteStopMapLogs = new HashSet<StudentRouteStopMapLog>();
+            StudentRouteStopMapLogs1 = new HashSet<StudentRouteStopMapLog>();
+            StudentRouteStopMapLogs2 = new HashSet<StudentRouteStopMapLog>();
+            StudentRouteStopMaps = new HashSet<StudentRouteStopMap>();
+            StudentRouteStopMaps1 = new HashSet<StudentRouteStopMap>();
+            StudentRouteStopMaps2 = new HashSet<StudentRouteStopMap>();
+            TransportApplications = new HashSet<TransportApplication>();
+            TransportApplications1 = new HashSet<TransportApplication>();
+            StaffRouteShiftMapLogs = new HashSet<StaffRouteShiftMapLog>();
+            StaffRouteShiftMapLogs1 = new HashSet<StaffRouteShiftMapLog>();
+        }
+
+        [Key]
+        public long RouteStopMapIID { get; set; }
+
+        public int RouteID { get; set; }
+
+        [StringLength(50)]
+        public string StopName { get; set; }
+
+        public decimal? OneWayFee { get; set; }
+
+        public decimal? TwoWayFee { get; set; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        public DateTime? UpdatedDate { get; set; }
+
+        public int? Created { get; set; }
+
+        public int? Updated { get; set; }
+
+        //[Column(TypeName = "timestamp")]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        //[MaxLength(8)]
+        ////public byte[] TimeStamps { get; set; }
+
+        public int? AcademicYearID { get; set; }
+
+        [StringLength(20)]
+        public string StopCode { get; set; }
+
+        public bool? IsActive { get; set; }
+
+        public int? SequenceNo { get; set; }
+
+        public virtual AcademicYear AcademicYear { get; set; }
+
+        public string Latitude { get; set; }
+
+        public string Longitude { get; set; }
+
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DriverScheduleLog> DriverScheduleLogs { get; set; }
+
+        public virtual Routes1 Routes1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StaffRouteStopMap> StaffRouteStopMaps { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StaffRouteStopMap> StaffRouteStopMaps1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StaffRouteStopMap> StaffRouteStopMaps2 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentRouteStopMapLog> StudentRouteStopMapLogs { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentRouteStopMapLog> StudentRouteStopMapLogs1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentRouteStopMapLog> StudentRouteStopMapLogs2 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentRouteStopMap> StudentRouteStopMaps { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentRouteStopMap> StudentRouteStopMaps1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StudentRouteStopMap> StudentRouteStopMaps2 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TransportApplication> TransportApplications { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TransportApplication> TransportApplications1 { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StaffRouteShiftMapLog> StaffRouteShiftMapLogs { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StaffRouteShiftMapLog> StaffRouteShiftMapLogs1 { get; set; }
+    }
+}

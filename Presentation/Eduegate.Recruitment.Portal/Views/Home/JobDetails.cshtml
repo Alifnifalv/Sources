@@ -1,0 +1,149 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Services.Contracts.Jobs.JobsDTO;
+@{
+    ViewData["Title"] = "JobDetails";
+    var windowName = "JobDetails";
+    var settingBL = new Eduegate.Domain.Setting.SettingBL(null);
+    var clientName = settingBL.GetSettingValue<string>("CLIENTINSTANCE");
+}
+
+@await Html.PartialAsync("_ToastMessage")
+<div id="JobDetails" ng-controller="RecruitmentController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+    <!-- Begin: Main Container -->
+    <div class="kt-container-fluid p-5 lg:p-10">
+        <!-- Begin: Banner and Search -->
+        <div class="relative rounded-xl overflow-hidden mb-10 shadow-md">
+            <img src="~/Images/jobapplybanner.png" alt="Job Apply Banner" class="w-full h-48 object-cover" />
+            <div class="absolute inset-0 bg-black/25 flex items-center justify-center p-4">
+                <div class="w-full max-w-2xl flex flex-col md:flex-row gap-3">
+                    <div class="kt-input w-full">
+                        <i class="fa fa-briefcase text-muted-foreground"></i>
+                        <input ng-model="searchText" type="text" placeholder="Search other jobs...">
+                    </div>
+                    <div class="kt-input w-full">
+                        <i class="fa fa-cogs text-muted-foreground"></i>
+                        <input ng-model="searchJobType" type="text" placeholder="Filter by job type...">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End: Banner and Search -->
+        <!-- Begin: Page Layout -->
+        <div class="flex flex-col lg:flex-row gap-7">
+
+            <!-- Begin: Other Jobs Sidebar -->
+            <aside class="lg:w-1/3 shrink-0">
+                <div class="kt-card">
+                    <div class="kt-card-header">
+                        <h3 class="kt-card-title">Other Openings</h3>
+                    </div>
+                    <div class="kt-card-content kt-scrollable-y-auto max-h-[600px] p-2">
+                        <div class="space-y-2">
+                            <div class="p-3 rounded-lg border cursor-pointer hover:bg-accent"
+                                 ng-repeat="job in filteredJobList | filter: { JobTitle: searchText, TypeOfJob: searchJobType }"
+                                 ng-class="{'bg-accent border-primary': @Model.JobIID == job.JobIID, 'border-transparent': @Model.JobIID != job.JobIID}"
+                                 ng-click="JobDetails(job.JobIID)">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <span class="kt-avatar kt-avatar-sm"><span class="kt-avatar-fallback">{{job.JobTitleInitial}}</span></span>
+                                    <h4 class="font-semibold text-foreground leading-tight">{{job.JobTitle}}</h4>
+                                </div>
+                                <div class="flex flex-wrap gap-2 text-xs mb-3">
+                                    <span class="kt-badge kt-badge-light">Exp: {{job.TotalYearOfExperience}} Years</span>
+                                    <span class="kt-badge kt-badge-light">{{job.TypeOfJob}}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-medium text-mono">{{job.MonthlySalary}}<span ng-if="job.MonthlySalary">/mo</span></span>
+                                    <span class="text-xs text-muted-foreground">Posted: {{job.PostedDate}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            <!-- End: Other Jobs Sidebar -->
+            <!-- Begin: Main Job Details -->
+            <div class="flex-grow">
+                <div class="kt-card">
+                    <div class="kt-card-header">
+                        <div class="flex items-center gap-4">
+                            <span class="kt-avatar kt-avatar-lg"><span class="kt-avatar-fallback">@Model.JobTitleInitial</span></span>
+                            <div>
+                                <h2 class="kt-card-title text-xl">@Model.JobTitle</h2>
+                                <p class="text-sm text-muted-foreground">Posted on: @Model.PostedDate</p>
+                            </div>
+                        </div>
+                        <div class="kt-card-toolbar">
+                            <button class="kt-btn kt-btn-primary" ng-click="JobApply(@Model.JobIID)">Apply Now</button>
+                        </div>
+                    </div>
+                    <div class="kt-card-content">
+                        <!-- Summary Cards -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-7">
+                            <div class="kt-card kt-card-border p-4 flex items-center gap-4">
+                                <i class="fa fa-briefcase text-2xl text-primary"></i>
+                                <div>
+                                    <h5 class="font-semibold text-foreground">Experience</h5>
+                                    <p class="text-sm text-muted-foreground">@Model.TotalYearOfExperience Years</p>
+                                </div>
+                            </div>
+                            <div class="kt-card kt-card-border p-4 flex items-center gap-4">
+                                <i class="fa fa-tag text-2xl text-primary"></i>
+                                <div>
+                                    <h5 class="font-semibold text-foreground">Job Type</h5>
+                                    <p class="text-sm text-muted-foreground">@Model.TypeOfJob</p>
+                                </div>
+                            </div>
+                            <div class="kt-card kt-card-border p-4 flex items-center gap-4">
+                                <i class="fa fa-money text-2xl text-primary"></i>
+                                <div>
+                                    <h5 class="font-semibold text-foreground">Salary</h5>
+                                    <p class="text-sm text-muted-foreground currSign">@Model.MonthlySalary</p>
+                                </div>
+                            </div>
+                            <div class="kt-card kt-card-border p-4 flex items-center gap-4">
+                                <i class="fa fa-calendar-times-o text-2xl text-primary"></i>
+                                <div>
+                                    <h5 class="font-semibold text-foreground">Deadline</h5>
+                                    <p class="text-sm text-muted-foreground">@Model.CloseDate</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="kt-separator mb-7"></div>
+
+                        <!-- Job Details Sections -->
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-lg font-semibold text-foreground mb-2">Job Description</h4>
+                                <p class="text-secondary-foreground leading-relaxed">@Model.JobDescription</p>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-foreground mb-2">Qualifications</h4>
+                                <ul class="space-y-1 list-disc list-inside text-secondary-foreground">
+                                    @foreach (var criteria in Model.AvailableJobCriteriaMapDTO)
+                                    {
+                                        <li>@criteria.FieldOfStudy (@criteria.Qualification.Value)</li>
+                                    }
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-semibold text-foreground mb-2">Required Skills</h4>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach (var skill in Model.SkillList)
+                                    {
+                                        <span class="kt-badge kt-badge-secondary">@skill.Value</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End: Main Job Details -->
+        </div>
+        <!-- End: Page Layout -->
+    </div>
+    <!-- End: Main Container -->
+</div>

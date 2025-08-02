@@ -1,0 +1,184 @@
+﻿@model Eduegate.Web.Library.ViewModels.ProductPriceViewModel
+
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    var windowName = "window_" + Guid.NewGuid();
+}
+
+<div class="windowcontainer" id="@(Model.ProductPriceListIID == 0 ? "Create" : "Edit")Price">
+    <div id="@windowName">
+        <div ng-model="ProductPriceModel" ng-controller="ProductPriceController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model), @Newtonsoft.Json.JsonConvert.SerializeObject(new Eduegate.Web.Library.ViewModels.ProductQuantityPriceViewModel()));">
+            @await Html.PartialAsync("~/Views/Shared/_InfoMessage.cshtml")
+            @*<div class="pagenav"><a class="pagenav-leftmargin" href="#">Dashboard </a>/<a href="#"> Catalog </a> /<span> Product Price</span></div>*@
+            <div class="pageheader stickdiv">
+                <span> Product Price</span>
+                <div class="alignright menugroup">
+                    <button class="button-orange alignright savebtn" type="button" ng-click="Submit();">Save</button>
+                    <button class="button-orange alignright" type="button" ng-click="LoadProductPriceList();">Cancel</button>
+                </div>
+            </div>
+            <div class="pagecontent priceinfo">
+                <form name="CreatePriceInfo" novalidate="novalidate">
+                    <div class="pagecontent-inner">
+                        <div class="pagecontent-column columnleft">
+                            <div class="productcreateleftnav productcreateleftrightmaxheight">
+                                <div class="producttab-space">
+                                    <div class="nav nav-tabs nav-tabsmobile" id="myTab">
+                                        <div class="panel-group" id="prodaccordion">
+                                            <div class="panel-body panel">
+                                                <div class="page_subtitles">
+                                                    <h4>
+                                                        <a href="#liPriceInfo" data-toggle="collapse" data-parent="#prodaccordion" ng-click="LoadPriceInfoSection($event, true);" navbarid="_TABINDEX_0">Price Information <span class="toggle-arrow"><i class="fa  fa fa-angle-double-down"></i></span></a>
+                                                    </h4>
+                                                </div>
+                                                <div class="panel-collapse collapse in" id="liPriceInfo" refnavbarid="_TABINDEX_0">
+                                                       <div class="panel-body form-horizontal" ng-show="IsPriceInfoSection">
+                                                            <div class="container-left alignleft priceinfo">
+                                                                <div class="form-group">
+                                                                    <label class="addprodleft control-label">Price Type</label>
+                                                                    <div class="controls brand">
+                                                                        @*<select name="ProductPriceListType" ng-model="ProductPriceModel.ProductPriceListTypeID" required>
+                            <i class="fa fa-caret-down"></i>
+                            <option ng-repeat="type in ProductPriceListTypes" ng-selected="ProductPriceModel.ProductPriceListTypeID == type.ProductPriceListTypeID" value="{{type.ProductPriceListTypeID}}">{{type.PriceListTypeName}}</option>
+                        </select>*@
+                                                                        <select name="ProductPriceListType" ng-model="ProductPriceModel.ProductPriceListTypeID"
+                                                                                ng-options="type.ProductPriceListTypeID as type.PriceListTypeName for type in ProductPriceListTypes"
+                                                                                required>
+                                                                            <option value="">Select</option>
+                                                                        </select>
+                                                                        <i class="dropdownarrow fa fa-caret-down"></i>
+                                                                        <span class="cufon" style="color:red" ng-show="submitted && CreatePriceInfo.ProductPriceListType.$error.required">Price Type is required</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="addprodleft control-label">Applies To</label>
+                                                                    <div class="controls brand">
+                                                                        @*<select name="ProductPriceListLevel" ng-model="ProductPriceModel.ProductPriceListLevelID" required>
+                            <i class="fa fa-caret-down"></i>
+                            <option ng-repeat="level in ProductPriceListLevels" ng-selected="ProductPriceModel.ProductPriceListLevelID == level.ProductPriceListLevelID" value="{{level.ProductPriceListLevelID}}">{{level.Name}}</option>
+                        </select>*@
+                                                                        <select name="ProductPriceListLevel" ng-model="ProductPriceModel.ProductPriceListLevelID"
+                                                                                ng-options="level.ProductPriceListLevelID as level.Name for level in ProductPriceListLevels"
+                                                                                required>
+                                                                            <option value="">Select</option>
+                                                                        </select>
+                                                                        <i class="dropdownarrow fa fa-caret-down"></i>
+                                                                        <span class="cufon" style="color:red" ng-show="submitted && CreatePriceInfo.ProductPriceListLevel.$error.required">Product Status is required</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="addprodleft control-label">Price List Name</label>
+                                                                    <div class="controls">
+                                                                        <input name="PriceListName" ng-model="ProductPriceModel.PriceDescription" maxlength="255" class="product-price-text" type="text" required>
+                                                                        <span class="cufon" style="color:red" ng-show="submitted && CreatePriceInfo.PriceListName.$error.required">Name is required.</span>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group">
+
+                                                                    <div class="controls multiplefields">
+                                                                        <div class="form-innerleft">
+                                                                            <label class="addprodleft control-label">Start Date</label>
+                                                                            <div class="transaction-date">
+                                                                                <div class="datetime_picker">
+                                                                                    <input type="text" id="PriceStartDate" ng-model="ProductPriceModel.StartDate" class="dpicker form-control" datetimepicker />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-innerright">
+                                                                            <label class="control-label">End Date</label>
+                                                                            <div class="transaction-date">
+                                                                                <div class="datetime_picker">
+                                                                                    <input type="text" id="PriceEndDate" ng-model="ProductPriceModel.EndDate" class="dpicker form-control" datetimepicker />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <span class="cufon" style="color:red" ng-show="submitted && !IsDateTime">Start Date should be less than End Date</span>
+                                                                    </div>
+                                                                    @*Validation message section for PriceStartDate field*@
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label class="addprodleft control-label">Price</label>
+                                                                    <div class="controls multiplefields">
+                                                                        <div class="form-innerleft">
+                                                                            <input name="Price" ng-model="ProductPriceModel.Price" class="product-price-text pricefield" type="text" valid-decimal ng-pattern="/^[1-9][0-9]*$/"
+                                                                                   @*ng-required="!(ProductPriceModel.Price>0 || (ProductPriceModel.PricePercentage>0 && ProductPriceModel.PricePercentage < 100)
+                                                                   && ProductPriceModel.ProductPriceListTypeID!=1)"*@>
+                                                                        </div>
+                                                                        <div class="form-innerright percentage">
+                                                                            <input name="Percentage" ng-model="ProductPriceModel.PricePercentage" class="product-price-text discountfield" type="text" max="100" min="1"
+                                                                                   percent valid-decimal ng-pattern="/^[1-9][0-9]*$/" maxlength="6" placeholder="Enter Discount"
+                                                                                   @*ng-required="!(ProductPriceModel.Price>0 || (ProductPriceModel.PricePercentage>0 && ProductPriceModel.PricePercentage < 100))"*@>%
+                                                                        </div>
+
+                                                                        @*<span class="cufon" style="color:red" ng-show="submitted
+                        && !(ProductPriceModel.Price>0 || (ProductPriceModel.PricePercentage>0 && ProductPriceModel.PricePercentage < 100) || ProductPriceModel.ProductPriceListTypeID==1)">
+                                Either Price OR Percentage required.
+                            </span>*@
+                                                                        <span class="cufon" style="color:red" ng-show="CreatePriceInfo.Percentage.$dirty && CreatePriceInfo.Percentage.$invalid">Percentage should be under 100.</span>
+                                                                        @*<span class="cufon" style="color:red" ng-show="submitted
+                        && !(ProductPriceModel.Price>0 || (ProductPriceModel.PricePercentage>0 && ProductPriceModel.PricePercentage < 100)
+                              && ProductPriceModel.ProductPriceListTypeID!=1)">Price is mandatory for Group type.</span>*@
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                 </div>
+                                             </div>
+                                                @*<li class="tab-header" ng-click="LoadproductPriceSection($event, true);"><a>SKU Product Price <span class="toggle-arrow"><i class="fa fa-angle-right" aria-hidden="true"></i></span></a>
+                                                <div ng-show="IsEditProductPriceSection" class="tab-pane fade active in">
+                                                        <div class="productcreteheader" style="font-size:18px;">SKU Price</div>
+                                                        @await Html.PartialAsync("IndividualPrice")
+                                                    </div>
+                                                </li>
+                                                <li class="tab-header" ng-click="LoadCategoryPriceSection($event);"><a>Category Price <span class="toggle-arrow"><i class="fa fa-angle-right" aria-hidden="true"></i></span></a>
+                                                     <div ng-show="IsCategoryPriceSection" class="tab-pane fade in active">
+                                                        <div class="productcreteheader" style="font-size:18px;">Category Price</div>
+                                                        @await Html.PartialAsync("CategoryPrice")
+                                                    </div>
+                                                </li>
+                                                <li class="tab-header" ng-click="LoadBrandPriceSection($event);"><a>Brand Price <span class="toggle-arrow"><i class="fa fa-angle-right" aria-hidden="true"></i></span></a>
+                                                <div ng-show="IsBrandPriceSection" class="tab-pane fade in active">
+                                                        <div class="productcreteheader" style="font-size:18px;">Brand Price</div>
+                                                        @await Html.PartialAsync("BrandPrice")
+                                                    </div>
+                                                </li>*@
+                                                <div class="panel-body panel">
+                                                    <div class="page_subtitles">
+                                                        <h4>
+                                                            <a href="#IsBranchMapSection" data-toggle="collapse" data-parent="#prodaccordion" ng-click="LoadBranchMapSection($event);" navbarid="_TABINDEX_1">Branch Maps <span class="toggle-arrow"><i class="fa  fa fa-angle-double-down"></i></span></a>
+                                                        </h4>
+                                                    </div>
+                                                    <div class="panel-collapse collapse" id="IsBranchMapSection" refnavbarid="_TABINDEX_1">
+                                                        <div class="panel-body form-horizontal" ng-show="IsBranchMapSection">
+                                                            @await Html.PartialAsync("BranchMap")
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('body').on('click', function (e) {
+            if ($(e.target).closest('.quickviewpanel').length === 0 && $(e.target).closest('ul.squick-view li').length === 0 && $(e.target).closest('.detailviews').length === 0) {
+                $('.quickviewpanel').removeClass('slide');
+                $('ul.squick-view li').removeClass('active');
+            }
+        });
+    });
+</script>

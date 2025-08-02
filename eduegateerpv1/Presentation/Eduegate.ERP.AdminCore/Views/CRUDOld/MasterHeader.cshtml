@@ -1,0 +1,77 @@
+﻿@model Eduegate.Web.Library.ViewModels.CRUDViewModel
+@using Eduegate.Framework.Extensions;
+
+<div class="pageheader stickdiv">
+
+    <span>
+        @if (Model.DisplayName.IsNotNullOrEmpty())
+        {
+            @Model.DisplayName;
+        }
+        else
+        {
+            @((Model.IID == 0 ? "Create " : "Edit ") + Model.Name);
+        }
+    </span>
+    @if (Model.IsSavePanelRequired)
+    {
+        <div class="alignright menugroup">
+            <div class="button-orange alignright" ng-click="CloseWindow()">
+                <a href="" title="Close">
+                    <i class="fa fa-close"></i>
+                    <span>Close
+                    </span>
+                </a>
+            </div>
+
+            <div class="button-orange alignright" ng-click="@(string.IsNullOrEmpty(Model.SaveCRUDMethod) ? "Save" : Model.SaveCRUDMethod )($event, true);">
+                <a href="" title="Close">
+                    <i class="fa fa-save"></i>
+                    <span>
+                        @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Save") &amp; @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Close")
+                    </span>
+                </a>
+            </div>
+
+            <div class="button-orange alignright" ng-click="@(string.IsNullOrEmpty(Model.SaveCRUDMethod) ? "Save" : Model.SaveCRUDMethod )($event);">
+                <a href="" title="Close">
+                    <i class="fa fa-save"></i>
+                    <span>
+                        Save
+                    </span>
+                </a>
+            </div>
+
+            <div class="button-orange alignright" ng-click="ReLoadPage();">
+                <a href="" title="Close">
+                    <i class="fa fa-refresh"></i>
+                    <span>
+                        Reload
+                    </span>
+                </a>
+            </div>
+
+            @if (Model.IsCacheable)
+            {
+                <button class="button-orange alignright" type="button" ng-click="ClearCache($event, @Model.CasheType);" form="nameform">Clear Cache</button>
+            }
+
+            <div class="button-orange alignright" ng-click="List('@Model.ListActionName')">
+                <a href="" title="List">
+                    <i class="fa fa-eye"></i>
+                    <span>
+                        @if (Model.ListButtonDisplayName.IsNotNullOrEmpty())
+                        {
+                            @Model.ListButtonDisplayName;
+                        }
+                        else
+                        {
+                            @(Model.Name + " List");
+                        }
+                    </span>
+                </a>
+            </div>
+        </div>
+    }
+</div>
+

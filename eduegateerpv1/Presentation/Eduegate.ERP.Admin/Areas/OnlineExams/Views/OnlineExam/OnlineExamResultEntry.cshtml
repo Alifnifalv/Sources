@@ -1,0 +1,150 @@
+﻿@*@model Eduegate.Web.Library.ViewModels.SearchListViewModel*@
+
+@{ if (Request.IsAjaxRequest()) { Layout = null; }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div style="background-color: #f5f5f5;" id="OnlineExamResult" class="windowcontainer" ng-controller="OnlineExamResultEntryController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName', 'O')">
+    @*ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName', 'mark')"*@
+    <div class="window-tab preload-overlay" style="display:none;">
+        <div class="preloader"><img src="~/Images/preloader.gif" width="32" height="32" alt="Loading" /></div>
+    </div>
+
+    <div class="main-page row g-3 g-xl-5 mb-5 mb-xl-10">
+        <div class="prod-tab-wrap" style="min-height:0px !important;">
+            <div style="width:100%;"></div>
+            <div class="col-md-12">
+                <div style="float:left;">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>&nbsp;<span class="cufon" style="color:red;font-weight:700">&nbsp;</span></label>
+                            <select class="form-control" style="float:left;">
+                                <option>CBSE</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Academic Year<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                            <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.AcademicYear)">&nbsp;Required!</span>
+                            <select class="form-control" style="float:left;" name="AcademicYear" ng-model="SearchArgs.AcademicYear" ng-options="x as x.Value for x in AcademicYears">
+                            </select>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="padding-bottom:20px;">
+        <div class="col-md-12">
+            
+            <div style="background-color: white; box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%); transition: 0.3s;">
+
+                <div id="MarksEntryPanel" @*class="tab-pane fade in active"*@ >
+                    <div style="text-align: center;">
+                        <h1 class="mb-3">Exam Result</h1>
+                    </div>
+                    <div style=" box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); transition: all 0.3s cubic-bezier(.25,.8,.25,1);padding:10px 10px 10px 10px;margin:10px 10px 10px 10px;">
+                        <div class="row">
+                           
+                            
+                          
+                            <div class="col">
+                                <span class="form-group">
+                                    <span class="controls">
+                                        <label>Exam<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                        <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.Mark.ExamID)">&nbsp;Required!</span>
+                                        <ui-select name="MarkExam" ng-model="SearchArgs.Mark.ExamID" theme="select2" class="pos-txt" ng-change="loadMarkEntrySearchCriteria($select)">
+                                            <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                            <ui-select-choices repeat="Exam in Mark.Exams | filter:$select.search">
+                                                {{Exam.Value}}
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="w-100"></div>
+                            <div class="col">
+                                <span class="form-group">
+                                    <span class="controls">
+                                        <label>Language Subject</label>
+                                        <ui-select name="MarkLanguageTypes" ng-model="SearchArgs.Mark.LanguageTypeID" theme="select2" class="pos-txt" ng-change="loadMarkEntrySearchCriteria($select)">
+                                            <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                            <ui-select-choices repeat="languageType in LanguageTypes | filter:$select.search">
+                                                {{languageType.Value}}
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </span>
+                                </span>
+                            </div>
+                           
+                            <div class="col">
+                                <span class="form-group">
+                                    <span class="controls">
+                                        <label>Subject</label>
+                                        @*<span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.Mark.SubjectID)">&nbsp;Required!</span>*@
+                                        <ui-select name="MarkSubject" ng-model="SearchArgs.Mark.SubjectID" theme="select2" class="pos-txt" ng-change="loadMarkEntrySearchCriteria($select)">
+                                            <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                            <ui-select-choices repeat="Subject in Mark.Subjects | filter:$select.search">
+                                                {{Subject.Value}}
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="w-100"></div>
+                            <div class="col" style="margin-top:10px">
+                                <span>
+                                    <input type="button" value="Get Marks" class="btn btn-info" title="Get Marks" ng-click="GetMarkEntry()" />
+                                    <input type="button" value="Save Entries" class="btn btn-primary" title="Save Entries" ng-disabled="MarkEntry.length == 0" ng-click="SaveMarkEntry()" />
+                                    <input type="button" value="Reset" class="btn btn-info" title="Reset" ng-click="ResetFields()" />
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                  
+                        <div class="row">
+                            <div class="row">
+                                <div class="col-md-12 controls fullcolumn-layout" ng-if="MarkEntry.length > 0" style="height: 27vw; overflow-y: auto; width: 100%; clear: both; display: inline-block; vertical-align: top; position: relative; padding: 10px;">
+                                    <table class="fullcolumn-layout grid">
+                                        <thead style= "position: sticky; top: 0;">
+                                         
+                                            <tr style="font-weight:bolder;background:#f5f5f5;">
+                                                <th>SL. No</th>
+
+                                                <th>Name</th>
+
+                                                <th ng-repeat="subject in ResultSubjects">{{subject.SubjectName}} (Max.mark : {{MaxMark}})</th>
+
+                                                <th>Remarks</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            <tr ng-repeat="candidate in MarkEntry">
+                                                <td>{{$index +1}}</td>
+
+                                                <td ng-bind="candidate.CandidateName"></td>
+                                                <td ng-repeat="sub in candidate.ResultSubjects">
+
+                                                <input type="text" class="ng-pristine" ng-model="sub.Marks" ng-change="ValidateMark(candidate,sub.Marks)">
+                                                </td>
+
+                                                <td><input type="text" class="ng-pristine" ng-model="candidate.Remarks"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    
+                </div>
+
+
+               
+            </div>
+        </div>
+    </div>
+</div>

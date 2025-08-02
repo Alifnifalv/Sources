@@ -1,0 +1,229 @@
+﻿@using Eduegate.Services.Contracts.Enums
+
+@{
+    Layout = null;
+    var viewIID = Eduegate.Services.Contracts.Enums.SearchView.EmploymentRequest;
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+
+}
+
+<div id="@windowName" class="summary-wrap" ng-controller="SummaryViewController" ng-init="SummaryViewInit('@windowName', '@viewIID', @ViewBag.IID,'@DynamicViews.EmploymentRequest');">
+    <div class="preload-overlay" style="display:block;">
+        <div class="preloader">
+            <img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" />
+            <div class="loadertextwrap">
+                <div id="Loadertext">
+                    <div id="fadetext_1" class="loadingtext">L</div>
+                    <div id="fadetext_2" class="loadingtext">o</div>
+                    <div id="fadetext_3" class="loadingtext">a</div>
+                    <div id="fadetext_4" class="loadingtext">d</div>
+                    <div id="fadetext_5" class="loadingtext">i</div>
+                    <div id="fadetext_6" class="loadingtext">n</div>
+                    <div id="fadetext_7" class="loadingtext">g</div>
+                    <div id="fadetext_8" class="loadingtext">.</div>
+                    <div id="fadetext_9" class="loadingtext">.</div>
+                    <div id="fadetext_10" class="loadingtext">.</div>
+                </div>
+                <span class="canceloperation" ng-click="CloseSummaryPanel($event);">Cancel</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="summary-header">
+        <div class="summary-controls">
+            @*<ul class="summary-tab">
+                    <li class="summary-tab-list active" title="Product Detail" content-tab="productdetail"><i class="fa fa-file-text"></i></li>
+                        <li class="summary-tab-list" title="Sales" content-tab="sales"><i class="fa fa-bar-chart"></i></li>
+                        <li class="summary-tab-list" title="Purchase" content-tab="purchase"><i class="fa fa-shopping-cart"></i></li>
+                        <li class="summary-tab-list" title="Inventory" content-tab="inventory"><i class="fa fa-cube"></i></li>
+                        <li class="summary-tab-list" title="Operation" content-tab="operation"><i class="fa fa-cogs"></i></li>
+                        <li class="summary-tab-list" title="Accounts" content-tab="accounts"><i class="fa fa-list-alt"></i></li>
+                </ul>*@
+            <div class="alignright panelcontrols">
+                <span class="remove" ng-click="CloseSummaryPanel($event);">x</span>
+                <span class="minmax"></span>
+            </div>
+        </div>
+    </div>
+    <div class="quickviewwrap">
+        <div class="summarytab-content show">
+            <h4>Employment Request Details</h4>
+            <div class="summary-tab-inner">
+                <div class="summary-content">
+                    <div class="label-value-box">
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Request Code:</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).EMP_REQ_NO"></span>
+                            <i class="fa fa-pencil" title="Edit" ng-click="Edit('SalesReturn', ViewModels.@(DynamicViews.ShoppingCart).ShoppingCartIID)"></i>
+                            <i class="fa fa-file-text" title="Report" ng-click="Print($event,'@viewIID','@viewIID Print Preview','%2fEduegate.Inventory.Reports%2f@(DynamicViews.ShoppingCart)', @ViewBag.IID);"></i>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Employee Number</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).EmpNumber"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Name</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).Name"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">DOB</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).DOB"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Marital Status</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).MaritalStatus"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Recruitment Type </span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).Recruittype"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">CIVIL ID</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).CIVILID"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Agent</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).Agent"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Nationality</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).NAT_CODE"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Passport No</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).PASSPORT_NO"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Passport Issue Date</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).PassportIssueDate"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Passport Expiry Date</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).PassportExpiryDate"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Employment Type </span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).EmploymentType"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Replacement / Reappointment for</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).ReplacementFor"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">is Budgeted</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).isBudgeted"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Department</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).Department"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Location</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).Location"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Pay Comp</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).PayComp"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Group</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).Group"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Main Designation</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).MainDesignation"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Designation</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).Designation"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Productive Type</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).ProductiveType"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Basic Salary</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).BasicSalary"></span>
+                        </div>
+                        @*<div class="label-value-box-inner">
+                            <span class="label-style">Proposed Increase</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).ProposedIncrease"></span>
+                        </div>*@
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Reason for Increase</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).IncreaseReason"></span>
+                        </div>
+                        @*<div class="label-value-box-inner">
+                            <span class="label-style">Salary Change After Period </span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).SalaryAfterChange"></span>
+                        </div>*@
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Recruiting Remark</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).RecruitingRemark"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Official Email</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).OfficialEmail"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Alternate Email</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).AlternateEmail"></span>
+                        </div>
+                        <div class="label-value-box-inner">
+                            <span class="label-style">Remark</span>
+                            <span class="link-content" ng-bind="ViewModels.@(DynamicViews.EmploymentRequest).PersonalRemark"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="summary-toggle">
+                    <div class="sum_toggleheader" ng-click="GetDynamicViewGrid('@DynamicViews.EmploymentAllowances', ViewModels.@(DynamicViews.EmploymentRequest).EMP_REQ_NO, false, $event)">Allowance Details</div>
+                    <div class="sum_togglecontent">
+                        <table class="data-grid">
+                            <thead>
+                                <tr>
+                                    <th>Allowance</th>
+                                    <th>Amount</th>
+                                    <th>Amount after Probation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <tr ng-repeat="grid in ViewModels.@(DynamicViews.EmploymentAllowances)">
+                                    <td><span ng-bind="grid.Allowance"></span> </td>
+                                    <td><span ng-bind="grid.Amount"></span></td>
+                                    <td> <span ng-bind="grid.AmountafterProbaion"></span> </td>
+                                </tr>
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        $('#@windowName .summary-panel .remove').on('click', function () {
+            $('.pagecontent', '#@windowName').removeClass('summaryview');
+        });
+
+        $('#@windowName .summary-toggle .sum_toggleheader').on('click', function () {
+            $(this).parent().toggleClass('show');
+
+            if ($(this).parent().hasClass('show')) {
+                $(this).parent().addClass('show');
+                $(this).parent().find('.sum_togglecontent').slideDown('fast');
+            }
+            else {
+                $(this).parent().removeClass('show');
+                $(this).parent().find('.sum_togglecontent').slideUp('fast');
+            }
+        });
+    });
+</script>

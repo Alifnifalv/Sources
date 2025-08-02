@@ -1,0 +1,49 @@
+﻿@using Eduegate.Services.Contracts.Enums
+@model string
+
+<div class="summary-toggle">
+    <div class="sum_toggleheader" ng-click="GetDynamicViewGrid('@DynamicViews.ProductInventory', @ViewBag.IID, true, $event)">Update Inventory</div>
+    <div class="sum_togglecontent">
+
+        <span id="spanPriceList" class="inputwrap">
+            <ui-select id="BranchList" theme="select2" class="pos-txt" style="width:400px; height:26px;" ng-model="Branch" ng-change="SelectBranchInventory('@DynamicViews.ProductInventory', @ViewBag.IID, @Newtonsoft.Json.JsonConvert.SerializeObject(new Eduegate.Web.Library.ViewModels.Inventory.UpdateInventoryViewModel()), $select);">
+                <ui-select-match placeholder="Search Branch" value="">{{$select.selected.Value}}</ui-select-match>
+                <ui-select-choices repeat="branch in Branches | filter:$select.search">{{branch.Value}}</ui-select-choices>
+            </ui-select>
+        </span>
+
+        @*<div class="fullwidth alignleft textright paddingbtm5">
+            <input type="button" value="Add" class="button-orange" ng-click="Save" />
+        </div>*@
+
+        <div class="label-value-box">
+            <div class="fullwidth alignleft textright paddingbtm5">
+                <input type="button" value="Save" class="button-orange" ng-click="SaveProductInventory(ViewModels.@DynamicViews.ProductInventory, '#@Model');" />
+            </div>
+
+            <table class="data-grid" cellpadding="0" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th class="medium-col-width">Branch Name</th>
+                        <th class="small-col-width">Batch</th>
+                        <th class="small-col-width">Quantity</th>
+                        <th class="small-col-width">Cost Price</th>
+                        <th class="small-col-width"> </th>
+                    </tr>
+                </thead>
+                <tbody ng-repeat="inventory in ViewModels.@(DynamicViews.ProductInventory)">
+                    <tr>
+                        <td class="medium-col-width"><span ng-bind="inventory.Branch"></span></td>
+                        <td class="small-col-width"><input type="text" class="ng-pristine" ng-model="inventory.Batch"></td>
+                        <td class="small-col-width"><input type="text" class="ng-pristine" ng-model="inventory.Quantity"></td>
+                        <td class="small-col-width"><input type="text" class="ng-pristine" ng-model="inventory.CostPrice"></td>
+                        <td class="button-orange qtybtn" ng-click="RemoveGridRow($event, $index, @Newtonsoft.Json.JsonConvert.SerializeObject(new Eduegate.Web.Library.ViewModels.Inventory.UpdateInventoryViewModel()), ViewModels.@(DynamicViews.ProductInventory))">
+                            <i class="fa fa-minus"></i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

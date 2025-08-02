@@ -1,0 +1,239 @@
+﻿@* @model Eduegate.ERP.Admin.Models.SchoolSelectionViewModel *@
+
+@{
+    
+    Layout = null;
+
+}
+
+
+
+<html lang="en" ng-app="Eduegate.ERP.Admin">
+<head>
+</head>
+<body>
+<div class="tab-content">
+    <div class="tab-pane active" id="planning" style="height: 100vh;width: 100%;">
+
+        <div id="cy" style="width: 100%; height: 100%;"></div>
+
+        <script>
+            // Sample data with progress information
+           
+                    var graphData = {
+                        nodes: [
+                            { data: { id: 'node1', label: 'Ad-01 - Admission taken for Class 1', progress: 0.3 } },
+                            { data: { id: 'node2', label: 'C1FP-01 - First Term payment', progress: 0.4 } },
+                            { data: { id: 'node3', label: 'C1FP-02 - Second Term Payment', progress: 0.5 } },
+                            { data: { id: 'node4', label: 'C1FP-03 - Third Term Payment', progress: 0.6 } },
+                            { data: { id: 'node5', label: 'PR-02 - Prometed to Class 2', progress: 0.7 } },
+                            { data: { id: 'node6', label: 'C2FP-01 - First Term payment', progress: 0.8 } },
+                            { data: { id: 'node7', label: 'C2FP-02 - Second Term Payment', progress: 0.9 } },
+                            { data: { id: 'node8', label: 'C2FP-03 - Third Term Payment', progress: 1.0 } },
+                        ],
+                        edges: [
+                            { data: { source: 'node1', target: 'node2' } },
+                            { data: { source: 'node2', target: 'node3' } },
+                            { data: { source: 'node3', target: 'node4' } },
+                            { data: { source: 'node1', target: 'node5' } },
+                            { data: { source: 'node5', target: 'node6' } },
+                            { data: { source: 'node6', target: 'node7' } },
+                            { data: { source: 'node7', target: 'node8' } }
+                        ]
+                    };
+          
+
+            // Initialize Cytoscape
+            var cy = cytoscape({
+                container: document.getElementById('cy'),
+                elements: graphData,
+                style: [
+                    {
+                        selector: 'node',
+                        style: {
+                            'label': 'data(label)',
+                            'background-color': '#3498db',
+                            'width': '60px',
+                            'height': '60px',
+                            'shape': 'ellipse'
+                        }
+                    },
+                    {
+                        selector: 'edge',
+                        style: {
+                            'width': 3,
+                            'line-color': '#e74c3c',
+                            'target-arrow-color': '#e74c3c',
+                            'target-arrow-shape': 'triangle'
+                        }
+                    }
+                ],
+                layout: { name: 'grid' },
+            }).on('cxttap', function (event) {
+                if (allSelected('node')) {
+                    contextMenu.hideMenuItem('select-all-nodes');
+                    contextMenu.showMenuItem('unselect-all-nodes');
+                }
+                else {
+                    contextMenu.hideMenuItem('unselect-all-nodes');
+                    contextMenu.showMenuItem('select-all-nodes');
+                }
+                if (allSelected('edge')) {
+                    contextMenu.hideMenuItem('select-all-edges');
+                    contextMenu.showMenuItem('unselect-all-edges');
+                }
+                else {
+                    contextMenu.hideMenuItem('unselect-all-edges');
+                    contextMenu.showMenuItem('select-all-edges');
+                }
+            });
+
+            var allSelected = function (type) {
+                if (type == 'node') {
+                    return cy.nodes().length == cy.nodes(':selected').length;
+                }
+                else if (type == 'edge') {
+                    return cy.edges().length == cy.edges(':selected').length;
+                }
+                return false;
+            }
+
+            var selectAllOfTheSameType = function (type) {
+                if (type == 'node') {
+                    cy.nodes().select();
+                } else if (type == 'edge') {
+                    cy.edges().select();
+                }
+            };
+            var unselectAllOfTheSameType = function (type) {
+                if (type == 'node') {
+                    cy.nodes().unselect();
+                    ;
+                } else if (type == 'edge') {
+                    cy.edges().unselect();
+                }
+            };
+
+            // demo your core ext
+            var contextMenu = cy.contextMenus({
+                menuItems: [
+                    {
+                        id: 'List',
+                        content: 'List',
+                        tooltipText: 'List',
+                        image: { src: "assets/remove.svg", width: 12, height: 12, x: 6, y: 4 },
+                        selector: 'node, edge',
+                        onClickFunction: function (event) {
+                            //var target = event.target || event.cyTarget;
+                            //removed = target.remove();
+
+                            //contextMenu.showMenuItem('undo-last-remove');
+                        },
+                        hasTrailingDivider: true
+                    },
+                    {
+                        id: 'Create',
+                        content: 'Create',
+                        tooltipText: 'Create',
+                        //selector: 'node, edge',
+                        image: { src: "assets/remove.svg", width: 12, height: 12, x: 6, y: 4 },
+                        //show: true,
+                        //coreAsWell: true,
+                        onClickFunction: function (event) {
+                            //if (removed) {
+                            //    removed.restore();
+                            //}
+                            //contextMenu.hideMenuItem('undo-last-remove');
+                        },
+                        hasTrailingDivider: true
+                    },
+                    {
+                        id: 'select-all-nodes',
+                        content: 'select all',
+                        selector: 'node',
+                        coreAsWell: true,
+                        show: true,
+                        onClickFunction: function (event) {
+                            selectAllOfTheSameType('node');
+
+                            contextMenu.hideMenuItem('select-all-nodes');
+                            contextMenu.showMenuItem('unselect-all-nodes');
+                        }
+                    },
+                    {
+                        id: 'unselect-all-nodes',
+                        content: 'unselect all',
+                        selector: 'node',
+                        coreAsWell: true,
+                        show: false,
+                        onClickFunction: function (event) {
+                            unselectAllOfTheSameType('node');
+
+                            contextMenu.showMenuItem('select-all-nodes');
+                            contextMenu.hideMenuItem('unselect-all-nodes');
+                        }
+                    },
+                    {
+                        id: 'select-all-edges',
+                        content: 'select all',
+                        selector: 'edge',
+                        coreAsWell: true,
+                        show: true,
+                        onClickFunction: function (event) {
+                            selectAllOfTheSameType('edge');
+
+                            contextMenu.hideMenuItem('select-all-edges');
+                            contextMenu.showMenuItem('unselect-all-edges');
+                        }
+                    },
+                    {
+                        id: 'unselect-all-edges',
+                        content: 'unselect all',
+                        selector: 'edge',
+                        coreAsWell: true,
+                        show: false,
+                        onClickFunction: function (event) {
+                            unselectAllOfTheSameType('edge');
+
+                            contextMenu.showMenuItem('select-all-edges');
+                            contextMenu.hideMenuItem('unselect-all-edges');
+                        }
+                    }
+                ]
+            });
+
+            debugger;
+            // Add donut charts to nodes
+            cy.ready(function () {
+                cy.nodes().forEach(node => {
+                    const progress = node.data('progress');
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 60;
+                    canvas.height = 60;
+                    const ctx = canvas.getContext('2d');
+                    drawDonutChart(ctx, 20, 20, 10, progress);
+                    node.data('donutChartCanvas', canvas);
+                });
+
+                cy.on('render cyCanvas.resize', function () {
+                    cy.nodes().forEach(node => {
+                        const canvas = node.data('donutChartCanvas');
+                        const boundingBox = node.renderedBoundingBox();
+                        const centerX = boundingBox.x1 + (boundingBox.x2 - boundingBox.x1) / 2;
+                        const centerY = boundingBox.y1 + (boundingBox.y2 - boundingBox.y1) / 2;
+
+                        canvas.style.position = 'absolute';
+                        canvas.style.left = centerX + 280 + 'px';
+                        canvas.style.top = centerY + 90 + 'px';
+                        document.body.appendChild(canvas);
+                    });
+                });
+            });
+        </script>
+    </div>
+ 
+</div>
+
+</body>
+</html>
+

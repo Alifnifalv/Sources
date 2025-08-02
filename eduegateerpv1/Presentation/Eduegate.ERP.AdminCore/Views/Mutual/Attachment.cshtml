@@ -1,0 +1,56 @@
+﻿@model Eduegate.Web.Library.ViewModels.AttachmentViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+<div class="msg-comments attachments" ng-controller="AttachmentController" ng-init="Init('@windowName', @Newtonsoft.Json.JsonConvert.SerializeObject(Model))" id="@windowName">
+    <div class="window-tab preload-overlay" style="display:block;">
+    <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div></div>
+    <div class="inner-title">Attachments</div>
+   
+    <div class="newcomnt-btns alignright">
+        <span class="alignleft"><a href="#" ng-click="AddAttachment()"><i class="fa fa-floppy-o"></i></a></span>
+        <span class="alignleft"><a href="#" ng-click="GetAttachments()"><i class="fa fa-refresh"></i></a></span>
+        <span class="alignleft"><a href="#" ng-click=" CloseAttachmentOverlay($event);"><i class="fa fa-close"></i></a></span>
+    </div>
+    <div class="new_comments">        
+        <div ng-click="TriggerUploadFile();" class="dropzone" style="cursor: pointer;">
+            <center> Click here to attach</center>
+            <div class="fallback">
+                 <input type="file" onchange="angular.element(this).scope().UploadImageFiles(this,'','','','')"
+                       id="UploadFile" multiple accept="image/*" />
+            </div>
+        </div>
+    </div>
+    <ul class="attachmentlist" ng-show="Attachments.length > 0">
+        <li ng-repeat="attachment in Attachments">
+            <span class="context msg">
+                <span class="attachment_header">
+                    <span class="username alignleft">
+                        <span><i class="fa fa-paperclip"></i></span> {{attachment.Username}}
+                    </span>
+                    <span class="msg-date alignright">{{attachment.AttachmentDate}}</span>
+                </span>              
+            </span>           
+        </li>
+       </ul>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.edit').on('click', function () {
+            $(this).closest('.msg').find('.msgtext').hide();
+            $(this).closest('.msg').find('.editbox').fadeIn();
+        });
+
+        $('.reply').on('click', function () {
+            var replyfield = "<span class='msg'><span class='reply_field'><textarea></textarea></span>" +
+                                "<span class='attachment_icons'>" +
+                                   "<span><a href='#'><i class='fa fa-trash-o'></i></a></span>" +
+                                   "<span><a href='#'><i class='fa fa-floppy-o'></i></a></span>" +
+                                   "</span>"+
+                              "</span>"
+            $(this).closest('li').append(replyfield);
+        });
+    });
+</script>
+

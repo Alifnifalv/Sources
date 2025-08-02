@@ -1,0 +1,66 @@
+﻿@using Eduegate.Services.Contracts.Enums
+
+<div class="summary-toggle">
+    <div class="sum_toggleheader" ng-click="GetBranchSettings('@DynamicViews.ProductSKUBranchSetting',@ViewBag.IID)">Branch Delivery Settings</div>
+    @*<div class="sum_toggleheader" >Branch Delivery Settings</div>*@ 
+    <div class="sum_togglecontent">
+        <span id="spanBranchList" class="inputwrap">
+            <ui-select id="BranchList" theme="select2" class="pos-txt" style="width:400px; height:26px;" ng-model="ProductPriceBranch" ng-change="SelectBranchList('@DynamicViews.ProductSKUBranchSetting', @ViewBag.IID, @Newtonsoft.Json.JsonConvert.SerializeObject(new Eduegate.Web.Library.ViewModels.ProductSKUBranchSettingViewModel()), $select);">
+                <ui-select-match placeholder="Search BranchList">{{$select.selected.Value}}</ui-select-match>
+                <ui-select-choices repeat="productBranch in ProductBranchLists | filter:$select.search">{{productBranch.Value}}</ui-select-choices>
+            </ui-select>
+        </span>
+        <div class="fullwidth alignleft textright paddingbtm5">
+            <input type="button" value="Save" class="button-orange" ng-click="SaveBranchDeliveryTypeSettings('@DynamicViews.ProductSKUTypeDeliveryTypes',ViewModels.@(DynamicViews.ProductSKUBranchSetting));" />
+            <input type="button" value="Cancel" class="button-orange" ng-click="CancelClick($event, ViewModels.@(DynamicViews.ProductSKUBranchSetting))" />
+        </div>
+        <table class="data-grid" cellpadding="0" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="medium-col-width">Branch</th>
+                    @*<th class="medium-col-width">BranchList Name</th>*@
+                    @*<th class="medium-col-width"></th>*@                    
+                </tr>
+            </thead>
+            <tbody ng-repeat="productSKUBranchSetting in ViewModels.@(DynamicViews.ProductSKUBranchSetting)">
+                <tr>                     
+                    <td class="medium-col-width"> {{productSKUBranchSetting.BranchID > 0 ? productSKUBranchSetting.BranchID + '-' + productSKUBranchSetting.BranchName : "Global "}}            
+                        <span class="button-orange qtybtn" ng-show="productSKUBranchSetting.BranchID > 0" ng-click="RemoveGridRow($event, $index, @Newtonsoft.Json.JsonConvert.SerializeObject(new Eduegate.Web.Library.ViewModels.ProductPriceSKUViewModel()), ViewModels.@(DynamicViews.ProductSKUBranchSetting))">
+                            <i class="fa fa-minus"></i>
+                        </span>                 
+                    </td>
+                    @*<td class="medium-col-width" ng-bind="productSKUBranchSetting.BranchName"></td>*@
+                </tr>
+                         
+                <tr>
+                    <td class="medium-col-width" >
+                        <div class="label-value-box-inner">
+                            <div class="label-value-box" ng-repeat="grid in productSKUBranchSetting.@(DynamicViews.ProductSKUTypeDeliveryTypes)">
+                                <div class="label-value-box-inner">
+                                    <div class="subtitle fullwidth fontbold mediumgrey">
+                                        <input type="checkbox" ng-model="grid.IsDeliveryAvailable" />
+                                        <span ng-bind-html="grid.Description"></span>
+                                    </div>
+                                </div>
+                                <div class="fullwidth alignleft" ng-class="{show:grid.IsDeliveryAvailable}">
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style fontbold">Delivery Charge</span>
+                                        <span class="link-content"><input ng-model="grid.DeliveryCharge"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style fontbold">Delivery Charge%</span>
+                                        <span class="link-content"><input ng-model="grid.DeliveryChargePercentage"></span>
+                                    </div>
+                                    <div class="label-value-box-inner">
+                                        <span class="label-style fontbold">Delivery Days</span>
+                                        <span class="link-content"><input ng-model="grid.DeliveryDays"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>                  
+                </tr>
+            </tbody>
+        </table>
+    </div>
+ </div>

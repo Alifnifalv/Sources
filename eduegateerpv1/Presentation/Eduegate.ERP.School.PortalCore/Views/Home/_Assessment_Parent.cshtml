@@ -1,0 +1,89 @@
+﻿
+<div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6">
+    <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2">
+        <h1 class="d-flex text-dark fw-bold m-0 fs-3">Assessment</h1>
+        <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+            <li class="breadcrumb-item text-gray-600">Ward</li>
+            <li class="breadcrumb-item text-gray-500">Assessment</li>
+        </ul>
+    </div>
+</div>
+
+<div class="flex-column-fluid">
+    <div id="AssessmentOverlay" class="preload-overlay center">
+        <span id="AssessmentOverlayButtonLoader" class="preloadImg">
+            <img src="~/Images/preloaderWhite.GIF" alt="loader" />
+        </span>
+    </div>
+    <div class="page-content-wrapper">
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="form-group row  margin-top-20">
+                    <label class="control-label col-md-12" for="SelectedAcademicYear">Academic Year<span class="required"> * </span></label>
+                    <div class="input-icon right ps-0">
+                        <i class="fa"></i>
+                        <select class="form-control validate" required="" aria-required="true" name="SelectedAcademicYear" id="SelectedAcademicYear"
+                                ng-options="item as item.Value for item in AcademicYears track by item.Key" ng-model="SelectedAcademicYear" ng-change="GetExamsList()"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="form-group row  margin-top-20">
+                    <label class="control-label col-md-12" for="SelectedExamGroup">Term<span class="required"> * </span></label>
+                    <div class="input-icon right ps-0">
+                        <i class="fa"></i>
+                        <select class="form-control validate" required="" aria-required="true" name="SelectedExamGroup" id="SelectedExamGroup"
+                                ng-options="item as item.Value for item in ExamGroups track by item.Key" ng-model="SelectedExamGroup" ng-change="GetExamsList()"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-lg-4">
+                <div class="form-group row  margin-top-20">
+                    <label class="control-label col-md-12" for="SelectedExam">Exam<span class="required"> * </span></label>
+                    <div class="input-icon right ps-0">
+                        <i class="fa"></i>
+                        <select class="form-control validate" required="" aria-required="true" name="SelectedExam" id="SelectedExam"
+                                ng-options="item as item.Value for item in TermExams track by item.Key" ng-model="SelectedTermExam"></select>
+                    </div>
+                </div>
+                <span>
+                    <button class="btn btn-sm btn-primary" type="submit" ng-click="GetPublishedProgressReports()">
+                        Get Progress Report
+                    </button>
+                </span>
+            </div>
+            <div class="col-lg-4"></div>
+        </div><br />
+        <div class="separator separator-dashed"></div>
+        <div class="card-stacked" ng-if="!IsShowAssessmentLoader && ProgressReports.length == 0">
+            <div class="alert alert-info text-center">
+                <b>No progress reports found.</b>
+            </div>
+        </div>
+        <div class="m-0" ng-if="ProgressReports.length > 0">
+            <div id="data.ProgressReportIID" ng-repeat="data in ProgressReports">
+                <div class="mb-4">
+                    <div ng-if="data.ReportContentID">
+                        <a class="btn btn-sm btn-secondary ms-2" ng-click="DownloadURL('ReadContentsByID?contentID=' + data.ReportContentID)">
+                            <i class="fa fa-2x fa-download" aria-hidden="true">
+                            </i>
+                        </a>
+                        <span ng-bind="data.ReportContentFileName"></span>
+                        <div class="separator separator-dashed"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="row gy-5 g-xl-10">
+    <div class="col-xl-4 mb-5 mb-xl-10">
+    </div>
+</div>

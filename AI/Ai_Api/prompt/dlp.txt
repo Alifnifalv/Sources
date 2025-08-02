@@ -1,0 +1,163 @@
+Analyze the following text extracted from an educational curriculum document. The text is structured with headings, subheadings, and bullet points representing different concepts and their associated learning objectives.
+Document Text:
+{document_text}
+Extraction Instructions:
+Dynamically identify:
+
+All class names exactly as they appear (e.g., labels like Class / Div: X, {class_labels}, or similar patterns).
+All subject names exactly as they appear (e.g., labels like Subject: X or equivalent).
+
+Chapters Extraction Rules (Updated):
+For each class and subject, extract the following fields verbatim:
+
+Chapters:
+Extract any entry in the document that satisfies any of the following patterns as a chapter_name:
+
+Starts with:
+
+Ch X:, Ch.X:, Chapter X: (e.g., Ch 1:, Chapter 2:), 
+
+Revision, Revision Worksheet,lesson name or similar
+
+IA:, FA:, SA: or similar internal assessments
+These may appear in section headings or content cells — treat all matching entries as distinct chapters, even if they appear mid-document or repeat with continuation (e.g., Ch 2:... (contd...)).
+
+Each extracted chapter should include:
+
+"chapter_name": something like chapter(ch) or if there is lesson name consider it as chapter
+
+"mark": Extract exactly as written or null if not present
+
+"period": Extract exactly as written or null if not present
+
+"month": Extract exactly as written or null if not present
+
+IMPORTANT LESSON EXTRACTION GUIDELINES:
+
+In the document, look for sections like "Concepts/Subtopics" which contain numbered items
+EACH numbered item in these sections (e.g., "1. Introduction to...", "2. Properties of...", etc.) represents a separate lesson
+For EACH numbered item, you must create a separate lesson entry in the JSON output
+If there are 5 numbered items, there should be 5 lesson entries in the output
+Do not combine multiple numbered items into a single lesson
+Extract all information as it appears without modification
+
+Lessons within each chapter:
+
+"Lesson_name": For each numbered item under "Subtopics", extract the exact text as it appears. Do not paraphrase or summarize. If explicitly labeled as "sub topic", use that text verbatim.
+"date": Extract exactly as written or null if not present
+"period": Extract exactly as written or null if not present
+"learning_objectives": Extract the exact text of each learning objective as written without paraphrasing
+"learning_outcomes": Extract the exact text of each learning outcome as written without paraphrasing
+"content": Extract exactly as written or null if not present
+"skill_development": Extract exactly as written or null if not present
+"resources": Extract exactly as written or null if not present
+"reference_book": Extract exactly as written or null if not present
+"cross_disciplinary_connection": Extract exactly as written or null if not present
+"local_and_global_connection/sgd": Extract exactly as written or null if not present
+"qatar_values_Identity": Extract exactly as written or null if not present
+"teaching_strategy": Extract exactly as written or null if not present
+"activity_name": Extract exactly as written or null if not present
+"activity_description": Extract exactly as written or null if not present
+"duration": Extract exactly as written or null if not present
+"assessment": Extract the exact text of each assessment item as written without paraphrasing
+"homework": Extract exactly as written or null if not present
+"differentiated_learning": {
+"sen": Extract exactly as written or null if not present,
+"high_achievers": Extract exactly as written or null if not present,
+"improvement_needed": Extract exactly as written or null if not present
+}
+"alignment_to_vision": Extract exactly as written or null if not present
+"post_class_reflection": Extract exactly as written or null if not present
+
+STRICT EXTRACTION RULES:
+
+DO NOT summarize, paraphrase, or create new sentences
+DO NOT combine information from different sections
+Extract text VERBATIM as it appears in the document
+If a field is not explicitly present, set to null
+Each numbered item under "Concepts/Subtopics" MUST be treated as a separate, distinct lesson
+Preserve original formatting and wording exactly as it appears in the document
+Do not infer or generate content that isn't explicitly stated
+CRITICAL: The document contains a list of numbered items under section(s) like "Concepts/Subtopics" - EACH of these numbered items must be extracted as an individual lesson
+For each numbered concept/subtopic, extract ALL related information that follows it in the document (e.g., learning objectives, teaching methodology, etc.)
+Make sure every numbered item from the Concepts/Subtopics section appears as a separate lesson in the output
+
+Exclusion Rules:
+Ignore sections starting with or labeled as:
+
+"Prescribed Books:"
+"Reference:"
+"Books Referred:"
+"Rationale"
+"Competencies"
+Any other purely referential or theoretical content
+
+⏱ Time Conversion Rule:
+If "Time Duration" is listed in minutes, convert to periods assuming:
+
+1 period = 45 minutes
+
+Output Format:
+Return only the following strict JSON:
+json{
+  "classes": [
+    {
+      "class": "string",
+      "subjects": [
+        {
+          "subject": "string",
+          "chapters": [
+            {
+              "chapter_name": "string",
+              "concepts": [
+                {
+                    "concept": "string",
+                    "learning_objectives": ["string"]
+                }
+              ]
+              "teaching_strategy":"string or null",
+              "mark": number or null,
+              "period": number or null,
+              "month": "string or null",
+              "Lessons": [
+                {
+                  "Lesson_name": "string",
+                  "date": "string or null",
+                  "period": number or null,
+                  "learning_objectives": ["string"] or [],
+                  "learning_outcomes": ["string"] or [],
+                  "content": "string or null",
+                  "skill_development": "string or null",
+                  "resources": "string or null",
+                  "reference_book": "string or null",
+                  "cross_disciplinary_connection": "string or null",
+                  "local_and_global_connection/sgd": "string or null",
+                  "qatar_values_Identity": "string or null",
+                  "teaching_methodology": [{
+                    "teaching_strategy":"string or null",
+                    "activity_name": "string or null",
+                    "duration": "string or null",
+                    "activity_description":"string or null",
+                  }],
+                  "assessment": ["string"] or [],
+                  "homework": "string or null",
+                  "differentiated_learning": {
+                    "sen": "string or null",
+                    "high_achievers": "string or null",
+                    "improvement_needed": "string or null"
+                  },
+                  "alignment_to_vision": "string or null",
+                  "post_class_reflection": "string or null"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+Final Output Rule:
+
+Return only the final JSON result if matches are found.
+Return null if no valid data is found or extractable.

@@ -1,0 +1,42 @@
+﻿@using Eduegate.Services.Contracts.Catalog
+@model Eduegate.Web.Library.ViewModels.ProductViewModel
+
+@{
+    Layout = null;
+    var viewIID =Eduegate.Services.Contracts.Enums.SearchView.Product;
+}
+
+<script>
+    $(function () {
+        $('.summaryheader-blk').on('click', '.remove', function () {
+            $('.summaryheader-blk').slideUp('fast');
+            $('.viewsummary').removeClass('active');
+        });
+        $('.pageheadername').on('click', '.viewsummary', function () {
+            $('.summaryheader-blk').slideToggle('fast');
+            $(this).toggleClass('active');
+        });
+    });
+</script>
+
+<div id="productLists" class="windowcontainer">
+    <div ng-model="ProductViewModel" ng-controller="ViewController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model), '@viewIID');InitializeWayPoint();">
+        @*<div class="pagenav"><a class="pagenav-leftmargin">Dashboard </a><a class="pagenav-leftmargin"> Product Catalog </a> /<span> List</span></div>*@
+        <div class="pageheadername">
+            <div>View Product</div>
+            <div class="alignright menugroup">
+                <div class="viewsummary active"></div>
+                <div class="createprodlink button-orange alignright" ng-click="Create('@viewIID')">
+                    <a title="Create Product">
+                        <i class="fa fa-plus"></i>
+                        <span>Create Product</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        @{
+            Html.RenderAction("List", "Product");
+        }
+    </div>
+</div>

@@ -1,0 +1,68 @@
+﻿@model Eduegate.Web.Library.ViewModels.Common.CRUDMasterDetailViewModel
+@using System.Reflection;
+@using Eduegate.Framework.Mvc.Attributes;
+@using Eduegate.Framework.Extensions;
+
+<div class="tabletop-section">
+    @if (Model.DetailViewModel != null)
+    {
+        <div class="alignleft">
+            <a class="button-orange delete nontexticon" ng-click="DeleteGridItems($event, CRUDModel.Model.DetailViewModel)"><i class="fa fa-trash" aria-hidden="true" title="delete"></i></a>
+            <a class="button-orange delete nontexticon" ng-click=""><i class="fa fa-download" aria-hidden="true"  title="import"></i></a>
+
+            @if (@Model.MasterViewModel.GetType().GetProperty("SearchText") != null)
+            {
+                <div class="controls">
+                    <input type="text" placeholder="Bar Code/Part No" ng-model="CRUDModel.Model.MasterViewModel.SearchText" name="searchText" ng-keyup="ProductExists($event);" />
+                </div>
+            }
+
+        </div>
+    }
+    @if (Model.MasterViewModel.IsSummaryPanel)
+    {
+        <div class="grid-controls alignright">
+            <div class="total alignleft">
+                <span class="caption">Quantity:</span>
+                <span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Quantity'| number : 0)}}</span>
+            </div>
+
+            <div class="total alignleft">
+                <span class="caption">Amount:</span>
+                <span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Amount': ((CRUDModel.Model.MasterViewModel.DeliveryCharge == null ? 0 : CRUDModel.Model.MasterViewModel.DeliveryCharge) - (CRUDModel.Model.MasterViewModel.Discount == null ? 0 : CRUDModel.Model.MasterViewModel.Discount)) | number : 3)}}</span>
+            </div>
+           
+        </div>
+    }
+
+    @if (Model.DetailViewModel != null)
+    {
+        <div class="stickygridheader">
+            <table cellpadding="0" cellspacing="0" class="listing">
+                <thead>
+                    <tr>
+                        @foreach (var property in Model.DetailViewModel.GetType().GetProperties())
+                        {
+                            var title = (System.ComponentModel.DisplayNameAttribute)property.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+                            var controlType = (ControlTypeAttribute)property.GetCustomAttributes(typeof(ControlTypeAttribute)).FirstOrDefault();
+
+                            if (controlType != null && controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.CheckBox)
+                            {
+
+                                <th @Html.Raw((string.IsNullOrEmpty(controlType.Css) ? string.Empty : "class=\"" + controlType.Css + "\""))>
+                                    <input type="checkbox" class="zoomin" ng-model="CRUDModel.Model.SelectAll" ng-click="SelectAllHeader($event,CRUDModel.Model.DetailViewModel, CRUDModel.Model.SelectAll)" />
+                                </th>
+                            }
+                            else if (title != null && controlType != null)
+                            {
+
+                                <th @Html.Raw((string.IsNullOrEmpty(controlType.Css) ? string.Empty : "class=\"" + controlType.Css + "\""))>@title.DisplayName</th>
+                            }
+                        }
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    }
+</div>

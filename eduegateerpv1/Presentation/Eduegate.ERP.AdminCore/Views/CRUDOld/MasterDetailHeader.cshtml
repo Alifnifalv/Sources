@@ -1,0 +1,58 @@
+﻿@model Eduegate.Web.Library.ViewModels.Common.CRUDMasterDetailViewModel
+@using Eduegate.Framework.Extensions;
+
+<div class="pageheadername stickdiv">
+    <span>
+        @if (Model.DisplayName.IsNotNullOrEmpty())
+        {
+            @Model.DisplayName;
+        }
+        else
+        {
+            @(Model.Name + " Maintenance");
+        }
+    </span>
+    <div class="alignright menugroup">
+        <div class="viewsummary active"></div>
+        <div class="menu-wrap alignright">
+            <div class="button-orange alignleft popupbtn comments-btn" ng-show="@Model.IID" ng-click="Comments($event)">
+                <a><i class="fa fa-comment"></i>Comments</a>
+            </div>
+            @*<div class="transparent-overlay" ng-click="CloseCommentOverlay($event, false);"></div>*@
+            <div class="popup comments" data-popup-type="comments">
+                <div class="popup-wrap" id="commentPanel">
+                </div>
+            </div>
+        </div>
+        <div ng- class="button-orange alignright paybtn" ng-click="@(string.IsNullOrEmpty(Model.SaveCRUDMethod) ? "SaveTransaction" : Model.SaveCRUDMethod )($event, true);">
+            <a><i class="fa fa-save"></i>Save&amp;Exit</a>
+        </div>
+        <div ng- class="button-orange alignright paybtn" ng-click="@(string.IsNullOrEmpty(Model.SaveCRUDMethod) ? "SaveTransaction" : Model.SaveCRUDMethod )($event, flase);">
+            <a><i class="fa fa-save"></i>Save</a>
+        </div>
+        <div class="button-orange alignright" ng-click="PrintTransaction($event,'@(Model.PrintPreviewReportName)','@(Model.DisplayName) Print Preview','%2fEduegate.Inventory.Reports%2f@(Model.PrintPreviewReportName)');">
+            <a><i class="fa fa-print"></i>Print</a>
+        </div>
+        <div class="button-orange alignright" ng-click="List(@Model.ListActionName)">
+            <a href="" title="Create">
+                <i class="fa fa-eye"></i>
+                <span>
+                    @if (Model.ListButtonDisplayName.IsNotNullOrEmpty())
+                    {
+                        @Model.ListButtonDisplayName;
+                    }
+                    else
+                    {
+                        @(Model.Name + " List");
+                    }
+                </span>
+            </a>
+        </div>
+        <div class="button-orange alignright" ng-click="ReLoadPage();">
+            <a><i class="fa fa-refresh"></i>Reload</a>
+        </div>
+        <div class="button-orange alignright" ng-click="CloseWindow();">
+            <a><i class="fa fa-close"></i>Close</a>
+        </div>
+    </div>
+</div>

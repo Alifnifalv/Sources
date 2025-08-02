@@ -1,0 +1,497 @@
+﻿@using Eduegate.ERP.Admin.Globalization;
+@model Eduegate.Web.Library.School.Academics.AILessonPlannerViewModel
+
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+    var windowName = "window_" + Guid.NewGuid().ToString();
+}
+
+
+
+<div id="AILessonPlanner" class="app-container windowcontainer  position-relative" accesskey="" ng-controller="AIUploadFileController" ng-init="Init('@windowName', @Newtonsoft.Json.JsonConvert.SerializeObject(Model), 'AILessonPlanner')">
+    <div class="main-page row g-3 g-xl-5 mb-5 mb-xl-10 vh-100 position-relative" style="background-color:#F7F8FB;">
+        <div class="PageLoaderBG_v02" ng-if="IsExtractionLoading ">
+            <ul class="loadingclass">
+                <li>
+                    <div>
+                        <div class=" frontPanel"></div>
+                        <img class="loaderimage" src="../Images/eduegateAI_logo.svg">
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="  flex-column-fluid  mb-4">
+            <div class="">
+                <div class="row gy-4 flex-row-fluid">
+                    <div class="col-6 dropDivClass" id="dropDivExcel">
+                        <script>(function(e,t,n){var r=e.querySelectorAll("html")[0];r.className=r.className.replace(/(^|\s)no-js(\s|$)/,"$1js$2")})(document,window,0);</script>
+                        <form id="excelUploadDropzone" class="box has-advanced-upload dropzone border-0 h-100" ng-click="TriggerUploadExcelFile($event);" method="post" action="~/Documents/DocManagement/UploadExcelDocument" enctype="multipart/form-data">
+                            <div class="dz-message dz-message-continer" data-dz-message>
+                                <svg class="box__icon" width="50" height="43" viewBox="0 0 50 43"><path d="M48.4 26.5c-.9 0-1.7.7-1.7 1.7v11.6h-43.3v-11.6c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v13.2c0 .9.7 1.7 1.7 1.7h46.7c.9 0 1.7-.7 1.7-1.7v-13.2c0-1-.7-1.7-1.7-1.7zm-24.5 6.1c.3.3.8.5 1.2.5.4 0 .9-.2 1.2-.5l10-11.6c.7-.7.7-1.7 0-2.4s-1.7-.7-2.4 0l-7.1 8.3v-25.3c0-.9-.7-1.7-1.7-1.7s-1.7.7-1.7 1.7v25.3l-7.1-8.3c-.7-.7-1.7-.7-2.4 0s-.7 1.7 0 2.4l10 11.6z"></path></svg>
+                                <div class="dz-message-title text-center text-black">
+                                    Click to upload, or drag Excel or pdf here.
+                                    <div class="box__uploading">uploading…</div>
+                                    <div class="box__success">done!</div>
+                                    <div class="box__error">error! <span></span>.</div>
+                                </div>
+
+                            </div>
+                            <div class="fallback">
+                                <input ng-model="uploadedExcelDocuments" onchange="UploadExcelFiles(this)" name="excelFile" type="file" accept=".xls,.xlsx, .pdf" multiple />
+                            </div>
+                        </form>
+                    </div>
+                    <form class="col-6">
+                        <div class="w-100 h-100 card rounded-3">
+                            <div class="card-header min-h-auto">
+                                <legend class="w-auto">General Data Selection</legend>
+                            </div>
+                            <div class="card-body d-grid gap-5">
+
+                                <div class="w-full">
+                                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                        <label class="form-label max-w-56">
+                                            Academic Year &nbsp; <span style="color: red; font-weight: bold;">*</span>
+                                        </label>
+                                        <div class="flex flex-col w-full gap-1">
+                                            <select class="select" required="" aria-required="true" name="AcademicYear" id="AcademicYear"
+                                                    ng-options="item as item.Value for item in AcademicYears track by item.Key"
+                                                    ng-model="LessonPlanChapterDTO.AcademicYear" autofocus=autofocus tabindex="0">
+                                            </select>
+                                            <span class="text-xs text-gray-500">
+                                                Select Academic Year
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="w-full">
+                                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                        <label class="form-label max-w-56">
+                                            Class &nbsp;<span style="color: red; font-weight: bold;">*</span>
+                                        </label>
+                                        <div class="flex flex-col w-full gap-1">
+                                            <select class="select" required="" aria-required="true" name="Class" id="Class"
+                                                    ng-options="item as item.Value for item in Classes track by item.Key"
+                                                    ng-model="LessonPlanChapterDTO.Class" autofocus=autofocus tabindex="0">
+                                            </select>
+                                            <span class="text-xs text-gray-500">
+                                                Select Class
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="w-full">
+                                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                        <label class="form-label max-w-56">
+                                            Section &nbsp;<span style="color: red; font-weight: bold;">*</span>
+                                        </label>
+                                        <div class="flex flex-col w-full gap-1">
+                                            <select class="select" required="" aria-required="true" name="Section" id="Section"
+                                                    ng-options="item as item.Value for item in Section track by item.Key"
+                                                    ng-model="LessonPlanChapterDTO.Section" autofocus=autofocus tabindex="0">
+                                            </select>
+                                            <span class="text-xs text-gray-500">
+                                                Select Section
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="w-full">
+                                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                        <label class="form-label max-w-56">
+                                            Subject &nbsp;<span style="color: red; font-weight: bold;">*</span>
+                                        </label>
+                                        <div class="flex flex-col w-full gap-1">
+                                            <select class="select" required="" aria-required="true" name="Subjects" id="Subjects"
+                                                    ng-options="item as item.Value for item in Subjects track by item.Key"
+                                                    ng-model="LessonPlanChapterDTO.Subject" autofocus=autofocus tabindex="0">
+                                            </select>
+                                            <span class="text-xs text-gray-500">
+                                                Select Subject
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="">
+                        <div class="preview-container d-flex h-100 overflow-hidden rounded-3">
+                            <div class="offcanvas offcanvas-end w-75 mw-750px bg-light" tabindex="-1" data-bs-scroll="true" data-bs-backdrop="false" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                                <div class="offcanvas-header pt-20">
+                                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Preview of file</h5> <div id="fileName"></div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                                </div>
+                                <div class="offcanvas-body">
+
+                                    <div class="card" id="excelContainer"></div>
+                                    <div class="ht-theme-main" id="fileContainer"></div>
+                                </div>
+                            </div>
+                            <div class="right-container">
+                                <div class="right-fn-box ">
+                                    <div class=" mt-4">
+                                        <form ng-submit="saveLessonPlans()">
+                                            <button type="submit" class="button-orange mb-4">Save</button>
+                                            @* <button class="button-orange  mb-4" disabled>sync with academic calender</button> *@
+
+                                            <a class="button-orange  mb-4" data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample">
+                                                show preview of uploaded file
+                                            </a>
+                                            <!-- Use custom index names for clarity and uniqueness -->
+                                            <div ng-repeat="(classIdx, class) in ExtractedData" class="m-4 ">
+                                                <div ng-repeat="(subjectIdx, subject) in class.Subjects" class="mb-3">
+                                                    <ul class="summaryheader ps-0">
+                                                        <li class="shadow-none">
+                                                            <span>
+                                                                <span class="quick-icon">
+                                                                    <i class="fa fa-2x fa-book"></i>
+                                                                </span>
+                                                                <label>Total Periods</label>
+                                                                <span>{{subject.Chapters[0].Lessons.length}}</span>
+                                                            </span>
+                                                        </li>
+                                                    </ul>
+                                                    <div ng-repeat="(chapterIdx, chapter) in subject.Chapters" class="mb-3">
+                                                        <!-- ACCORDION ID: Make it unique -->
+                                                        <div class="accordion ..." id="accordionChapter_{{classIdx}}_{{subjectIdx}}_{{chapterIdx}}">
+                                                            <div class="accordion-item">
+                                                                <h2 class="accordion-header">
+                                                                    <!-- ACCORDION TARGET: Make it unique -->
+                                                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                                            data-bs-target="#collapseChapter_{{classIdx}}_{{subjectIdx}}_{{chapterIdx}}"
+                                                                            aria-controls="collapseChapter_{{classIdx}}_{{subjectIdx}}_{{chapterIdx}}">
+                                                                        <div class="w-full me-20">
+                                                                            <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5 ">
+                                                                                <div class="form-label w-25px badge badge-rounded">
+                                                                                    {{$index + 1}}
+                                                                                </div>
+                                                                                <div class="">
+                                                                                    <h4 style="color: var(--Text-Heading-Dark, #27272E);/* Headings/h5 */font-family: Inter;font-size: 16px;font-style: normal;font-weight: 600;line-height: 136.023%;" ng-bind="subject.Subject"></h4>
+                                                                                    <small style="" class="badge badge-light-primary">Lesson Plan : {{ chapter.ChapterName }}</small>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </button>
+                                                                </h2>
+                                                                <!-- ACCORDION PANEL ID: Make it unique -->
+                                                                <div id="collapseChapter_{{classIdx}}_{{subjectIdx}}_{{chapterIdx}}" class="accordion-collapse collapse"
+                                                                     data-bs-parent="#accordionChapter_{{classIdx}}_{{subjectIdx}}_{{chapterIdx}}">
+                                                                    <div class="accordion-body">
+                                                                        <!-- Nested accordions for lessons -->
+                                                                        <div class="accordion ..." id="accordionLesson_{{classIdx}}_{{subjectIdx}}_{{chapterIdx}}"
+                                                                             ng-repeat="(lessonIdx, concept) in chapter.Lessons">
+                                                                            <div class="accordion-item mb-2">
+                                                                                <h2 class="accordion-header">
+                                                                                    <label class="p-5" style="color: var(--Theme-Dark-Light, #505780);" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLesson{{$index}}" aria-expanded="true" aria-controls="collapseOne">
+                                                                                        Sub Topic : &nbsp <span class=" badge badge-light-info" styles="color: var(--Text-Heading-Dark, #27272E);
+                                                                                                                     font-family: Inter;
+                                                                                                                     font-size: 14px;
+                                                                                                                     font-style: normal;
+                                                                                                                     font-weight: 600;
+                                                                                                                     line-height: 24px; " ng-bind="concept.LessonName"></span>
+                                                                                    </label>
+                                                                                    <!-- ACCORDION TARGET: Make it unique -->
+                                                                                    <button type="button" class="accordion-button collapsed"
+                                                                                            data-bs-toggle="collapse"
+                                                                                            data-bs-target="#collapseLesson_{{classIdx}}_{{subjectIdx}}_{{chapterIdx}}_{{lessonIdx}}">
+                                                                                        Period : &nbsp <span class=" badge badge-light-info" styles="color: var(--Text-Heading-Dark, #27272E);
+                                                                                                                     font-family: Inter;
+                                                                                                                     font-size: 14px;
+                                                                                                                     font-style: normal;
+                                                                                                                     font-weight: 600;
+                                                                                                                     line-height: 24px; " ng-bind="concept.Period"></span>
+                                                                                    </button>
+                                                                                </h2>
+                                                                                <!-- ACCORDION PANEL ID: Make it unique -->
+                                                                                <div id="collapseLesson_{{classIdx}}_{{subjectIdx}}_{{chapterIdx}}_{{lessonIdx}}" class="accordion-collapse collapse"
+                                                                                     data-bs-parent="#accordionLesson_{{classIdx}}_{{subjectIdx}}_{{chapterIdx}}">
+                                                                                    <div class="accordion-body">
+                                                                                        <ul class="list-group">
+                                                                                            <li class="list-group-item d-grid gap-5">
+                                                                                                <ul class="mt-1">
+                                                                                                    <label class="form-label max-w-56">
+                                                                                                        Learning Objective(s)
+                                                                                                    </label>
+                                                                                                    <li ng-repeat="(objectiveIdx, objective) in concept.LessonLearningObjectiveName" class="pb-2">
+                                                                                                        <textarea id="LessonLearningObjectiveName[objectiveIdx]" class="textarea" placeholder=" " rows="2"
+                                                                                                                  ng-model="concept.LessonLearningObjectiveName[objectiveIdx]"></textarea>
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                                <ul class="mt-1">
+                                                                                                    <label class="form-label max-w-56">
+                                                                                                        Learning Outcome(s)
+                                                                                                    </label>
+                                                                                                    <li ng-repeat="(outComeIdx, outcome) in concept.LessonLearningOutcomeName" class="pb-2">
+                                                                                                        <textarea id="LessonLearningOutcomeName[outComeIdx]" class="textarea" placeholder=" " rows="2"
+                                                                                                                  ng-model="concept.LessonLearningOutcomeName[outComeIdx]"></textarea>
+                                                                                                    </li>
+                                                                                                </ul>
+                                                                                            </li>
+                                                                                        </ul>
+
+                                                                                        <div class="mt-5">
+                                                                                            <div class="mt-1">
+                                                                                                <label class="form-label">
+                                                                                                    Content
+                                                                                                </label>
+                                                                                                <div class="pb-2">
+                                                                                                    <div class="w-full">
+                                                                                                        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                                                                            <div class="flex flex-col w-full gap-1">
+                                                                                                                <textarea id="Content" class="textbox rounded" rows="5" placeholder=" "
+                                                                                                                          ng-model="concept.Content"></textarea>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <ul class="mt-1">
+                                                                                                <label class="form-label max-w-56">
+                                                                                                    Skill Development
+                                                                                                </label>
+                                                                                                <li ng-repeat="(skillIdx, skill) in concept.SkillDevolepment" class="pb-2">
+                                                                                                    <input id="SkillDevolepment[skillIdx]" type="text" class="textbox" placeholder=" "
+                                                                                                           ng-model="concept.SkillDevolepment[skillIdx]" />
+                                                                                                </li>
+                                                                                            </ul>
+                                                                                        </div>
+
+                                                                                        <div class="mt-5">
+                                                                                            <div class="mt-1">
+                                                                                                <label class="form-label">
+                                                                                                    Resources
+                                                                                                </label>
+                                                                                                <div class="pb-2">
+                                                                                                    <div class="w-full">
+                                                                                                        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                                                                            <div class="flex flex-col w-full gap-1">
+                                                                                                                <textarea id="Resources" class="textbox rounded" rows="5" placeholder=" "
+                                                                                                                          ng-model="concept.Resources"></textarea>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="mt-5">
+                                                                                            <div class="mt-1">
+                                                                                                <label class="form-label">
+                                                                                                    ReferenceBook
+                                                                                                </label>
+                                                                                                <div class="pb-2">
+                                                                                                    <div class="w-full">
+                                                                                                        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                                                                            <div class="flex flex-col w-full gap-1">
+                                                                                                                <textarea id="ReferenceBook" class="textbox rounded" rows="5" placeholder=" "
+                                                                                                                          ng-model="concept.ReferenceBook"></textarea>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="mt-1">
+                                                                                            <label class="form-label">
+                                                                                                Cross-disciplinary connection if any
+                                                                                            </label>
+                                                                                            <div class="pb-2">
+                                                                                                <div class="w-full">
+                                                                                                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                                                                        <div class="flex flex-col w-full gap-1">
+                                                                                                            <textarea id="CrossDisciplinaryConnection" class="textbox rounded" rows="5" placeholder=" "
+                                                                                                                      ng-model="concept.CrossDisciplinaryConnection"></textarea>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="mt-1">
+                                                                                            <label class="form-label">
+                                                                                                Local And GlobalConnection/SDG
+                                                                                            </label>
+                                                                                            <div class="pb-2">
+                                                                                                <div class="w-full">
+                                                                                                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                                                                        <div class="flex flex-col w-full gap-1">
+                                                                                                            <textarea id="LocalAndGlobalConnection" class="textbox rounded" rows="5" placeholder=" "
+                                                                                                                      ng-model="concept.LocalAndGlobalConnection"></textarea>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="mt-1">
+                                                                                            <label class="form-label">
+                                                                                                Allignment To Vision And Mission
+                                                                                            </label>
+                                                                                            <div class="pb-2">
+                                                                                                <div class="w-full">
+                                                                                                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                                                                        <div class="flex flex-col w-full gap-1">
+                                                                                                            <textarea id="AllignmentToVisionAndMission" class="textbox rounded" rows="5" placeholder=" "
+                                                                                                                      ng-model="concept.AllignmentToVisionAndMission"></textarea>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <label class="form-label pt-10">
+                                                                                            Teaching Learning Methodology/ strategies
+                                                                                        </label>
+
+                                                                                        <div class="card">
+                                                                                            <div class="card-body d-grid gap-5" ng-repeat="df in concept.TeachingMethodology">
+                                                                                                <label class="form-label">
+                                                                                                    Time : {{df.EstimatedDuration}}
+                                                                                                </label>
+                                                                                                <label class="form-label p-3">{{df.ActivityName}}
+                                                                                                </label>
+                                                                                                <div class="pb-2">
+                                                                                                    <div class="w-full">
+                                                                                                        <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                                                                            <div class="flex flex-col w-full gap-1">
+                                                                                                                <textarea id="ActivityDescription" class="textbox rounded" rows="5" placeholder=" "
+                                                                                                                          ng-model="df.ActivityDescription"></textarea>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <hr ng-if="!$last" />
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="mt-5">
+                                                                                            <label class="form-label">
+                                                                                                Assessment
+                                                                                            </label>
+                                                                                            <ul class="mt-1" ng-repeat="assmnt in concept.Assessment">
+                                                                                                <label class="form-label max-w-56">
+                                                                                                    {{assmnt.AssessmentName}}
+                                                                                                </label>
+                                                                                                <div class="w-full">
+                                                                                                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                                                                        <div class="flex flex-col w-full gap-1">
+                                                                                                            <textarea id="AssessmentDescription" class="textbox rounded" rows="5" placeholder=" "
+                                                                                                                      ng-model="assmnt.AssessmentDescription"></textarea>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </ul>
+                                                                                        </div>
+
+                                                                                        <div class="mt-5">
+                                                                                            <label class="form-label">
+                                                                                                HomeWork
+                                                                                            </label>
+                                                                                            <div class="pb-2">
+                                                                                                <div class="w-full">
+                                                                                                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                                                                        <div class="flex flex-col w-full gap-1">
+                                                                                                            <textarea class="textbox rounded" rows="5" placeholder=" "
+                                                                                                                      ng-model="concept.HomeWorks"></textarea>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="mt-5">
+                                                                                            <label class="form-label">
+                                                                                                Differentiated learning
+                                                                                            </label>
+                                                                                            <ul class="mt-1">
+                                                                                                <label class="form-label max-w-56">
+                                                                                                    High Achievers
+                                                                                                </label>
+                                                                                                <div class="w-full">
+                                                                                                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                                                                        <div class="flex flex-col w-full gap-1">
+                                                                                                            <textarea class="textbox rounded" rows="5" placeholder=" "
+                                                                                                                      ng-model="concept.DifferentiatedLearning.HighAchievers"></textarea>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </ul>
+                                                                                            <ul class="mt-1">
+                                                                                                <label class="form-label max-w-56">
+                                                                                                    SEN
+                                                                                                </label>
+                                                                                                <div class="w-full">
+                                                                                                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                                                                        <div class="flex flex-col w-full gap-1">
+                                                                                                            <textarea class="textbox rounded" rows="5" placeholder=" "
+                                                                                                                      ng-model="concept.DifferentiatedLearning.SEN"></textarea>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </ul>
+                                                                                            <ul class="mt-1">
+                                                                                                <label class="form-label">
+                                                                                                    For Students who need improvement
+                                                                                                </label>
+                                                                                                <div class="w-full">
+                                                                                                    <div class="flex items-baseline flex-wrap lg:flex-nowrap gap-2.5">
+                                                                                                        <div class="flex flex-col w-full gap-1">
+                                                                                                            <textarea class="textbox rounded" rows="5" placeholder=" "
+                                                                                                                      ng-model="concept.DifferentiatedLearning.StudentsWhoNeedImprovement"></textarea>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="w-1px h-1px" style=" visibility: hidden;">
+                        <div class="row gy-0 g-xl-2  dropDivClass" id="dropDiv">
+                            <div class="col-lg-1 ">
+                                <div id="kt_search_map" class="w-100 h-100 card-rounded leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0" style="position: relative;">
+                                    <div class="imgsuploaded">
+                                        <div class="upload-imgwrap dropzone-previews h-100px border" id="previews">
+                                            <div class="dz-preview dz-processing dz-image-preview" ng-repeat="docInfo in uploadedDocInfo">
+                                                <div>
+                                                    <input name="filename" />
+                                                    <select name="filetype"></select>
+                                                </div>
+                                                <div class="dz-image">
+
+                                                    <img data-dz-thumbnail="" ng-src="{{docInfo.FilePath}}" />
+                                                </div>
+                                                <a data-dz-remove="" class="dz-remove" ng-click="DeleteUploadedDcuments(docInfo);">Cancel upload</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

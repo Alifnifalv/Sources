@@ -1,0 +1,185 @@
+﻿@model Eduegate.Web.Library.ViewModels.Inventory.Purchase.RFQComparisonViewModel;
+@{
+    Layout = "_BidLayout";
+    ViewBag.Title = "RFQ Comparison";
+    var window = "RFQComparisonScreen";
+}
+
+<div ng-controller="BidController" ng-init="Init('@window','@Model.TenderIID')">
+    <h3 class="pb-5">RFQ Comparison</h3>
+    <div class="pb-10 pt-5 px-15 mb-15 listPage">
+        <h3 class="mb-10">
+            <a href="/bid/BidUsersList" title="back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="20" viewBox="0 0 26 20" fill="none">
+                    <path d="M25 9.03287H2.96065L10.4803 1.54212C10.8335 1.18893 10.8335 0.617178 10.4803 0.264891C10.1271 -0.0882969 9.55537 -0.0882969 9.20308 0.264891L0.260836 9.20631C-0.0869455 9.55409 -0.0869455 10.1358 0.260836 10.4835L9.20316 19.4259C9.55634 19.779 10.1281 19.779 10.4804 19.4259C10.8336 19.0727 10.8336 18.5009 10.4804 18.1486L2.96065 10.8394H25C25.4986 10.8394 25.5 10.4985 25.5 10C25.5 9.50145 25.4985 9.03287 25 9.03287Z" fill="#515151" />
+                </svg>
+            </a>
+        </h3>
+        <div class="row m-4">
+            <div class="col labelBadge mx-2">
+                Tender : &ensp; <label>{{QuotationList.TransactionHead.TenderName}}</label>
+            </div>
+            <div class="col labelBadge mx-2">
+                Description : &ensp; <label>{{QuotationList.TransactionHead.TenderDescription}}</label>
+            </div>
+        </div>
+
+        <div class="tableCondainer col-12 border rounded">
+            <div class="row">
+                <div class="col"><h3>Supplier List</h3></div>
+                <div class="col-6"></div>
+                <div class="col"> 
+                    <h3 ng-click="toggleCollapse('collapseItemList')" class="pull-right" style="cursor:pointer;" title="{{ !collapseItemList ? 'Expand' : 'Collapse' }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16" ng-show="!collapseItemList">
+                            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16" ng-show="collapseItemList">
+                            <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708z" />
+                        </svg>
+                    </h3>
+                </div>
+            </div>
+
+            <div class="collapse" ng-class="{'show': collapseItemList}">
+                <h4 class="m-5" ng-if="GroupedQuotationList.length == 0" style="color:red;">No records found!!</h4>
+                <div class="row" ng-repeat="quotation in GroupedQuotationList">
+                    <div class="row labelBadge mx-2 mb-2" ng-click="toggleDetails(quotation)" style="cursor:pointer;" title="{{ quotation.isCollapsed ? 'Expand' : 'Collapse' }}">
+                        <div class="col">
+                            Quotation : &ensp; <label>{{ quotation.QuotationNo }}</label><br />
+                            Item Count: &ensp; <label> {{ quotation.Count }}</label>
+                        </div> 
+                        <div class="col">
+                            Supplier : &ensp; <label>{{ quotation.Supplier }}</label><br />
+                            Supplier code: &ensp; <label> {{ quotation.SupplierCode }}</label>
+                        </div> 
+                        <div class="col">
+                            Submitted date: &ensp; <label> {{ quotation.SubmittedDateString }}</label><br />
+                            Discount Amount : &ensp; <label>{{ quotation.QTDiscount }}</label>
+                        </div>    
+                        <div class="col">
+                            Bid Amount : &ensp; <label>{{ quotation.GrossAmount }}</label><br />
+                            Net Amount : &ensp; <label>{{ quotation.NetAmount }}</label>
+                        </div>
+                    </div>
+
+                    <div ng-show="!quotation.isCollapsed">
+                        <table class="table border-top mt-5">
+                            <thead class="tableHeader">
+                                <tr>
+                                    <th scope="col"><input type="checkbox" ng-model="itemListAll" ng-click="itemListCheckBoxClick(quotation)" /></th>
+                                    <th scope="col">#</th>
+                                    @* <th scope="col">Supplier</th> *@
+                                    @* <th scope="col">QT.No</th> *@
+                                    <th scope="col">Item</th>
+                                    <th scope="col">Item Code	</th>
+                                    @* <th scope="col">Description</th> *@
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Unit</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Amount	</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="qtn in quotation.Details" class="clickable-row">
+                                    <th scope="row"><input type="checkbox" name="select" ng-model="qtn.selected" ng-checked="itemListAll" ng-click="detailCheckBoxClick(qtn)"></th>
+                                    <th scope="row">{{$index + 1}}</th>
+                                    @* <td ng-bind="qtn.Supplier"></td> *@
+                                    @* <td ng-bind="qtn.QuotationNo"></td> *@
+                                    <td ng-bind="qtn.SKUID.Value"></td>
+                                    <td ng-bind="qtn.ProductCode"></td>
+                                    @* <td ng-bind="qtn.Description"></td> *@
+                                    <td ng-bind="qtn.Quantity"></td>
+                                    <td ng-bind="qtn.Unit"></td>
+                                    <td ng-bind="qtn.UnitPrice"></td>
+                                    <td ng-bind="qtn.Amount"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tableCondainer col-12 mt-2 border rounded">
+            <div class="row">
+                <div class="col"><h3>Compared List</h3></div>
+                <div class="col-6"></div>
+                <div class="col">
+                    <h3 ng-click="toggleCollapse('collapseComparedList')" class="pull-right" style="cursor:pointer;" title="{{ !collapseComparedList ? 'Expand' : 'Collapse' }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16" ng-show="!collapseComparedList">
+                            <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16" ng-show="collapseComparedList">
+                            <path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708z" />
+                        </svg>
+                    </h3>
+                </div>
+            </div>
+
+            <div class="collapse" ng-class="{'show': collapseComparedList}">
+
+                <div class="row mb-5">
+                    <div class="col-8"></div>
+                    <div class="col-4 pull-right">
+                        <button ng-click="compareList()" ng-if="GroupedQuotationList.length != 0" class="button reset" title="click here to compare the above list">Compare list</button>
+                        <button ng-click="ApproveList('@Model.TenderIID','BidUserDetails')" ng-if="CompareList.length > 0 && BidUserDetails.IsApprover" class="button download" title="approve compared list">Approve list</button>
+                    </div>
+
+                </div>
+
+                <h4 class="m-5" ng-if="GroupedQuotationList.length == 0" style="color:red;">No records found!!</h4>
+                <div class="row" ng-repeat="cmpre in CompareList">
+
+                    <div class="row labelBadge mx-2 mb-2" ng-click="toggleDetails(cmpre)" style="cursor:pointer;" title="{{ cmpre.isCollapsed ? 'Expand' : 'Collapse' }}">
+                        <div class="col">
+                            Quotation : &ensp; <label>{{ cmpre.QuotationNo }}</label><br />
+                            Item Count: &ensp; <label> {{ cmpre.Count }}</label>
+                        </div>
+                        <div class="col">
+                            Supplier : &ensp; <label>{{ cmpre.Supplier }}</label><br />
+                            Supplier code: &ensp; <label> {{ cmpre.SupplierCode }}</label>
+                        </div>
+                    </div>
+
+                    <div ng-show="!cmpre.isCollapsed">
+                        <table class="table border-top mt-5">
+                            <thead class="tableHeader">
+                                <tr>
+                                    <th scope="col">#</th>
+                                   @*  <th scope="col">Supplier</th>
+                                    <th scope="col">QT.No</th> *@
+                                    <th scope="col">Item</th>
+                                    <th scope="col">Item Code	</th>
+                                    @* <th scope="col">Description</th> *@
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Unit</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Amount	</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in cmpre.Details" class="clickable-row">
+                                    <th scope="row">{{$index + 1}}</th>
+                                    @* <td ng-bind="item.Supplier"></td>
+                                    <td ng-bind="item.QuotationNo"></td> *@
+                                    <td ng-bind="item.SKUID.Value"></td>
+                                    <td ng-bind="item.ProductCode"></td>
+                                    @* <td ng-bind="item.Description"></td> *@
+                                    <td ng-bind="item.Quantity"></td>
+                                    <td ng-bind="item.Unit"></td>
+                                    <td ng-bind="item.UnitPrice"></td>
+                                    <td ng-bind="item.Amount"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

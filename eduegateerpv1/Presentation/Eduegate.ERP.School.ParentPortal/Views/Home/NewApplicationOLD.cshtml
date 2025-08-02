@@ -1,0 +1,1042 @@
+﻿
+@model Eduegate.Web.Library.School.Students.StudentApplicationViewModel
+
+@{
+    ViewBag.Title = "NewApplication";
+    Layout = null;
+}
+
+<div class="pageContentInner setVerticalScroll">
+    <div class="row">
+        <div class="col s2">
+            <!--forspacing-->
+        </div>
+        <div class="col s8 newApplation">
+            <div class="portalWrapper">
+                <label>Back to Application List</label>
+                @Html.ActionLink("Click Here", "AnonymousDashbaord")
+            </div>
+
+            <div class="row card" ng-controller="ApplicationController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+                @*<div id="ApplicationOverlay" class="preload-overlay">
+                        <span id="ApplicationOverlayButtonLoader" class="preloadImg">
+                            <img src="~/Images/preloader.gif" alt="loader" />
+                            <br /><label>Loading...</label>
+                        </span>
+                    </div>*@
+                @using (Html.BeginForm("SubmitApplication", "Home", FormMethod.Post, new { id = "StudApplication" }))
+                {
+                    @Html.HiddenFor(a => a.ApplicationIID)
+                    @Html.HiddenFor(a => a.SchoolID)
+                    @Html.HiddenFor(a => a.RelegionID)
+                    @Html.HiddenFor(a => a.ClassID)
+                    @Html.HiddenFor(a => a.FatherCountryID)
+                    @Html.HiddenFor(a => a.MotherCountryID)
+                    @Html.HiddenFor(a => a.NationalityID)
+                    @Html.HiddenFor(a => a.GenderID)
+                    @Html.HiddenFor(a => a.FatherStudentRelationShipID)
+                    //@Html.HiddenFor(a => a.MotherStudentRelationShipID)
+                    @Html.HiddenFor(a => a.CountryofIssueID)
+                    @Html.HiddenFor(a => a.FatherCountryofIssueID)
+                    @Html.HiddenFor(a => a.MotherCountryofIssueID)
+                    @Html.HiddenFor(a => a.CountryID)
+                    @Html.HiddenFor(a => a.AcademicyearID)
+                    @Html.HiddenFor(a => a.CanYouVolunteerToHelpOneID)
+                    @Html.HiddenFor(a => a.CanYouVolunteerToHelpTwoID)
+                    @Html.HiddenFor(a => a.CurriculamID)
+                    @Html.HiddenFor(a => a.SecoundLanguageID)
+                    @Html.HiddenFor(a => a.ThridLanguageID)
+                    @Html.HiddenFor(a => a.StudentCoutryOfBrithID)
+                    @Html.HiddenFor(a => a.PrimaryContactID)
+                    @*@Html.HiddenFor(a => a.CategoryID)*@
+                    @Html.HiddenFor(a => a.CastID)
+                    @Html.HiddenFor(a => a.CommunityID)
+                    @Html.HiddenFor(a => a.BloodGroupID)
+                    @Html.HiddenFor(a => a.PreviousSchoolSyllabusID)
+                    @Html.HiddenFor(a => a.PreviousSchoolClassCompletedID)
+                    @Html.HiddenFor(a => a.StudentPassportDetailNoID)
+                    @Html.HiddenFor(a => a.FatherPassportDetailNoID)
+                    @Html.HiddenFor(a => a.MotherPassportDetailNoID)
+                    @Html.HiddenFor(a => a.StudentVisaDetailNoID)
+                    @*@Html.HiddenFor(a => a.FatherVisaDetailNoID)
+                        @Html.HiddenFor(a => a.MotherVisaDetailNoID)*@
+                    @Html.HiddenFor(a => a.CreatedBy)
+                    @Html.HiddenFor(a => a.CreatedDate)
+                    @Html.HiddenFor(a => a.ApplicationNumber)
+                    @Html.HiddenFor(a => a.LoginID)
+
+
+                    <div class="row">
+                        <br />
+                        <div class="formTitle col s12">
+                            <span>School</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            <select class="validate" required="" aria-required="true" name="School" id="School"
+                                    ng-options="item as item.Value for item in Schools track by item.Key" ng-model="School" autofocus tabindex="0"></select>
+                            <label for="School" style="font-size:.8rem;">Select locations of the school *</label>
+                            @Html.ValidationMessageFor(m => m.School)
+                        </div>
+
+                        <div class="input-field col s4">
+                            @*<select class="validate" required="" aria-required="true" name="SchoolAcademicyear" id="SchoolAcademicyear"
+                                ng-options="item as item.Value for item in AcademicYears track by item.Key" ng-model="AcademicyearID"></select>*@
+                            <span><label for="SchoolAcademicyear">Academic Year *</label></span>
+                            @*<div class="input-field col s8">*@
+                            <div>@Model.SchoolAcademicyear</div>
+                            @*</div>*@
+                            @Html.ValidationMessageFor(m => m.SchoolAcademicyear)
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <br />
+                        <div class="formTitle col s12">
+                            <span>Class</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            <select class="validate" required="" aria-required="true" name="ClassKey" id="ClassKey"
+                                    ng-options="item as item.Value for item in Classes track by item.Key" ng-model="ClassKey"></select>
+                            <label for="Class">Admission looking for *</label>
+                            @Html.ValidationMessageFor(m => m.ClassKey)
+                        </div>
+                        <div class="input-field col s4">
+                            @*<select class="validate" required="" aria-required="true" name="CurriculamString" id="CurriculamString"
+                                ng-options="item as item.Value for item in SchoolSyllabus track by item.Key" ng-model="CurriculamString"></select>*@
+                            <span><label for="CurriculamString">Curriculam</label></span>
+                            <div>@Model.CurriculamString</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <br />
+                        <div class="formTitle col s12">
+                            <span>Student's Details(As per Passport)</span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.FirstName, new { @class = "validate", @required = "", @aria_required = "true", ng_model = "StudentApplication.FirstName", @capitalize = "", maxlength = "20", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.FirstName)
+                            <label for="FirstName">First Name *</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.MiddleName, new
+                            {
+                                @class = "validate",@*@aria_required = "false",*@ng_model = "StudentApplication.MiddleName",
+@capitalize = "",
+maxlength = "20",
+@autocomplete = "off"
+})
+                            @Html.ValidationMessageFor(m => m.MiddleName)
+                            <label for="MiddleName">Middle Name</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.LastName, new { @class = "validate", @required = "", @aria_required = "true", ng_model = "StudentApplication.LastName", @capitalize = "", maxlength = "20", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.LastName)
+                            <label for="LastName">Last Name  *</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            <select class="validate" required="" aria-required="true" name="Gender" id="Gender"
+                                    ng-options="item as item.Value for item in Genders track by item.Key" ng-model="Gender"></select>
+                            <label for="Gender">Gender  *</label>
+                            @Html.ValidationMessageFor(m => m.Gender)
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.DateOfBirthString, new { @class = "validate datepicker validate dateofbirth", @required = "", @aria_required = "true", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.DateOfBirthString)
+                            <label for="DateOfBirthString">Date Of Birth  *</label>
+                        </div>
+                        <div class="input-field col s4">
+                            <select class="validate" required="" aria-required="true" name="StudentCoutryOfBrith" id="StudentCoutryOfBrith"
+                                    ng-options="item as item.Value for item in Countries track by item.Key" ng-model="StudentCoutryOfBrith"></select>
+                            <label for="StudentCoutryOfBrith">Country Of Birth  *</label>
+                            @Html.ValidationMessageFor(m => m.StudentCoutryOfBrith)
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            <select class="validate" aria-required="false" name="Relegion" id="Relegion"
+                                    ng-options="item as item.Value for item in Relegions track by item.Key" ng-model="Relegion" ng-change="RelegionChanges($select)"></select>
+                            <label for="Relegion">Religion</label>
+                        </div>
+                        <div class="input-field col s4">
+                            <select class="validate" aria-required="false" name="Cast" id="Cast"
+                                    ng-options="item as item.Value for item in Casts track by item.Key" ng-model="Cast"></select>
+                            <label for="Cast">Caste</label>
+                        </div>
+                        <div class="input-field col s4">
+                            <select class="validate" aria-required="false" name="Community" id="Community"
+                                    ng-options="item as item.Value for item in Communitys track by item.Key" ng-model="Community"></select>
+                            <label for="Community">Community</label>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            <select class="validate" required="" aria-required="true" name="Nationality" id="Nationality"
+                                    ng-options="item as item.Value for item in Countries track by item.Key" ng-model="Nationality"></select>
+                            <label for="Nationality">Nationality *</label>
+                            @Html.ValidationMessageFor(m => m.Nationality)
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.AdhaarCardNo, new
+                       {
+                           @class = "validate",
+                           @type = "text",
+                           maxlength = "12",
+                           id = "AdhaarCardNo",
+                           value = "",
+                           onkeypress = "javascript:return isNumber(event)",
+                           @autocomplete = "off"@*, disabled = "disabled"*@})
+                            @Html.ValidationMessageFor(m => m.AdhaarCardNo)
+                            <label for="AdhaarCardNo">Adhaar No.</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.StudentPassportNo, new { @class = "validate", @required = "", @aria_required = "true", maxlength = "12", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.StudentPassportNo)
+                            <label for="StudentPassportNo">Passport No.  *</label>
+                        </div>
+
+                        <div class="input-field col s4">
+                            <select class="validate" required="" aria-required="true" name="StudentCountryofIssue" id="StudentCountryofIssue"
+                                    ng-options="item as item.Value for item in Countries track by item.Key" ng-model="StudentCountryofIssue"></select>
+                            <label for="StudentCountryofIssue"> Country Of Issue  *</label>
+                            @Html.ValidationMessageFor(m => m.StudentCountryofIssue)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.PassportNoIssueString, new { @class = "validate datepicker validate maxtodayDate", @required = "", @aria_required = "true", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.PassportNoIssueString)
+                            <label for="PassportNoIssueString">Passport Issue Date  *</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.PassportNoExpiryString, new { @class = "validate datepicker validate", @required = "", @aria_required = "true", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.PassportNoExpiryString)
+                            <label for="PassportNoExpiryString">Passport Expiry Date  *</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.StudentVisaNo, new
+                            {
+                                @class = "validate",@*@aria_required = "false",*@@type = "text",
+maxlength = "11",
+id = "StudentVisaNo",
+value = "",
+onkeypress = "javascript:return isNumber(event)",
+@autocomplete = "off"
+})
+                            <label for="StudentVisaNo">Visa No.</label>
+                        </div>
+
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.VisaExpiryDateString, new
+                       {
+                           @class = "validate datepicker validate",
+                           @autocomplete = "off"@*@aria_required = "false"*@})
+                            <label for="VisaExpiryDateString">Visa Expiry Date</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.StudentNationalID, new { @class = "validate", @type = "text", maxlength = "11", id = "StudentNationalID", value = "", onkeypress = "javascript:return isNumber(event)", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.StudentNationalID)
+                            <label for="StudentNationalID">National ID  *</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.StudentNationalIDNoIssueDateString, new
+                            {
+                                @class = "validate datepicker validate maxtodayDate",
+                                @autocomplete = "off"@*, @aria_required = "false"*@})
+                            <label for="StudentNationalIDNoIssueDateString">National ID Issue Date</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.StudentNationalIDNoExpiryDateString, new
+                       {
+                           @class = "validate datepicker validate",
+                           @autocomplete = "off"@*,  @aria_required = "false"*@})
+                            <label for="StudentNationalIDNoExpiryDateString">National ID Expiry Date</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            <select class="validate" aria-required="false" name="BloodGroup" id="BloodGroup"
+                                    ng-options="item as item.Value for item in BloodGroups track by item.Key" ng-model="BloodGroup"></select>
+                            <label for="BloodGroup">BloodGroup</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s6">
+                            <select class="validate" aria-required="false" name="SecoundLanguageString" id="SecoundLanguageString"
+                                    ng-options="item as item.Value for item in Languages track by item.Key" ng-model="SecoundLanguageString"></select>
+                            <label for="SecoundLanguageString">Second Language Option(from Grade 1 onward)</label>
+                        </div>
+
+
+                        <div class="input-field col s6">
+                            <select class="validate" aria-required="false" name="ThridLanguageString" id="ThridLanguageString"
+                                    ng-options="item as item.Value for item in Languages track by item.Key" ng-model="ThridLanguageString"></select>
+                            <label for="ThridLanguageString">Third Language Option(from Grade 5 onward)</label>
+                        </div>
+                    </div>
+                    <div class="row">
+
+                        <div class="input-field col s4">
+                            <label>
+                                @Html.CheckBoxFor(m => m.IsMinority)
+                                <span for="IsMinority">Is Minority</span>
+                            </label>
+                        </div>
+                        <div class="input-field col s4">
+                            <label>
+                                @Html.CheckBoxFor(m => m.IsOnlyChildofParent)
+                                <span for="IsOnlyChildofParent">Is Only Child of Parent</span>
+                            </label>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="formTitle col s12">
+                            <span>Parents/Guardian(As per Passport)</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.FatherFirstName, new { @class = "validate", @required = "", @aria_required = "true", ng_model = "StudentApplication.FatherFirstName", @capitalize = "", maxlength = "20", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.FatherFirstName)
+                            <label for="FatherFirstName"> First Name *</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.FatherMiddleName, new
+                            {
+                                @class = "validate",@*@aria_required = "false",*@ng_model = "StudentApplication.FatherMiddleName",
+@capitalize = "",
+maxlength = "20",
+@autocomplete = "off"
+})
+                            @Html.ValidationMessageFor(m => m.FatherMiddleName)
+                            <label for="FatherMiddleName"> Middle Name</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.FatherLastName, new { @class = "validate", @required = "", @aria_required = "true", ng_model = "StudentApplication.FatherLastName", @capitalize = "", maxlength = "20", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.FatherLastName)
+                            <label for="FatherLastName"> Last Name *</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            <select class="validate" required="" aria-required="true" name="FatherStudentRelationShip" id="FatherStudentRelationShip"
+                                    ng-options="item as item.Value for item in GaurdianTypes track by item.Key" ng-model="FatherStudentRelationShip"></select>
+                            <label for="FatherStudentRelationShip">RelationShip *</label>
+                            @Html.ValidationMessageFor(m => m.FatherStudentRelationShip)
+                        </div>
+                        <div class="input-field col s4">
+                            <select class="validate" required="" aria-required="true" name="FatherCountry" id="FatherCountry"
+                                    ng-options="item as item.Value for item in Countries track by item.Key" ng-model="FatherCountry"></select>
+                            <label for="FatherCountry"> Nationality *</label>
+                            @Html.ValidationMessageFor(m => m.FatherCountry)
+                        </div>
+
+
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.FatherOccupation, new
+                            {
+                                @class = "validate",@*@aria_required = "false",*@maxlength = "25",
+@autocomplete = "off"
+})
+                            <label for="FatherOccupation"> Occupation</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.FatherCompanyName, new
+                            {
+                                @class = "validate",@*@aria_required = "false",*@maxlength = "100",
+@autocomplete = "off"
+})
+                            <label for="FatherCompanyName">Company Name</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.FatherPassportNumber, new { @class = "validate", @required = "", @aria_required = "true", maxlength = "12", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.FatherPassportNumber)
+                            <label for="FatherPassportNumber"> Passport No. *</label>
+                        </div>
+                        <div class="input-field col s4">
+                            <select class="validate" required="" aria-required="true" name="FatherCountryofIssue" id="FatherCountryofIssue"
+                                    ng-options="item as item.Value for item in Countries track by item.Key" ng-model="FatherCountryofIssue"></select>
+                            <label for="FatherCountryofIssue"> Passport Issue Country *</label>
+                            @Html.ValidationMessageFor(m => m.FatherCountryofIssue)
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+
+                            @Html.TextBoxFor(m => m.FatherPassportNoIssueString, new { @class = "validate datepicker validate maxtodayDate", @aria_required = "true", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.FatherPassportNoIssueString)
+                            <label for="FatherPassportNoIssueString">Passport Issue Date *</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.FatherPassportNoExpiryString, new { @class = "validate datepicker validate", @required = "", @aria_required = "true", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.FatherPassportNoExpiryString)
+                            <label for="FatherPassportNoExpiryString">Passport Expiry Date *</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.FatherNationalID, new { @class = "validate", @type = "text", maxlength = "11", id = "FatherNationalID", value = "", onkeypress = "javascript:return isNumber(event)", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.FatherNationalID)
+                            <label for="FatherNationalID">National ID</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.FatherNationalDNoIssueDateString, new
+                            {
+                                @class = "validate datepicker validate",
+                                @autocomplete = "off"@*, @aria_required = "false"*@})
+                            <label for="FatherNationalDNoIssueDateString">National ID Issue Date</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.FatherNationalDNoExpiryDateString, new
+                            {
+                                @class = "validate datepicker validate",
+                                @autocomplete = "off"@*, @aria_required = "false"*@})
+                            <label for="FatherNationalDNoExpiryDateString">National ID Expiry Date</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.MobileNumber, new
+                            {
+                                @type = "tel",
+                                @class = "validate",
+                                @required = "",
+                                @aria_required = "true",
+                                maxlength = "13",@*@placeholder = "+974 xxxx xxxx ",*@id = "MobileNumber",
+value = "",
+onkeypress = "javascript:return isNumberc(event)",
+@autocomplete = "off"
+})
+                            @Html.ValidationMessageFor(m => m.MobileNumber)
+                            <label for="MobileNumber"> Mobile No. *</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.FatherMobileNumberTwo, new
+                            {
+                                @type = "tel",
+                                @class = "validate",@*@aria_required = "false",*@maxlength = "13",
+//@placeholder = "+974 xxxx xxxx ",
+id = "FatherMobileNumberTwo",
+value = "",
+onkeypress = "javascript:return isNumberc(event)",
+@autocomplete = "off"
+})
+                            @Html.ValidationMessageFor(m => m.FatherMobileNumberTwo)
+                            <label for="FatherMobileNumberTwo"> Other Mobile No.</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.EmailID, new { @class = "validate", @required = "", @aria_required = "true", @type = "email", maxlength = "50", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.EmailID)
+
+                            <label for="EmailID"> Email ID *</label>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="input-field col s7">
+                            <select class="validate" aria-required="false" name="CanYouVolunteerToHelpOneString" id="CanYouVolunteerToHelpOneString"
+                                    ng-options="item as item.Value for item in VolunteerTypes track by item.Key" ng-model="CanYouVolunteerToHelpOneString"></select>
+                            <label for="CanYouVolunteerToHelpOneString">In which sphere Of School Life Can You Volunteer To Help ?</label>
+                        </div>
+
+
+
+                        <div class="input-field col s4">
+                            <select class="validate" required="" aria-required="true" name="PrimaryContact" id="PrimaryContact"
+                                    ng-options="item as item.Value for item in GaurdianTypes track by item.Key" ng-model="PrimaryContact"></select>
+                            <label for="PrimaryContact">Primary Contact *</label>
+                            @Html.ValidationMessageFor(m => m.PrimaryContact)
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="formTitle col s12">
+                            <span>Mother Details(As per Passport)</span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.MotherFirstName, new { @class = "validate", @required = "", @aria_required = "true", ng_model = "StudentApplication.MotherFirstName", @capitalize = "", maxlength = "20", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.MotherFirstName)
+                            <label for="MotherFirstName">First Name *</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.MotherMiddleName, new
+                            {
+                                @class = "validate",@*@aria_required = "false",*@ng_model = "StudentApplication.MotherMiddleName",
+@capitalize = "",
+maxlength = "20",
+@autocomplete = "off"
+})
+                            @Html.ValidationMessageFor(m => m.MotherMiddleName)
+                            <label for="MotherMiddleName">Middle Name</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.MotherLastName, new { @class = "validate", @required = "", @aria_required = "true", ng_model = "StudentApplication.MotherLastName", @capitalize = "", maxlength = "20", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.MotherLastName)
+                            <label for="MotherLastName">Last Name *</label>
+                        </div>
+                    </div>
+
+                    @*<div class="input-field col s4">
+                            <select class="validate" required="" aria-required="true" name="MotherStudentRelationShip" id="MotherStudentRelationShip"
+                                    ng-options="item as item.Value for item in GaurdianTypes track by item.Key" ng-model="MotherStudentRelationShip"></select>
+                            <label for="MotherStudentRelationShip">RelationShip *</label>
+                            @Html.ValidationMessageFor(m => m.MotherStudentRelationShip)
+                        </div>*@
+                    <div class="row">
+                        <div class="input-field col s4">
+                            <select class="validate" required="" aria-required="true" name="MotherCountry" id="MotherCountry"
+                                    ng-options="item as item.Value for item in Countries track by item.Key" ng-model="MotherCountry"></select>
+                            <label for="MotherCountry">Nationality *</label>
+                            @Html.ValidationMessageFor(m => m.MotherCountry)
+                        </div>
+
+
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.MotherOccupation, new
+                            {
+                                @class = "validate",@*@aria_required = "false", *@maxlength = "25",
+@autocomplete = "off"
+})
+                            <label for="MotherOccupation">Occupation</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.MotherCompanyName, new
+                            {
+                                @class = "validate",@*@aria_required = "false",*@maxlength = "100",
+@autocomplete = "off"
+})
+                            <label for="MotherCompanyName">Company Name</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.MotherPassportNumber, new
+                            {
+                                @class = "validate",@*@aria_required = "false",*@maxlength = "12",
+@autocomplete = "off"
+})
+                            @Html.ValidationMessageFor(m => m.MotherPassportNumber)
+                            <label for="MotherPassportNumber">Passport No.</label>
+                        </div>
+                        <div class="input-field col s4">
+                            <select class="validate" aria-required="false" name="MotherCountryofIssue" id="MotherCountryofIssue"
+                                    ng-options="item as item.Value for item in Countries track by item.Key" ng-model="MotherCountryofIssue"></select>
+                            <label for="MotherCountryofIssue">Passport Issue Country</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+
+                            @Html.TextBoxFor(m => m.MotherPassportNoIssueString, new
+                            {
+                                @class = "validate datepicker validate maxtodayDate",
+                                @autocomplete = "off"@*, @aria_required = "false"*@})
+                            <label for="MotherPassportNoIssueString">Passport Issue Date</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.MotherPassportNoExpiryString, new
+                       {
+                           @class = "validate datepicker validate",
+                           @autocomplete = "off"@*, @aria_required = "false"*@})
+                            <label for="MotherPassportNoExpiryString">Passport Expiry Date</label>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.MotherNationalID, new { @class = "validate", @type = "text", maxlength = "11", id = "MotherNationalID", value = "", onkeypress = "javascript:return isNumber(event)", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.MotherNationalID)
+                            <label for="MotherNationalID">National ID</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.MotherNationalDNoIssueDateString, new
+                            {
+                                @class = "validate datepicker validate",
+                                @autocomplete = "off"@*, @aria_required = "false"*@})
+                            <label for="MotherNationalDNoIssueDateString">National ID Issue Date</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.MotherNationaIDNoExpiryDateString, new
+                       {
+                           @class = "validate datepicker validate",
+                           @autocomplete = "off"@*, @aria_required = "false"*@})
+                            <label for="MotherNationaIDNoExpiryDateString">National ID Expiry Date</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.MotherEmailID, new { @class = "validate", @aria_required = "true", @type = "email", maxlength = "50", @autocomplete = "off" })
+                            @Html.ValidationMessageFor(m => m.MotherEmailID)
+                            <label for="MotherEmailID">Email ID</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.MotherMobileNumber, new
+                            {
+                                @type = "tel",
+                                @class = "validate",@*@aria_required = "false",*@maxlength = "13",
+//@placeholder = "+974 xxxx xxxx ",
+id = "MotherMobileNumber",
+value = "",
+onkeypress = "javascript:return isNumberc(event)",
+@autocomplete = "off"
+})
+                            @Html.ValidationMessageFor(m => m.MotherMobileNumber)
+                            <label for="MotherMobileNumber">Mobile No.</label>
+                        </div>
+                    </div>
+                    <div class="row">
+
+
+                        <div class="input-field col s7">
+                            <select class="validate" aria-required="false" name="CanYouVolunteerToHelpTwoString" id="CanYouVolunteerToHelpTwoString"
+                                    ng-options="item as item.Value for item in VolunteerTypes track by item.Key" ng-model="CanYouVolunteerToHelpTwoString"></select>
+                            <label for="CanYouVolunteerToHelpTwoString">In which sphere Of School Life Can You Volunteer To Help ?</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="formTitle col s12">
+                            <span>Location/Address Details</span>
+                        </div>
+
+
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.BuildingNo, new
+                            {
+                                @class = "validate"@*, @aria_required = "false"*@,
+maxlength = "10",
+@autocomplete = "off"
+})
+                            <label for="BuildingNo">Building No.</label>
+                        </div>
+
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.FlatNo, new
+                            {
+                                @class = "validate",
+                                @autocomplete = "off"@*, @aria_required = "false"*@,
+maxlength = "10"
+})
+                            <label for="FlatNo">Flat/Unit No.</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.StreetNo, new
+                            {
+                                @class = "validate"@*, @aria_required = "false"*@,
+maxlength = "10",
+@autocomplete = "off"
+})
+                            <label for="StreetNo">Street No.</label>
+                        </div>
+
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.StreetName, new
+                            {
+                                @class = "validate",@*@aria_required = "false",*@maxlength = "50",
+@autocomplete = "off"
+})
+                            <label for="StreetName">Street Name</label>
+                        </div>
+
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.LocationNo, new
+                            {
+                                @class = "validate"@*, @aria_required = "false"*@,
+maxlength = "10",
+@autocomplete = "off"
+})
+                            <label for="LocationNo">Zone/Location No.</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.LocationName, new
+                            {
+                                @class = "validate",@*@aria_required = "false",*@maxlength = "50",
+@autocomplete = "off"
+})
+                            <label for="LocationName">Zone/Location Name</label>
+                        </div>
+
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.ZipNo, new
+                            {
+                                @class = "validate",@*@aria_required = "false", *@maxlength = "8",
+id = "ZipNo",
+value = "",
+onkeypress = "javascript:return isNumber(event)",
+@autocomplete = "off"
+})
+                            <label for="ZipNo">Zip No.</label>
+                        </div>
+
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.PostBoxNo, new
+                            {
+                                @class = "validate",@*@aria_required = "false",*@maxlength = "8",
+id = "PostBoxNo",
+value = "",
+onkeypress = "javascript:return isNumber(event)",
+@autocomplete = "off"
+})
+                            <label for="PostBoxNo">Post Box No.</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.City, new
+                            {
+                                @class = "validate",@*@aria_required = "false",*@maxlength = "50",
+@autocomplete = "off"
+})
+                            <label for="City">City</label>
+                        </div>
+                        <div class="input-field col s4">
+                            <select class="validate" aria-required="false" name="Country" id="Country"
+                                    ng-options="item as item.Value for item in Countries track by item.Key" ng-model="Country"></select>
+                            <label for="Country">Country</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="input-field col s4" style="text-align:right">
+                            <label>
+                                @Html.CheckBoxFor(m => m.IsStudentStudiedBefore, new { ng_click = "previousCheckbox()", id = "IsStudentStudiedBefore", AutoPostBack = "true" })
+                                @*<input type="checkbox" id="IsStudentStudiedBefore" onclick="myFunction()">*@
+                                <span for="IsStudentStudiedBefore">If the student has studied before</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="row" id="row1" hidden="">
+                        <div class="formTitle col s12">
+                            <span>Previous School Details</span>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextAreaFor(m => m.PreviousSchoolName, new
+                            {
+                                @class = "materialize-textarea validate"@*, @required = "", @aria_required = "true"*@,
+maxlength = "50",
+@autocomplete = "off"
+})
+                            <label for="PreviousSchoolName">Previous School Name</label>
+                        </div>
+                        <div class="input-field col s4">
+                            @Html.TextBoxFor(m => m.PreviousSchoolAcademicYear, new
+                       {
+                           @class = "validate",
+                           @type = "tel",
+                           onkeyup = "addHyphen(this)",
+                           value = "",
+                           onkeypress = "javascript:return isNumberc(event)",
+                           placeholder = "",
+                           maxlength = "9",
+                           @autocomplete = "off"
+                       })
+                            <label for="PreviousSchoolName">Previous School Academic Year</label>
+                        </div>
+                        <div class="input-field col s4">
+                            <select class="validate" @*required="" aria-required="true"*@ name="PreviousSchoolSyllabus" id="PreviousSchoolSyllabus"
+                                    ng-options="item as item.Value for item in Syllabus track by item.Key" ng-model="PreviousSchoolSyllabus"></select>
+                            <label for="PreviousSchoolSyllabus">Previous School Syllabus</label>
+                        </div>
+                    </div>
+
+                    <div class="row" id="row2" hidden="">
+                        <div class="input-field col s4">
+                            <select class="validate" @*required="" aria-required="true"*@ id="PreviousSchoolClassClassKey" name="PreviousSchoolClassClassKey" ng-model="PreviousSchoolClassClassKey"
+                                    ng-options="item as item.Value for item in Classes track by item.Key"></select>
+                            <label for="PreviousSchoolClassClassKey">Previous School Class Completed</label>
+                        </div>
+
+                        <div class="input-field col s4">
+                            @Html.TextAreaFor(m => m.PreviousSchoolAddress, new { @class = "materialize-textarea validate", maxlength = "200", @autocomplete = "off" })
+                            <label for="PreviousSchoolAddress"> Previous School Address</label>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="input-field col s12 text-right noMarginBtm">
+                            <button class="btn waves-effect waves-light" type="submit" name="action" id="submitBtn">Submit</button>
+                        </div>
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/ToasterPlugin/simple-notify.min.css" />
+
+<script src="~/ToasterPlugin/simple-notify.min.js"></script>
+
+
+<script type="text/javascript">
+    function callToasterPlugin(status, title) {
+        new Notify({
+            status: status,
+            title: title,
+            effect: 'fade',
+            speed: 300,
+            customClass: null,
+            customIcon: null,
+            showIcon: true,
+            showCloseButton: true,
+            autoclose: true,
+            autotimeout: 3000,
+            gap: 20,
+            distance: 20,
+            type: 1,
+            position: 'right top'
+        })
+    }
+    $(document).ready(function () {
+
+        $('select').formSelect();
+        $('.datepicker').datepicker();
+        $("select[required]").css({
+            display: "inline",
+            height: 0,
+            padding: 0,
+            width: 0
+        });
+        $('#submitBtn').click(function () {
+            if ($('#StudApplication').valid()) {
+                $(this).prop("disabled", true);
+
+                if ($('#IsStudentStudiedBefore').prop("checked") == true) {
+
+                    if ($("#PreviousSchoolName").val() == null || $("#PreviousSchoolName").val() == "") {
+                        $("#PreviousSchoolName").focus();
+                        $(this).prop("disabled", false);
+                        return false;
+                    }
+
+                    else if ($("#PreviousSchoolAcademicYear").val() == null || $("#PreviousSchoolAcademicYear").val() == "") {
+                        $("#PreviousSchoolAcademicYear").focus();
+                        $(this).prop("disabled", false);
+                        return false;
+                    }
+                    else if ($("#PreviousSchoolAcademicYear").val().length > 10) {
+                        $("#PreviousSchoolAcademicYear").focus();
+
+                        $(this).prop("disabled", false);
+                        return false;
+                    }
+                    else if ($("#PreviousSchoolSyllabus").val() == null || $("#PreviousSchoolSyllabus").val() == "") {
+                        $("#PreviousSchoolSyllabus").focus();
+                        $(this).prop("disabled", false);
+                        return false;
+                    }
+
+                    else if ($("#PreviousSchoolClassClassKey").val() == null || $("#PreviousSchoolClassClassKey").val() == "") {
+                        $("#PreviousSchoolClassClassKey").focus();
+                        $(this).prop("disabled", false);
+                        return false;
+                    }
+
+                    else if ($("#PreviousSchoolAddress").val() == null || $("#PreviousSchoolAddress").val() == "") {
+                        $("#PreviousSchoolAddress").focus();
+                        $(this).prop("disabled", false);
+                        return false;
+                    }
+                    else {
+                        $('#StudApplication').submit();
+                    }
+
+                }
+                else {
+                    $('#StudApplication').submit();
+                }
+            }
+
+            else {
+                $(this).prop("disabled", false);
+
+                if ($("#School").val() == null || $("#School").val() == "") {
+                    $("#School").focus();
+                    callToasterPlugin('error', 'Please Select School');
+                }
+                else if ($("#ClassKey").val() == null || $("#ClassKey").val() == "") {
+                    $("#ClassKey").focus();
+                    callToasterPlugin('error', 'Please Select Class');
+                }
+                else if ($("#FirstName").val() == null || $("#FirstName").val() == "") {
+                    $("#FirstName").focus();
+                    callToasterPlugin('error', 'Please Enter First Name');
+                }
+                else if ($("#LastName").val() == null || $("#LastName").val() == "") {
+                    $("#LastName").focus();
+                    callToasterPlugin('error', 'Please Enter Last Name');
+                }
+                else if ($("#Gender").val() == null || $("#Gender").val() == "") {
+                    $("#Gender").focus();
+                    callToasterPlugin('error', 'Please Select Gender');
+                }
+                else if ($("#DateOfBirthString").val() == null || $("#DateOfBirthString").val() == "") {
+                    $("#DateOfBirthString").focus();
+                    callToasterPlugin('error', 'Please Select Date of Birth');
+                }
+                else if ($("#StudentCoutryOfBrith").val() == null || $("#StudentCoutryOfBrith").val() == "") {
+                    $("#StudentCoutryOfBrith").focus();
+                    callToasterPlugin('error', 'Please Select Student Country of Birth');
+                }
+                else if ($("#Nationality").val() == null || $("#Nationality").val() == "") {
+                    $("#Nationality").focus();
+                    callToasterPlugin('error', 'Please Select Nationality');
+                }
+                else if ($("#AdhaarCardNo").val() != null && $("#AdhaarCardNo").val() != "") {
+                    if ($("#AdhaarCardNo").val().length != 12) {
+                        $("#AdhaarCardNo").focus();
+                        callToasterPlugin('error', 'Please Enter Valid Adhaar number');
+                    }
+                }
+                else if ($("#StudentPassportNo").val() == null || $("#StudentPassportNo").val() == "" || $("#StudentPassportNo").val().length != 12) {
+                    $("#StudentPassportNo").focus();
+                    callToasterPlugin('error', 'Please Enter Valid Student Passport Number');
+                }
+                else if ($("#StudentCountryofIssue").val() == null || $("#StudentCountryofIssue").val() == "") {
+                    $("#StudentCountryofIssue").focus();
+                    callToasterPlugin('error', 'Please Student Country of Issue');
+                }
+                else if ($("#PassportNoIssueString").val() == null || $("#PassportNoIssueString").val() == "") {
+                    $("#PassportNoIssueString").focus();
+                    callToasterPlugin('error', 'Please Enter Passport Issue Date');
+                }
+                else if ($("#PassportNoExpiryString").val() == null || $("#PassportNoExpiryString").val() == "") {
+                    $("#PassportNoExpiryString").focus();
+                    callToasterPlugin('error', 'Please Enter Passport Expiry Date');
+                }
+                else if ($("#StudentNationalID").val() == null || $("#StudentNationalID").val() == "" || $("#StudentNationalID").val().length != 11) {
+                    $("#StudentNationalID").focus();
+                    callToasterPlugin('error', 'Please Enter Valid Student National ID');
+                }
+                else if ($("#FatherFirstName").val() == null || $("#FatherFirstName").val() == "") {
+                    $("#FatherFirstName").focus();
+                    callToasterPlugin('error', 'Please Enter Father/Gurdian First Name');
+                }
+                else if ($("#FatherStudentRelationShip").val() == null || $("#FatherStudentRelationShip").val() == "") {
+                    $("#FatherStudentRelationShip").focus();
+                    callToasterPlugin('error', 'Please Select Student Relationship');
+                }
+                else if ($("#FatherCountry").val() == null || $("#FatherCountry").val() == "") {
+                    $("#FatherCountry").focus();
+                    callToasterPlugin('error', 'Please Enter Valid Student National ID');
+                }
+                else if ($("#FatherPassportNumber").val() == null || $("#FatherPassportNumber").val() == "" || $("#FatherPassportNumber").val().length != 12) {
+                    $("#FatherPassportNumber").focus();
+                    callToasterPlugin('error', 'Please Enter Father Valid Passport Number');
+                }
+                else if ($("#FatherCountryofIssue").val() == null || $("#FatherCountryofIssue").val() == "") {
+                    $("#FatherCountryofIssue").focus();
+                    callToasterPlugin('error', 'Please Enter Father Passport Issued Country');
+                }
+                else if ($("#FatherPassportNoIssueString").val() == null || $("#FatherPassportNoIssueString").val() == "") {
+                    $("#FatherPassportNoIssueString").focus();
+                    callToasterPlugin('error', 'Please Enter Father Passport Issue Date');
+                }
+                else if ($("#FatherPassportNoExpiryString").val() == null || $("#FatherPassportNoExpiryString").val() == "") {
+                    $("#FatherPassportNoExpiryString").focus();
+                    callToasterPlugin('error', 'Please Enter Father Passport Expiry Date');
+                }
+                else if ($("#MobileNumber").val() == null || $("#MobileNumber").val() == "" || $("#MobileNumber").val().length > 13) {
+                    $("#MobileNumber").focus();
+                    callToasterPlugin('error', 'Please Enter Valid Mobile number');
+                }
+                else if ($("#EmailID").val() == null || $("#EmailID").val() == "") {
+                    $("#EmailID").focus();
+                    callToasterPlugin('error', 'Please Enter Valid Email id');
+                }
+                else if ($("#PrimaryContact").val() == null || $("#PrimaryContact").val() == "") {
+                    $("#PrimaryContact").focus();
+                    callToasterPlugin('error', 'Please Enter Primary Contact');
+                }
+                else if ($("#MotherFirstName").val() == null || $("#MotherFirstName").val() == "") {
+                    $("#MotherFirstName").focus();
+                    callToasterPlugin('error', 'Please Enter Mother First Name');
+                }
+                else if ($("#MotherLastName").val() == null || $("#MotherLastName").val() == "") {
+                    $("#MotherLastName").focus();
+                    callToasterPlugin('error', 'Please Enter Mother Last Name');
+                }
+                else if ($("#MotherCountry").val() == null || $("#MotherCountry").val() == "") {
+                    $("#MotherCountry").focus();
+                    callToasterPlugin('error', 'Please Enter Mother Country');
+                }
+                return false;
+            }
+        });
+
+    });
+    //WRITE THE VALIDATION SCRIPT.
+    function isNumber(evt) {
+        var iKeyCode = (evt.which) ? evt.which : evt.keyCode
+        if (iKeyCode != 46 && iKeyCode > 31 && (iKeyCode < 48 || iKeyCode > 57))
+            return false;
+        return true;
+    }
+    // WRITE THE VALIDATION SCRIPT.
+    function isNumberc(evt) {
+        var iKeyCode = (evt.which) ? evt.which : evt.keyCode
+        if (iKeyCode != 46 && iKeyCode > 31 && (iKeyCode < 48 || iKeyCode > 57) && (iKeyCode != 43))
+            return false;
+        return true;
+    }
+    $(function () {
+        $("#Nationality").change(function () {
+            if ($(this).val() == 1) {
+                $("#AdhaarCardNo").removeAttr("disabled");
+                $("#AdhaarCardNo").focus();
+            } else {
+                $("#AdhaarCardNo").val('');
+                $("#AdhaarCardNo").attr("disabled", "disabled");
+            }
+        });
+    });
+    function addHyphen(element) {
+        let ele = document.getElementById(element.id);
+        ele = ele.value.split('-').join('');    // Remove dash (-) if mistakenly entered.
+
+        let finalVal = ele.match(/.{1,4}/g).join('-');
+        document.getElementById(element.id).value = finalVal;
+    }
+
+</script>

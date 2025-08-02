@@ -1,0 +1,134 @@
+﻿@model Eduegate.Web.Library.ViewModels.CommentViewModel
+@{
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+        <div class="msg-comments comments" ng-controller="CommentController" ng-init="Init('@windowName', @Newtonsoft.Json.JsonConvert.SerializeObject(Model))" id="@windowName">
+            <div class="window-tab preload-overlay" style="display:block;"><div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div></div>
+            <div class="inner-title">Comments</div>
+            <div class="alignleft commentoptions">
+                <span class="alignleft" style="width: 65px;"><select><option>Level1</option><option>Level2</option></select></span>
+                <span class="alignleft">
+                    @*<select>
+                            <option>Department1</option><option>Department2</option>
+                        </select>*@
+                    <select ng-change="GetComments();" ng-model="Model.DepartmentID">
+                        <i class="fa fa-caret-down"></i>
+                        <option ng-repeat="data in Model.Department" value={{data.Key}} ng-selected="Model.DepartmentID == data.Key">{{data.Value}}</option>
+                    </select>
+                </span>
+            </div>
+
+            <div class="newcomnt-btns alignright">
+                <span class="alignleft"><a href="#" ng-click="AddComment()"><i class="fa fa-floppy-o"></i></a></span>
+                <span class="alignleft"><a href="#" ng-click="GetComments()"><i class="fa fa-refresh"></i></a></span>
+                <span class="alignleft"><a href="#" ng-click="CloseCommentOverlay($event);"><i class="fa fa-close"></i></a></span>
+            </div>
+            <div class="new_comments">
+                <textarea placeholder="Enter Comments" ng-model="CommentText"></textarea>
+            </div>
+            <ul class="commentlist" ng-show="Comments.length > 0">
+                <li ng-repeat="comment in Comments">
+                    <span class="context msg">
+                        <span class="comment_header">
+                            <span class="username alignleft">
+                                <span><img src="/Images/Accounts.png" /></span> {{comment.Username}}
+                            </span>
+                            <span class="msg-date alignright">{{comment.CommentDate}}</span>
+                        </span>
+                        <span class="msgtext" ng-show="!comment.IsEdit" ng-bind-html="comment.CommentText">
+
+                        </span>
+                        <span class="editbox" ng-show="comment.IsEdit"><textarea ng-model="comment.CommentText"></textarea></span>
+                        <span class="comment_icons">
+                            @*<span><a href="#"><i class="fa fa-trash-o"></i></a></span>*@
+                            <span class="reply"><a href="#" ng-click="ReplyComment(comment);"><i class="fa fa-reply"></i></a></span>
+                            @*<span class="edit"><a href="#" ng-click="comment.IsEdit = true;"><i class="fa fa-pencil"></i></a></span>*@
+                            <span><a href="#" ng-click="SaveComment(comment);"><i class="fa fa-floppy-o"></i></a></span>
+                        </span>
+                    </span>
+                    <ul>
+                        <li ng-repeat="childComment in comment.Comments">
+                            <span class="msg">
+                                <span class="comment_header">
+                                    <span class="username alignleft">
+                                        <span><img src="/Images/Accounts.png" /></span> {{childComment.Username}}
+                                    </span>
+                                    <span class="msg-date alignright">{{childComment.CommentDate}}</span>
+                                </span>
+                                <span class="msgtext" ng-bind="childComment.CommentText" ng-show="!childComment.IsEdit">
+
+                                </span>
+                                <span class="editbox" ng-show="childComment.IsEdit"><textarea g-model="childComment.CommentText"></textarea></span>
+                                <span class="comment_icons">
+                                    <span><a href="#"><i class="fa fa-trash-o"></i></a></span>
+                                    @*<span class="reply"><a href="#" g-click="ReplyComment(childComment);"><i class="fa fa-reply"></i></a></span>*@
+                                    <span class="edit"><a href="#" ng-click="childComment.IsEdit = true;"><i class="fa fa-pencil"></i></a></span>
+                                    <span><a href="#" ng-click="SaveComment(comment);"><i class="fa fa-floppy-o"></i></a></span>
+                                </span>
+                            </span>
+                        </li>
+                    </ul>
+                </li>
+                @*<li>
+                        <span class="context msg">
+                            <span class="comment_header">
+                                <span class="username alignleft">
+                                    <span><img src="/Images/Accounts.png" /></span> User Name
+                                </span>
+                                <span class="msg-date alignright">17-05-2016</span>
+                            </span>
+                            <span class="msgtext">
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi non quis exercitationem culpa nesciunt nihil aut nostrum explicabo reprehenderit optio amet ab temporibus asperiores
+                                quasi cupiditate.
+                            </span>
+                            <span class="editbox"><textarea></textarea></span>
+                            <span class="comment_icons">
+                                <span><a href="#"><i class="fa fa-trash-o"></i></a></span>
+                                <span class="reply"><a href="#"><i class="fa fa-reply"></i></a></span>
+                                <span class="edit"><a href="#"><i class="fa fa-pencil"></i></a></span>
+                                <span><a href="#"><i class="fa fa-floppy-o"></i></a></span>
+                            </span>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="context msg">
+                            <span class="comment_header">
+                                <span class="username alignleft">
+                                    <span><img src="/Images/Accounts.png" /></span> User Name
+                                </span>
+                                <span class="msg-date alignright">17-05-2016</span>
+                            </span>
+                            <span class="msgtext">
+                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eligendi non quis exercitationem culpa nesciunt nihil aut nostrum explicabo reprehenderit optio amet ab temporibus asperiores
+                                quasi cupiditate.
+                            </span>
+                            <span class="editbox"><textarea></textarea></span>
+                            <span class="comment_icons">
+                                <span><a href="#"><i class="fa fa-trash-o"></i></a></span>
+                                <span class="reply"><a href="#"><i class="fa fa-reply"></i></a></span>
+                                <span class="edit"><a href="#"><i class="fa fa-pencil"></i></a></span>
+                                <span><a href="#"><i class="fa fa-floppy-o"></i></a></span>
+                            </span>
+                        </span>
+                    </li>*@
+            </ul>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('.edit').on('click', function () {
+                    $(this).closest('.msg').find('.msgtext').hide();
+                    $(this).closest('.msg').find('.editbox').fadeIn();
+                });
+
+                $('.reply').on('click', function () {
+                    var replyfield = "<span class='msg'><span class='reply_field'><textarea></textarea></span>" +
+                        "<span class='comment_icons'>" +
+                        "<span><a href='#'><i class='fa fa-trash-o'></i></a></span>" +
+                        "<span><a href='#'><i class='fa fa-floppy-o'></i></a></span>" +
+                        "</span>" +
+                        "</span>"
+                    $(this).closest('li').append(replyfield);
+                });
+            });
+        </script>

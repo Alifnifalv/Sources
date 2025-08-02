@@ -1,0 +1,259 @@
+@model Eduegate.Web.Library.OnlineExam.Common.LogInViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Log in";
+    var settings = new Eduegate.Service.Client.SettingServiceClient(null);
+    var portalTitle = new Eduegate.Domain.Setting.SettingBL(null).GetSettingValue<string>("PortalTitle");
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>@portalTitle</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" name="viewport">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
+
+
+    <link href="~/Design_v02/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" asp-append-version="true" />
+
+    <script src="~/Scripts/bootstrap.js" asp-append-version="true"></script>
+    <script src="~/Scripts/bootstrap.min.js" asp-append-version="true"></script>
+
+    <script src="~/Scripts/angular-ui/ui-bootstrap-tpls.js" asp-append-version="true"></script>
+    <script src="~/Scripts/boostrapcolorpicker/bootstrap-colorpicker-module.js" asp-append-version="true"></script>
+    <script src="~/Scripts/calendar/angular-bootstrap-calendar.js" asp-append-version="true"></script>
+
+    <link rel="stylesheet" href="~/Content/Login-styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Content/aos.css" asp-append-version="true">
+
+    @* <link href="@Url.Content("~/Content/animate.css")" rel="stylesheet" type="text/css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <script src="~/Scripts/angular-animate.js" asp-append-version="true"></script> *@
+
+    <script src="~/Scripts/aos.js" asp-append-version="true"></script>
+
+    <style>
+        .preload-overlay {
+            display: none;
+            background: #000;
+            height: 100%;
+            left: 0;
+            opacity: 0.4;
+            filter: alpha(opacity=20);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .dot1 {
+            height: 25px;
+            width: 25px;
+            background-color: #3DF1E6;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot2 {
+            height: 25px;
+            width: 25px;
+            background-color: #3DB0F1;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .dot3 {
+            height: 25px;
+            width: 25px;
+            background-color: #F1CA3D;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .clientname {
+            color: #505050;
+            font-family: Montserrat;
+            font-size: 29.069px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+        }
+
+        .portal {
+            color: #824298;
+            font-family: Montserrat;
+            font-size: 32.299px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+
+    </style>
+    @*<meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <link href="~/Content/main.css" rel="stylesheet" />*@
+</head>
+<body class="auth-bg bgi-size-cover bgi-attachment-fixed bgi-position-center bgi-no-repeat" data-bs-theme=light ng-controller="LoginController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+    <script>
+        AOS.init();
+    </script>
+    @{
+        var clientname = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENTINSTANCE");
+    }
+    <div id="LoginOverlay" class="preload-overlay">
+        <div id="LoginButtonLoader" class="preloadImg">
+            <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
+    </div>
+    <div class="d-flex flex-column flex-root">
+        <div class="d-flex flex-column flex-column-fluid flex-lg-row justify-content-between">
+            <div class="d-none d-lg-flex  w-lg-50 pt-15 pt-lg-0 px-20 scroll-y bgi-size-contain bgi-norepeat bgi-position-start position-relative justify-content-center"
+                 style="">
+                <div class="d-flex justify-content-between flex-column-fluid flex-column w-100 w-100 py-20">
+                    <div class="d-flex align-items-start py-2">
+                        <video autoplay muted id="myVideo">
+                            <source src="../Clients/@clientname/Images/login_main.mp4" type="video/mp4">
+                        </video>
+                        @* <div>
+                        <span class="fw-bold fs-2 me-2 text-uppercase clientname">@clientname</span>
+                        <h4 class="portal fw-bold">EXAM PORTAL</h4>
+                        </div> *@
+                    </div>
+                    @*                     <div class="d-flex  flex-center justify-content-between">
+                    <div class="dot1" style="margin-left: 80px;" data-aos="fade-right" data-aos-offset="300" data-aos-easing="ease-in-sine"></div>
+                    <div class="dot2" style="margin-bottom:300px;" data-aos="fade-right" data-aos-offset="300" data-aos-easing="ease-in-sine"></div>
+                    <div class="dot3" style="margin-right:180px;" data-aos="fade-right" data-aos-offset="300" data-aos-easing="ease-in-sine"></div>
+                    </div> *@
+
+                    <div class="m-0">
+                        @*                         <button data-aos="zoom-in" class="btn btn-flex btn-link rotate" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" data-kt-menu-offset="0px, 0px">
+                        <img class=" h-45px rounded-circle me-3" src="../Clients/@clientname/Images/eduegate-logo.png" alt="">
+                        </button> *@
+                    </div>
+                </div>
+
+            </div>
+            <div class="d-flex flex-center vh-100 flex-lg-row-auto justify-content-center w-lg-50 p-12 p-lg-20">
+                <div class="bg-body d-flex flex-column align-items-stretch flex-center rounded-4 w-md-320px p-3 py-lg-20" style="box-shadow:8px 12px 30.1px rgba(0, 0, 0, 0);">
+                    <div class="d-flex flex-center flex-column flex-column-fluid px-lg-5 pb-5 pb-lg-10">
+                        <div class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework">
+                            <div class="formWrap inputFields">
+                                <div class="upper-login text-center">Login</div>
+                                <br /><br />
+                                @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmLogin" }))
+                                {
+                                    <div class="form-group  mgbt-xs-20 loginfields">
+                                        <div class="fv-row mb-8 fv-plugins-icon-container">
+                                            <div class="my-4"><span class="credentials">Username</span></div>
+                                            @Html.TextBoxFor(model => model.UserName, new { @class = "required form-control bg-transparent", @ng_model = "LoginModel.UserName", @placeholder = "Username", autocomplete = "off" })
+                                        </div>
+                                        <div class="fv-row mb-8 fv-plugins-icon-container">
+                                            <div class="my-4"><span class="credentials">Password</span></div>
+                                            @Html.PasswordFor(m => m.Password, new { @class = "required form-control bg-transparent", @ng_model = "LoginModel.Password", @placeholder = "Password" })
+                                        </div>
+                                        <div class="fv-row mb-8 fv-plugins-icon-container">
+                                            <div class="my-4"><span class="credentials">Remember Password</span></div>
+                                            @Html.CheckBoxFor(m => m.RememberPassword)
+                                            @* @Html.ValidationMessageFor(model => model.RememberPassword, "", new { @class = "text-danger" }) *@
+                                        </div>
+                                    </div>
+                                    @*<div class="displaylineBlock fullWidth fieldWrap">
+                                <input type="submit" value="Submit" id="submitbtn" />
+                                </div> *@
+
+                                    <div class="displaylineBlock fullWidth fieldWrap">
+                                        <button type="submit" value="Login" id="submitbtn" class="btn w-100 button_credentials">
+                                            Log In
+                                            @* <span ng-hide="LoadingWithText" class="ng-hide" id="LoginButtonLoader">
+                                        Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                        </span> *@
+                                        </button>
+
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $.validator.unobtrusive.parse($('#frmLogin'));
+
+        ////Disable Back Button In All Browsers.
+        //function DisableBackButtonAllBrowsers() {
+        //    window.history.forward()
+        //};
+        //DisableBackButtonAllBrowsers();
+        //window.onload = DisableBackButtonAllBrowsers;
+        //window.onpageshow = function (evts) { if (evts.persisted) DisableBackButtonAllBrowsers(); };
+        //window.onunload = function () { void (0) };
+        $("#target").submit(function (event) {
+            $("#LoginOverlay").show();
+            $("#submitbtn").trigger();
+        });
+    </script>
+    <style>
+        .login-bg-image {
+            background-image: url(../Clients/@clientname/Images/login_main.svg);
+            background-repeat: no-repeat;
+            right: -25px;
+            bottom: -25px;
+        }
+
+        .upper-login {
+            color: #000;
+            font-family: Poppins;
+            font-size: 35.165px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+        }
+
+        .credentials {
+            color: #5E6278;
+            font-family: Roboto;
+            font-size: 15.264px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 23.033px;
+        }
+
+        .inner_credentials {
+            color: #CDD1DF;
+            font-family: Roboto;
+            font-size: 15.714px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+        }
+
+        .button_credentials {
+            border-radius: 6.791px;
+            background: #045BA7;
+            color: #ffffff
+        }
+
+            .button_credentials:hover {
+                background: #4f9de1;
+            }
+
+        #myVideo {
+            position: fixed;
+            bottom: 0;
+            width: 60%;
+            height: 100%;
+            left: 10px;
+        }
+
+    </style>
+</body>
+</html>

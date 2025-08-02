@@ -1,0 +1,311 @@
+﻿@model Eduegate.ERP.Admin.Models.LoginViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Log in";
+    var settings = new Eduegate.Service.Client.SettingServiceClient(null);
+    var settingBL = new Eduegate.Domain.Setting.SettingBL(null);
+    var portalTitle = settingBL.GetSettingValue<string>("PortalTitle");
+    var isMultiCompany = settingBL.GetSettingValue<bool>("IsMultiCompany", 0, false);
+}
+
+<!DOCTYPE html>
+<html lang="en" ng-app="Eduegate.ERP.School.Portal">
+<head>
+    <title>@portalTitle</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" name="viewport">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="~/Content/font-awesome.min.css" asp-append-version="true" />
+
+    <link href="~/Design_v02/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="~/Content/normalize.css" asp-append-version="true" />
+    @* <link rel="stylesheet" href="~/Content/materialize.min.css" /> *@
+    <link rel="stylesheet" href="~/Content/c3.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Content/Login-styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Content/aos.css" asp-append-version="true">
+    <link href="@Url.Content("~/Content/animate.css")" rel="stylesheet" type="text/css" asp-append-version="true" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    
+
+    <script src="~/Scripts/jquery-3.4.1.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.prettyPhoto.js" asp-append-version="true"></script>
+    <script src="~/Scripts/draggable/draggable.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.custom.js" asp-append-version="true"></script>
+    <script src="~/app/CustomValidation.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/bootstrap.js" asp-append-version="true"></script>
+    <script src="~/Scripts/bootstrap.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/respond.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-route.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-animate.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-sanitize.js" asp-append-version="true"></script>
+    <script src="~/Scripts/i18n/angular-locale_en.js" asp-append-version="true"></script>
+    <script src="~/Scripts/tmhDynamicLocale.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-filter.min.js" asp-append-version="true"></script>
+
+    <script src="~/app/app.js" asp-append-version="true"></script>
+    <script src="~/app/CustomValidation.js" asp-append-version="true"></script>
+    <script src="~/app/print.min.js" asp-append-version="true"></script>
+    <script src="~/app/ReportController.js" asp-append-version="true"></script>
+    <script src="~/app/schedule.js" asp-append-version="true"></script>
+    <script src="~/app/util.js" asp-append-version="true"></script>
+
+    <script src="~/app/Directives/Angularckeditor.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/Angulardatepicker.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/Capitalize.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/Customdatepicker.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/custom-ui-select.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/custom-validation.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/Datetimepicker.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/FileModel.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/Initialvalue.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/LowerCase.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/NgBlur.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/NgWith.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/NgWithModel.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/NumbersOnly.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/Onerrorsrc.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/Prettyp.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/Selectonclick.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/Selectonfocus.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/skienDatepicker.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/Timepicker.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/UpperCase.js" asp-append-version="true"></script>
+    <script src="~/app/Directives/WbDatepicker.js" asp-append-version="true"></script>
+
+    <script src="~/app/Services/accountService.js" asp-append-version="true"></script>
+    <script src="~/app/Services/commonService.js" asp-append-version="true"></script>
+    <script src="~/app/Services/productService.js" asp-append-version="true"></script>
+    <script src="~/app/Services/purchaseorderService.js" asp-append-version="true"></script>
+    <script src="~/app/Services/SubscriptionSignalRService.js" asp-append-version="true"></script>
+
+ <script src="~/app/Controller/login-controller.js" asp-append-version="true"></script>
+ 
+    <script src="~/Scripts/jquery.waypoints.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/moment.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-moment.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/select.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery-ui.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.ui.touch-punch.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/Custom.js" asp-append-version="true"></script>
+    <script src="~/Scripts/dropzone.js" asp-append-version="true"></script>
+    <script src="~/Scripts/excanvas.js" asp-append-version="true"></script>
+    <script src="~/Scripts/jquery.signature.js" asp-append-version="true"></script>
+    <script src="~/Scripts/interact.js" asp-append-version="true"></script>
+    <script src="~/Scripts/rrule/rrule.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-ui/ui-bootstrap-tpls.js" asp-append-version="true"></script>
+    <script src="~/Scripts/boostrapcolorpicker/bootstrap-colorpicker-module.js" asp-append-version="true"></script>
+    <script src="~/Scripts/calendar/angular-bootstrap-calendar.js" asp-append-version="true"></script>
+    <script src="~/Scripts/d3.js" asp-append-version="true"></script>
+    <script src="~/Scripts/c3.js" asp-append-version="true"></script>
+    <script src="~/Scripts/underscore-min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/shortcut.js" asp-append-version="true"></script>
+
+    <script src="~/app/utility.js" asp-append-version="true"></script>
+    <script src="~/app/chartbuilder.js" asp-append-version="true"></script>
+    <script src="~/app/BrowserNotifier.js" asp-append-version="true"></script>
+    <script src="~/Scripts/materialize.min.js" asp-append-version="true"></script>
+
+    <script src="~/Scripts/materialize.min.js" asp-append-version="true"></script>
+    <script src="~/Scripts/JSLINQ.js" asp-append-version="true"></script>
+    <script src="~/Scripts/highcharts/highcharts-ng.js" asp-append-version="true"></script>
+    <script src="~/Scripts/highcharts//highstock.src.js" asp-append-version="true"></script>
+    <script src="~/Scripts/toaster.js" asp-append-version="true"></script>
+    <script src="~/Scripts/aos.js" asp-append-version="true"></script>
+    <script src="~/Scripts/anime.min.js" asp-append-version="true"></script>
+
+
+    <script src="~/Scripts/ng-map.min.js" type="text/javascript" asp-append-version="true"></script>
+    <style>
+        .preload-overlay {
+            display: none;
+            background: #000;
+            height: 100%;
+            left: 0;
+            opacity: 0.4;
+            filter: alpha(opacity=20);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body class="auth-bg bgi-size-cover bgi-attachment-fixed bgi-position-center bgi-no-repeat" data-bs-theme=light ng-controller="LoginController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+    <script>
+        AOS.init();
+    </script>
+    @{
+        var clientname = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENTINSTANCE");
+    }
+    <div id="LoginOverlay" class="preload-overlay">
+        <div id="LoginButtonLoader" class="preloadImg">
+            <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+        </div>
+    </div>
+        <div class="d-flex flex-column flex-root">
+            <div class="d-flex flex-column flex-column-fluid flex-lg-row justify-content-between">
+                <div class="d-none d-lg-flex  w-lg-50 pt-15 pt-lg-0 px-20 scroll-y bgi-size-contain bgi-norepeat bgi-position-start position-relative login-bg-image" 
+                    style="">
+                    <div class="d-flex justify-content-between flex-column-fluid flex-column w-100 w-100 py-20">
+                        <div class="d-flex flex-column py-2" data-aos="fade-right">
+                        <span class="text-primary fw-bold fs-2 me-2 text-uppercase"> @clientname</span>
+                        <h4 class="text-secondary fw-bold"> PARENT PORTAL  </h4>
+                        </div>
+                        <div class="d-flex  flex-center justify-content-between">
+                            <div class=" tick-demo">
+                                <div class=" el symbol symbol-150px overflow-hidden" data-aos="zoom-in">
+                                <img src="~/Images/Catchy-Nicknames-For-Mother.webp" class="object-fit-cover" alt="">
+                                </div>
+                            </div>
+                            <div class="mb-20 pb-20  ">
+                            <div class="tick-demo2" data-aos="zoom-in"
+                                 data-aos-duration="2000">
+                                    <div class="el2 symbol symbol-200px  overflow-hidden" >
+                                    <img src="~/Images/Raising-Successful-Children.jpg" class="object-fit-cover" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class=" mt-20 pt-20 me-10">
+                            <div class="tick-demo3" data-aos="flip-right" data-aos-duration="2000">
+                                    <div class="symbol symbol-150px el3 overflow-hidden" >
+                                    <img src="~/Images/nationa-parents-as-teachers-day.jpg" class="object-fit-cover" alt="">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="m-0" >
+                            <button data-aos="zoom-in" class="btn btn-flex btn-link rotate" data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" data-kt-menu-offset="0px, 0px">
+                                <img class=" h-45px rounded-circle me-3" src="~/Images/eduegate-logo.png" alt="">
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="d-flex flex-center vh-100 flex-lg-row-auto justify-content-center w-lg-50 p-12 p-lg-20">
+                    <div class="bg-body d-flex flex-column align-items-stretch flex-center rounded-4 min-w-300px w-md-320px p-3 py-lg-20" style="box-shadow:8px 12px 30.1px rgba(0, 0, 0, 0.25);">
+                        <div class="d-flex flex-center flex-column flex-column-fluid px-lg-5 pb-5 pb-lg-10">
+                            <div class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework">     
+                            <div class="formWrap inputFields">
+                                <div class="logo d-flex flex-center"><img class="h-60px" src="~/Clients/@clientname/img/PODARLOGO-01.png" /></div>
+                                <br /><br />
+                                @using (Html.BeginForm(null, null, FormMethod.Post, new { id = "frmLogin", @ng_submit = "Signin($event);" }))
+                                {
+                                    <div class="form-group  mgbt-xs-20 loginfields">
+                                        <div class="fv-row mb-8 fv-plugins-icon-container">
+                                            <div class="my-4"><span class="text-gray-700 fw-semibold fs-6">Enter your user ID or email</span></div>
+                                            @Html.TextBoxFor(model => model.Email, new { @class = "required form-control bg-transparent", @ng_model = "LoginModel.Email", @ng_keyup = "EmailKeyup();", @placeholder = "User ID/Email" })
+                                            <span class="field-validation-error textleft ng-cloak text-danger fw-semibold" ng-show="IsEmailPasswordIncorrect">Invalid User name or Password</span>
+                                        </div>
+                                        <div class="fv-row mb-8 fv-plugins-icon-container">
+                                            <div class="my-4"><span class="text-gray-700 fw-semibold fs-6">Password</span></div>
+                                            @Html.PasswordFor(m => m.Password, new { @class = "required form-control bg-transparent", @ng_model = "LoginModel.Password", @ng_keyup = "PasswordKeyup();", @placeholder = "Password" })
+                                            @Html.ValidationMessageFor(m => m.Password, null, new { @class = "validateError d-flex text-danger fw-semibold" })
+                                        </div>
+                                    </div>
+                                    <div class="displaylineBlock fullWidth fieldWrap">
+                                        <button type="submit" value="Login" id="submitbtn" class="btn btn-primary w-100">Log In
+                                            <span ng-hide="LoadingWithText" class="ng-hide" id="LoginButtonLoader">
+                                                Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                            </span>
+                                        </button>
+                                     
+                                    </div>
+                                }
+                            </div>
+                                <div class="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8 mt-4">
+                                    <a class="link-primary">
+                                    @Html.ActionLink("Forgot password?", "ResetPassword", "Account")
+                                    </a>
+                                </div>
+                                <div class="text-gray-500 text-center fw-semibold fs-6">
+                                    Need an account?
+                                @Html.ActionLink("Register", "Register", "Account")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* <svg id="SvgjsSvg1001" width="2" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.dev" style="overflow: hidden; top: -100%; left: -100%; position: absolute; opacity: 0;"><defs id="SvgjsDefs1002"></defs><polyline id="SvgjsPolyline1003" points="0,0"></polyline><path id="SvgjsPath1004" d="M0 0 "></path></svg> *@
+    @* <div class="GradientMesh_MeshContainer__3et4t" aria-hidden="true"><div class="GradientMesh_GradientColor__rYatu GradientMesh_index-0__AQJpy" style="background: radial-gradient(circle, rgb(69, 5, 9) 0px, rgba(69, 5, 9, 0) 50%) no-repeat; top: 32%; left: 85%; width: 20%; height: 20%;"></div><div class="GradientMesh_GradientColor__rYatu GradientMesh_index-1__FuetZ" style="background: radial-gradient(circle, rgb(144, 32, 62) 0px, rgba(144, 32, 62, 0) 50%) no-repeat; top: 28%; left: 82%; width: 25%; height: 25%;"></div><div class="GradientMesh_GradientColor__rYatu GradientMesh_index-2__g3MMm" style="background: radial-gradient(circle, rgb(175, 61, 142) 0px, rgba(175, 61, 142, 0) 50%) no-repeat; top: 38%; left: 81%; width: 25%; height: 25%;"></div><div class="GradientMesh_GradientColor__rYatu GradientMesh_index-3__STmtT" style="background: radial-gradient(circle, rgb(174, 61, 114) 0px, rgba(174, 61, 114, 0) 50%) no-repeat; top: 25%; left: 75%; width: 40%; height: 40%;"></div><div class="GradientMesh_GradientColor__rYatu GradientMesh_index-4__mCO8T" style="background: radial-gradient(circle, rgb(225, 173, 201) 0px, rgba(225, 173, 201, 0) 50%) no-repeat; top: 20%; left: 60%; width: 60%; height: 60%;"></div><div class="GradientMesh_GradientColor__rYatu GradientMesh_index-5__y2Iqg" style="background: radial-gradient(circle, rgb(196, 222, 243) 0px, rgba(196, 222, 243, 0) 50%) no-repeat; top: 30%; left: 75%; width: 45%; height: 45%;"></div><div class="GradientMesh_Interactive__7Mgh9 GradientMesh_Light__JX1aa" style="transform: translateX(1415px) translateY(257px) translateZ(0px);"></div></div> *@
+    <div class="GradientMesh_MeshContainer__3et4t" aria-hidden="true">
+   <div class="GradientMesh_GradientColor__rYatu GradientMesh_index-0__AQJpy" 
+        style="background: radial-gradient(circle,  rgba(255, 202, 66, 0.79) 0px, rgba(244, 178, 201, 0) 50%) no-repeat;
+        top: 15%; 
+        right :5%;
+        width: 50%; 
+        height: 50%;"></div>
+
+
+   <div class="GradientMesh_GradientColor__rYatu GradientMesh_index-1__FuetZ" 
+   style="background: radial-gradient(circle, rgb(129, 52, 255) 0px, rgba(255, 221, 204, 0) 50%) no-repeat; 
+        top: 5%; 
+        right: 0%; 
+        width: 60%; 
+        height: 60%;">
+        </div>
+   <div class="GradientMesh_GradientColor__rYatu GradientMesh_index-2__g3MMm" 
+   style="background: radial-gradient(circle, rgb(255, 88, 228) 0px, rgba(172, 109, 170, 0) 50%) no-repeat;
+        top: -10%; 
+        right: -10%;
+        width: 80%; 
+        height: 80%;">
+        </div>
+   <div class="GradientMesh_GradientColor__rYatu GradientMesh_index-3__STmtT" 
+   style="background: radial-gradient(circle, rgb(57, 172, 255) 0px, rgba(201, 220, 171, 0) 50%) no-repeat;
+        top: -20%;
+        right: -40%;
+        width: 100%; 
+        height: 100%;">
+        </div>
+   <div class="GradientMesh_GradientColor__rYatu GradientMesh_index-4__mCO8T" 
+   style="background: radial-gradient(circle, rgb(199, 79, 255) 0px, rgba(57, 57, 157, 0) 50%) no-repeat; 
+        top: 0%;
+        right: -40%; 
+        width: 100%;
+        height: 100%;">
+        </div>
+ @*   <div class="GradientMesh_GradientColor__rYatu GradientMesh_index-5__y2Iqg" style="background: radial-gradient(circle, rgb(168, 142, 178) 0px, rgba(168, 142, 178, 0) 50%) no-repeat; top: 7%; left: 52%; width: 54%; height: 54%;"></div>
+   <div class="GradientMesh_GradientColor__rYatu GradientMesh_index-6__ZQnlI" style="background: radial-gradient(circle, rgb(182, 208, 213) 0px, rgba(182, 208, 213, 0) 50%) no-repeat; top: -10%; left: 40%; width: 100%; height: 100%;"></div> *@
+   <div class="GradientMesh_Interactive__7Mgh9 GradientMesh_Light__JX1aa" style="transform: translateX(965px) translateY(225px) translateZ(0px);"></div>
+</div>
+    <script type="text/javascript">
+        $.validator.unobtrusive.parse($('#frmLogin'));
+
+        ////Disable Back Button In All Browsers.
+        //function DisableBackButtonAllBrowsers() {
+        //    window.history.forward()
+        //};
+        //DisableBackButtonAllBrowsers();
+        //window.onload = DisableBackButtonAllBrowsers;
+        //window.onpageshow = function (evts) { if (evts.persisted) DisableBackButtonAllBrowsers(); };
+        //window.onunload = function () { void (0) };
+        $("#target").submit(function (event) {
+            $("#LoginOverlay").show();
+            $("#submitbtn").trigger();
+        });
+    </script>
+    <style>
+        .login-bg-image {
+            background-image: url(../Clients/@clientname/Images/parentimg.png);
+            background-repeat: no-repeat;
+        }
+    </style>
+</body>
+</html>

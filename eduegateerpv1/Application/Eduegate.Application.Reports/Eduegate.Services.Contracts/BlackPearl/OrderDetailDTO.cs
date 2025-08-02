@@ -1,0 +1,54 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Eduegate.Services.Contracts.Eduegates
+{
+    public class OrderDetailDTO
+    {
+        [DataMember]
+        public long TransactionIID { get; set; }
+
+        [DataMember]
+        public Nullable<long> ProductID { get; set; }
+
+        [DataMember]
+        public string ProductName { get; set; }
+
+        [DataMember]
+        public string ProductImageUrl { get; set; }
+
+        [DataMember]
+        public string ProductUrl { get; set; }
+
+        [DataMember]
+        public Nullable<long> ProductSKUMapID { get; set; }
+
+        [DataMember]
+        public Nullable<decimal> Quantity { get; set; }
+
+        [DataMember]
+        public Nullable<long> UnitID { get; set; }
+
+        [DataMember]
+        public Nullable<decimal> DiscountPercentage { get; set; }
+
+        [DataMember]
+        public Nullable<decimal> UnitPrice { get; set; }
+
+        [DataMember]
+        public Nullable<decimal> Amount { get; set; }
+
+        [DataMember]
+        public Nullable<decimal> ExchangeRate { get; set; }
+
+        [DataMember]
+        public List<KeyValuePair<byte, string>> Properties { get; set; }
+
+        [DataMember]
+        public List<KeyValuePair<long, string>> Categories { get; set; }
+    }
+}

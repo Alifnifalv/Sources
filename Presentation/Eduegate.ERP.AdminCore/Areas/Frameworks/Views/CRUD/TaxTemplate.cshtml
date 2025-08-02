@@ -1,0 +1,26 @@
+﻿@model Eduegate.Web.Library.ViewModels.Common.CRUDMasterDetailViewModel
+@{ 
+    var headSpan = long.Parse(TempData["HeaderCount"].ToString()) - 2;
+
+    if (Model.MasterViewModel.GetType().GetProperty("TaxDetails") != null)
+    {
+        <tr class="subtotal" ng-repeat="tax in CRUDModel.Model.MasterViewModel.TaxDetails.Taxes">
+            <td colspan="@(headSpan - 4)" class="textright"><span>{{tax.TaxName}} - </span></td>
+            <td><span>(incl.)</span></td>
+            <td>
+                <input type="hidden" value="{{tax.InclusiveTaxAmount = (CRUDModel.Model.DetailViewModel|sumByKey:'InclusiveTaxAmount')}}" />
+                <input class="caption" type="hidden" value="{{CRUDModel.Model.MasterViewModel.InclusiveTaxAmount = (CRUDModel.Model.DetailViewModel|sumByKey:'InclusiveTaxAmount')}}" />
+                <span class="value discount caption" type="text">{{( tax.InclusiveTaxAmount | number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span>
+            </td>
+            <td><span>(excl.)</span></td>
+            <td class="textright">
+                <input class="caption" type="hidden" value="{{tax.ExclusiveTaxAmount = (CRUDModel.Model.DetailViewModel|sumByKey:'ExclusiveTaxAmount')}}" />
+                <input class="caption" type="hidden" value="{{CRUDModel.Model.MasterViewModel.ExclusiveTaxAmount = (CRUDModel.Model.DetailViewModel|sumByKey:'ExclusiveTaxAmount')}}" />
+                <input class="caption" type="hidden" value="{{CRUDModel.Model.MasterViewModel.TaxAmount = (CRUDModel.Model.DetailViewModel|sumByKey:'TaxAmount')}}" />
+                <span class="value discount caption" type="text">{{( tax.ExclusiveTaxAmount | number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span>
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+    }
+}

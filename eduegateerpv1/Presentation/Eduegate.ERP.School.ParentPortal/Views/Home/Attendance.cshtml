@@ -1,0 +1,413 @@
+﻿@{
+    ViewBag.Title = "Attendance";
+}
+
+@{ if (Request.IsAjaxRequest()) { Layout = null; }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6">
+    <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2">
+        <h1 class="d-flex text-dark fw-bold m-0 fs-3">Attendance</h1>
+        <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+            <li class="breadcrumb-item text-gray-600">
+                <a class="text-gray-600 text-hover-primary">Home</a>
+            </li>
+            <li class="breadcrumb-item text-gray-600">Ward</li>
+            <li class="breadcrumb-item text-gray-500">Attendance</li>
+        </ul>
+    </div>
+</div>
+            <div class="flex-column-fluid">
+                <div id="StudentAttendence" class="windowcontainer">
+                    <div class="row" style="padding:1rem 0">
+                        <div class="col-md-3">
+                            <label>Month</label>
+                            <select id="attendanceMonth" ng-change="getStudentAttendance()"
+                                    ng-model="SelectedDate.SelectedMonth" class="form-control">
+                                <option value="0">Jan</option>
+                                <option value="1">Feb</option>
+                                <option value="2">Mar</option>
+                                <option value="3">Apr</option>
+                                <option value="4">May</option>
+                                <option value="5">Jun</option>
+                                <option value="6">Jul</option>
+                                <option value="7">Aug</option>
+                                <option value="8">Sep</option>
+                                <option value="9">Oct</option>
+                                <option value="10">Nov</option>
+                                <option value="11">Dec</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Year</label>
+                            <select id="attendanceYear" ng-change="getStudentAttendance()" ng-model="SelectedDate.SelectedYear" class="form-control">
+                                <option ng-repeat="year in Years" value="{{year}}">{{year}}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row" style="padding:1rem 0">
+                        @*<div class="col-md-6">
+            <span class="daycalender_week" ng-repeat="week in WKDays track by $index">
+                <label style="color: darkblue"><b>{{week.name}}</b></label>
+            </span>
+            <div class="daycalender" ng-repeat="monthDay in MonthDays">
+                <label>{{monthDay.Day}}</label>
+                <div style="text-align: center;">
+                    <b class="daycalender_inner" aria-hidden="true">
+                        <span ng-class="{'Pressent_P': monthDay.StatusData==='P', 'Pressent_A': monthDay.StatusData==='A', 'Pressent_UM': monthDay.StatusData==='UM', 'Pressent_H': monthDay.StatusData==='H', 'Pressent_AE': monthDay.StatusData==='AE', 'Pressent_L': monthDay.StatusData==='L', 'Pressent_NA': monthDay.StatusData==='NA', 'Pressent_T': monthDay.StatusData==='T', 'Pressent_TE': monthDay.StatusData==='TE', 'Pressent_W': monthDay.StatusData==='W'}">
+                            {{monthDay.StatusData}}
+                        </span>
+                    </b>
+                </div>
+            </div>
+        </div>*@
+                        <div class=" col-12 ">
+                            <div id='calendar'></div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <div class="card-px pt-5 pb-10 flex-grow-1">
+                                <div class="row g-0 mt-5 mb-10">
+                                    <div class="col">
+                                        <div class="d-flex align-items-center me-2">
+                                            <div class="symbol symbol-50px me-3">
+                                                <div class="symbol-label " style="background-color: #81c784;">
+                                                    <span class="text-white ">
+                                                        p
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="fs-4 text-dark fw-bold">Present</div>
+                                                <div class="fs-7 text-muted fw-bold"> P (Present)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="d-flex align-items-center me-2">
+                                            <div class="symbol symbol-50px me-3">
+                                                <div class="symbol-label" style="background-color: #ef5350;">
+                                                    <span class="text-white">
+                                                        A
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="fs-4 text-dark fw-bold">Absent</div>
+                                                <div class="fs-7 text-muted fw-bold">A (Absent)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row g-0 mt-5 mb-10">
+                                    <div class="col">
+                                        <div class="d-flex align-items-center me-2">
+                                            <div class="symbol symbol-50px me-3">
+                                                <div class="symbol-label" style=" background-color: #e57373;">
+                                                    <span class="text-white">
+                                                        AE
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="fs-4 text-dark fw-bold">Absent excused</div>
+                                                <div class="fs-7 text-muted fw-bold">  AE (Absent excused)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="d-flex align-items-center me-2">
+                                            <div class="symbol symbol-50px me-3">
+                                                <div class="symbol-label " style="background-color: #f8bbd0;">
+                                                    <span class="text-white ">
+                                                        H
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="fs-4 text-dark fw-bold">Holiday</div>
+                                                <div class="fs-7 text-muted fw-bold">  H (Holiday)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-0 mt-5 mb-10">
+                                    <div class="col">
+                                        <div class="d-flex align-items-center me-2">
+                                            <div class="symbol symbol-50px me-3">
+                                                <div class="symbol-label " style="background-color: #ce93d8;">
+                                                    <span class="text-white">
+                                                        L
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="fs-4 text-dark fw-bold">Late</div>
+                                                <div class="fs-7 text-muted fw-bold"> L (Late)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="d-flex align-items-center me-2">
+                                            <div class="symbol symbol-50px me-3">
+                                                <div class="symbol-label" style="background-color: #b2ebf2;">
+                                                    <span class="text-white ">
+                                                        T
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="fs-4 text-dark fw-bold">Tardy</div>
+                                                <div class="fs-7 text-muted fw-bold">   T (Tardy)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-0 mt-5 mb-10">
+                                    <div class="col">
+                                        <div class="d-flex align-items-center me-2">
+                                            <div class="symbol symbol-50px me-3">
+                                                <div class="symbol-label" style=" background-color: #b2dfdb;">
+                                                    <span class="text-white">
+                                                        TE
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="fs-4 text-dark fw-bold">Tardy excused</div>
+                                                <div class="fs-7 text-muted fw-bold">TE (Tardy excused)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="d-flex align-items-center me-2">
+                                            <div class="symbol symbol-50px me-3">
+                                                <div class="symbol-label " style=" background-color: #90a4ae;">
+                                                    <span class="text-white">
+                                                        UM
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="fs-4 text-dark fw-bold">Unmarked</div>
+                                                <div class="fs-7 text-muted fw-bold"> UM (Unmarked)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row g-0 mt-5 mb-10">
+                                    <div class="col">
+                                        <div class="d-flex align-items-center me-2">
+                                            <div class="symbol symbol-50px me-3">
+                                                <div class="symbol-label" style="background-color: #c5cae9; ">
+                                                    <span class="text-white">
+                                                        W
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="fs-4 text-dark fw-bold">Weekend</div>
+                                                <div class="fs-7 text-muted fw-bold">  W (Weekend)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="d-flex align-items-center me-2">
+                                            <div class="symbol symbol-50px me-3">
+                                                <div class="symbol-label" style="background-color: #e0e0e0; ">
+                                                    <span class="text-white">
+                                                        NA
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="fs-4 text-dark fw-bold">Not applicable</div>
+                                                <div class="fs-7 text-muted fw-bold"> NA (Not applicable)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<div class="row gy-5 g-xl-10">
+
+    <!--begin::Col-->
+    <div class="col-xl-4 mb-5 mb-xl-10">
+        <!--begin::Engage widget 1-->
+        <!-- END BEGIN PROFILE SIDEBAR -->
+        <!-- BEGIN PROFILE CONTENT -->
+        <!--end::Engage widget 1-->
+    </div>
+    <!--end::Col-->
+</div>
+
+<style>
+    .Pressent_A {
+        height: 100%;
+        width: 100%;
+        background-color: #ef5350;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        padding: 1rem 1.5rem 1rem;
+        float: none;
+        border-radius: 100%;
+    }
+
+    .Pressent_AE {
+        height: 100%;
+        width: 100%;
+        background-color: #e57373;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        padding: 1rem 1rem 1rem;
+        float: none;
+        border-radius: 100%;
+    }
+
+    .Pressent_H {
+        height: 100%;
+        width: 100%;
+        background-color: #f8bbd0;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        padding: 1rem 1.5rem 1rem;
+        float: none;
+        border-radius: 100%;
+    }
+
+    .Pressent_L {
+        height: 100%;
+        width: 100%;
+        background-color: #ce93d8;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        padding: 1rem 1.5rem 1rem;
+        float: none;
+        border-radius: 100%;
+    }
+
+    .Pressent_NA {
+        height: 100%;
+        width: 100%;
+        background-color: #e0e0e0;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        padding: 1rem 1rem 1rem;
+        float: none;
+        border-radius: 100%;
+    }
+
+    .Pressent_P {
+        height: 100%;
+        width: 100%;
+        background-color: #81c784;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        padding: 1rem 1.5rem 1rem;
+        float: none;
+        border-radius: 100%;
+    }
+
+    .Pressent_T {
+        height: 100%;
+        width: 100%;
+        background-color: #b2ebf2;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        padding: 1rem 1.5rem 1rem;
+        float: none;
+        border-radius: 100%;
+    }
+
+    .Pressent_TE {
+        height: 100%;
+        width: 100%;
+        background-color: #b2dfdb;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        padding: 1rem 1.3rem 1rem;
+        float: none;
+        border-radius: 100%;
+    }
+
+    .Pressent_UM {
+        height: 100%;
+        width: 100%;
+        background-color: #90a4ae;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        padding: 1rem 1rem 1rem;
+        float: none;
+        border-radius: 100%;
+    }
+
+    .Pressent_W {
+        height: 100%;
+        width: 100%;
+        background-color: #c5cae9;
+        font-weight: bold;
+        color: black;
+        text-align: center;
+        padding: 1rem 1.5rem 1rem;
+        float: none;
+        border-radius: 100%;
+    }
+
+    .daycalender {
+        display: inline-block;
+        width: 14.2857142857%;
+        border: 1px solid rgb(229 222 222);
+        /*height: 55px;*/
+        font-size: 1rem;
+        padding: 5px 5px 5px 5px;
+        text-align: left;
+        /* border-radius: 10px; */
+    }
+
+    .daycalender_inner {
+        /*height: 30px;
+        width: 30px;
+        border-radius: 100%;
+        padding-top: 3px;
+        color: white;
+        text-align: center;*/
+        height: 100%;
+        width: 100%;
+        color: white;
+        text-align: center;
+        padding: 1rem 0rem 1rem;
+        float: right;
+        border-radius: 10px;
+    }
+
+    .daycalender_week {
+        display: inline-block;
+        width: 14.2857142857%;
+        border: 1px solid rgb(124, 0, 0);
+        height: 30px;
+        font-size: 1rem;
+        padding: 5px 2px 5px 0px;
+        text-align: center;
+        /* border-radius: 10px; */
+    }
+</style>

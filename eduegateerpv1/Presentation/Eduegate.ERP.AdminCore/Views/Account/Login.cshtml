@@ -1,0 +1,247 @@
+﻿@model Eduegate.ERP.Admin.Models.LoginViewModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Log in";
+    var settingBL = new Eduegate.Domain.Setting.SettingBL(null);
+    var isMultiCompany = settingBL.GetSettingValue<bool>("IsMultiCompany", 0, false);
+    var clientName = settingBL.GetSettingValue<string>("CLIENTINSTANCE");
+    var portalTitle = settingBL.GetSettingValue<string>("PORTALTITLE");
+}
+
+<!DOCTYPE html>
+<html lang="en" ng-app="Eduegate.ERP.Admin">
+<head>
+    <title>@portalTitle</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="@Url.Content("/Images/favicon.ico")" />
+    <link rel="icon" type="image/png" sizes="192x192" href="@Url.Content("/Images/favicon.ico")" />
+    <link rel="shortcut icon" href="@Url.Content("/Images/favicon.ico")" type="image/x-icon" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" name="viewport">
+    
+    <link rel="stylesheet" href="~/Content/jquery-ui.css" />
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css" />
+    @* <link rel="stylesheet" href="~/Content/bootstrap-theme.min.css" /> *@
+    <link rel="stylesheet" href="~/Content/jquery.datetimepicker.min.css" />
+    <link rel="stylesheet" href="~/Content/angular-round-progress-bar.min.css" />
+
+    <link rel="stylesheet" href="~/Content/jquery-bootstrap-datepicker.css" />
+    <link rel="stylesheet" href="~/Content/jkanban.min.css" />
+    <link rel="stylesheet" href="~/Content/modal-popup.css" />
+
+    <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/jquery-3.6.0.js"></script>
+
+    <script src="~/app/app.js"></script>
+
+    @* <script src="~/Scripts/jquery-{version}.js"></script> *@
+    <script src="~/Scripts/jquery.prettyPhoto.js"></script>
+    <script src="~/Scripts/draggable/draggable.bundle.min.js"></script>
+
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.custom.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.custom.js"></script>
+    <script src="~/app/Common/CustomValidation.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.2.2.min.js"></script>
+
+    <script src="~/Scripts/bootstrap.bundle.js"></script>
+    <script src="~/Scripts/respond.js"></script>
+
+    <script src="~/Scripts/angular-route.js"></script>
+    <script src="~/Scripts/angular-animate.js"></script>
+    <script src="~/Scripts/angular-sanitize.js"></script>
+    <script src="~/Scripts/i18n/angular-locale_en.js"></script>
+    <script src="~/Scripts/tmhDynamicLocale.js"></script>
+    <script src="~/Scripts/angular-filter.min.js"></script>
+
+    <!-- The library to replace with your local copy of ng-weekly-scheduler -->
+    <script src="@Url.Content("~/Scripts/ng-weekly-scheduler.js")"></script>
+    <script src="@Url.Content("~/Scripts/daypilot-all.min.js")"></script>
+
+
+    
+    <script src="~/app/controller/Layouts/login-controller.js"></script>
+    
+
+    <script src="~/Scripts/jquery.waypoints.min.js"></script>
+    <script src="~/Scripts/moment.min.js"></script>
+    <script src="~/Scripts/angular-moment.js"></script>
+    <script src="~/Scripts/angular-moment.min.js"></script>
+    <script src="~/Scripts/daterangepicker.js"></script>
+    <script src="~/Scripts/jquery.datetimepicker.full.min.js"></script>
+    <script src="~/Scripts/datetimepicker.js"></script>
+    <script src="~/Scripts/select.js"></script>
+    <script src="~/Scripts/jquery-ui.js"></script>
+    <script src="~/Scripts/jquery.ui.touch-punch.min.js"></script>
+    <script src="~/Scripts/Custom.js"></script>
+    <script src="~/Scripts/dropzone.js"></script>
+    <script src="~/Scripts/zebra_datepicker.js"></script>
+    <script src="~/Scripts/date.js"></script>
+    <script src="~/Scripts/excanvas.js"></script>
+    <script src="~/Scripts/jquery.signature.js"></script>
+    <script src="~/Scripts/interact.js"></script>
+    <script src="~/Scripts/rrule/rrule.js"></script>
+    <script src="~/Scripts/angular-ui/ui-bootstrap-tpls.js"></script>
+    <script src="~/Scripts/boostrapcolorpicker/bootstrap-colorpicker-module.js"></script>
+    <script src="~/Scripts/calendar/angular-bootstrap-calendar.js"></script>
+    <script src="~/Scripts/underscore-min.js"></script>
+    <script src="~/Scripts/shortcut.js"></script>
+
+    <script src="~/app/Common/utility.js"></script>
+    <script src="~/Scripts/JSLINQ.js"></script>
+
+    <script src="~/Scripts/JSLINQ.js"></script>
+    <script src="~/Scripts/toaster.js"></script>
+
+    <link href="~/Content/login-style-grey.css" type="text/css" rel="stylesheet" />
+    <link href="~/Clients/@clientName/css/clientstyle.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="~/Scripts/opencv.js"></script>
+    <script src="~/Scripts/angular-flickity.js"></script>
+
+
+
+    <script src="~/Scripts/ng-map.min.js" type="text/javascript"></script>
+  </head>
+
+<body ng-controller="LoginController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model))">
+    <div id="LoginOverlay" class="preload-overlay">
+		<span id="LoginButtonLoader" class="preloadImg"><img src="/Images/preloader.GIF" alt="loader" /></span>
+	</div>
+
+    <div class="loginpage flex-center d-flex flex-column flex-lg-row flex-column-fluid" align="center">
+        <div class=" d-lg-flex flex-lg-row-fluid d-none">
+            <div class="d-flex flex-center w-lg-50 pt-15 pt-lg-0 px-10 h-100">
+                <div class="bgTopSection-new">
+                    <div class="big-circles">
+                        @* <div class="eclipse-1"> </div> *@
+                        <div class="eclipse-2"> </div>
+                        <div class="eclipse-5"> </div>
+
+                        <div class="eclipse-4"> </div>
+                        <div class="eclipse-3 	d-none d-xl-block d-xxl-block "> </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex flex-column-fluid flex-lg-row-auto w-lg-50 justify-content-center justify-content-lg-center">
+        <div class="bg-body d-flex flex-column align-items-stretch flex-center rounded-4 ">
+            <!--begin::Wrapper-->
+                <div class="bg-body card d-flex flex-center flex-column flex-column-fluid p-10  px-lg-6 py-lg-20 pb-15 pb-lg-20" ng-model="LoginModel">
+     
+                <!--begin::Form-->
+                @using (Html.BeginForm(null, null, FormMethod.Post, new { @class = "form  fv-plugins-bootstrap5 fv-plugins-framework", id = "frmLogin", @ng_submit = "Signin($event);" }))
+                {
+                    <form class="" novalidate="novalidate">
+                        <div class="text-center mb-11">
+                                <a  class="d-block mx-auto pb-20">
+                                    <img alt="Logo" src="~/Clients/@clientName/Images/logo/PODARLOGO-01.png" class=" h-35px">
+                                </a>
+                            <h1 class="text-dark fw-bolder mb-3">
+                                Sign In
+                            </h1>
+                        </div>
+                        <div class="my-4">
+                            <span class="text-gray-700 fw-semibold fs-6">Enter your user ID or email to access your account.</span>
+                        </div>
+
+                            <div class="modal" id="kt_modal_create_app">
+                                <!--begin::Modal dialog-->
+                                <div class="modal-dialog modal-dialog-centered mw-900px">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h2>Capture Face</h2>
+                                            <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                                                <i class="ki-outline ki-cross fs-1"></i>
+                                            </div>
+                                        </div>
+                                        <div class="modal-body py-lg-10 px-lg-10">
+                                            <canvas id="canvas"></canvas>
+
+                                            <video id="video" width="640" height="480" autoplay muted></video>
+
+                                            @* <input type="file" id="fileInput" accept="image/*"> *@
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button ng-click="startFaceDetection()" id="stopRecordingBtn" class="btn btn-primary">Capture</button>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        
+                            
+
+                        <div class="fv-row mb-8 fv-plugins-icon-container">
+                            @Html.TextBoxFor(model => model.Email, new { @class = "required  form-control bg-transparent", @ng_model = "LoginModel.Email", @ng_keyup = "EmailKeyup();", @placeholder = "Email" })
+                                <span class="fv-plugins-message-container invalid-feedback" ng-show="IsEmailPasswordIncorrect">Invalid User name or Password</span>
+
+                        </div>
+                        <div class="fv-row mb-3 fv-plugins-icon-container">
+                            @Html.PasswordFor(m => m.Password, new { @class = "required  form-control bg-transparent", @ng_model = "LoginModel.Password", @ng_keyup = "PasswordKeyup();", @placeholder = "Password" })
+                            @Html.ValidationMessageFor(m => m.Password, null, new { @class = "fv-plugins-message-container invalid-feedback" })
+                        </div>
+                        <div class="d-flex flex-end flex-wrap gap-3 fs-base fw-semibold mb-8">
+                           
+                                <input type="checkbox" class="custom-checkbox" id="checkbox-1" value="1" ng-model="LoginModel.RememberMe">
+                        
+
+                            <!--begin::Link-->
+                            <a class="link-primary">
+                                Remember me!
+                            </a>
+                            <!--end::Link-->
+                        </div>
+                        <!--end::Wrapper-->
+                        <!--begin::Submit button-->
+
+                        <div class="d-grid mb-10">
+                            <button type="submit" id="kt_sign_in_submit" class="btn btn-primary">
+                                <span class="indicator-label">
+                                    Log In
+                                </span>
+                                <span class="indicator-progress" id="indicator-progress" >
+                                    Please wait...    <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                </span>
+                            </button>
+                       @*     <span class="my-3">or</span>
+
+                                <a  class="btn btn-flex btn-outline btn-text-gray-700 btn-active-color-primary bg-state-light flex-center text-nowrap w-100 mt-5"
+                                   data-toggle="modal" ng-click="faceDetectionModel()" data-target="#kt_modal_create_app">
+                                    <img alt="Logo" src="/Images/face.png" class="h-15px me-3">
+                                    Face ID
+                                </a> *@
+                        </div>
+                        <div class="text-gray-500 text-center fw-semibold fs-6">
+                            Not a Member yet?
+
+                            <a class="link-primary" type="submit">
+                                Contact admin
+                            </a>
+                        </div>
+                    </form>
+                }
+            </div>
+         
+            <div class="d-flex justify-content-center align-items-center position-absolute top-0 bottom-0 end-0 start-0  opacity-30" ng-show="$scope.ShowButtonLoader == true" style=" background: rgba(0, 0, 0, 0.4);" >
+                <div class="spinner-border text-primary " role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <!--end::Wrapper-->
+            <!--begin::Footer-->
+            <!--end::Footer-->
+        </div>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+        $.validator.unobtrusive.parse($('#frmLogin'));
+    </script>
+</body>
+</html>

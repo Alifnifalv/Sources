@@ -1,0 +1,598 @@
+﻿@using StackExchange.Profiling;
+
+@{
+    string cultureCode = "en";
+    var settingBL = new Eduegate.Domain.Setting.SettingBL(null);
+
+    var smartlayout = Context.Request.Query["layout"];
+    var theme = Context.Request.Query["theme"];
+    var clientBootstrapDateFormat = settingBL.GetSettingValue<string>("ClientBootstrapDateFormat", "d/m/Y");
+    var clientBootstrapDateTimeFormat = settingBL.GetSettingValue<string>("ClientBootstrapDateTimeFormat", "d/m/Y H:i");
+
+    if (ViewBag.CultureCode != null)
+    {
+        cultureCode = ViewBag.CultureCode;
+    }
+
+}
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html dir="@(cultureCode == "ar" ? "rtl" : "ltr")" lang="@cultureCode" ng-app="Eduegate.ERP.Admin" class="@(cultureCode == "ar" ? "layout_ar" : "layout_en")">
+<head>
+    @{
+        var clientName = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENTINSTANCE");
+        // var settingBL = new Eduegate.Domain.Setting.SettingBL(null);
+        var portalTitle = settingBL.GetSettingValue<string>("PORTALTITLE");
+        var dateTimeFormat = settingBL.GetSettingValue<string>("DateTimeFormat");
+        var dateFormat = settingBL.GetSettingValue<string>("DateFormat");
+    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>@portalTitle</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="@Url.Content("/Images/favicon.ico")" />
+    <link rel="icon" type="image/png" sizes="192x192" href="@Url.Content("/Images/favicon.ico")" />
+    <link rel="shortcut icon" href="@Url.Content("/Images/favicon.ico")" type="image/x-icon" />
+    <script type="text/javascript">
+        var CKEDITOR_BASEPATH = "@Url.Content("~/Scripts/ckeditor/")";
+    </script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDJdtz9MrZdbaGkT4g3at7W0KBBffHRfk" type="text/javascript"></script>
+
+
+
+
+
+    <link rel="stylesheet" href="~/Content/font-awesome.min.css" />
+    @* <link rel="stylesheet" href="~/Content/font-awesome.css" /> *@
+    <link rel="stylesheet" href="~/Content/daterangepicker.css" />
+    <link rel="stylesheet" href="~/Content/Select.css" />
+    <link rel="stylesheet" href="~/Content/Select2.css" />
+    <link rel="stylesheet" href="~/Content/dropdownsearch.css" />
+    <link rel="stylesheet" href="~/Content/jquery-ui.css" />
+
+    <link rel="stylesheet" href="~/lib/bootstrap-5.1.3-dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-5.1.3-dist/css/bootstrap-datetimepicker.min.css" />
+    @* <link rel="stylesheet" href="~/css/jquery.json-viewer.css" /> *@
+
+    @* <link rel="stylesheet" href="~/Content/bootstrap.min.css" /> *@
+    @* <link rel="stylesheet" href="~/Content/bootstrap-theme.min.css" /> *@
+    <link rel="stylesheet" href="~/Content/default.css" />
+    <link rel="stylesheet" href="~/Content/jquery.datetimepicker.min.css" />
+    @* <link rel="stylesheet" href="~/Content/materialize.min.css" /> *@
+    @* <link rel="stylesheet" href="~/Content/datetimepicker.css" /> *@
+    <link rel="stylesheet" href="~/Content/prettyPhoto.css" />
+    <link rel="stylesheet" href="~/Content/ng-weekly-scheduler.css" />
+    @*<link rel="stylesheet" href="~/Content/c3.min.css" />*@
+    <link rel="stylesheet" href="~/Content/angular-bootstrap-calendar.min.css" />
+    <link rel="stylesheet" href="~/Content/angular-round-progress-bar.min.css" />
+    <link rel="stylesheet" href="~/Content/eduegate-scheduler.css" />
+    @* <link rel="stylesheet" href="~/Content/calendar-heatmap.css" /> *@
+    @* <link rel="stylesheet" href="~/Content/cropper.min.css" /> *@
+    @* <link rel="stylesheet" href="~/Content/jquery.fancybox.min.css" /> *@
+    @* <link rel="stylesheet" href="~/Content/viewer.css" /> *@
+    @* <link rel="stylesheet" href="~/Content/jquery-bootstrap-datepicker.css" /> *@
+    <link rel="stylesheet" href="~/Content/jkanban.min.css" />
+    <link rel="stylesheet" href="~/Content/modal-popup.css" />
+    <link rel="stylesheet" href="~/Content/smart-settings.css" />
+    <link rel="stylesheet" href="~/Content/cytoscape.style.css" />
+    <link rel="stylesheet" href="~/Content/report-viewer.min.css" />
+    <link rel="stylesheet" href="~/Content/semantic.min.css" />
+   
+   
+    @{
+        if (theme == "blue")
+        {
+            <link rel="stylesheet" href="~/Content/styles-blue.css" />
+
+        }
+        else
+        {
+            <link rel="stylesheet" href="~/Content/styles-gray.css" />
+        }
+    }
+
+    <script src="~/Scripts/jquery-3.6.0.js"></script>
+    <script src="~/Scripts/jquery.prettyPhoto.js"></script>
+    <script src="~/Scripts/draggable/draggable.bundle.min.js"></script>
+
+
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.custom.js"></script>
+    <script src="~/app/Common/CustomValidation.js"></script>
+    <script src="~/lib/signalr/jquery.signalR-2.4.1.min.js" asp-append-version="true"></script>
+    <script src="~/lib/jsonviewer/jquery.json-viewer.js" asp-append-version="true"></script>
+
+    @* <script src="~/Scripts/bootstrap.bundle.js"></script> *@
+    <script src="~/lib/bootstrap-5.1.3-dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="~/lib/moment/moment.min.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap-5.1.3-dist/js/bootstrap-datetimepicker.min.js" asp-append-version="true"></script>
+
+    <script src="~/Scripts/respond.js"></script>
+    <script src="~/Scripts/jquery.steps.min.js"></script>
+
+    <script src="~/Scripts/angular.js"></script>
+    <script src="~/Scripts/angular-route.js"></script>
+    <script src="~/Scripts/angular-animate.js"></script>
+    <script src="~/Scripts/angular-sanitize.js"></script>
+    <script src="~/Scripts/i18n/angular-locale_en.js"></script>
+    <script src="~/Scripts/tmhDynamicLocale.js"></script>
+    <script src="~/Scripts/angular-filter.min.js"></script>
+    @*<script src="@Url.Content("~/Scripts/cropper.js")"></script>*@
+
+    <script src="@Url.Content("~/Scripts/ng-weekly-scheduler.js")"></script>
+    <script src="@Url.Content("~/Scripts/daypilot-all.min.js")"></script>
+
+
+    <script src="~/app/app.js"></script>
+
+    <script src="~/app/directives/Angularckeditor.js" asp-append-version="true"></script>
+    <script src="~/app/directives/FileModel.js" asp-append-version="true"></script>
+    <script src="~/app/directives/Initialvalue.js" asp-append-version="true"></script>
+    <script src="~/app/directives/Angulardatepicker.js" asp-append-version="true"></script>
+    <script src="~/app/directives/Capitalize.js" asp-append-version="true"></script>
+    <script src="~/app/directives/custom-ui-select.js" asp-append-version="true"></script>
+    <script src="~/app/directives/custom-validation.js" asp-append-version="true"></script>
+    <script src="~/app/directives/Customdatepicker.js" asp-append-version="true"></script>
+    <script src="~/app/directives/Datetimepicker.js" asp-append-version="true"></script>
+    <script src="~/app/directives/FileModel.js" asp-append-version="true"></script>
+    <script src="~/app/directives/Initialvalue.js" asp-append-version="true"></script>
+    <script src="~/app/directives/LowerCase.js" asp-append-version="true"></script>
+    <script src="~/app/directives/NgBlur.js" asp-append-version="true"></script>
+    <script src="~/app/directives/NgWith.js" asp-append-version="true"></script>
+    <script src="~/app/directives/NgWithModel.js" asp-append-version="true"></script>
+    <script src="~/app/directives/NumbersOnly.js" asp-append-version="true"></script>
+    <script src="~/app/directives/Onerrorsrc.js" asp-append-version="true"></script>
+    <script src="~/app/directives/Prettyp.js" asp-append-version="true"></script>
+    <script src="~/app/directives/Selectonclick.js" asp-append-version="true"></script>
+    <script src="~/app/directives/Selectonfocus.js" asp-append-version="true"></script>
+    <script src="~/app/directives/skienDatepicker.js" asp-append-version="true"></script>
+    <script src="~/app/directives/Timepicker.js" asp-append-version="true"></script>
+    <script src="~/app/directives/UpperCase.js" asp-append-version="true"></script>
+    <script src="~/app/directives/Colorpicker.js" asp-append-version="true"></script>
+    <script src="~/app/directives/FileType.js" asp-append-version="true"></script>
+
+    <script src="~/app/services/accountService.js" asp-append-version="true"></script>
+    <script src="~/app/services/commonService.js" asp-append-version="true"></script>
+    <script src="~/app/services/CRUD.Services.js" asp-append-version="true"></script>
+    <script src="~/app/services/productService.js" asp-append-version="true"></script>
+    <script src="~/app/services/purchaseorderService.js" asp-append-version="true"></script>
+    <script src="~/app/services/SubscriptionSignalRService.js" asp-append-version="true"></script>
+    <script src="~/app/services/RealtimeSignalRService.js" asp-append-version="true"></script>
+
+    <script src="~/app/filters/DateFilter.js" asp-append-version="true"></script>
+    <script src="~/app/filters/MakePositive.js" asp-append-version="true"></script>
+    <script src="~/app/filters/PropsFilter.js" asp-append-version="true"></script>
+    <script src="~/app/filters/Range.js" asp-append-version="true"></script>
+    <script src="~/app/filters/Safehtml.js" asp-append-version="true"></script>
+    <script src="~/app/filters/SumByKey.js" asp-append-version="true"></script>
+    <script src="~/app/filters/Trusted.js" asp-append-version="true"></script>
+    <script src="~/app/filters/ext.js" asp-append-version="true"></script>
+    <script src="~/app/filters/Alert.js" asp-append-version="true"></script>
+
+    <script src="~/app/common/BrowserNotifier.js" asp-append-version="true"></script>
+    <script src="~/app/common/chartbuilder-chartjs.js" asp-append-version="true"></script>
+    <script src="~/app/common/CustomValidation.js" asp-append-version="true"></script>
+    <script src="~/app/common/endlesspagination.js" asp-append-version="true"></script>
+    <script src="~/app/common/schedule.js" asp-append-version="true"></script>
+    <script src="~/app/common/util.js" asp-append-version="true"></script>
+    <script src="~/app/common/utility.js" asp-append-version="true"></script>
+
+    @* <script src="~/Scripts/jquery.waypoints.min.js"></script> *@
+    <script src="~/Scripts/moment.min.js"></script>
+    <script src="~/Scripts/angular-moment.js"></script>
+    <script src="~/Scripts/angular-moment.min.js"></script>
+    <script src="~/Scripts/daterangepicker.js"></script>
+    <script src="~/Scripts/jquery.datetimepicker.full.min.js"></script>
+    @* <script src="~/Scripts/datetimepicker.js"></script> *@
+    <script src="~/Scripts/select.js"></script>
+    <script src="~/Scripts/jquery-ui.js"></script>
+    <script src="~/Scripts/jquery.ui.touch-punch.min.js"></script>
+    <script src="~/Scripts/Custom.js"></script>
+    <script src="~/Scripts/dropzone.js"></script>
+    <script src="~/Scripts/zebra_datepicker.js"></script>
+    <script src="~/Scripts/date.js"></script>
+    <script src="~/Scripts/excanvas.js"></script>
+    <script src="~/Scripts/jquery.signature.js"></script>
+    <script src="~/Scripts/interact.js"></script>
+    <script src="~/Scripts/rrule/rrule.js"></script>
+    <script src="~/Scripts/angular-ui/ui-bootstrap-tpls.js"></script>
+    <script src="~/Scripts/boostrapcolorpicker/bootstrap-colorpicker-module.js"></script>
+    <script src="~/Scripts/calendar/angular-bootstrap-calendar.js"></script>
+    @*<script src="~/Scripts/d3.js"></script>
+    <script src="~/Scripts/c3.min.js"></script>*@
+    <script src="~/Scripts/underscore-min.js"></script>
+    <script src="~/Scripts/shortcut.js"></script>
+    @* <script src="~/Scripts/calendar-heatmap.js"></script> *@
+    @* <script src="~/Scripts/angular-waypoints.all.min.js"></script> *@
+    @* <script src="~/Scripts/notify.min.js"></script> *@
+    @* <script src="~/Scripts/html2canvas.min.js"></script> *@
+    <script src="~/Scripts/kanban/jkanban.min.js"></script>
+
+    <script src="~/app/Common/utility.js"></script>
+    <script src="~/app/Common/chartbuilder.js"></script>
+    <script src="~/Scripts/JSLINQ.js"></script>
+    <script src="~/app/Common/BrowserNotifier.js"></script>
+
+    <script src="~/Scripts/JSLINQ.js"></script>
+
+    @* <script src="~/Scripts/highcharts/charts-ng.js"></script> *@
+    <script src="~/Scripts/highcharts/highstock.src.js"></script>
+    <script src="~/Scripts/toaster.js"></script>
+
+    <script src="~/Scripts/ng-map.min.js" type="text/javascript"></script>
+
+
+    <!-- The library to replace with your local copy of ng-weekly-scheduler -->
+
+
+    <script src="~/app/controller/Accounts/AccountGroupController.js"></script>
+    <script src="~/app/controller/Accounts/AccountMapsController.js"></script>
+    <script src="~/app/controller/Accounts/AccountVoucherController.js"></script>
+    <script src="~/app/controller/Accounts/AssetController.js"></script>
+    <script src="~/app/controller/Accounts/BudgetingController.js"></script>
+    <script src="~/app/controller/Accounts/BudgetingListController.js"></script>
+    <script src="~/app/controller/Accounts/ChartOfAccountController.js"></script>
+    <script src="~/app/controller/Accounts/MonthlyClosingController.js"></script>
+    <script src="~/app/controller/Accounts/FinancialYearClosingController.js"></script>
+    <script src="~/app/controller/Accounts/SchoolSelectionController.js"></script>
+    <script src="~/app/controller/Admins/CreatePolylineController.js"></script>
+    <script src="~/app/controller/Admins/GrantAccessController.js"></script>
+    <script src="~/app/controller/Admins/ResetController.js"></script>
+    <script src="~/app/controller/Admins/UserDeviceMapController.js"></script>
+    <script src="~/app/controller/Admins/UserManagementController.js"></script>
+    <script src="~/app/controller/Boilerplates/BoilerPlateController.BarChart.js"></script>
+    <script src="~/app/controller/Boilerplates/BoilerPlateController.C3Chart.js"></script>
+    <script src="~/app/controller/Boilerplates/BoilerPlateController.js"></script>
+    <script src="~/app/controller/Boilerplates/BoilerPlateController.LineChart.js"></script>
+    <script src="~/app/controller/Boilerplates/BoilerplateController.PieChart.js"></script>
+    <script src="~/app/controller/Boilerplates/BoilerPlateController.QuickLaunch.js"></script>
+    <script src="~/app/controller/Boilerplates/DashbaordBoilerPlateController.js"></script>
+    <script src="~/app/controller/Boilerplates/SupplierTransactionCountBoilerPlateController.js"></script>
+    <script src="~/app/controller/Boilerplates/TransactionCountBoilerPlateController.js"></script>
+    <script src="~/app/controller/Boilerplates/ListLinkBoilerplateController.js"></script>
+    <script src="~/app/controller/Boilerplates/CardViewBoilerPlateController.js"></script>
+    <script src="~/app/controller/Boilerplates/ListRowExpandBoilerPlateController.js"></script>
+    <script src="~/app/controller/DashBoard/StudentCockpitController.js"></script>    
+    <script src="~/app/controller/CRM/LeadController.js"></script>
+    <script src="~/app/controller/DashBoard/DashboardController.js"></script>
+    <script src="~/app/controller/Employees/EmployeeController.js"></script>
+    <script src="~/app/controller/Frameworks/ActivityController.js"></script>
+    <script src="~/app/controller/Frameworks/ActivityStreamController.js"></script>
+    <script src="~/app/controller/Frameworks/AdvancedSearchController.js"></script>
+    <script src="~/app/controller/Frameworks/AppointmentController.js"></script>
+    <script src="~/app/controller/Frameworks/AttachmentController.js"></script>
+    <script src="~/app/controller/Frameworks/ChatController.js"></script>
+    <script src="~/app/controller/Frameworks/CkEditorController.js"></script>
+    <script src="~/app/controller/Frameworks/CommentController.js"></script>
+    <script src="~/app/controller/Frameworks/CommunicationController.js"></script>
+    <script src="~/app/controller/Frameworks/CRUDController.js"></script>
+    <script src="~/app/controller/Frameworks/DataFeedController.js"></script>
+    <script src="~/app/controller/Frameworks/DataFeedControllerV2.js"></script>
+    <script src="~/app/controller/Frameworks/DocumentTypeController.js"></script>
+    <script src="~/app/controller/Frameworks/EmailTemplateController.js"></script>
+    <script src="~/app/controller/Frameworks/ExpressionBuilderController.js"></script>
+    <script src="~/app/controller/Frameworks/FilterController.js"></script>
+    <script src="~/app/controller/Frameworks/LiveTableRowsController.js"></script>
+    <script src="~/app/controller/Frameworks/LiveViewController.js"></script>
+    <script src="~/app/controller/Frameworks/MyCalendarController.js"></script>
+    <script src="~/app/controller/Frameworks/MyInboxController.js"></script>
+    <script src="~/app/controller/Frameworks/PageController.js"></script>
+    <script src="~/app/controller/Frameworks/PageMaintenanceController.js"></script>
+    <script src="~/app/controller/Frameworks/print.min.js"></script>
+    <script src="~/app/controller/Frameworks/ScreenFieldSettingController.js"></script>
+    <script src="~/app/controller/Frameworks/SettingController.js"></script>
+    <script src="~/app/controller/Frameworks/SmartTreeLaunchViewController.js"></script>
+    <script src="~/app/controller/Frameworks/SmartTreeViewController.js"></script>
+    <script src="~/app/controller/Frameworks/SummaryRowsController.js"></script>
+    <script src="~/app/controller/Frameworks/TableRowsController.js"></script>
+    <script src="~/app/controller/Frameworks/UploadFileController.js"></script>
+    <script src="~/app/controller/Frameworks/user-view-filter.js"></script>
+    <script src="~/app/controller/HR/EmployeePromotionController.js"></script>
+    <script src="~/app/controller/HR/LoanController.js"></script>
+    <script src="~/app/controller/HR/LeaveRequestController.js"></script>  
+    <script src="~/app/controller/HR/LoanEntryListController.js"></script>
+    <script src="~/app/controller/HR/LoanApprovalListController.js"></script>
+    <script src="~/app/controller/HR/EmployeeSettlementController.js"></script>
+    <script src="~/app/controller/HR/EmployeeStructureController.js"></script>
+    <script src="~/app/controller/HR/EmployeeTimesheetApprovalController.js"></script>
+    <script src="~/app/controller/HR/SalarySlipPublishController.js"></script>
+    <script src="~/app/controller/HR/WPSController.js"></script>
+    <script src="~/app/controller/HR/SalarySlipViewController.js"></script>
+    <script src="~/app/controller/HR/TimesheetController.js"></script>
+    <script src="~/app/controller/Inventories/CategoryController.js"></script>
+    <script src="~/app/controller/Inventories/CreateProductController.js"></script>
+    <script src="~/app/controller/Inventories/OrderChangeRequestController.js"></script>
+    <script src="~/app/controller/Inventories/OrderController.js"></script>
+    <script src="~/app/controller/Inventories/OrderDeliveryDetailController.js"></script>
+    <script src="~/app/controller/Inventories/PointOfSaleController.js"></script>
+    <script src="~/app/controller/Inventories/PrintSettingController.js"></script>
+    <script src="~/app/controller/Inventories/ProductBundleController.js"></script>
+    <script src="~/app/controller/Inventories/ProductPriceController.js"></script>
+    <script src="~/app/controller/Inventories/ProductPriceSetting.js"></script>
+    <script src="~/app/controller/Inventories/SerialKeyTrackingController.js"></script>
+    <script src="~/app/controller/Inventories/ShoppingCartController.js"></script>
+    <script src="~/app/controller/Inventories/StockInController.js"></script>
+    <script src="~/app/controller/Inventories/StockUpdationController.js"></script>
+    <script src="~/app/controller/Inventories/QuotationController.js"></script>
+    <script src="~/app/controller/Inventories/PurchaseRequestController.js"></script>
+    <script src="~/app/controller/Inventories/SupplierController.js"></script>
+    <script src="~/app/controller/Inventories/TransactionStatusController.js"></script>
+    <script src="~/app/controller/Inventories/ProductClassMapController.js"></script>
+    <script src="~/app/controller/Layouts/LayoutController.js"></script>
+    <script src="~/app/controller/Layouts/LayoutHeaderController.js"></script>
+    <script src="~/app/controller/Layouts/LeftMenuController.js"></script>
+    <script src="~/app/controller/Layouts/login-controller.js"></script>
+    <script src="~/app/controller/Notifications/PushNotificationController.js"></script>
+    <script src="~/app/controller/OnlineExam/CandidateAnswerController.js"></script>
+    <script src="~/app/controller/OnlineExam/CandidateController.js"></script>
+    <script src="~/app/controller/OnlineExam/OnlineExamController.js"></script>
+    <script src="~/app/controller/OnlineExam/OnlineExamQuestionController.js"></script>
+    <script src="~/app/controller/OnlineExam/OnlineExamQuestionMapController.js"></script>
+    <script src="~/app/controller/OnlineExam/OnlineExamResultController.js"></script>
+    <script src="~/app/controller/OnlineExam/OnlineExamResultEntryController.js"></script>
+    <script src="~/app/controller/Reports/ReportController.js"></script>
+    <script src="~/app/controller/Schedules/ScheduleController.js"></script>
+    <script src="~/app/controller/Schools/AcademicCalenderController.js"></script>
+    <script src="~/app/controller/Schools/AcademicClassMapController.js"></script>
+    <script src="~/app/controller/Schools/AcademicSchoolMapController.js"></script>
+    <script src="~/app/controller/Schools/AssignmentController.js"></script>
+    <script src="~/app/controller/Schools/AttendenceController.js"></script>
+    <script src="~/app/controller/Schools/BookIssueReturnController.js"></script>
+    <script src="~/app/controller/Schools/CampusTransferController.js"></script>
+    <script src="~/app/controller/Schools/CertificateTemplateController.js"></script>
+    <script src="~/app/controller/Schools/ClassTeacherMapController.js"></script>
+    <script src="~/app/controller/Schools/CollectionFeeController.js"></script>
+    <script src="~/app/controller/Schools/DriverScheduleLogController.js"></script>
+    <script src="~/app/controller/Schools/ExamController.js"></script>
+    <script src="~/app/controller/Schools/FeeDueCancellationController.js"></script>
+    <script src="~/app/controller/Schools/FeeDueController.js"></script>
+    <script src="~/app/controller/Schools/FeeMasterClassController.js"></script>
+    <script src="~/app/controller/Schools/FeePeriodController.js"></script>
+    <script src="~/app/controller/Schools/FinalSettlementController.js"></script>
+    <script src="~/app/controller/Schools/StudentJourneyController.js"></script>
+    <script src="~/app/controller/Schools/HealthEntryController.js"></script>
+    <script src="~/app/controller/Schools/KanbanController.ClassSection.js"></script>
+    <script src="~/app/controller/Schools/LessonPlanController.js"></script>
+    <script src="~/app/controller/Schools/LibraryController.js"></script>
+    <script src="~/app/controller/Schools/MailFeeDueStatementController.js"></script>
+    <script src="~/app/controller/Schools/MarkController.js"></script>
+    <script src="~/app/controller/Schools/MarkPublishController.js"></script>
+    <script src="~/app/controller/Schools/MarkRegisterController.js"></script>
+    <script src="~/app/controller/Schools/PaymentValidationController.js"></script>
+    <script src="~/app/controller/Schools/RefundController.js"></script>
+    <script src="~/app/controller/Schools/RemarksEntryController.js"></script>
+    <script src="~/app/controller/Schools/RouteController.js"></script>
+    <script src="~/app/controller/Schools/EventTransportAllocationController.js"></script>
+    <script src="~/app/controller/Schools/RouteGroupController.js"></script>
+    <script src="~/app/controller/Schools/RouteShiftingController.js"></script>
+    <script src="~/app/controller/Schools/SalesOrderLiteController.js"></script>
+    <script src="~/app/controller/Schools/SkillController.js"></script>
+    <script src="~/app/controller/Schools/StudentAchievementController.js"></script>
+    <script src="~/app/controller/Schools/StudentApplicationController.js"></script>
+    <script src="~/app/controller/Schools/StudentAttendenceController.js"></script>
+    <script src="~/app/controller/Schools/StudentConcessionController.js"></script>
+    <script src="~/app/controller/Schools/StudentController.js"></script>
+    <script src="~/app/controller/Schools/StudentFeeConcessionController.js"></script>
+    <script src="~/app/controller/Schools/StudentPickupRequestController.js"></script>
+    <script src="~/app/controller/Schools/StudentPromotionController.js"></script>
+    <script src="~/app/controller/Schools/StudentSkillRegisterController.js"></script>
+    <script src="~/app/controller/Schools/StudentTransferRequestController.js"></script>
+    <script src="~/app/controller/Schools/SubjectController.js"></script>
+    <script src="~/app/controller/Schools/SubjectMarkEntryController.js"></script>
+    <script src="~/app/controller/Schools/TimeTableController.js"></script>
+    <script src="~/app/controller/Schools/TransportController.js"></script>
+    <script src="~/app/controller/Schools/SchoolController.js"></script>
+    <script src="~/app/controller/SmartViews/SmartViewController.js"></script>
+    <script src="~/app/controller/Subscriptions/SubscriptionController.js"></script>
+    <script src="~/app/controller/SummaryViews/InventoryDetailSummaryViewController.js"></script>
+    <script src="~/app/controller/SummaryViews/SummaryViewController.BrandSetting.js"></script>
+    <script src="~/app/controller/SummaryViews/SummaryViewController.CategorySetting.js"></script>
+    <script src="~/app/controller/SummaryViews/SummaryViewController.JobProfile.js"></script>
+    <script src="~/app/controller/SummaryViews/SummaryViewController.js"></script>
+    <script src="~/app/controller/SummaryViews/SummaryViewController.ProductPriceSetting.js"></script>
+    <script src="~/app/controller/SummaryViews/SummaryViewController.ProductSKU.js"></script>
+    <script src="~/app/controller/SummaryViews/SummaryViewController.ProductSKUPriceSetting.js"></script>
+    <script src="~/app/controller/SummaryViews/SummaryViewController.ShoppingCart.js"></script>
+    <script src="~/app/controller/SummaryViews/SummaryViewController.SupplierProduct.js"></script>
+    <script src="~/app/controller/SummaryViews/SummaryViewController.SupplierPurchaseOrderAction.js"></script>
+    <script src="~/app/controller/SummaryViews/SummaryViewController.SupplierSKU.js"></script>
+    <script src="~/app/controller/SummaryViews/SummaryViewCustomerController.js"></script>
+    <script src="~/app/controller/SummaryViews/SummaryViewProductSKUController.js"></script>
+    <script src="~/app/controller/SummaryViews/SummaryViewSupplierController.js"></script>
+    <script src="~/app/controller/Views/LiveViewController.JobOperation.js"></script>
+    <script src="~/app/controller/Views/ViewController.DocManagement.js"></script>
+    <script src="~/app/controller/Views/ViewController.JobProfile.js"></script>
+    <script src="~/app/controller/Views/ViewController.js"></script>
+    <script src="~/app/controller/Views/ViewCustomizeController.js"></script>
+    <script src="~/app/controller/Warehouses/DriverLocationController.js"></script>
+    <script src="~/app/controller/Warehouses/MissionController.js"></script>
+    <script src="~/app/controller/Warehouses/MissionProcessingController.js"></script>
+    <script src="~/app/controller/Warehouses/MoveJobOperationController.js"></script>
+    <script src="~/app/controller/Warehouses/ProcessingJobController.js"></script>
+    <script src="~/app/controller/Warehouses/ProcessingMissionController.js"></script>
+    <script src="~/app/controller/Warehouses/RepairOrderController.js"></script>
+    <script src="~/app/controller/Workflows/WorkFlowController.js"></script>
+    <script src="~/app/controller/Workflows/WorkflowLogController.js"></script>
+    <script src="~/app/controller/Supports/CaseManagementController.js"></script>
+    <script src="~/app/controller/Supports/TicketController.js"></script>
+    <script src="~/app/controller/Signups/SignupController.js"></script>
+    <script src="~/app/controller/DataManagements/DataManagementController.js"></script>
+    <script src="~/app/controller/Frameworks/SmartSettingController.js"></script>
+    <script src="~/app/controller/Signups/MeetingFollowupController.js"></script>
+    <script src="~/app/controller/Signups/SignupAllocationListController.js"></script>
+    <script src="~/app/controller/Signups/MeetingRequestController.js"></script>
+    <script src="~/app/controller/Schools/CounselorHubController.js"></script>
+    <script src="~/app/controller/Reports/ReportViewController.js"></script>
+
+    <script type="text/javascript">
+        var _dateTimeFormat = '@dateTimeFormat';
+        var _dateFormat = '@dateFormat';
+    </script>
+
+    @*this js will contain custom validation code*@
+
+
+    <!--animate-->
+    <link href="@Url.Content("~/Content/animate.css")" rel="stylesheet" type="text/css" />
+    <link href="~/Content/cropper.css" rel="stylesheet">
+    <link href="~/Content/dashboard.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="~/Clients/@clientName/css/clientstyle.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/Content/fullcalendar.bundle.css" asp-append-version="true">
+    <script src="@Url.Content("~/Scripts/wow.min.js")"></script>
+    <script>
+        new WOW().init();
+    </script>
+
+    <script src="@Url.Content("~/Scripts/Chart.js")"></script>
+    <script src="@Url.Content("~/Scripts/chartjs-plugin-datalabels@2.0.0.js")"></script>
+    <script src="~/Scripts/angular-flickity.js"></script>
+
+
+
+    <script src="~/Scripts/cropper.js"></script>
+    <script src="~/Scripts/jquery-cropper.js"></script>
+
+    <script src="@Url.Content("~/Scripts/ckeditor/ckeditor.js")"></script>
+    @* <script src="@Url.Content("~/signalr/hubs")"></script> *@
+
+    <script src="@Url.Content("~/app/common/utility.js")"></script>
+
+    <script src="~/Scripts/datatables.bundle.js"></script>
+    <script src="~/Scripts/scripts.bundle.js"></script>
+    <script src="~/Design_v02/fullcalendar.bundle.js" asp-append-version="true"></script>
+
+
+    <!-- Bold Report Viewer component styles, dependent script Start -->
+    <link href="https://cdn.boldreports.com/6.2.32/content/v2.0/tailwind-light/bold.report-viewer.min.css" rel="stylesheet" asp-append-version="true" />
+    <script src="https://cdn.boldreports.com/6.2.32/scripts/v2.0/common/bold.reports.common.min.js" asp-append-version="true"></script>
+    <script src="https://cdn.boldreports.com/6.2.32/scripts/v2.0/common/bold.reports.widgets.min.js" asp-append-version="true"></script>
+    <script src="https://cdn.boldreports.com/6.2.32/scripts/v2.0/bold.report-viewer.min.js" asp-append-version="true"></script>
+    <!-- Bold Report Viewer component styles, dependent script End -->
+
+    <script src="@Url.Content("~/Scripts/cytoscape.min.js")" asp-append-version="true"></script>
+
+</head>
+
+<body ng-controller="LayoutController" ng-init="Init('@smartlayout', '@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Dashboard")');" dir="@(cultureCode == "ar" ? "rtl" : "ltr")">
+    <div class="overlaydiv"></div>
+    <div class="fluid-container" dir="@(cultureCode == "ar" ? "rtl" : "ltr")">
+        <div id="Overlay" class="loaderoverlay">
+            <div class="d-flex justify-content-center align-items-center vh-100">
+                <div id="ButtonLoader" class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+        @await Html.PartialAsync("~/Views/Shared/_GlobalInfoMessage.cshtml")
+        @await Html.PartialAsync("_Header")
+        <div class="row">
+
+            @if (smartlayout != "smart")
+            {
+                @await Html.PartialAsync("_LeftMenu")
+            }
+
+            <div class="leftnav-tree">
+                <div id="SmartViewCotnainer" class="leftnav-treewrap"></div>
+            </div>
+
+            <main id="LayoutContentSection" role="main" class="ml-sm-auto" @(smartlayout == "smart" ? "smart-view" : "")>
+
+                @if (smartlayout != "smart")
+                {
+                    <div class="topmenuwrap">
+                        <div class="btncontrols-wrap">
+                            <div class="buttonscrollleft btncontrols"><i class="fa fa-angle-left" aria-hidden="true"></i></div>
+                            <div class="buttonscrollright btncontrols"><i class="fa fa-angle-right" aria-hidden="true"></i></div>
+                        </div>
+                        <div class="topmenuwrap-inner">
+                            <ul class="bodyrightmain-tab">
+                                <li class="tab-list" ng-repeat="windowtab in WindowTabs" ng-class="{active: $index==SelectedWindowIndex}"
+                                    ng-click="SelectWindowTab($event,$index);">
+                                    <div class="tab-list-blk">{{windowtab.Title}}</div>
+                                    <i class="fa fa-close" ng-show="ShowClose($index);" ng-click="CloseWindowTab($index)"></i>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div ng-if="WindowCount > 0" class="pageClose" ng-click="CloseSmartWindow($event)">X</div>
+                }
+
+                @RenderBody()
+
+                @*<div class="activityStream overlaySummaryView">
+                <div class="dockToggle"></div>
+                <div class="overlaySummaryInnerview">
+                @await Html.PartialAsync("~/Views/Shared/_ActivityStream.cshtml")
+                <div id="activityWayPoint" class="waypointLoading">
+                <center>
+                <img src="/Images/preloader.GIF" />
+                </center>
+                </div>
+                </div>
+                </div>*@
+
+                <div class="activityStream overlaySummaryView">
+                    <div class="dockToggle" style="display: flex; align-items: center; padding: 2px; color: darkgray ">
+                        <i class="fa fa-ellipsis-v fa-2x" aria-hidden="true"></i>
+                    </div>
+                    <div class="overlaySummaryInnerview">
+                        @await Html.PartialAsync("~/Views/Shared/_ActivityStream.cshtml")
+                    </div>
+                </div>
+
+                @await Html.PartialAsync("~/Views/Shared/_SmartTreeView.cshtml")
+
+            </main>
+
+            <div id="dailogue" class="popup"></div>
+            <div class="popup workFlow">
+                <div class="popup-wrap">Test</div>
+                <div class="popupPointer"></div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+    <script>
+        // utility.myHost = "@string.Format("{0}://{1}{2}/", Context.Request.Scheme, Context.Request.Host.Value, Url.Content("~"))";
+        let x = document.querySelectorAll(".myDIV");
+        for (let i = 0, len = x.length; i < len; i++) {
+            let num = Number(x[i].innerHTML)
+                .toLocaleString('en');
+            x[i].innerHTML = num;
+            x[i].classList.add("currSign");
+        }
+    </script>
+    <script type="text/javascript">
+
+        window._bootstrapDateFormat = "@clientBootstrapDateFormat";
+        window._bootstrapDateTimeFormat = "@clientBootstrapDateTimeFormat";
+
+    </script>
+    <div class="modal right" id="globalPopup" tabindex="-1" aria-labelledby="rightModalLabel" aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered modal-lg w-100">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,26 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Eduegate.Domain.Entity.Models
+{
+    [Table("TransactionHeadShoppingCartMaps", Schema = "inventory")]
+    public partial class TransactionHeadShoppingCartMap
+    {
+        [Key]
+        public long TransactionHeadShoppingCartMapIID { get; set; }
+        public Nullable<long> TransactionHeadID { get; set; }
+        public Nullable<long> ShoppingCartID { get; set; }
+        public Nullable<System.DateTime> CreatedDate { get; set; }
+        public Nullable<System.DateTime> UpdatedDate { get; set; }
+        public Nullable<System.DateTime> CreatedBy { get; set; }
+        public Nullable<System.DateTime> UpdatedBy { get; set; }
+        //public byte[] TimeStamps { get; set; }
+        public Nullable<byte> StatusID { get; set; }
+        public Nullable<decimal> DeliveryCharge { get; set; }
+        public virtual ShoppingCart ShoppingCart { get; set; }
+        public virtual TransactionHead TransactionHead { get; set; }
+        public virtual Status Status { get; set; }
+    }
+}

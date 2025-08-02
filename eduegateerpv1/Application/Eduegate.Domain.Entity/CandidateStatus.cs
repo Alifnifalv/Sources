@@ -1,0 +1,26 @@
+namespace Eduegate.Domain.Entity
+{
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
+
+    [Table("exam.CandidateStatuses")]
+    public partial class CandidateStatus
+    {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public CandidateStatus()
+        {
+            Candidates = new HashSet<Candidate>();
+        }
+
+        public byte CandidateStatusID { get; set; }
+
+        [StringLength(50)]
+        public string CandidateStatusName { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Candidate> Candidates { get; set; }
+    }
+}

@@ -1,0 +1,50 @@
+Need to install below to fix dependency issue for DinkToPdf
+-------------------------------------------------------------
+sudo apt-get update
+sudo apt-get install -y wkhtmltopdf
+
+==============================================================
+The dependent files for 'libwkhtmltox.so' library which is used for DinkToPdf converter
+
+The error you're encountering is related to missing dependencies on your Linux environment, specifically the libXrender.so.1 library. The wkhtmltopdf tool (which you're trying to use through the libwkhtmltox library) has a few dependencies, including X11 libraries such as libXrender, libXext, and others.
+
+To resolve this issue, you'll need to install these missing dependencies on your Linux system.
+
+Steps to Resolve
+Install Missing Dependencies: Use your package manager (such as apt, yum, or dnf, depending on your Linux distribution) to install the required libraries. Here are the most common dependencies needed for wkhtmltopdf to work:
+
+For Debian/Ubuntu-based distributions:
+-----------------------------------------
+sudo apt-get update
+sudo apt-get install -y libxrender1 libxext6 libfontconfig1 libfreetype6
+
+For RedHat/CentOS-based distributions:
+----------------------------------------
+sudo yum install -y libXrender libXext fontconfig freetype
+
+Verify Installation: After installing these packages, verify that the libraries have been installed correctly by checking their presence in the system.
+
+You can use the following command:
+-----------------------------------
+ldconfig -p | grep libXrender
+Rerun Your Application: After the missing dependencies are installed, rerun your application, and it should now be able to load the libwkhtmltox.so library correctly.
+
+Additional Notes:
+-------------------
+strace tool:
+-------------
+If the issue persists, you can use strace to troubleshoot the
+dynamic library loading process:
+
+strace -e open your-application-binary
+
+This will provide you with detailed information about what libraries or files are missing.
+
+LD_DEBUG: You can also set the LD_DEBUG environment variable to help debug the issue:
+-----------------
+export LD_DEBUG=libs
+./your-application-binary
+
+This should give you insights into what exactly is missing or causing the problem during the library loading phase.
+
+By installing these dependencies and possibly using the debugging tools, you should be able to resolve the issue of libwkhtmltox.so not loading properly.

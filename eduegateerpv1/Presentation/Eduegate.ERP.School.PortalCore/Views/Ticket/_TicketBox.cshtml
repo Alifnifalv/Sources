@@ -1,0 +1,275 @@
+﻿@{
+    ViewBag.Title = "TicketBox";
+}
+
+<link href="~/Design_v02/css/pages/inbox.min.css" rel="stylesheet" type="text/css" />
+
+<div class="bg-light d-flex flex-column" data-aos="fade-up" style="flex:1;">
+    <section class="home-section-wrap">
+        <div class="container">
+            <div class="row row-eq-height">
+                <div class="p-md-sm-0  fontawesome-demo">
+                    <div class="container-custom container-xxl d-flex flex-column-fluid  p-md-sm-0">
+                        <div class="content d-flex flex-row flex-row-fluid" id="kt_content">
+                            <div class="d-flex flex-column flex-row-fluid">
+                                <div class="flex-column-fluid">
+                                    
+                                    <div class="row gy-5 g-xl-10">
+                                        <div class="col">
+                                            <div class="card card-flush h-xl-100">
+                                                <div class="card-header pt-7">
+                                                    <h3 class="card-title align-items-start flex-column">
+                                                        @* <span>Total <span ng-bind="TicketCount"></span> Tickets</span> *@
+                                                    </h3>
+                                                    <div class="card-toolbar">
+                                                        <div class="d-flex flex-stack flex-wrap gap-4">
+                                                            <a class="btn btn-primary btn-sm" ng-click="GenerateButtonClick()">
+                                                                Generate
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row gy-5 g-xl-10">
+
+                                        <div class="col">
+                                            <div class="card card-flush h-xl-100">
+                                                <div class="card-header pt-7">
+                                                    <h3 class="card-title align-items-start flex-column">
+                                                        <span>Total <span ng-bind="TicketCount"></span> Tickets</span>
+                                                    </h3>
+                                                    <div class="card-toolbar">
+                                                        <div class="d-flex flex-stack flex-wrap gap-4">
+
+
+                                                            <a class="btn btn-light btn-sm" ng-click="GetAllTickets()">
+                                                                <i class=" mini tooltips fa fa-refresh fa-lg" title="refresh"></i>
+                                                                refresh
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div id="kt_table_widget_5_table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                                                        <div class="table-responsive">
+
+                                                            <div class="inbox-body no-pad table-responsive">
+                                                                <table class="table table-inbox table-hover table align-middle table-row-dashed fs-6 gy-3 no-footer">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Ticket no</th>
+                                                                            <th>Ticket date</th>
+                                                                            <th>Resolution date</th>
+                                                                            <th>Type</th>
+                                                                            <th>Title</th>
+                                                                            <th>Status</th>
+                                                                            <th></th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody class="fw-bold text-gray-600">
+                                                                        <tr class="unread" ng-repeat-start="ticket in AllTicketDetails" ng-init="currentTicket = $parent.start; $parent.start=$parent.start+1;">
+                                                                            <td class="inbox-small-cells">
+                                                                                <span ng-bind="ticket.TicketNo"></span>
+                                                                            </td>
+                                                                            <td class="inbox-small-cells">
+                                                                                <span ng-bind="ticket.FromDueDateString"></span>
+                                                                            </td>
+                                                                            <td class="inbox-small-cells">
+                                                                                <span ng-bind="ticket.ToDueDateString"></span>
+                                                                            </td>
+                                                                            <td class="inbox-small-cells">
+                                                                                <span ng-bind="ticket.DocumentTypeName"></span>
+                                                                            </td>
+                                                                            <td class="view-message">
+                                                                                <span ng-bind="ticket.Subject"></span>
+                                                                            </td>
+                                                                            <td class="inbox-small-cells">
+                                                                                <span ng-bind="ticket.TicketStatus" ng-if="ticket.TicketStatus == 'Close'" class="badge badge-danger"></span>
+                                                                                <span ng-bind="ticket.TicketStatus" ng-if="ticket.TicketStatus != 'Close' && ticket.TicketStatus != 'Hold'" class="badge badge-success"></span>
+                                                                                <span ng-bind="ticket.TicketStatus" ng-if="ticket.TicketStatus == 'Hold'" class="badge badge-warning"></span>
+                                                                            </td>
+                                                                            <td class="text-end">
+                                                                                <div class="controls text-center">
+                                                                                    <a class="btn btn-sm btn-icon btn-light btn-active-light-primary toggle h-25px w-25px" data-bs-toggle="collapse" href="#collapseExample{{currentTicket}}" role="button" aria-expanded="false" aria-controls="collapseExample">
+                                                                                        <i class="fa  fa fa-angle-double-down"></i>
+                                                                                    </a>
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr class="collapse" id="collapseExample{{currentTicket}}">
+                                                                            <th colspan="7"><h4><b>Description</b></h4></th>
+                                                                        </tr>
+                                                                        <tr class="collapse" id="collapseExample{{currentTicket}}">
+                                                                            <td class="text-start" colspan="7">
+                                                                                <span ng-bind-html="ticket.Description" class="text-gray-800 fs-4 fw-normal"></span><span class="redcolor"></span>
+                                                                            </td>
+                                                                        </tr>
+
+                                                                        <tr class="collapse" id="collapseExample{{currentTicket}}">
+                                                                            <td colspan="7">
+                                                                                <h4><b>Communications</b></h4>
+                                                                                <br />
+                                                                                <br />
+                                                                                <textarea id="CommunicationNote" name="CommunicationNote" rows="4" cols="100" ng-model="CommunicationNotes"></textarea>
+                                                                                <br />
+                                                                                <input type="button" class="btn btn-primary" value="Send" ng-click="SaveTicketCommunication(ticket, CommunicationNotes)">
+
+                                                                                <br />
+                                                                                <br />
+                                                                                <h4><b>Previous</b></h4>
+                                                                                <div ng-repeat="communication in ticket.TicketCommunications">
+                                                                                    <label>{{communication.CommunicationStringDate}}({{communication.CommunicationUser}})</label><br />
+                                                                                    <span ng-bind-html="communication.Notes"></span><span class="redcolor"></span>
+                                                                                    <br />
+                                                                                    <br />
+                                                                                </div>
+                                                                            </td>
+                                                                        </tr>
+
+                                                                        <tr ng-repeat-end="" class="ng-scope"></tr>
+                                                                    </tbody>
+                                                                </table>
+
+                                                                <div id="TicketOverlay" class="preload-overlay center" ng-if="IsEnableLoader">
+                                                                    <span id="TicketOverlay" class="preloadImg">
+                                                                        <img src="~/Images/preloaderWhite.GIF" alt="loader" />
+                                                                    </span>
+                                                                </div>
+                                                                <div class="alert alert-info text-center" ng-if="AllTicketDetails.length == 0 && !ShowPreLoader">
+                                                                    <label>There is no details found!</label>
+                                                                </div>
+                                                            </div>
+                                                        </div><div class="row"><div class="col-sm-12 col-md-5 d-flex align-items-center justify-content-center justify-content-md-start"></div><div class="col-sm-12 col-md-7 d-flex align-items-center justify-content-center justify-content-md-end"></div></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gy-5 g-xl-10">
+                        <div class="col-xl-4 mb-5 mb-xl-10">
+                        </div>
+
+                    </div>
+                </div>
+
+            </div><!--pageContent-->
+        </div><!--pageContainer-->
+    </section>
+</div>
+
+<div class="modal bg-dark bg-opacity-75" id="TicketGenerationModal" tabindex="-1" aria-modal="true" role="dialog">
+    <!--begin::Modal dialog-->
+    <script>
+        $('#TicketGenerationModal').on('show.bs.modal', function (e) {
+            $('.modal .modal-dialog').attr('class', 'modal-dialog modal-dialog-centered ' + 'animate__zoomIn' + '   animate__animated');
+        })
+        $('#TicketGenerationModal').on('hide.bs.modal', function (e) {
+            $('.modal .modal-dialog').attr('class', 'modal-dialog modal-dialog-centered ' + 'animate__zoomOut' + '   animate__animated');
+        })
+    </script>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+            <div class="modal-header flex-stack border-0 px-10 pt-5 pb-0">
+
+                <div class="btn btn-sm btn-icon btn-active-color-primary me-n2 position-relative z-index-1" data-bs-dismiss="modal">
+                    <!--begin::Svg Icon | path: icons/duotune/general/gen034.svg-->
+                    <span class="svg-icon svg-icon-1">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="5" fill="currentColor"></rect>
+                            <rect x="7" y="15.3137" width="12" height="2" rx="1" transform="rotate(-45 7 15.3137)" fill="currentColor"></rect>
+                            <rect x="8.41422" y="7" width="12" height="2" rx="1" transform="rotate(45 8.41422 7)" fill="currentColor"></rect>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            <div class="modal-body pt-0 pb-5 px-10">
+                <div class="card-body pt-15 pt-lg-10">
+
+                    @* <div class="mb-14">
+                    <a class="">
+                    <img alt="Logo" src="../img/PODARLOGO-01.png" class="h-40px">
+                    </a>
+                    </div> *@
+                    <span style="text-align:center;">
+                        <h4 class="fw-bolder text-gray-900 mb-5">Service Request</h4>
+                    </span>
+
+                    <div>
+                        <div>
+                            <div class="fs-6 fw-semibold text-gray-500 mb-7">Type</div>
+                            <div class="fw-bolder text-gray-900 mb-5" ng-repeat="documentType in TicketDocumentTypes track by $index">
+                                <span ng-click="DocumentTypeChange(documentType)">
+                                    <input type="radio" id="documentType_{{documentType.Key}}" name="documentType" value="{{documentType.Key}}" ng-model="TicketGeneration.DocumentTypeID" />
+                                    <label>{{documentType.Value}}</label>
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="fs-6 fw-semibold text-gray-500 mb-7">Subject</span>
+                            <div>
+                                <textarea class="form-control" style="height: 40px"
+                                          id="TicketSubject" required ng-model="TicketGeneration.Subject"></textarea>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="fs-6 fw-semibold text-gray-500 mb-7">Notes</span>
+                            <div>
+                                <textarea class="form-control" style="height: 150px"
+                                          id="TicketDescription" required ng-model="TicketGeneration.Description1"></textarea>
+                            </div>
+                        </div>
+                        <br />
+                        @* <div>
+                        <div class="fs-6 fw-semibold text-gray-500 mb-7">Students</div>
+                        <div class="fw-bolder text-gray-900 mb-5" ng-repeat="student in Students track by $index">
+                        <span ng-click="StudentSelectionChange(student)">
+                        <input type="radio" id="student_{{student.Key}}" name="student" value="{{student.Value}}" />{{student.Value}}
+                        </span>
+                        </div>
+                        </div> *@
+                        <div ng-if="IsError">
+                            <label ng-bind="ErrorMessage" style="color:red;"></label>
+                        </div>
+                    </div>
+
+                    @* <div id="FeePaymentHistoryOverlay" class="preload-overlay center">
+                    <span id="FeePaymentHistoryOverlay" class="preloadImg">
+                    <img src="~/Images/preloaderWhite.GIF" alt="loader" />
+                    </span>
+                    </div> *@
+                    <form form method="post" ng-submit="SubmitAndGenerateTicket()" id="TicketSubmition" novalidate class="d-flex justify-content-end pt-10">
+                        <button class="btn btn-sm btn-primary" type="submit" id="TicketSubmitionButton">Submit</button>
+                    </form>
+                    <!--end::Link-->
+                    <!--begin::Illustration-->
+                    <div class="mb-0">
+                        <img src="" class="mw-100 mh-300px theme-light-show" alt="">
+                    </div>
+                    <!--end::Illustration-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .text-gray-600 {
+        color: var(--kt-text-gray-600) !important;
+    }
+
+    .fw-bold {
+        font-weight: 600 !important;
+    }
+
+    .text-active-primary.active .svg-icon {
+        color: var(--kt-info-light) !important;
+    }
+</style>

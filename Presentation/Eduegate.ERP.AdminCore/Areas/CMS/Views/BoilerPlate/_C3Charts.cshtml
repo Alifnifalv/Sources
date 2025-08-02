@@ -1,0 +1,57 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    var windowName = "window_" + Guid.NewGuid().ToString() + "_" + Model.BoilerPlateMapIID.ToString();
+
+    var width = Model.GetParameterValue<int>("Width");
+    var lookUpName = Model.GetParameterValue<string>("LookUpName");
+    var title = Model.GetParameterValue<string>("Title");
+    var cultureTitle = Model.GetParameterValue<string>("Title_" + System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower());
+    if (!string.IsNullOrEmpty(cultureTitle))
+    {
+        title = cultureTitle;
+    }
+
+    var yAxis_Label = Model.GetParameterValue<string>("Y-axis-Label");
+    var cultureLabel = Model.GetParameterValue<string>("Y-axis-Label_" + System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower());
+    if (!string.IsNullOrEmpty(cultureLabel))
+    {
+        yAxis_Label = cultureLabel;
+    }
+
+}
+<div class="card card-flush h-xl-100 ">
+    <div id="@windowName"  tempalte="_Charts" ng-controller="C3ChartBoilerPlateController as c3Charts" 
+         ng-init="c3Charts.childInit(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName','@yAxis_Label')">
+ 
+        <div class="card-header">
+            <h3 class="card-title align-items-start flex-column">
+                <span class="">@title</span>
+
+                @*<span class="text-muted mt-1 fw-semibold fs-7">8k social visitors</span>*@
+            </h3>
+
+            <!--begin::Toolbar-->
+            <div class="card-toolbar flex-nowrap" style="cursor: pointer;">
+                <!--begin::Menu-->
+                @if (!string.IsNullOrEmpty(lookUpName))
+                {
+                    <select ng-model="c3Charts.SelectedFilter" ng-options="x as x.Value for x in c3Charts.LookUps.@(lookUpName)" ng-change="c3Charts.ReloadData()" class="m-1 form-select form-select-sm py-1">
+                    </select>
+                    <div class="loader" ng-show="isLoading"></div>
+                }
+
+                <i class="fa fa-refresh ms-3 refresh-button" ng-click="c3Charts.ReloadData()"></i>
+            </div>
+            <!--end::Toolbar-->
+        </div>
+
+        <div class="card-body" id="@(windowName)_widgetcontainer">
+            <div class="text-center ng-hide" ng-show="ShowSpinner" id="@(windowName)_widgetcontainer">
+                <div class="spinner-border position-absolute " role="status" >
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

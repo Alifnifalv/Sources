@@ -1,0 +1,87 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@*@model Eduegate.Web.Library.ViewModels.SearchListViewModel*@
+@using Eduegate.Framework.Extensions;
+@{
+
+    var window = "window_ListLinks";
+    var documentTypeID = Model.GetParameterValue<string>("DocumentTypeID");
+    var title = Model.GetParameterValue<string>("Title");
+    var viewID = Model.GetParameterValue<string>("ViewID");
+    var referenceID = Model.GetParameterValue<string>("REFERENCEID");
+   
+    var cultureTitle = Model.GetParameterValue<string>("Title_" + System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower());
+    if (!string.IsNullOrEmpty(cultureTitle))
+    {
+        title = cultureTitle;
+    }
+    // var metadata = await Eduegate.Services.Client.Factory.ClientFactory.SearchServiceClient(new Eduegate.Framework.CallContext()
+    //         {
+    //             LanguageCode = System.Globalization.CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLower(),
+    //             CompanyID = 1
+    //         }).SearchList((Eduegate.Services.Contracts.Enums.SearchView)int.Parse(viewID));
+
+    // var viewFullPath = metadata?.ViewFullPath;
+    var viewName = (Eduegate.Services.Contracts.Enums.SearchView)int.Parse(viewID); //metadata?.ViewName;
+    var reportName = "";
+    var reportHeader = "";
+    var parameterID = "";
+}
+
+<div class="card card-flush h-xl-100">
+    <div id="@window" template="_DashBoard_Grid" ng-controller="ListLinkBoilerplateController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@window','@viewName')">
+        @* <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">*@
+        <div>
+            <div class="card-header border-0 pt-5">
+                <h3 class="card-title align-items-start flex-column">
+                    <span class="card-label fw-bold text-dark">@title</span>
+
+                    @*<span class="text-muted mt-1 fw-semibold fs-7">8k social visitors</span>*@
+                </h3>               
+            </div>
+            <div class="card-body">                
+                <div class="widget-container">
+                    <h2>List Of Reports</h2>
+                    <ul>
+                        <li ng-repeat="report in ReportList">
+                            <a href="" data-role="none" ng-click="ViewReports(report.ReportName,report.ReportHeader,report.ParameterName,referenceID)">
+                                <i class="fa  fa-angle-double-right"></i>
+                                <label>{{report.ReportHeader}}</label>
+                            </a>
+                        </li>                      
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ 
+<style>
+    .widget-container {
+        width: 300px;
+        background-color: #f5f5f5;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+        .widget-container h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+
+        .widget-container ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .widget-container li {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .widget-container i {
+            margin-right: 10px;
+            
+        }
+
+</style>

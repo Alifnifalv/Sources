@@ -1,0 +1,277 @@
+﻿@{
+    var theme = Request.QueryString["theme"];
+    string cultureCode = "en";
+
+    if (string.IsNullOrEmpty(theme))
+    {
+        theme = "blue";
+    }
+
+    var layout = Request.QueryString["layout"];
+
+    if (string.IsNullOrEmpty(layout))
+    {
+        layout = "multi";
+    }
+
+    if (ViewBag.CultureCode != null)
+    {
+        cultureCode = ViewBag.CultureCode;
+    }
+
+    var settings = new Eduegate.Service.Client.SettingServiceClient(null);
+    var companyID = (ViewBag.CallContext as Eduegate.Framework.CallContext).CompanyID;
+    var schoolID = (ViewBag.CallContext as Eduegate.Framework.CallContext).SchoolID;
+    var academicYearID = (ViewBag.CallContext as Eduegate.Framework.CallContext).AcademicYearID;
+}
+
+@{
+    var clientName = new Eduegate.Domain.FrameworkSettingBL(null).GetSettingValue<string>("CLIENTINSTANCE");
+}
+<div class="header" ng-controller="LayoutHeaderController" ng-model="HeaderInfoModel" ng-init="Init('@(theme)', '@(layout)', '@(cultureCode)');">
+
+    @{
+        if (schoolID == null || academicYearID == null)
+        {
+            <div class="ModelPopup-Container">
+                <div class="ModelPopup-Inner">
+                    @*<div class="close" style="margin-top: -.5rem; margin-right: -.5rem;" ng-click="CloseSchoolMainPopup();">x</div>*@
+                    <div class="gridItemPopupInner">
+                        <div class="AcademicYear gridItemContent" data-attr="AcademicYear">
+
+                            <div class="controls">
+                                <label>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("School")</label>
+                                <select id="School" ng-model="SelectedSchool" ng-change="FillAcademicYearBySchool()">
+                                    <option ng-repeat="x in School" ng-value="{{x.Key}}" ng-selected="{{SelectedSchool == x.Key}}">{{x.Value}}</option>
+                                </select>
+                                @*<i class="dropdownarrow fa fa-caret-doown"></i>*@
+                            </div>
+                            <div class="controls">
+                                <label>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Academic Year")</label>
+                                <select id="AcademicYear" ng-model="SelectedAcademicYear">
+                                    <option ng-repeat="x in AcademicYear" ng-value="{{x.Key}}" ng-selected="{{SelectedAcademicYear == x.Key}}">{{x.Value}}</option>
+                                </select>
+                                @*<i class="dropdownarrow fa fa-caret-down"></i>*@
+                            </div>
+
+                            <div class="modal-footer">
+                                <input type="button" value="Apply" class="button-orange" ng-click="SaveSchool();" />
+                                @*<input type="button" value="Close" class="button-orange" ng-click="CloseSchoolPopup();" />*@
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        }
+    }
+
+
+
+    <!-- <div class="leftnaviconsmall" id="leftnavonlyicon"><img src="images/left-nav-icon-width.png"></div> -->
+    @if (layout == "multi")
+    {
+        <div class="leftnaviconfull active" id="leftnavfullview"><span></span><span></span><span></span></div>
+    }
+
+    <div class="vendorscrnheader">
+        <span class="caption_wrapper">
+            @if (theme == "blue" && schoolID == 30)
+            {
+                <img src="~/Clients/@clientName/images/logo/PODARLOGO-01.png" />
+            }
+            else
+            {
+                <img src="~/Clients/@clientName/images/logo/PEARL_LOGO-02.png" />
+
+            }
+        </span>
+    </div>
+
+    <div class="profilepicname alignright" id="profilelink">
+        <span class="profile-pic"><img ng-src="Content/ReadContentsByID?contentID={{HeaderInfoModel.ProfileFile}}" onerrorsrc="~/images/profilepic.png" /></span>
+        <span class="profilename">
+            <span ng-bind="HeaderInfoModel.UserName != null ? HeaderInfoModel.UserName : HeaderInfoModel.Customer == null ? HeaderInfoModel.Supplier == null ? HeaderInfoModel.LoginEmailID : HeaderInfoModel.Supplier.FirstName :  HeaderInfoModel.Customer.FirstName"></span>
+            <span ng-bind="HeaderInfoModel.Customer == null ? HeaderInfoModel.Supplier == null ? '' : HeaderInfoModel.Supplier.MiddleName : HeaderInfoModel.Customer.MiddleName"></span>
+            <span ng-bind="HeaderInfoModel.Customer == null ? HeaderInfoModel.Supplier == null ? '' : HeaderInfoModel.Supplier.LastName : HeaderInfoModel.Customer.LastName"></span>
+        </span><br />
+        <span class="companyname" ng-bind="HeaderInfoModel.CompanyName"></span>
+        <img class="hidedrpdwn" src="images/dropdownarrow.png">
+        <div class="myprofile-dropdown" id="myprofile">
+            <div class="myprofile-arrow"><i class="fa fa-caret-up"></i></div>
+            <ul>
+                <li class="userAccountInfo">
+                    <span class="account_name">
+                        <span class="profilename">
+                            <span ng-bind="HeaderInfoModel.Customer == null ? HeaderInfoModel.Supplier == null ? HeaderInfoModel.LoginEmailID : HeaderInfoModel.Supplier.FirstName :  HeaderInfoModel.Customer.FirstName"></span>
+                            <span ng-bind="HeaderInfoModel.Customer == null ? HeaderInfoModel.Supplier == null ? '' : HeaderInfoModel.Supplier.MiddleName : HeaderInfoModel.Customer.MiddleName"></span>
+                            <span ng-bind="HeaderInfoModel.Customer == null ? HeaderInfoModel.Supplier == null ? '' : HeaderInfoModel.Supplier.LastName : HeaderInfoModel.Customer.LastName"></span>
+                        </span><br />
+                        <span class="companyname" ng-bind="HeaderInfoModel.CompanyName"></span>
+                    </span>
+                </li>
+                <li>
+                    <a data-popup-type="changepassword" ng-click="ChangePassword($event)">
+                        <div class="myprofile-icon"><i class="fa  fa-list-alt"></i></div>
+                        <div>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("ChangePassword")</div>
+                    </a>
+                </li>
+                <li class="listTitle">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Language")</li>
+                <li class=" menu-state-color ">
+                    <div class=" w-175px py-1 show">
+                        <!--begin::Menu item-->
+                        <div class="menu-item px-">
+                            <a class="menu-link d-flex px-0 " ng-click="LanguageChanged('en')" ng-model="SelectedLanguage" value="en" ng-class="{ 'active' : SelectedLanguage=='en'}">
+                                <span class="symbol symbol-20px me-3">
+                                    <img class="rounded-1" src="~/Clients/@clientName/images/flags/united-states.svg" alt="">
+                                </span>
+                                @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("English")
+                            </a>
+                        </div>
+                        <!--end::Menu item-->
+                        <!--begin::Menu item-->
+                        <div class="menu-item px-">
+                            <a ng-click="LanguageChanged('ar')" class="menu-link d-flex px-0" ng-model="SelectedLanguage" value="ar"  ng-class="{ 'active' : SelectedLanguage=='ar'}">
+                                <span class="symbol symbol-20px me-3">
+                                    <img class="rounded-1" src="~/Clients/@clientName/images/flags/arabic.png" alt="">
+                                </span>
+                                @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Arabic")
+                            </a>
+                        </div>
+                        <!--end::Menu item-->
+                        <!--begin::Menu item-->
+                        <div class="menu-item px-0">
+                            <a ng-click="LanguageChanged('fr')" class="menu-link d-flex px-0" ng-model="SelectedLanguage" value="fr"  ng-class="{ 'active' : SelectedLanguage=='fr'}">
+                                <span class="symbol symbol-20px me-3">
+                                    <img class="rounded-1" src="~/Clients/@clientName/images/flags/france.svg" alt="">
+                                </span>
+                                @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("French")
+                            </a>
+                        </div>
+                        <!--end::Menu item-->
+                    </div>
+                </li>
+                @*<li class="chooseOptions">
+                        <form>
+                            <a href="#" class="noMarginBtm">
+                                <label>
+                                    <input name="theme" type="radio" ng-model="SelectedLanguage" value="en">
+                                    <span class="inputIcon"></span>English
+                                </label>
+                            </a>
+                            <a href="#" class="noMarginBtm" >
+                                <label>
+                                    <input name="theme" type="radio" ng-model="SelectedLanguage" value="ar">
+                                    <span class="inputIcon"></span>Arabic
+                                </label>
+                            </a>
+                            <a href="#" class="noMarginBtm" >
+                                <label>
+                                    <input name="theme" type="radio" ng-model="SelectedLanguage" value="fr">
+                                    <span class="inputIcon"></span>French
+                                </label>
+                            </a>
+                        </form>
+                    </li>*@
+                <li>
+                    <a ng-click="ChangeSchoolAcademicYear()">
+                        @*<div class="myprofile-icon"></div>*@
+                        @*<div>School & Academic Year</div>*@
+                        <div>
+                            @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("School") & @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Academic Year")
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a ng-click="Signout()">
+                        <div>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Log out")</div>
+                    </a>
+                </li>
+            </ul>
+            <ul class="licenseType">
+                <li>
+                    <span class="licenceLabel"> Eduegate Volume Licence</span>
+                    <span class="licenceCaption"> Powered by Softop Solutions </span>
+                    <span class="licenceCaption"><a href="http://www.eduegate.com" target="_blank"> www.eduegate.com</a></span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="message alignright" id="mymessagelink">
+        @*<img src="images/message.png">*@
+        <i class="fa fa-envelope-o" aria-hidden="true" ng-click="loadMessages()"></i>
+        <span class="messagecount" ng-bind="AlertCount" ng-show="AlertCount>0">0</span>
+
+        <div class="mymessage" id="mymessageview" style=" width: 1000%; height: 1500%; overflow-x: visible; overflow-y: scroll;">
+            <div class="mymessage-arrow"><i class="fa fa-caret-up"></i></div>
+            <div class="mymessageheader div-sticky-class d-flex justify-content-between align-items-center p-3">
+                <h5>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("MESSAGES")</h5> <button ng-if="mailData.length!=0" class="button-orange col-md-4 right" style="padding:5px" ng-click="MarkAllAsRead()" id="markAllButton">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("MarkAllRead")</button>
+            </div>
+            <ul class="list-group list-group-flush list-unstyled p-2">
+                <li ng-if="mailData.length==0">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("No Messages")</li>
+                <li ng-repeat="mail in mailData">
+                    <a class="list-group-item list-group-item-action rounded notif-unread border-0 mb-1 p-3">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-bell me-2"></i>
+                            <div class="mb-2 fw-bold fs-6">{{mail.FromLogin}}</div>
+                        </div>
+                        <div ng-click="MarkAsReadSingle(mail.NotificationAlertIID)"><i class="fa fa-check pull-right" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("MarkAsRead")"></i></div>
+                        <p>{{mail.Message}}</p>
+                    </a>
+                </li>
+
+            </ul>
+            <p> </p>
+        </div>
+    </div>
+    <div class="change-school d-none d-lg-flex " ng-click="ChangeSchoolAcademicYear()">
+        <span class="companyname" ng-bind="SelectedSchoolDetail"></span><br />
+        <span class="companyname header-badge" ng-bind="SelectedAcademicYearDetail"></span>
+    </div>
+    <div class="transparent-overlay" ng-click="ClosePopup($event);"></div>
+    <div class="popup gridpopupfields" data-popup-type="gridpopupfields">
+        <div class="popup-wrap" id="globalPopupContainer">
+        </div>
+    </div>
+    <div id="OverlaySchoolPopup" class="gridItemOverlay"></div>
+    <!--Popup Container-->
+    <div id="ItemPopupSchool" class="gridIItemPopupSchool">
+        <div class="window-tab preload-overlay" style="display:none;">
+            <div class="preloader"><img src="~/Images/preloader.gif" width="32" height="32" alt="Loading" /></div>
+        </div>
+        <span class="tooltipArrow"></span>
+        <div class="gridItemPopupInner">
+            <div class="AcademicYear gridItemContent" data-attr="AcademicYear">
+
+                <div class="controls">
+                    <label>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("School")</label>
+                    <select id="School" ng-model="SelectedSchool" ng-change="FillAcademicYearBySchool()">
+                        <option ng-repeat="x in School" ng-value="{{x.Key}}" ng-selected="{{SelectedSchool == x.Key}}">{{x.Value}}</option>
+                    </select>
+                    @*<i class="dropdownarrow fa fa-caret-down"></i>*@
+                </div>
+                <div class="controls">
+                    <label>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Academic Year")</label>
+                    <select id="AcademicYear" ng-model="SelectedAcademicYear">
+                        <option ng-repeat="x in AcademicYear" ng-value="{{x.Key}}" ng-selected="{{SelectedAcademicYear == x.Key}}">{{x.Value}}</option>
+                    </select>
+                    @*<i class="dropdownarrow fa fa-caret-down"></i>*@
+                </div>
+
+                <div class="modal-footer">
+                    <input type="button" value="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Apply")" class="button-orange me-2" ng-click="SaveSchool();" />
+                    <input type="button" value="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Close")" class="button-orange" ng-click="CloseSchoolPopup();" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<style>
+    .div-sticky-class {
+        position: sticky;
+        position: -webkit-sticky;
+        top: 0;
+    }
+</style>

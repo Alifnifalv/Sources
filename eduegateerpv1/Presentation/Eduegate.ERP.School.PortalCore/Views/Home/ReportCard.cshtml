@@ -1,0 +1,103 @@
+﻿@{
+    ViewBag.Title = "ReportCard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="ReportCardOverlay" class=" container-loader preload-overlay center w-100 h-100">
+    <div id="ReportCardOverlayButtonLoader" class="preloadImg">
+        <span class="spinner-grow" role="status">
+            <span class="sr-only">Loading...</span>
+        </span>
+    </div>
+</div>
+
+<style>
+    .container-loader {
+        position: fixed;
+        top: 165px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        text-align: center;
+        background: #eee;
+    }
+
+        .container-loader:before {
+            content: "";
+            height: calc(100% - 210px);
+            display: inline-block;
+            vertical-align: middle;
+        }
+</style>
+<div class=" d-flex flex-column bg-light" style="flex:1;" ng-controller="ReportCardController" ng-init="init()">
+
+    <section class="home-section-wrap">
+        <div class="container">
+            <div class="row row-eq-height">
+                <!-- Nav tabs -->
+                <!-- Tab panes -->
+
+                <div class="tab-pane  fontawesome-demo">
+                    <div class="container-custom container-xxl d-flex flex-column-fluid  p-md-sm-0">
+                        <div class="content d-flex flex-row flex-row-fluid " data-aos="fade-up">
+                            <div class="d-flex flex-column flex-row-fluid">
+                                <div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6" id="kt_toolbar">
+                                    <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2">
+                                        <h1 class="d-flex text-dark fw-bold m-0 fs-3">Report Card</h1>
+                                        <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+                                            <li class="breadcrumb-item text-gray-600">
+                                                <a class="text-gray-600 text-hover-primary">Home</a>
+                                            </li>
+                                            <li class="breadcrumb-item text-gray-500">Report Card</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="flex-column-fluid">
+                                    <div class="row g-5 g-lg-8 mb-5 mb-xl-0">
+
+                                        <div class="text-left noPaddingLeft noPaddingRight col- col-sm-12  col-md-9 col-xl-8">
+                                            <div class="mb-4 col-6">
+                                                <label for="exampleFormControlInput1" class="form-label">Student</label>
+                                                <select class="form-control" required="" aria-required="true" name="SelectedStudent" id="SelectedStudent"
+                                                        ng-model="SelectedStudent" ng-options="item as item.Value for item in Students track by item.Key" autofocus tabindex="0" ng-change="StudentChanges()"></select>
+                                            </div>
+                                            <div class="mb-4 col-6">
+                                                <label for="exampleFormControlInput1" class="form-label">Academic Year</label>
+                                                <select class="form-control" required="" aria-required="true" name="SelectedAcademicYear" id="SelectedAcademicYear"
+                                                        ng-model="SelectedAcademicYear" ng-options="item as item.Value for item in AcademicYear track by item.Key" ng-change="GetReportCardDetails()"></select>
+                                            </div>
+                                            <div class="d-flex flex-stack pb-10">
+                                                <div class="d-flex">
+                                                    <div ng-repeat="data in ReportCards track by $index">
+                                                        <a class="btn btn-sm btn-primary ms-2" ng-click="DownloadURL('ReadContentsByID?contentID='+data.ReportContentID)">
+                                                            <i class="fa fa-2x fa-download" aria-hidden="true">
+                                                            </i>
+                                                        </a>
+
+                                                    </div>
+                                                    @*<div ng-if="data.length == 0">
+                                                            <div class="alert alert-info text-center">
+                                                                <b>No data found.</b>
+                                                            </div>
+                                                        </div>*@
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gy-5 g-xl-10">
+                        <div class="col-xl-4 mb-5 mb-xl-10">
+                        </div>
+
+                    </div>
+                </div>
+
+            </div><!--pageContent-->
+        </div><!--pageContainer-->
+    </section>
+
+</div>

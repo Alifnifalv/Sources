@@ -1,0 +1,233 @@
+﻿@model Eduegate.Web.Library.ViewModels.SearchListViewModel
+@*@Model Eduegate.Web.Library.School.Exams.MarkApprovalViewModel*@
+
+@{ 
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div style="background-color: #f5f5f5;" id="MarkPublish" class="windowcontainer" ng-controller="MarkPublishController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName', 'markPublish')">
+    <div class="window-tab preload-overlay" style="display:none;">
+        <div class="preloader"><img src="/Images/preloader.GIF" width="32" height="32" alt="Loading" /></div>
+    </div>
+    <div style="padding-bottom:20px;">
+        <div class="col-md-12">
+            <div style="background-color: white; box-shadow: 0 4px 8px 0 rgb(0 0 0 / 20%); transition: 0.3s;">
+
+                <div id="MarkPublishPanel">
+                    <div style="text-align: center;">
+                        <h1 class="mb-3">Publish Progress Report</h1>
+                    </div>
+                    <div style=" box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); transition: all 0.3s cubic-bezier(.25,.8,.25,1);padding:10px 10px 10px 10px;margin:10px 10px 10px 10px;">
+                        <div class="row">
+
+                            <div class="col">
+                                <span class="form-group">
+                                    <span class="controls">
+                                        <label>Academic Year<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                        <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.Mark.AcademicYearID)">&nbsp;Required!</span>
+                                        <ui-select name="MarkAcademicYear" ng-model="SearchArgs.Mark.AcademicYearID" theme="select2" class="pos-txt" ng-change="loadMarkPublishSearchCriteria($select)">
+                                            <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                            <ui-select-choices repeat="AcademicYear in Mark.AcademicYears | filter:$select.search">
+                                                {{AcademicYear.Value}}
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="col">
+                                <span class="form-group">
+                                    <span class="controls">
+                                        <label>Class<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                        <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.Mark.ClassID)">&nbsp;Required!</span>
+                                        <ui-select name="MarkClass" ng-model="SearchArgs.Mark.ClassID" theme="select2" class="pos-txt" ng-change="loadMarkPublishSearchCriteria($select)">
+                                            <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                            <ui-select-choices repeat="class in Mark.Classes | filter:$select.search">
+                                                {{class.Value}}
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="w-100"></div>
+                            <div class="col">
+                                <span class="form-group">
+                                    <span class="controls">
+                                        <label>Section<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                        <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.Mark.SectionID)">&nbsp;Required!</span>
+                                        <ui-select name="MarkSection" ng-model="SearchArgs.Mark.SectionID" theme="select2" class="pos-txt" ng-change="loadMarkPublishSearchCriteria($select)">
+                                            <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                            <ui-select-choices repeat="Section in Mark.Sections | filter:$select.search">
+                                                {{Section.Value}}
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="col">
+                                <span class="form-group">
+                                    <span class="controls">
+                                        <label>Terms<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                        <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.Mark.TermID)">&nbsp;Required!</span>
+                                        <ui-select name="MarkTerm" ng-model="SearchArgs.Mark.TermID" theme="select2" class="pos-txt" ng-change="loadMarkPublishSearchCriteria($select)">
+                                            <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                            <ui-select-choices repeat="Term in Mark.Terms | filter:$select.search">
+                                                {{Term.Value}}
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="w-100"></div>
+                            <div class="col">
+                                <span class="form-group">
+                                    <span class="controls">
+                                        <label>Exam<span class="cufon" style="color:red;font-weight:700">&nbsp;*</span></label>
+                                        <span class="cufon" style="color:red" ng-show="SearchArgs.IsFetched && isEmptyObject(SearchArgs.Mark.ExamID)">&nbsp;Required!</span>
+                                        <ui-select name="MarkExam" ng-model="SearchArgs.Mark.ExamID" theme="select2" class="pos-txt" ng-change="loadMarkPublishSearchCriteria($select)">
+                                            <ui-select-match placeholder="Search">{{$select.selected.Value}}</ui-select-match>
+                                            <ui-select-choices repeat="Exam in Mark.Exams | filter:$select.search">
+                                                {{Exam.Value}}
+                                            </ui-select-choices>
+                                        </ui-select>
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="col">
+
+                            </div>
+                            <div class="w-100"></div>
+                            <div class="col" style="margin-top:10px">
+                                <span class="field-row">
+                                    <input type="button" value="Get Marks" class="button-orange" ng-click="GetMarkEntryDetailsForPublish()" />
+
+                                    <span class="form-group">
+                                        <span class="controls w-75" style="max-width:250px;">
+                                            @*<label>Status</label>*@
+                                            <span class="controls brand min-w-150px">
+
+                                                <select class="form-control validate" name="SelectedStatus" id="SelectedStatus" style="height: 31px;"
+                                                        ng-options="item as item.Value for item in Status track by item.Key"
+                                                        ng-model="SelectedMasterStatus" ng-change="UpdateMasterStatus()" ng-disabled="MarkPublish.length == 0">
+                                                    <option value="" disabled selected>Select status</option>
+                                                </select>
+                                                <i class="dropdownarrow fa fa-caret-down"></i>
+                                            </span>
+                                        </span>
+                                    </span>
+
+                                    <input type="button" value="Submit" class="button-orange" ng-disabled="MarkPublish.length == 0" ng-click="SaveMarksToPublish()" />
+                                    <input type="button" value="Reset" class="button-orange" ng-click="ResetFields()" />
+                                </span>
+
+                                <div class="col text-right">
+                                    <span class="field-row">
+                                        <span class="form-group">
+                                            <span class="controls w-75" style="max-width:250px;">
+                                                @*<label>Status</label>*@
+                                                <span class="controls brand min-w-150px">
+
+                                                    <select class="form-control validate" name="SelectedPromotionStatus" id="SelectedPromotionStatus" style="height: 31px;"
+                                                            ng-options="item as item.Value for item in PromotionStatus track by item.Key"
+                                                            ng-model="SelectedPromotionStatus">
+                                                        <option value="" disabled selected>Select status</option>
+                                                    </select>
+                                                    <i class="dropdownarrow fa fa-caret-down"></i>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <input type="button" value="Download" class="button-orange" ng-disabled="!SelectedPromotionStatus" ng-click="DownloadReports()" />
+
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 controls fullcolumn-layout w-100" ng-if="MarkPublish.length > 0">
+                            <table class="fullcolumn-layout grid table">
+                                <thead>
+                                    <tr style="font-weight:bolder;background:#f5f5f5;">
+                                        <th class="small-col-width text-wrap overflow-visible text-unset" style="width: 35px;"><input type="checkbox" name="IsSelectedToPublish" id="IsSelectedToPublish" style="width: 20px; height: 20px;" ng-model="IsSelectedToPublish" ng-change="ChangeHeaderCheckBox(IsSelectedToPublish)" /></th>
+                                        <th class="small-col-width text-left text-break text-wrap overflow-visible text-unset" style="width: 70px;">SL. No.</th>
+                                        <th class="small-col-width text-left w-100 text-break text-wrap overflow-visible text-unset">Enroll No</th>
+                                        <th class="medium-col-width text-left  text-break text-wrap overflow-visible text-unset">Student Name</th>
+                                        <th data-toggle="tooltip" data-placement="top" title="{{subject.Value}}" class="small-col-width text-wrap overflow-visible text-unset w-100 text-break text-left" ng-repeat="subject in Mark.Subjects">
+                                            <span ng-bind="subject.Value"></span>
+                                        </th>
+                                        <th data-toggle="tooltip" data-placement="top" title="{{skill.Value}}" class="small-col-width text-wrap overflow-visible text-unset w-100 text-break text-left" ng-repeat="skill in Mark.Skills">
+                                            <span ng-bind="skill.Value"></span>
+                                        </th>
+                                        <th class="medium-col-width text-left text-break text-wrap overflow-visible text-unset">Status</th>
+                                        <th class="medium-col-width text-left  text-break text-wrap overflow-visible text-unset">Fee defaulter status</th>
+                                        <th class="medium-col-width text-left  text-break text-wrap overflow-visible text-unset">Preview</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr ng-repeat="detail in MarkPublish">
+                                        <td class="small-col-width" style="width: 20px; height: 20px; "><input type="checkbox" name="IsSelected" id="IsSelected" style="width: 20px; height: 20px;" ng-model="detail.IsSelected" ng-disabled="detail.IsDisabled && detail.StudentFeeDefaulterStatus" /></td>
+                                        <td style="text-align:left">{{$index +1}}</td>
+                                        <td style="text-align:left; color:red;" ng-if="detail.StudentFeeDefaulterStatus">{{detail.EnrollNumber}}</td>
+                                        <td style="text-align:left" ng-if="!detail.StudentFeeDefaulterStatus">{{detail.EnrollNumber}}</td>
+                                        <td ng-bind="detail.Student.Value" style="text-align:left; color:red;" ng-if="detail.StudentFeeDefaulterStatus"></td>
+                                        <td ng-bind="detail.Student.Value" style="text-align:left" ng-if="!detail.StudentFeeDefaulterStatus"></td>
+                                        <td ng-repeat="subject in Mark.Subjects" style="text-align:left">
+                                            <span ng-bind="getMarks(subject,detail)"></span>
+                                        </td>
+                                        <td ng-repeat="skill in Mark.Skills" style="text-align:left">
+                                            <span ng-bind="getSkillGrade(skill,detail)"></span>
+                                        </td>
+                                        <td>
+                                            <span class="form-group">
+                                                <span class="controls w-75" style="max-width:250px">
+                                                    <span class="controls brand">
+                                                        <select class="form-control validate" name="SelectedEntryStatus" id="SelectedEntryStatus"
+                                                                ng-options="item as item.Value for item in Status track by item.Key"
+                                                                ng-model="detail.MarkEntryStatus" ng-change="UpdateRowStatus(detail)">
+                                                        </select>
+                                                        <i class="dropdownarrow fa fa-caret-down"></i>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td ng-bind="detail.StudentFeeDefaulterStatus" style="text-align:left; color:red;"></td>
+                                        <td class="text-center align-middle" data-order="58" ng-if="detail.MarkEntryStatusID != 1">
+                                            <span class="symbol symbol-30px" ng-click="ViewProgressReport(detail)">
+                                                <span class="symbol-label">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                                        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+                                                    </svg>
+                                                </span>
+                                            </span>
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal right" id="globalRightDrawer" tabindex="-1" aria-labelledby="rightModalLabel" aria-hidden="true">
+            <div class="modal-dialog  modal-dialog-centered modal-lg w-100">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

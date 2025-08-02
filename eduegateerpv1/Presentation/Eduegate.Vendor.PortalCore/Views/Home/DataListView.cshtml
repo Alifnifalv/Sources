@@ -1,0 +1,130 @@
+﻿@using Eduegate.ERP.Admin.Globalization;
+@model Eduegate.Web.Library.ViewModels.Filter.AdvanceFilterViewModel;
+
+@{
+    int index = 0;
+    Random rnd = new Random();
+    var windowName = "window_" + Guid.NewGuid().ToString();
+    var screen = @Model.FilterViewModel.View;
+
+    if (screen == Eduegate.Infrastructure.Enums.SearchView.BidApprovalList || screen == Eduegate.Infrastructure.Enums.SearchView.AwardedBidList)
+    {
+        Layout = "_BidLayout";
+    }
+    else
+    {
+        Layout = "_Layout";
+    }
+
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div id="DataList" class="windowcontainer pagecontent" ng-controller="DataListController" ng-init="Init('@windowName', '@Model.JsonModel','@screen')">
+
+    <h3 class="pb-5 px-2">@Model.SearchMetadata.ViewTitle</h3>
+    <div class="listPage pt-4 mb-20">
+        <div class="float-end px-15 pb-5 pt-5">
+            @if (Model.SearchMetadata.IsGenericCRUDSave == true)
+            {
+                <a href="~/Home/@Model.SearchMetadata.ViewName" class="createButton">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="13" viewBox="0 0 16 13" fill="none">
+                        <path d="M14.9306 5.24617H13.7199V4.03548C13.7199 3.8126 13.5393 3.63196 13.3164 3.63196C13.0936 3.63196 12.9128 3.8126 12.9128 4.03548V5.24617H11.7023C11.4795 5.24617 11.2988 5.42682 11.2988 5.6497C11.2988 5.87258 11.4795 6.05322 11.7023 6.05322H12.9128V7.26391C12.9128 7.48679 13.0936 7.66744 13.3164 7.66744C13.5393 7.66744 13.7199 7.48679 13.7199 7.26391V6.05322H14.9306C15.1534 6.05322 15.3341 5.87258 15.3341 5.6497C15.3341 5.42682 15.1534 5.24617 14.9306 5.24617Z" fill="white" />
+                        <path d="M9.28164 3.63195C9.28164 5.63788 7.65559 7.26391 5.64991 7.26391C3.64411 7.26391 2.01807 5.63788 2.01807 3.63195C2.01807 1.62603 3.64411 0 5.64991 0C7.65559 0 9.28164 1.62603 9.28164 3.63195Z" fill="white" />
+                        <path d="M8.07057 8.07104H2.97752C1.3331 8.07104 0 9.40411 0 11.0486V11.0487V11.703C0 11.9259 0.180633 12.1066 0.403499 12.1066H10.8953C11.1182 12.1066 11.2988 11.9259 11.2988 11.703V11.2995C11.2988 9.51643 9.8535 8.07104 8.07057 8.07104Z" fill="white" />
+                    </svg> &ensp;
+                    Register @Model.SearchMetadata.ViewTitle</a>
+            }
+        </div>
+    @* Filter Starts *@
+    @if (Model.FilterViewModel.Columns.Count > 0)
+    {
+        <div class="fl-advsearch-section p-6">
+                <div style="display: flex; flex-wrap: wrap;" class="px-10">
+                @foreach (var col in Model.FilterViewModel.Columns.OrderBy(x => x.FilterColumnID))
+                {
+                    <div class="adv-fields px-3" style="width:19%; display: flex; flex-direction: column;">
+                        <label>@col.ColumnCaption</label>
+                        <span class="inputwrap two-fields">
+                            <select ng-model="FilterCondtion" class="d-none">
+                                <option value="Equals" selected>Equals</option>
+                            </select>
+
+                            @switch (col.ColumnType)
+                            {
+                                case Eduegate.Services.Contracts.Enums.DataTypes.Date:
+                                case Eduegate.Services.Contracts.Enums.DataTypes.DateTime:
+                                    <span class="filterfield datetime_picker" style="display: flex;">
+                                        <input type="date" placeholder="@col.ColumnCaption" autocomplete="off" id="Model[@index].FilterValue" name="Model[@index].FilterValue" ng-keyup="$event.keyCode == 13 ? SearchClick() : null" ng-model="Model[@index].FilterValue" ng-change="Model[@index].IsDirty=true;">
+                                        <input type="date" autocomplete="off" placeholder="@col.ColumnCaption" id="Model[@index].FilterValue2" name="Model[@index].FilterValue2" ng-keyup="$event.keyCode == 13 ? SearchClick() : null" ng-model="Model[@index].FilterValue2" ng-change="Model[@index].IsDirty=true;" ng-show="Model[@index].FilterCondition=='Between'">
+                                    </span>
+                                    break;
+
+                                case Eduegate.Services.Contracts.Enums.DataTypes.String:
+                                case Eduegate.Services.Contracts.Enums.DataTypes.Number:
+                                    <span class="filterfield" style="display: flex;">
+                                        <input type="text" data-rel="tooltip-right" placeholder="@col.ColumnCaption" class="width-70" ng-keyup="$event.keyCode == 13 ? SearchClick() : null" ng-model="Model[@index].FilterValue" ng-change="Model[@index].IsDirty=true;">
+                                        <input type="text" data-rel="tooltip-right" placeholder="@col.ColumnCaption" class="width-70" ng-keyup="$event.keyCode == 13 ? SearchClick() : null" ng-model="Model[@index].FilterValue2" ng-show="c" ng-change="Model[@index].IsDirty=true;">
+                                    </span>
+                                    break;
+
+                                case Eduegate.Services.Contracts.Enums.DataTypes.DropDown:
+                                    if (@col.LookUpID.HasValue)
+                                    {
+                                        <span @Html.Raw(string.IsNullOrEmpty(@col.Attribute1) ? "class='field-row'" : @col.Attribute1) ng-class="{filtermodified:QuickFilter[@index].IsDirty}" style="display: flex; flex-direction: column; width: 100%;">
+                                            @if (@col.IsLookupLazyLoad == true)
+                                            {
+                                                <ui-select ng-style="{'width': '100%'}" ng-model="QuickFilter[@index].FilterValue3" theme="select2" class="pos-txt" ng-change="DropDownOnChange(@(index), 2,'@(((Eduegate.Services.Contracts.Enums.LookUpTypes)@col.LookUpID).ToString())');">
+                                                    <ui-select-match>{{$select.selected.Value}}</ui-select-match>
+                                                    <ui-select-choices repeat="data in LookUps.@(((Eduegate.Services.Contracts.Enums.LookUpTypes)@col.LookUpID).ToString()) | filter:$select.search" refresh="LoadLookups('@(((Eduegate.Services.Contracts.Enums.LookUpTypes)@col.LookUpID).ToString())', @col.IsLookupLazyLoad.ToString().ToLower(), $select)" refresh-delay="50">{{data.Value}}</ui-select-choices>
+                                                </ui-select>
+                                            }
+                                            else
+                                            {
+                                                <ui-select ng-style="{'width': '100%'}" ng-model="QuickFilter[@index].FilterValue3" theme="select2" class="pos-txt" ng-change="DropDownOnChange(@(index), 2,'@(((Eduegate.Services.Contracts.Enums.LookUpTypes)@col.LookUpID).ToString())');" ng-click="LoadLookups('@(((Eduegate.Services.Contracts.Enums.LookUpTypes)@col.LookUpID).ToString())', @col.IsLookupLazyLoad.ToString().ToLower(), $select)">
+                                                    <ui-select-match>{{$select.selected.Value}}</ui-select-match>
+                                                    <ui-select-choices repeat="data in LookUps.@(((Eduegate.Services.Contracts.Enums.LookUpTypes)@col.LookUpID).ToString()) | filter:$select.search">{{data.Value}}</ui-select-choices>
+                                                </ui-select>
+                                            }
+                                        </span>
+                                    }
+                                    break;
+                            }
+                        </span>
+                    </div>
+                    index++;
+                }
+                <span class="field-row field-row-btn pt-6">
+                    <button class="reset" ng-click="ResetSearchClick()"> Reset
+                    </button>
+                    <button class="normal" ng-click="SearchClick()"> Search
+                    </button>
+                </span>
+            </div>
+        </div>
+    }
+    @* Filter End *@
+
+        <div class="tableCondainer">
+                <div class="col-12">
+                    <table class="table table-bordered">
+                        @{
+                            await Html.RenderPartialAsync("_TableHeader", Model.SearchMetadata);
+                            await Html.RenderPartialAsync("_TableRows", Model.SearchMetadata);
+                        }
+                    </table>
+                </div>
+        </div>
+        <hr />
+        <div>
+            <ul style="display: flex; list-style: none; padding: 0; justify-content: center;" class="pb-8">
+                <li style="margin-right: 10px;">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Total") &nbsp;<span ng-bind="TotalRecords"></span> @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("records")</li>
+                <li style="margin-right: 10px; cursor:pointer;" ng-click="FirstPage($event)" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Go to first page")"><i class="fa fa-fast-backward"></i></li>
+                <li style="margin-right: 10px; cursor:pointer;" ng-click="PreviousPage($event)" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("previous")"><i class="fa fa-step-backward"></i></li>
+                <li style="margin-right: 10px;">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Page") <span ng-bind="CurrentPage"></span> @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("of") <span ng-bind="TotalPages"></span></li>
+                <li style="margin-right: 10px; cursor:pointer;" ng-click="NextPage($event)" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("next")"><i class="fa fa-step-forward"></i></li>
+                <li style="margin-right: 10px; cursor:pointer;" ng-click="LastPage($event)" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Go to last page")"> <i class="fa fa-fast-forward"></i></li>
+                @* <li style="margin-right: 10px;" class="last"><span>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Go to page"): &nbsp;<input type="text" id="txtGetPageNo" ng-model="GoToPageNo" ng-keyup="$event.keyCode == 13 && GoToPage($event)" /></span></li> *@
+            </ul>
+        </div>
+    </div>
+</div>

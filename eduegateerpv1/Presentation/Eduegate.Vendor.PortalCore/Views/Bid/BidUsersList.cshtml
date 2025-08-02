@@ -1,0 +1,118 @@
+﻿@{
+    Layout = "_BidLayout";
+    ViewBag.Title = "Bid Users";
+    var window = "BidUsersList";
+}
+
+@* Tender list or bid list by Tender and loginID *@
+
+<div ng-controller="BidController" ng-init="Init('@window')">
+    <h3 class="pb-5 px-2">Tender List</h3>
+    <div class="listPage pt-4 mb-20">
+        <div class="tableCondainer col-12">
+            <table class="table">
+                <thead class="tableHeader">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Tender</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Bid Opening Date</th>
+                        <th scope="col">Closing Date</th>
+                        <th scope="col">Is Active</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="tender in TenderList" class="clickable-row" data-tender-id="{{tender.TenderIID}}">
+                        <th scope="row" class="m-3 p-5">{{$index + 1}}</th>
+                        <td ng-bind="tender.Name" class="m-3 p-5"></td>
+                        <td ng-bind="tender.Description" class="m-3 p-5"></td>
+                        <td ng-bind="tender.OpeningDateString" class="m-3 p-5"></td>
+                        <td ng-bind="tender.EndDateString" class="m-3 p-5"></td>
+                        <td class="gridstatus m-3" ng-class="{'green':tender.IsActive,'red':!tender.IsActive}" ng-bind="tender.IsActive == true ? 'Yes' : 'No'"></td>
+                        <td ng-click="toggleSlide(tender)" style="cursor:pointer;" title="bid users">
+                            <h4 class="p-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill svgMenulink" viewBox="0 0 16 16">
+                                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
+                                </svg>
+                            </h4>
+
+                        </td>
+                        <td title="open bid" style="cursor:pointer;" ng-click="ValidateAndOpenTender(tender)">
+                            <h4 class="p-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder2-open svgMenulink" viewBox="0 0 16 16">
+                                    <path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7z" />
+                                </svg>
+                            </h4>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    @* slider to show tender users *@
+    <div class="slide-container" id="slidePage" ng-class="{'show': isSlideVisible}">
+        <h4>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill slidecloseButton" viewBox="0 0 16 16" ng-click="closeSlide()" style="cursor:pointer;">
+                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z" />
+            </svg>
+        </h4>
+
+        <div>
+            <span class="badge badge-pill badge-secondary">Number of Authorities :</span>
+            <span class="badge badge-light">{{BidUsersList[0].NumOfAuthorities}}</span>
+        </div>
+
+            <table class="table table-bordered">
+                <thead class="tableHeader">
+                <tr>
+                    <th>#</th>
+                    <th>User Name</th>
+                    <th>Email ID</th>
+                    <th>Opened Date</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                    <tr ng-repeat="data in BidUsersList" ng-class="{'table-warning': data.IsTenderOpened,'table-success':data.IsTenderApproved}">
+                        <th scope="row">{{$index + 1}}</th>
+                        <td ng-bind="data.UserName"></td>
+                        <td ng-bind="data.EmailID"></td>
+                        <td ng-bind="data.OpenedDateString"></td>
+                        <td ng-bind="data.OpenedTime"></td>
+                        <td ng-bind="data.IsTenderApproved == true ? 'Approved' : ''">
+                        </td>
+                    </tr>
+            </tbody>
+        </table>
+    </div>
+
+        <!-- Modal -->
+        <div class="modal fade" tabindex="-1" role="dialog" id="exampleModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" style="color:darkred;">ALERT</h3>
+                        <h4>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill slidecloseButton" viewBox="0 0 16 16" ng-click="closeModal()" aria-label="Close" style="cursor:pointer;">
+                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293z" />
+                            </svg>
+                        </h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-info">
+                            <strong>Notice:</strong> Please open bid using the 'Open' button.<br /> The tender is visible after the <span class="badge badge-light">{{BidUsersList[0].NumOfAuthorities}}</span> bid Authorities is opened.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="button reset" ng-click="closeModal()">Close</button>
+                        <button type="button" class="button download" ng-if="isModalOpenBtnVisible" ng-click="OpenAndUpdateLog(SelectedTender,TenderAuthMapIID)">Open</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

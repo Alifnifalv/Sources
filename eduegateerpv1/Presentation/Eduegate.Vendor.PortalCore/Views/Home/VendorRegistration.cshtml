@@ -1,0 +1,1137 @@
+﻿@model Eduegate.Web.Library.ViewModels.SupplierViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div style="text-align:center;" class="pt-1">
+    @await Html.PartialAsync("_ToastMessage")
+</div>
+<h3 class="pb-5">
+    <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill="none">
+        <path d="M14.4999 5.95465C11.7643 5.95465 9.53125 8.17797 9.53125 10.9137C9.53125 13.659 11.7643 15.8823 14.4999 15.8823C17.2356 15.8823 19.4686 13.659 19.4686 10.9137C19.4686 8.17797 17.2356 5.95465 14.4999 5.95465Z" fill="#515151" />
+        <path d="M14.4903 0C6.50571 0 0 6.49597 0 14.4903C0 18.937 2.02036 22.9196 5.18132 25.578V25.5876C7.70437 27.7046 10.9524 28.9806 14.4903 28.9806C19.5364 28.9806 24.1377 26.4286 26.8057 22.1463C28.246 19.8456 29 17.2067 29 14.4903C29 11.774 28.246 9.12533 26.8057 6.83428C24.1377 2.55195 19.5364 0 14.4903 0ZM25.172 21.1216C24.708 21.866 24.1667 22.5233 23.577 23.142C22.1077 20.126 18.9853 18.1153 15.5343 18.1153H13.4657C11.0684 18.1153 8.816 19.053 7.12433 20.7446C6.41868 21.4407 5.858 22.2623 5.42299 23.1516C3.26733 20.8993 1.93333 17.8543 1.93333 14.4903C1.93333 7.56896 7.56902 1.93333 14.4903 1.93333C18.8694 1.93333 22.852 4.14698 25.172 7.859C26.4093 9.85033 27.0667 12.1413 27.0667 14.4903C27.0667 16.8393 26.4093 19.1303 25.172 21.1216Z" fill="#515151" />
+    </svg> My Account
+</h3>
+<div id="MyProfileForm" ng-controller="VendorController" ng-init="Init('VendorRegistration')">
+    <div class="navTabs">
+        <ul class="nav nav-tabs pb-2 pt-2">
+            <li class="nav-item px-2">
+                <a class="nav-link active" data-bs-toggle="tab" href="#tab1">Vendor Information</a>
+            </li>
+            <li class="nav-item px-2">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab2">Business Details</a>
+            </li>
+            <li class="nav-item px-2">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab3">Financial Information</a>
+            </li>
+            <li class="nav-item px-2">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab4">Product/Service Information</a>
+            </li>
+            <li class="nav-item px-2">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab5">Compliance and Certifications</a>
+            </li>
+            <li class="nav-item px-2">
+                <a class="nav-link" data-bs-toggle="tab" href="#tab6">References and Past Performance</a>
+            </li>
+        </ul>
+    </div>
+
+    <form id="multiPageForm" name="myProfile">
+        <div class="listPage mb-20">
+            <!-- Tab panes -->
+            <div class="tab-content pt-4">
+                @* Vendor Information *@
+                <div class="tab-pane active px-10" id="tab1">
+
+                    <div class="row pb-15 pt-5">
+                        <div class="col-1 rectangleIcon"></div>
+                        <div class="col-5 liTabHeaders">Vendor Information</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="SupplierCode">Supplier Code</label>
+                                <input type="text" ng-model="Vendor.SupplierCode" id="SupplierCode" name="SupplierCode" disabled>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3 pe-8">
+                            <label hidden ng-model="Vendor.SupplierIID"></label>
+                            <label hidden ng-model="Vendor.LoginID"></label>
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="FirstName">Company Name<span class="required"> </span></label>
+                                <input type="text" ng-model="Vendor.FirstName" id="FirstName" name="Company Name" required oninput="this.value = this.value.toUpperCase()" disabled>
+                                @Html.ValidationMessageFor(m => m.FirstName)
+                            </div>
+                        </div><div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="VendorNickName">Company Short Name<span class="required"> </span></label>
+                                <input type="text" ng-model="Vendor.VendorNickName" id="VendorNickName" name="Company Short Name" required oninput="this.value = this.value.toUpperCase()">
+                                @Html.ValidationMessageFor(m => m.VendorNickName)
+                            </div>
+                        </div><div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="CommunicationAddress">Communication Address<span class="required"> </span></label>
+                                <input type="text" ng-model="Vendor.CommunicationAddress" id="CommunicationAddress" name="Communication Address" required oninput="this.value = this.value.toUpperCase()">
+                                @Html.ValidationMessageFor(m => m.CommunicationAddress)
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="PhysicalAddress">Physical Address<span class="required"> </span></label>
+                                <input type="text" ng-model="Vendor.PhysicalAddress" id="PhysicalAddress" name="Physical Address" required oninput="this.value = this.value.toUpperCase()">
+                                @Html.ValidationMessageFor(m => m.PhysicalAddress)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="TelephoneNumber">Phone Number<span class="required"> </span></label>
+                                <input type="text" ng-model="Vendor.TelephoneNumber" id="TelephoneNumber" name="Phone Number" required>
+                                @Html.ValidationMessageFor(m => m.TelephoneNumber)
+                            </div>
+                        </div><div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="SupplierEmail">Email Address<span class="required"> </span></label>
+                                <input type="email" ng-model="Vendor.SupplierEmail" id="SupplierEmail" name="Email Address" required>
+                                @Html.ValidationMessageFor(m => m.SupplierEmail)
+                            </div>
+                        </div><div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="phone">Website URL<span class="required"> </span></label>
+                                <input type="text" ng-model="Vendor.WebsiteURL" id="WebsiteURL" name="Website URL" required>
+                                @Html.ValidationMessageFor(m => m.WebsiteURL)
+                            </div>
+                        </div>
+                    </div>
+
+                    @*                     <div class="row"> //Temperory Commented
+                    <h4>Primary Contact Person :</h4>
+                    <div class="col-2">
+                    <div class="form-group row margin-top-20">
+                    <label class="control-label col-md-12" for="ContactPerson">Contact Person<span class="required"> </span></label>
+                    <select type="text" id="ContactPerson" ng-model="Vendor.ContactPerson" name="ContactPerson" required ng-options="item as item.Value for item in ContactPersons track by item.Key" ng-change="ContactPersonChanges(Vendor.ContactPerson.Key)">
+                    <option value="">Select Contact Person</option>
+                    </select>
+                    </div>
+                    </div>
+                    <div class="col-2">
+                    <div class="form-group row margin-top-20">
+                    <label class="control-label col-md-12" for="ContactPersonTitle">Title</label>
+                    <input type="text" id="ContactPersonTitle" name="ContactPersonTitle" pattern="[A-Z]+" disabled ng-model="ContactPersonTitle">
+                    </div>
+                    </div>
+                    <div class="col-2">
+                    <div class="form-group row margin-top-20">
+                    <label class="control-label col-md-12" for="ContactPersonPhone">Phone Number</label>
+                    <input type="text" id="ContactPersonPhone" name="ContactPersonPhone" disabled ng-model="ContactPersonPhone">
+                    </div>
+                    </div>
+                    <div class="col-2">
+                    <div class="form-group row margin-top-20">
+                    <label class="control-label col-md-12" for="ContactPersonEmail">Email Address</label>
+                    <input type="text" id="ContactPersonEmail" name="ContactPersonEmail" disabled ng-model="ContactPersonEmail">
+                    </div>
+                    </div>
+                    </div> *@
+
+                    <div class="button-container">
+                        <button class="reset btnNext">
+                            Next &ensp; <svg xmlns="http://www.w3.org/2000/svg" width="8" height="13" viewBox="0 0 8 13" fill="none">
+                                <path d="M7.01148 6.34301L7.01146 6.34299L1.65514 0.989055C1.5653 0.899211 1.44393 0.849941 1.32302 0.849941C1.20509 0.849941 1.08216 0.894838 0.989901 0.990058C0.806207 1.17482 0.80654 1.47132 0.9909 1.65568L6.01038 6.67749L0.988521 11.6993C0.803826 11.884 0.803826 12.1813 0.988521 12.366C1.17321 12.5507 1.47045 12.5507 1.65514 12.366L7.01148 7.00964C7.19617 6.82494 7.19617 6.52771 7.01148 6.34301Z" fill="#316BA1" stroke="#316BA1" stroke-width="0.3" />
+                            </svg>
+                        </button>
+                        <button class="normal" ng-click="SaveChanges(Vendor)"> Save </button>
+                    </div>
+
+                </div>
+
+                @* Business Details *@
+                <div class="tab-pane fade px-10" id="tab2">
+
+                    <div class="row pb-15 pt-5">
+                        <div class="col-1 rectangleIcon"></div>
+                        <div class="col-5 liTabHeaders">Business Details</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="companyName">Select Business Type</label>
+                                <select type="text" id="businessType" name="businessType" required ng-options="item as item.Value for item in BusinessTypes track by item.Key" ng-model="Vendor.BusinessDetail.BusinessType">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="yearEstablished">Year Established</label>
+                                <input type="text" id="yearEstablished" ng-model="Vendor.BusinessDetail.YearEstablished" name="yearEstablished" maxlength="4">
+                            </div>
+                        </div>
+                    </div>
+
+                    @* <h4>Commercial/Business Registration Number </h4> *@
+
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <!-- Using Bootstrap's grid system to set width -->
+                            <label for="businessRegistrationNumber" class="form-label">Commercial/Business Registration Number</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="businessRegistrationNumber"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.BusinessRegistration"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'BusinessRegistration')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.BusinessRegistration">
+                                <button type="button" class="delete" ng-click="DeleteContentData('BusinessRegistration',Vendor.Document.BusinessRegistration)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.BusinessRegistration)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="CRNumber">CR Number<span class="required"> </span></label>
+                                <input type="text" id="CRNumber" ng-model="Vendor.BusinessDetail.VendorCR" name="CR Number" required>
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label for="CRStartDate">CR Start Date</label>
+                                <input type="text" autocomplete="off" ng-model="Vendor.BusinessDetail.CRStartDateString" datetime-picker />
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="CRExpiryDate">CR Expiry Date</label>
+                                <input type="text" ng-model="Vendor.BusinessDetail.CRExpiryDateString" id="CRExpiryDate" name="CRExpiryDate" datetime-picker ng-change="validateDates('CRExpiryDateString')">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <!-- Using Bootstrap's grid system to set width -->
+                            <label for="taxIdentificationNumber" class="form-label">Tax Identification Number (TIN)</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="taxIdentificationNumber"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.TaxIdentificationNumber"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'TaxIdentificationNumber')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.TaxIdentificationNumber">
+                                <button type="button" class="delete" ng-click="DeleteContentData('TaxIdentificationNumber',Vendor.Document.TaxIdentificationNumber)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.TaxIdentificationNumber)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                        <div class="row">
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="TINNumber">TIN Number</label>
+                                <input type="text" ng-model="Vendor.BusinessDetail.TINNumber" id="TINNumber" name="TINNumber">
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="TaxJurisdictionCountry">Tax Jurisdiction country</label>
+                                <select type="text" id="TaxJurisdictionCountry" name="TaxJurisdictionCountry" required ng-options="item as item.Value for item in Countries track by item.Key" ng-model="Vendor.BusinessDetail.TaxJurisdictionCountry">
+                                    <option value=""> </option>
+                                </select>
+                            </div>
+                        </div>
+@*                         <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="DUNSNumber">DUNS Number</label>
+                                <input type="text" id="DUNSNumber" name="DUNSNumber" ng-model="Vendor.BusinessDetail.DUNSNumber">
+                            </div>
+                        </div> *@
+                    </div>
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <label for="DUNSNumberUpload" class="form-label">DUNS Number</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="DUNSNumberUpload"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.DUNSNumberUpload"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'DUNSNumberUpload')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.DUNSNumberUpload">
+                                <button type="button" class="delete" ng-click="DeleteContentData('DUNSNumberUpload',Vendor.Document.DUNSNumberUpload)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.DUNSNumberUpload)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    @* <h4>Trade/Business license </h4> *@
+
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <label for="tradeLicense" class="form-label">Trade/Business license</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="tradeLicense"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.TradeLicense"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'TradeLicense')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.TradeLicense">
+                                <button type="button" class="delete" ng-click="DeleteContentData('TradeLicense',Vendor.Document.TradeLicense)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.TradeLicense)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="licenseNumber">License  Number<span class="required"> </span></label>
+                                <input type="text" id="licenseNumber" name="License Number" ng-model="Vendor.BusinessDetail.LicenseNumber" required>
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="licenseStartDate">Start Date</label>
+                                <input type="text" id="licenseStartDate" name="licenseStartDate" ng-model="Vendor.BusinessDetail.LicenseStartDateString" datetime-picker>
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="licenseExpiryDate">Expiry Date</label>
+                                <input type="text" id="licenseExpiryDate" name="licenseExpiryDate" ng-model="Vendor.BusinessDetail.LicenseExpiryDateString" datetime-picker ng-change="validateDates('LicenseExpiryDateString')">
+                            </div>
+                        </div>
+                    </div>
+
+                    @* <h4>Establishment License </h4> *@
+
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <label for="establishmentLicense" class="form-label">Establishment License</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="establishmentLicense"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.EstablishmentLicense"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'EstablishmentLicense')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.EstablishmentLicense">
+                                <button type="button" class="delete" ng-click="DeleteContentData('EstablishmentLicense',Vendor.Document.EstablishmentLicense)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.EstablishmentLicense)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="EstIDNumber">ID Number<span class="required"> </span></label>
+                                <input type="text" id="EstIDNumber" name="Est ID Number" ng-model="Vendor.BusinessDetail.EstIDNumber" required>
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="EstFirstIssueDate">First Issue Date</label>
+                                <input type="text" id="EstFirstIssueDate" name="EstFirstIssueDate" ng-model="Vendor.BusinessDetail.EstFirstIssueDateString" datetime-picker>
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="EstExpiryDate">Expiry Date</label>
+                                <input type="text" id="EstExpiryDate" name="EstExpiryDate" ng-model="Vendor.BusinessDetail.EstExpiryDateString" datetime-picker ng-change="validateDates('EstExpiryDateString')">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-container">
+                        <button class="reset btnPrevious">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="8" height="13" viewBox="0 0 8 13" fill="none">
+                                <path d="M0.988521 7.01148L0.988544 7.0115L6.34486 12.3654C6.4347 12.4553 6.55608 12.5046 6.67698 12.5046C6.79491 12.5046 6.91784 12.4597 7.0101 12.3644C7.19379 12.1797 7.19346 11.8832 7.0091 11.6988L1.98962 6.677L7.01148 1.65514C7.19617 1.47045 7.19617 1.17321 7.01148 0.98852C6.82679 0.803826 6.52955 0.803826 6.34486 0.988521L0.98852 6.34486C0.803827 6.52955 0.803826 6.82679 0.988521 7.01148Z" fill="#316BA1" stroke="#316BA1" stroke-width="0.3" />
+                            </svg>
+                            &ensp; Back
+                        </button>
+                        <button class="reset btnNext">
+                            Next &ensp; <svg xmlns="http://www.w3.org/2000/svg" width="8" height="13" viewBox="0 0 8 13" fill="none">
+                                <path d="M7.01148 6.34301L7.01146 6.34299L1.65514 0.989055C1.5653 0.899211 1.44393 0.849941 1.32302 0.849941C1.20509 0.849941 1.08216 0.894838 0.989901 0.990058C0.806207 1.17482 0.80654 1.47132 0.9909 1.65568L6.01038 6.67749L0.988521 11.6993C0.803826 11.884 0.803826 12.1813 0.988521 12.366C1.17321 12.5507 1.47045 12.5507 1.65514 12.366L7.01148 7.00964C7.19617 6.82494 7.19617 6.52771 7.01148 6.34301Z" fill="#316BA1" stroke="#316BA1" stroke-width="0.3" />
+                            </svg>
+                        </button>
+                        <button class="normal" ng-click="SaveChanges(Vendor)"> Save </button>
+                    </div>
+
+                </div>
+
+                @* Financial Information *@
+                <div class="tab-pane fade px-10" id="tab3">
+
+                    <div class="row pb-15 pt-5">
+                        <div class="col-1 rectangleIcon"></div>
+                        <div class="col-5 liTabHeaders">Financial Information</div>
+                    </div>
+
+                    <h4>Bank Account Details </h4>
+                    <div class="row">
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="BankName">Bank Name<span class="required"> </span></label>
+                                <input type="text" id="BankName" name="Bank Name" ng-model="Vendor.BankAccounts.BankName" required />
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="BankAddress">Bank Address</label>
+                                <input type="text" id="BankAddress" name="BankAddress" ng-model="Vendor.BankAccounts.BankAddress" />
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="AccountNumber">Account Number</label>
+                                @* <input type="text" id="AccountNumber" name="AccountNumber" ng-model="Vendor.BankAccounts.AccountNumber" /> *@
+                                <input type="text"
+                                       id="AccountNumber"
+                                       name="AccountNumber"
+                                       ng-model="Vendor.BankAccounts.AccountNumber"
+                                       ng-pattern="/^[a-zA-Z0-9]*$/"
+                                       maxlength="31" ng-class="{'is-invalid': myProfile.AccountNumber.$invalid && myProfile.AccountNumber.$touched}" />
+                                <div ng-show="myProfile.AccountNumber.$error.pattern && myProfile.AccountNumber.$touched" style="color:red;">
+                                    The account number must be alphanumeric.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="IBAN">IBAN</label>
+                                <input type="text" id="IBAN" name="IBAN" ng-model="Vendor.BankAccounts.IBAN" />
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="SWIFTBICCode">SWIFT/BIC Code</label>
+                                <input type="text" id="SWIFTBICCode" name="SWIFTBICCode" ng-model="Vendor.BankAccounts.SwiftCode" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <!-- Using Bootstrap's grid system to set width -->
+                            <label for="uploadBankConfrimLetter" class="form-label">Letter of confirmation from the Bank</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="uploadBankConfrimLetter"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.LetterConfirmationFromBank"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'LetterConfirmationFromBank')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.LetterConfirmationFromBank">
+                                <button type="button" class="delete" ng-click="DeleteContentData('LetterConfirmationFromBank',Vendor.Document.LetterConfirmationFromBank)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.LetterConfirmationFromBank)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Financial Statements </h4>
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <label for="uploadAuditFin" class="form-label">Latest audited financial statements</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="uploadAuditFin"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.LatestAuditedFinancialStatements"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'LatestAuditedFinancialStatements')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.LatestAuditedFinancialStatements">
+                                <button type="button" class="delete" ng-click="DeleteContentData('LatestAuditedFinancialStatements',Vendor.Document.LatestAuditedFinancialStatements)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.LatestAuditedFinancialStatements)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label class="pt-4"><b>Credit References :</b></label><br />
+                    <h8>
+                        <input type="checkbox" id="IsCreditReference" name="IsCreditReference" ng-model="Vendor.BankAccounts.IsCreditReference">
+                        Is Credit reference
+                    </h8>
+
+                    <div class="row pt-4">
+                        <h4>Payment Terms :</h4>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="paymentDays">Max Number of days allowed</label>
+                                <input type="text" id="paymentDays" name="paymentDays" pattern="\d+" ng-model="Vendor.BankAccounts.PaymentMaxNoOfDaysAllowed">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h4>Insurance Certificates </h4>
+
+                        <div class="row">
+                            <div class="col-5 mb-5">
+                                <label for="uploadLiabilityInsurance" class="form-label">Liability Insurance</label>
+                                <input class="form-control form-control-sm"
+                                       type="file"
+                                       id="uploadLiabilityInsurance"
+                                       accept=".pdf,.doc,.docx"
+                                       ng-model="Vendor.Document.LiabilityInsurance"
+                                       onchange="angular.element(this).scope().UploadFile(this.files[0],'LiabilityInsurance')" />
+
+                                <div class="mt-2" ng-if="Vendor.Document.LiabilityInsurance">
+                                    <button type="button" class="delete" ng-click="DeleteContentData('LiabilityInsurance',Vendor.Document.LiabilityInsurance)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                            <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                            <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                            <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                        </svg>&ensp;
+                                        Delete
+                                    </button>
+                                    <button type="button"
+                                            class="download"
+                                            ng-click="DownloadURL(Vendor.Document.LiabilityInsurance)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                            <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                            <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                        </svg>&ensp;
+                                        Download
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-5 mb-5">
+                                <label for="uploadCompensationInsurance" class="form-label">Workers' Compensation Insurance</label>
+                                <input class="form-control form-control-sm"
+                                       type="file"
+                                       id="uploadCompensationInsurance"
+                                       accept=".pdf,.doc,.docx"
+                                       ng-model="Vendor.Document.WorkersCompensationInsurance"
+                                       onchange="angular.element(this).scope().UploadFile(this.files[0],'WorkersCompensationInsurance')" />
+
+                                <div class="mt-2" ng-if="Vendor.Document.WorkersCompensationInsurance">
+                                    <button type="button" class="delete" ng-click="DeleteContentData('WorkersCompensationInsurance',Vendor.Document.WorkersCompensationInsurance)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                            <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                            <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                            <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                        </svg>&ensp;
+                                        Delete
+                                    </button>
+                                    <button type="button"
+                                            class="download"
+                                            ng-click="DownloadURL(Vendor.Document.WorkersCompensationInsurance)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                            <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                            <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                        </svg>&ensp;
+                                        Download
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="button-container">
+                        <button class="reset btnPrevious">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="8" height="13" viewBox="0 0 8 13" fill="none">
+                                <path d="M0.988521 7.01148L0.988544 7.0115L6.34486 12.3654C6.4347 12.4553 6.55608 12.5046 6.67698 12.5046C6.79491 12.5046 6.91784 12.4597 7.0101 12.3644C7.19379 12.1797 7.19346 11.8832 7.0091 11.6988L1.98962 6.677L7.01148 1.65514C7.19617 1.47045 7.19617 1.17321 7.01148 0.98852C6.82679 0.803826 6.52955 0.803826 6.34486 0.988521L0.98852 6.34486C0.803827 6.52955 0.803826 6.82679 0.988521 7.01148Z" fill="#316BA1" stroke="#316BA1" stroke-width="0.3" />
+                            </svg>
+                            &ensp; Back
+                        </button>
+                        <button class="reset btnNext">
+                            Next &ensp; <svg xmlns="http://www.w3.org/2000/svg" width="8" height="13" viewBox="0 0 8 13" fill="none">
+                                <path d="M7.01148 6.34301L7.01146 6.34299L1.65514 0.989055C1.5653 0.899211 1.44393 0.849941 1.32302 0.849941C1.20509 0.849941 1.08216 0.894838 0.989901 0.990058C0.806207 1.17482 0.80654 1.47132 0.9909 1.65568L6.01038 6.67749L0.988521 11.6993C0.803826 11.884 0.803826 12.1813 0.988521 12.366C1.17321 12.5507 1.47045 12.5507 1.65514 12.366L7.01148 7.00964C7.19617 6.82494 7.19617 6.52771 7.01148 6.34301Z" fill="#316BA1" stroke="#316BA1" stroke-width="0.3" />
+                            </svg>
+                        </button>
+                        <button class="normal" ng-click="SaveChanges(Vendor)"> Save </button>
+                    </div>
+                </div>
+
+                @* Product/Service Information *@
+                <div class="tab-pane fade px-10" id="tab4">
+
+                    <div class="row pb-15 pt-5">
+                        <div class="col-1 rectangleIcon"></div>
+                        <div class="col-5 liTabHeaders">Product/Service Information</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="ProductorServiceDesc">Product/Service Description</label>
+                                <input type="text" id="ProductorServiceDesc" name="ProductorServiceDesc" ng-model="Vendor.ExternalSettings.ProductorServiceDescription">
+                            </div>
+                        </div>
+                    </div>
+                    <h4>Product Categories </h4>
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="ProductCategories"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.PrdctCategories"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'PrdctCategories')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.PrdctCategories">
+                                <button type="button" class="delete" ng-click="DeleteContentData('PrdctCategories',Vendor.Document.PrdctCategories)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.PrdctCategories)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-3 pe-8">
+                        <div class="form-group row margin-top-20">
+                            <label class="control-label col-md-12" for="PricingInformation">Pricing Information</label>
+                            <input type="text" id="PricingInformation" name="PricingInformation" ng-model="Vendor.ExternalSettings.PricingInformation">
+                        </div>
+                    </div>
+                    <div class="col-3 pe-8">
+                        <div class="form-group row margin-top-20">
+                            <label class="control-label col-md-12" for="LeadTimeDays">Lead Time Days</label>
+                            <input type="text" id="LeadTimeDays" name="LeadTimeDays" ng-model="Vendor.ExternalSettings.LeadTimeDays">
+                        </div>
+                    </div>
+                    <div class="col-3 pe-8">
+                        <div class="form-group row margin-top-20">
+                            <label class="control-label col-md-12" for="MOQs">Minimum Order Quantities (MOQs)</label>
+                            <input type="number" id="MOQs" name="MOQs" ng-model="Vendor.ExternalSettings.MinOrderQty">
+                        </div>
+                    </div>
+                    <div class="col-3 pe-8">
+                        <div class="form-group row margin-top-20">
+                            <label class="control-label col-md-12" for="WarrantyGuaranteeInfo">Warranty/Guarantee Information</label>
+                            <input type="text" id="WarrantyGuaranteeInfo" name="WarrantyGuaranteeInfo" ng-model="Vendor.ExternalSettings.Warranty_GuaranteeInfo">
+                        </div>
+                    </div>
+
+                    <div class="button-container">
+                        <button class="reset btnPrevious">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="8" height="13" viewBox="0 0 8 13" fill="none">
+                                <path d="M0.988521 7.01148L0.988544 7.0115L6.34486 12.3654C6.4347 12.4553 6.55608 12.5046 6.67698 12.5046C6.79491 12.5046 6.91784 12.4597 7.0101 12.3644C7.19379 12.1797 7.19346 11.8832 7.0091 11.6988L1.98962 6.677L7.01148 1.65514C7.19617 1.47045 7.19617 1.17321 7.01148 0.98852C6.82679 0.803826 6.52955 0.803826 6.34486 0.988521L0.98852 6.34486C0.803827 6.52955 0.803826 6.82679 0.988521 7.01148Z" fill="#316BA1" stroke="#316BA1" stroke-width="0.3" />
+                            </svg>
+                            &ensp; Back
+                        </button>
+                        <button class="reset btnNext">
+                            Next &ensp; <svg xmlns="http://www.w3.org/2000/svg" width="8" height="13" viewBox="0 0 8 13" fill="none">
+                                <path d="M7.01148 6.34301L7.01146 6.34299L1.65514 0.989055C1.5653 0.899211 1.44393 0.849941 1.32302 0.849941C1.20509 0.849941 1.08216 0.894838 0.989901 0.990058C0.806207 1.17482 0.80654 1.47132 0.9909 1.65568L6.01038 6.67749L0.988521 11.6993C0.803826 11.884 0.803826 12.1813 0.988521 12.366C1.17321 12.5507 1.47045 12.5507 1.65514 12.366L7.01148 7.00964C7.19617 6.82494 7.19617 6.52771 7.01148 6.34301Z" fill="#316BA1" stroke="#316BA1" stroke-width="0.3" />
+                            </svg>
+                        </button>
+                        <button class="normal" ng-click="SaveChanges(Vendor)"> Save </button>
+                    </div>
+
+                </div>
+
+                @* Compliance and Certifications *@
+                <div class="tab-pane fade px-10" id="tab5">
+
+                    <div class="row pb-15 pt-5">
+                        <div class="col-1 rectangleIcon"></div>
+                        <div class="col-5 liTabHeaders">Compliance and Certifications</div>
+                    </div>
+
+                    <h4>Quality Certifications </h4>
+
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <label for="uploadISO9001" class="form-label">ISO9001</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="uploadISO9001"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.ISO9001"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'ISO9001')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.ISO9001">
+                                <button type="button" class="delete" ng-click="DeleteContentData('ISO9001',Vendor.Document.ISO9001)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.ISO9001)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <label for="uploadOtherRelevantISOCertf9001" class="form-label">Other relevant ISO certifications</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="uploadOtherRelevantISOCertf9001"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.OtherRelevantISOCertifications"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'OtherRelevantISOCertifications')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.OtherRelevantISOCertifications">
+                                <button type="button" class="delete" ng-click="DeleteContentData('OtherRelevantISOCertifications',Vendor.Document.OtherRelevantISOCertifications)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.OtherRelevantISOCertifications)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Environmental Compliance </h4>
+
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <label for="uploadISO14001" class="form-label">ISO14001</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="uploadISO14001"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.ISO14001"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'ISO14001')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.ISO14001">
+                                <button type="button" class="delete" ng-click="DeleteContentData('ISO14001',Vendor.Document.ISO14001)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.ISO14001)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <label for="uploadOtherISO14001" class="form-label">Upload other environmental standards</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="uploadOtherISO14001"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.OtherEnviStandards"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'OtherEnviStandards')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.OtherEnviStandards">
+                                <button type="button" class="delete" ng-click="DeleteContentData('OtherEnviStandards',Vendor.Document.OtherEnviStandards)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.OtherEnviStandards)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Social Compliance </h4>
+
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <label for="uploadSA8000" class="form-label">SA8000</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="uploadSA8000"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.SA8000"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'SA8000')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.SA8000">
+                                <button type="button" class="delete" ng-click="DeleteContentData('SA8000',Vendor.Document.SA8000)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.SA8000)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <label for="uploadOtherSA8000" class="form-label">Other social responsibility standards</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="uploadOtherSA8000"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.OtherSocialRespoStandards"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'OtherSocialRespoStandards')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.OtherSocialRespoStandards">
+                                <button type="button" class="delete" ng-click="DeleteContentData('OtherSocialRespoStandards',Vendor.Document.OtherSocialRespoStandards)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.OtherSocialRespoStandards)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Health and Safety Compliance </h4>
+
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <label for="uploadOHSAS18001" class="form-label">OHSAS18001</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="uploadOHSAS18001"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.OHSAS18001"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'OHSAS18001')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.OHSAS18001">
+                                <button type="button" class="delete" ng-click="DeleteContentData('OHSAS18001',Vendor.Document.OHSAS18001)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.OHSAS18001)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-5 mb-5">
+                            <label for="uploadOtherOHSAS18001" class="form-label">Other relevant health and safety standards</label>
+                            <input class="form-control form-control-sm"
+                                   type="file"
+                                   id="uploadOtherOHSAS18001"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="Vendor.Document.OtherRelevantHealthSafetyStandards"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'OtherRelevantHealthSafetyStandards')" />
+
+                            <div class="mt-2" ng-if="Vendor.Document.OtherRelevantHealthSafetyStandards">
+                                <button type="button" class="delete" ng-click="DeleteContentData('OtherRelevantHealthSafetyStandards',Vendor.Document.OtherRelevantHealthSafetyStandards)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 12 17" fill="none">
+                                        <path d="M11.5602 4.6327L3.88081 0.985333C3.49675 0.803074 3.0357 0.967018 2.85322 1.35113L2.5918 1.90159L11.6646 6.21074L11.9261 5.66034C12.1085 5.27617 11.9444 4.81518 11.5602 4.6327Z" fill="#9B3A3A" />
+                                        <path d="M0.387962 4.93762C0.279463 4.93762 0.175919 4.98305 0.102492 5.06288C0.0290649 5.14271 -0.00767653 5.2497 0.00134181 5.35781L0.785771 14.7707C0.86816 15.7592 1.70971 16.5336 2.70167 16.5336H7.09098C8.08295 16.5336 8.92449 15.7592 9.00683 14.7707L9.72534 6.14897L7.17488 4.93762H0.387962Z" fill="#9B3A3A" />
+                                        <path d="M6.95134 1.12986C7.0222 0.980672 7.14696 0.867998 7.30255 0.812608C7.45831 0.757217 7.6261 0.765679 7.77535 0.836545L9.21505 1.52032C9.52312 1.66668 9.65472 2.03632 9.50842 2.34433L9.33212 2.71553L10.033 3.04843L10.2093 2.67723C10.5391 1.98282 10.2425 1.1494 9.54795 0.819511L8.10819 0.135731C7.77184 -0.0240385 7.39329 -0.0433556 7.04235 0.0816208C6.69147 0.206486 6.41023 0.460558 6.25047 0.79702L6.07422 1.16816L6.77503 1.50106L6.95134 1.12986Z" fill="#9B3A3A" />
+                                    </svg>&ensp;
+                                    Delete
+                                </button>
+                                <button type="button"
+                                        class="download"
+                                        ng-click="DownloadURL(Vendor.Document.OtherRelevantHealthSafetyStandards)">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                                        <path d="M8.22504 6.95825C8.10683 6.95825 8.01226 7.04757 7.99912 7.16578C7.89667 8.17979 7.04028 8.97051 5.99737 8.97051C4.95709 8.97051 4.1007 8.17979 3.99562 7.16578C3.98249 7.0502 3.88792 6.95825 3.7697 6.95825H1.03765C0.464974 6.95825 0 7.42323 0 7.99591V10.171C0 10.7437 0.464974 11.2087 1.03765 11.2087H10.9623C11.535 11.2087 12 10.7437 12 10.171V7.99853C12 7.42585 11.535 6.96088 10.9623 6.96088H8.22504V6.95825Z" fill="white" />
+                                        <path d="M7.54997 3.57992L6.73824 4.39165C6.73824 4.39165 6.73824 1.14536 6.73824 0.738179C6.73824 0.330998 6.40724 0 6.00006 0C5.59288 0 5.26188 0.330998 5.26188 0.738179L5.26188 4.39165L4.45014 3.57992C4.20058 3.33036 3.80128 3.26731 3.50706 3.46433C3.10514 3.73229 3.06573 4.28132 3.38885 4.60444L5.56398 6.77957C5.80566 7.02125 6.19708 7.02125 6.43876 6.77957L8.61389 4.60444C8.93701 4.28132 8.8976 3.73229 8.49568 3.46433C8.19883 3.26468 7.79953 3.32773 7.54997 3.57992Z" fill="white" />
+                                    </svg>&ensp;
+                                    Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-container">
+                        <button class="reset btnPrevious">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="8" height="13" viewBox="0 0 8 13" fill="none">
+                                <path d="M0.988521 7.01148L0.988544 7.0115L6.34486 12.3654C6.4347 12.4553 6.55608 12.5046 6.67698 12.5046C6.79491 12.5046 6.91784 12.4597 7.0101 12.3644C7.19379 12.1797 7.19346 11.8832 7.0091 11.6988L1.98962 6.677L7.01148 1.65514C7.19617 1.47045 7.19617 1.17321 7.01148 0.98852C6.82679 0.803826 6.52955 0.803826 6.34486 0.988521L0.98852 6.34486C0.803827 6.52955 0.803826 6.82679 0.988521 7.01148Z" fill="#316BA1" stroke="#316BA1" stroke-width="0.3" />
+                            </svg>
+                            &ensp; Back
+                        </button>
+                        <button class="reset btnNext">
+                            Next &ensp; <svg xmlns="http://www.w3.org/2000/svg" width="8" height="13" viewBox="0 0 8 13" fill="none">
+                                <path d="M7.01148 6.34301L7.01146 6.34299L1.65514 0.989055C1.5653 0.899211 1.44393 0.849941 1.32302 0.849941C1.20509 0.849941 1.08216 0.894838 0.989901 0.990058C0.806207 1.17482 0.80654 1.47132 0.9909 1.65568L6.01038 6.67749L0.988521 11.6993C0.803826 11.884 0.803826 12.1813 0.988521 12.366C1.17321 12.5507 1.47045 12.5507 1.65514 12.366L7.01148 7.00964C7.19617 6.82494 7.19617 6.52771 7.01148 6.34301Z" fill="#316BA1" stroke="#316BA1" stroke-width="0.3" />
+                            </svg>
+                        </button>
+                        <button class="normal" ng-click="SaveChanges(Vendor)"> Save </button>
+                    </div>
+
+                </div>
+
+                @* Reference and PastPerformance *@
+                <div class="tab-pane fade px-10" id="tab6">
+
+                    <div class="row pb-15 pt-5">
+                        <div class="col-1 rectangleIcon"></div>
+                        <div class="col-5 liTabHeaders">Reference and Past Performance</div>
+                    </div>
+
+                    <h4>Client References </h4>
+                    <div class="row">
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="NamesOfClients">Names of clients</label>
+                                <input type="text" id="NamesOfClients" name="NamesOfClients" ng-model="Vendor.NamesOfClients">
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="ClientContctInfo">Contact information</label>
+                                <input type="text" id="ClientContctInfo" name="ClientContctInfo" ng-model="Vendor.ClientContactInformation">
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="ProjectDetails">Project details</label>
+                                <input type="text" id="ProjectDetails" name="ProjectDetails" ng-model="Vendor.ClientProjectDetails">
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Previous Contracts and Projects </h4>
+                    <div class="row">
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="ScopeOfWork">Scope of work</label>
+                                <input type="text" id="ScopeOfWork" name="ScopeOfWork" ng-model="Vendor.PrevContractScopeOfWork">
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="ValueOfContracts">Value of contracts</label>
+                                <input type="text" id="ValueOfContracts" name="ValueOfContracts" ng-model="Vendor.PrevValueOfContracts">
+                            </div>
+                        </div>
+                        <div class="col-3 pe-8">
+                            <div class="form-group row margin-top-20">
+                                <label class="control-label col-md-12" for="PreProjDuration">Duration</label>
+                                <input type="text" id="PreProjDuration" name="PreProjDuration" ng-model="Vendor.PrevContractDuration">
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <hr />
+                    <h3>Declaration</h3>
+                    <h8>
+                        <input type="checkbox" id="declaration" name="declaration" ng-model="Vendor.Declaration">
+                        We confirm that the information provided for registration are true and correct and we will comply with your organization's standards, reducing risks and fostering a trustworthy partnership.
+                    </h8>
+
+                    <div class="button-container">
+                        <button class="reset btnPrevious">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="8" height="13" viewBox="0 0 8 13" fill="none">
+                                <path d="M0.988521 7.01148L0.988544 7.0115L6.34486 12.3654C6.4347 12.4553 6.55608 12.5046 6.67698 12.5046C6.79491 12.5046 6.91784 12.4597 7.0101 12.3644C7.19379 12.1797 7.19346 11.8832 7.0091 11.6988L1.98962 6.677L7.01148 1.65514C7.19617 1.47045 7.19617 1.17321 7.01148 0.98852C6.82679 0.803826 6.52955 0.803826 6.34486 0.988521L0.98852 6.34486C0.803827 6.52955 0.803826 6.82679 0.988521 7.01148Z" fill="#316BA1" stroke="#316BA1" stroke-width="0.3" />
+                            </svg>
+                            &ensp; Back
+                        </button>
+                        <button class="normal" ng-click="SaveChanges(Vendor)">Save</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<script>
+    $('.btnNext').click(function () {
+        const nextTabLinkEl = $('.nav-tabs .active').closest('li').next('li').find('a')[0];
+        const nextTab = new bootstrap.Tab(nextTabLinkEl);
+        nextTab.show();
+    });
+
+    $('.btnPrevious').click(function () {
+        const prevTabLinkEl = $('.nav-tabs .active').closest('li').prev('li').find('a')[0];
+        const prevTab = new bootstrap.Tab(prevTabLinkEl);
+        prevTab.show();
+    });
+</script>

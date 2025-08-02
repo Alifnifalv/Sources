@@ -1,0 +1,70 @@
+﻿@model Eduegate.Framework.PageRendererEngine.ViewModels.PageRedererViewModel
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+<div id="DashbaordWindow" class="app-container  windowcontainer position-relative" style="display:block" ng-controller="PageController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName','DashbaordWindow');">
+    <div class="switch-field position-absolute end-0 p-0 mt-13 me-5">
+        <input type="radio" name="dashboardType" ng-model="DashboardType" value="Default" />
+        <label ng-click="DashboardType='Default'">Default</label>
+        <input type="radio" name="dashboardType" ng-model="DashboardType" value="PowerBI" />
+        <label ng-click="DashboardType='PowerBI'">Power BI</label>
+
+    </div>
+    <div class="main-page row g-3 g-xl-5 mb-5 mb-xl-10" ng-show="DashboardType == 'Default'">
+        @Html.Raw(Model.Content)
+    </div>
+    <div class="powerpagecontent" style="HEIGHT: calc(100vh - 90px)" ng-show="DashboardType == 'PowerBI'">
+        <div id="embed-container" style="height:800px;">
+            <iframe title="Main dashboard live" width="1600" height="750" id="dashboardFrame" src="" frameborder="0" allowfullscreen="true"></iframe>
+            @* <iframe title="PowerBIReport" width="1600" height="750" src="https://app.powerbi.com/reportEmbed?reportId=4a11ab84-a126-4613-942b-c248430eb0d0&autoAuth=true&ctid=74371ba3-a603-4a16-ae30-9741f9381eaa" frameborder="0" allowFullScreen="true"></iframe> *@
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/powerbi-client/2.18.5/powerbi.min.js"></script>
+
+@* <script>
+    // Assuming viewModel data is set correctly elsewhere in your application
+    var viewModel = {
+        reportId: '4a11ab84-a126-4613-942b-c248430eb0d0',
+        embedUrl: 'https://app.powerbi.com/reportEmbed?reportId=4a11ab84-a126-4613-942b-c248430eb0d0&autoAuth=true&ctid=74371ba3-a603-4a16-ae30-9741f9381eaa',
+        token: 'your_powerbi_access_token'
+    };
+
+    var embedConfig = {
+        type: 'report',
+        tokenType: powerbi.models.TokenType.Embed,
+        accessToken: viewModel.token,
+        embedUrl: viewModel.embedUrl,
+        id: viewModel.reportId,
+        settings: {
+            filterPaneEnabled: false,
+            navContentPaneEnabled: false
+        }
+    };
+
+    var reportContainer = document.getElementById('embed-container');
+    var report = powerbi.embed(reportContainer, embedConfig);
+</script> *@
+
+<script>
+    $('.switch-field input[type="radio"]').on('change', function () {
+        var selectedValue = $(this).val();
+        if (selectedValue === 'PowerBI') {
+            $('.powerpagecontent').show();
+        } else {
+            $('.powerpagecontent').hide();
+        }
+    });
+</script>
+
+<script src="/lib/powerbi/embed.js"></script>
+
+
+

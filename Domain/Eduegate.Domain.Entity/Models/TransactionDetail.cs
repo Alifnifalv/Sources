@@ -1,0 +1,119 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Eduegate.Domain.Entity.Models
+{
+    [Table("TransactionDetails", Schema = "inventory")]
+    public partial class TransactionDetail
+    {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public TransactionDetail()
+        {
+            ProductSerialMaps = new HashSet<ProductSerialMap>();
+            TransactionAllocations = new HashSet<TransactionAllocation>();
+            TransactionDetails1 = new HashSet<TransactionDetail>();
+        }
+
+        [Key]
+        public long DetailIID { get; set; }
+
+        public long? HeadID { get; set; }
+
+        public long? ProductID { get; set; }
+
+        public long? ProductSKUMapID { get; set; }
+
+        public decimal? Quantity { get; set; }
+
+        public long? UnitID { get; set; }
+
+        public decimal? DiscountPercentage { get; set; }
+
+        public decimal? UnitPrice { get; set; }
+
+        public decimal? Amount { get; set; }
+
+        public decimal? ExchangeRate { get; set; }
+
+        public DateTime? WarrantyDate { get; set; }
+
+        public long? CreatedBy { get; set; }
+
+        public long? UpdatedBy { get; set; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        public DateTime? UpdatedDate { get; set; }
+
+        //[Column(TypeName = "timestamp")]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        //[MaxLength(8)]
+        ////public byte[] TimeStamps { get; set; }
+
+        public string SerialNumber { get; set; }
+
+        public long? ParentDetailID { get; set; }
+
+        public int? Action { get; set; }
+
+        [StringLength(200)]
+        public string Remark { get; set; }
+
+        public decimal? TaxAmount1 { get; set; }
+
+        public decimal? TaxAmount2 { get; set; }
+
+        public int? TaxTemplateID { get; set; }
+
+        public decimal? TaxPercentage { get; set; }
+
+        public bool? HasTaxInclusive { get; set; }
+
+        public decimal? InclusiveTaxAmount { get; set; }
+
+        public decimal? ExclusiveTaxAmount { get; set; }
+
+        public DateTime? WarrantyStartDate { get; set; }
+
+        public DateTime? WarrantyEndDate { get; set; }
+
+        public int? CostCenterID { get; set; }
+
+        public virtual Product Product { get; set; }
+
+        public virtual ProductSKUMap ProductSKUMap { get; set; }
+
+        public virtual Unit Unit { get; set; }
+
+        public decimal? DiscountAmount { get; set; }
+
+        public long? CartItemID { get; set; }
+
+        public decimal? ActualUnitPrice { get; set; }
+
+        public decimal? ActualQuantity { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProductSerialMap> ProductSerialMaps { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TransactionAllocation> TransactionAllocations { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TransactionDetail> TransactionDetails1 { get; set; }
+
+        public virtual TransactionDetail TransactionDetail1 { get; set; }
+
+        public virtual TransactionHead TransactionHead { get; set; }
+
+        public Nullable<decimal> LandingCost { get; set; }
+        public Nullable<decimal> LastCostPrice { get; set; }
+        public Nullable<decimal> Fraction { get; set; }
+        public Nullable<decimal> ForeignAmount { get; set; }
+        public Nullable<decimal> ForeignRate { get; set; }
+        public Nullable<long> UnitGroupID { get; set; }
+
+    }
+}

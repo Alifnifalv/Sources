@@ -1,0 +1,137 @@
+--Migrate Employee Table
+;WITH SCH_EMPLOYEE AS
+(
+	SELECT
+	Eexp.EmployeeCode,
+	--Name Convert Start
+	Ltrim(SubString(Eexp.Name,1,Isnull(Nullif(CHARINDEX(' ',Eexp.Name),0),1000))) AS FirstName,
+	Ltrim(SUBSTRING(Eexp.Name,CharIndex(' ',Eexp.Name),
+	CASE WHEN (CHARINDEX(' ',Eexp.Name,CHARINDEX(' ',Eexp.Name)+1)-CHARINDEX(' ',Eexp.Name))<=0 THEN 0 
+	ELSE CHARINDEX(' ',Eexp.Name,CHARINDEX(' ',Eexp.Name)+1)-CHARINDEX(' ',Eexp.Name) END )) AS MiddleName,
+	Ltrim(SUBSTRING(Eexp.Name,Isnull(Nullif(CHARINDEX(' ',Eexp.Name,Charindex(' ',Eexp.Name)+1),0),CHARINDEX(' ',Eexp.Name)),
+	CASE WHEN Charindex(' ',Eexp.Name)=0 then 0 else LEN(Eexp.Name) END)) AS LastName,
+	--Name Convert End
+	CASE WHEN Eexp.Location = 'Pearl Thumama' THEN 10 WHEN Eexp.Location = 'Pearl Westbay' THEN 20 WHEN Eexp.Location = 'Pearl Modern School' THEN 30 END BranchID,
+	CASE WHEN Eexp.Status = 'Active' then 1 else 0 end IsActive,
+	desgn.DesignationID,
+	na.NationalityIID AS NationalityID,
+	Eexp.SponsoredBy,
+	Eexp.DateOfJoined AS DateOfJoining,
+	CASE WHEN Eexp.Location = 'Pearl Thumama' THEN 1 WHEN Eexp.Location = 'Pearl Westbay' THEN 1 WHEN Eexp.Location = 'Pearl Modern School' THEN 2 END CompanyID,
+	CASE WHEN Eexp.SequenceNumber = 'EP' then 1 ELSE 2 end JobTypeID,
+	CASE WHEN Eexp.Category = 'Academic' then 1 else 2 end CategoryID
+	FROM schools.EmployeeExcelExport Eexp
+	LEFT JOIN payroll.Designations desgn on desgn.DesignationName = Eexp.Designation
+	LEFT JOIN mutual.Nationalities na on na.NationalityName = Eexp.Nationality
+)
+MERGE payroll.Employees emp 
+USING SCH_EMPLOYEE E ON E.EmployeeCode=emp.EmployeeCode
+WHEN NOT MATCHED THEN
+INSERT(EmployeeCode, FirstName, MiddleName, LastName, BranchID, IsActive, DesignationID, NationalityID, DateOfJoining, CompanyID, JobTypeID, CategoryID)
+VALUES(EmployeeCode, FirstName, MiddleName, LastName, BranchID, IsActive, DesignationID, NationalityID, DateOfJoining, CompanyID, JobTypeID, CategoryID)
+WHEN MATCHED THEN 
+UPDATE SET BranchID=E.BranchID, JobTypeID=E.JobTypeID, IsActive = E.IsActive;
+
+SELECT * FROM payroll.Employees
+
+========================================================================
+--Migrate Employee Bank Detail Table
+;WITH SCH_EMPLOYEEBANK AS
+(
+	SELECT
+	emp.EmployeeIID,
+	Eexp.EmployeeCode,
+	Eexp.IBANNumber, Eexp.SWIFTCode, Eexp.BankAccountNumber,
+	Eexp.BankShortName, bnk.ShortName, bnk.BankIID
+	FROM schools.EmployeeExcelExport Eexp
+	LEFT JOIN payroll.Employees emp on emp.EmployeeCode = Eexp.EmployeeCode
+	LEFT JOIN mutual.Banks bnk on bnk.ShortName = Eexp.BankShortName
+)
+MERGE payroll.EmployeeBankDetails bankDet 
+USING SCH_EMPLOYEEBANK EB ON EB.EmployeeIID=bankDet.EmployeeID
+WHEN NOT MATCHED THEN
+INSERT(EmployeeID, AccountNo, BankID, IBAN, SwiftCode)
+VALUES(EmployeeIID, BankAccountNumber, BankIID, IBANNumber, SWIFTCode)
+WHEN MATCHED THEN 
+UPDATE SET EmployeeID=EB.EmployeeIID;
+
+SELECT * FROM payroll.EmployeeBankDetails
+
+========================================================================
+--Migrate Employee Visa Detail Table
+;WITH SCH_EMPLOYEEVISA AS
+(
+	SELECT
+	emp.EmployeeIID,
+	Eexp.EmployeeCode,
+	Eexp.NationalID,Eexp.SponsoredBy
+	FROM schools.EmployeeExcelExport Eexp
+	LEFT JOIN payroll.Employees emp on emp.EmployeeCode = Eexp.EmployeeCode
+)
+MERGE Schools.passportvisadetails v 
+USING SCH_EMPLOYEEVISA EV ON EV.EmployeeIID=v.ReferenceID
+WHEN NOT MATCHED THEN
+INSERT(ReferenceID, NationalIDNo, SponceredBy)
+VALUES(EmployeeIID, NationalID, SponsoredBy)
+WHEN MATCHED THEN 
+UPDATE SET ReferenceID=EV.EmployeeIID;
+
+SELECT * FROM Schools.passportvisadetails
+
+========================================================================
+--Update Employee Table
+;WITH SCH_EMPLOYEE AS
+(
+	SELECT
+	Eexp.EmployeeCode,eexp.EmployeeName,
+	CASE WHEN Eexp.WorkEmail IS NULL OR Eexp.WorkEmail = '' THEN emp.EmployeeCode+'.'+LOWER(Trim(emp.FirstName))+'@pearschool.org' ELSE Trim(Eexp.WorkEmail) END WorkEmail
+	FROM schools.EmployeeEmailExcelExport Eexp
+	LEFT JOIN payroll.Employees emp ON emp.EmployeeCode = Eexp.EmployeeCode where emp.IsActive = 1
+)
+MERGE payroll.Employees emp 
+USING SCH_EMPLOYEE E ON E.EmployeeCode=emp.EmployeeCode
+WHEN MATCHED THEN 
+UPDATE SET WorkEmail=E.WorkEmail;
+
+SELECT * FROM payroll.Employees
+
+========================================================================
+--Migrate Login table
+;WITH SCH_EMPLOYEE AS
+(
+	SELECT
+	emp.EmployeeCode,emp.WorkEmail, TRIM(emp.FirstName) + ' ' + ISNULL(emp.MiddleName,'')  + ' '  + ISNULL(emp.LastName,'') AS EmployeeName,
+	PasswordSalt = '1000:Bek7WUpYQ7W7Z+whXpoGgr5JFSYkZoBA:dyY/EeG3of/W0/KVblfmDJE7bYj2SyJQ', Password = 'to/Tc4xi7QgG+Pf9NTLyxA==',
+	StatusID = 1, RequirePasswordReset = 1
+	FROM payroll.Employees emp
+	WHERE emp.IsActive=1
+)
+MERGE admin.Logins l 
+USING SCH_EMPLOYEE E ON E.EmployeeCode=l.LoginUserID
+WHEN NOT MATCHED THEN
+INSERT(LoginEmailID, LoginUserID, UserName, StatusID, RequirePasswordReset, PasswordSalt, Password)
+VALUES(WorkEmail, EmployeeCode,EmployeeName , StatusID, RequirePasswordReset, PasswordSalt, Password)
+WHEN MATCHED THEN 
+UPDATE SET LoginEmailID=E.WorkEmail, StatusID = E.StatusID, UserName = E.EmployeeName, PasswordSalt = E.PasswordSalt, Password = E.Password, RequirePasswordReset = E.RequirePasswordReset;
+
+SELECT * FROM admin.Logins
+
+========================================================================
+--Update Employee Table LoginID
+;WITH SCH_EMPLOYEE AS
+(
+	SELECT
+	emp.EmployeeCode,emp.FirstName,emp.WorkEmail,emp.IsActive,
+	l.LoginUserID, l.LoginEmailID, l.UserName, l.LoginIID
+	FROM payroll.Employees emp
+	inner join admin.Logins l on l.LoginUserID = emp.EmployeeCode
+	WHERE emp.IsActive=1
+)
+MERGE payroll.Employees emp 
+USING SCH_EMPLOYEE E ON E.EmployeeCode=emp.EmployeeCode AND emp.IsActive=1
+WHEN MATCHED THEN 
+UPDATE SET LoginID=E.LoginIID;
+
+SELECT * FROM payroll.Employees
+
+========================================================================

@@ -1,0 +1,416 @@
+﻿@model Eduegate.Web.Library.ViewModels.BaseMasterViewModel
+@using System.Reflection;
+@using Eduegate.Framework.Mvc.Attributes;
+@using Eduegate.Frameworks.Mvc.Attributes;
+@using Eduegate.Web.Library.ViewModels.Common;
+
+
+@{
+    var modelContainerType = (ContainerTypeAttribute)Model.GetType().GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+    string bindingPrefix = "CRUDModel.ViewModel";
+    Model.NamePrefix = Model.NamePrefix + "_" + ViewBag.WindowName;
+
+    if (modelContainerType != null)
+    {
+        bindingPrefix = string.IsNullOrEmpty(modelContainerType.GridBindingPrefix) ? modelContainerType.BindingPrefix : modelContainerType.GridBindingPrefix;
+    }
+
+    var orderBy = (OrderAttribute)Model.GetType().GetCustomAttributes(typeof(OrderAttribute)).FirstOrDefault();
+    IEnumerable<PropertyInfo> properties = null;
+
+    if (orderBy == null)
+    {
+        properties = Model.GetType().GetProperties();
+    }
+    else
+    {
+        properties = Model.GetType().GetProperties().Where(a => a.GetCustomAttribute(typeof(OrderAttribute), false) != null).OrderBy(a => (a.GetCustomAttribute(typeof(OrderAttribute), false) as OrderAttribute).Order);
+    }
+
+    foreach (var property in properties)
+    {
+        //if the parameters are supplied.
+        if (ViewBag.Parameters != null)
+        {
+            var parameter = (ViewBag.Parameters as ICollection<Eduegate.Web.Library.ViewModels.Common.ClientParameter>)
+                .Where(a => a.ParameterName == property.Name).FirstOrDefault();
+
+            if (parameter != null)
+            {
+                continue;
+            }
+        }
+
+        var claimType = (HasClaimAttribute)property.GetCustomAttributes(typeof(HasClaimAttribute)).FirstOrDefault();
+
+        if (claimType != null)
+        {
+            var allClaims = (ViewBag.Claims as List<Eduegate.Web.Library.ViewModels.Security.ClaimViewModel>);
+            var allClaimNames = allClaims.Select(a => a.ResourceName).ToList();
+            if (!claimType.HasAccess(allClaimNames))
+            {
+                continue;
+            }
+        }
+
+        var title = (System.ComponentModel.DisplayNameAttribute)property.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+        var containerType = (ContainerTypeAttribute)property.GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault(); // make sure this is a field
+
+        if (title != null && containerType == null)
+        {
+            var controlType = (ControlTypeAttribute)property.GetCustomAttributes(typeof(ControlTypeAttribute)).FirstOrDefault();
+
+            //no view for all these control types
+            if (controlType.ControlType ==  Eduegate.Framework.Enums.ControlTypes.DataPicker)
+            {
+                continue;
+            }
+
+            <div style="display:flex;flex-direction: column;width:50%;padding-right:5px;">
+                <div class="label-value-box-inner @(string.IsNullOrEmpty(controlType.Css) ? string.Empty : controlType.Css)
+                     @(controlType.IsFullColumn ? string.Empty : "form-group")
+                     @(controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.FileUpload || controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.FileUploadCrop || controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.MultipleFileUploadCrop   ? "upload-banner" : string.Empty)
+                     @(controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.RichTextEditor || controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.RichTextEditorInline || controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.RichTextEditorMultiLanguage  ? "textaligntop editorfield" : string.Empty)
+                     @(controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.Grid || controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.GridListView ? "fullcolumn-layout" : string.Empty)
+                     @(controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.FieldSet ? "" : string.Empty)
+                         @(controlType.ControlType == Eduegate.Framework.Enums.ControlTypes.GroupInfo ? "columns" : string.Empty)" style="width:100%;">
+
+                @if (controlType.ControlType != Eduegate.Framework.Enums.ControlTypes.ShowFlowStatus && 
+                    controlType.ControlType != Eduegate.Framework.Enums.ControlTypes.NewLine)
+                {
+                        <label class="label-style control-label" @Html.Raw(controlType.Attributes4)>
+                        @(controlType.ControlType != Eduegate.Framework.Enums.ControlTypes.Button && controlType.ControlType != Eduegate.Framework.Enums.ControlTypes.GroupInfo 
+                                ? title.DisplayName : string.Empty)
+
+                        @if (!string.IsNullOrEmpty(controlType.TooltipText))
+                        {
+                            <span class="tooltip_Data" tooltipdata="@controlType.TooltipText">
+                                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                            </span>
+                        }
+                    </label>
+                }                
+                </div>
+                <div class="link-content" style="width:200%;margin-left:15px;margin-bottom:10px;">
+                    @{
+                        if (controlType != null)
+                        {
+                            switch (controlType.ControlType)
+                            {
+                                case Eduegate.Framework.Enums.ControlTypes.NewLine:
+                                    <div></div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.DropDown:
+                                    var lookUpType = (LookUpAttribute)property.GetCustomAttributes(typeof(LookUpAttribute)).FirstOrDefault();
+                                    <label class="control-label">
+                                        <select disabled ng-model="@bindingPrefix.@property.Name" @Html.Raw(controlType.Attributes)>
+                                            <i class="fa fa-caret-down"></i>
+                                            <option ng-repeat="data in @lookUpType.DataSource" value={{data.Key}}>{{data.Value}}</option>
+                                        </select>
+                                    </label>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.CheckBox:
+                                case Eduegate.Framework.Enums.ControlTypes.YesNoCheckBox:
+                                    //@await Html.RenderPartialAsync("~/Areas/Frameworks/Views/Controls/_CheckBox.cstml", Model)
+                                    <label class="control-label">
+                                        <span ng-bind="@bindingPrefix.@property.Name" />
+                                    </label>
+                                    break;                            
+                                case Eduegate.Framework.Enums.ControlTypes.HtmlLabel:
+                                    if (property.PropertyType == typeof(double?) || property.PropertyType == typeof(double))
+                                    {
+                                        <label class="control-label @controlType.Attributes2"><span @(string.IsNullOrEmpty(controlType.Attributes) ? Html.Raw("ng-bind-html='" + bindingPrefix + "." + property.Name + "' | number : " + ViewContext.ViewBag.DefaultDecimalPoints) : Html.Raw(controlType.Attributes)) /><span class="redcolor"></span></label>
+                                    }
+                                    else
+                                    {
+                                        <label class="control-label @controlType.Attributes2"><span @(string.IsNullOrEmpty(controlType.Attributes) ? Html.Raw("ng-bind-html='" + bindingPrefix + "." + property.Name + "'") : Html.Raw(controlType.Attributes)) /><span class="redcolor"></span></label>
+                                    }
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.Label:
+                                    if (property.PropertyType == typeof(double?) || property.PropertyType == typeof(double))
+                                    {
+                                        <label class="control-label"><span @(string.IsNullOrEmpty(controlType.Attributes) ? Html.Raw("ng-bind='" + bindingPrefix + "." + property.Name + "' | number : " + ViewContext.ViewBag.DefaultDecimalPoints) : Html.Raw(controlType.Attributes)) /><span class="redcolor"></span></label>
+                                    }
+                                    else
+                                    {
+                                        <label class="control-label"><span @(string.IsNullOrEmpty(controlType.Attributes) ? Html.Raw("ng-bind='" + bindingPrefix + "." + property.Name + "'") : Html.Raw(controlType.Attributes)) /><span class="redcolor"></span></label>
+                                    }
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.Image:
+                                    <img style="width:40px;height:40px;" data-ng-src="{{@(bindingPrefix + "." + property.Name)}}" ng-click="ShowImageContent(@(bindingPrefix + "." + property.Name))" />
+                                    break;
+                                // case Eduegate.Framework.Enums.ControlTypes.DataImage:
+                                //     <img style="width:40px;height:40px;" data-ng-src="data:image/png;base64,{{@(bindingPrefix + "." + property.Name)}}" ng-click="ShowImageContent(@(bindingPrefix + "." + property.Name))" />
+                                //     break;
+                                // case Eduegate.Framework.Enums.ControlTypes.JsonViewer:
+                                //     <span class="excludeGridStyle displayFlex">
+                                //         <a ng-click="ShowViewJSON($event, @(bindingPrefix + "." + property.Name))" class="fa fa-eye"></a>
+                                //     </span>
+                                //     break;
+                                case Eduegate.Framework.Enums.ControlTypes.TextBoxEditable:
+                                    <div class="controls fieldWithCheckBox">
+                                        <span ng-bind="bindingPrefix.@property.Name"></span>
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.TextBox:
+                                    <div class="controls text-muted">
+                                     @if (property.PropertyType == typeof(double?) || property.PropertyType == typeof(double) || property.PropertyType == typeof(decimal) || property.PropertyType == typeof(decimal?))
+                                     {
+                                        <span ng-bind="@bindingPrefix.@property.Name | number : @ViewContext.ViewBag.DefaultDecimalPoints">
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span ng-bind="@bindingPrefix.@property.Name">
+                                        </span>
+                                    }
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.TextBoxWithAutogeneration:
+                                    <div class="controls">
+                                        <div class="controls text-muted">
+                                            <span ng-bind="@bindingPrefix.@property.Name | number : @ViewContext.ViewBag.DefaultDecimalPoints">
+                                            </span>
+                                        </div>
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.TextBoxWithMultiLanguage:
+                                    <div class="controls productname fieldpopup">
+                                        <ul class="list-group">
+                                            <li class="list-group-item" ng-repeat="culture in @(bindingPrefix).@(property.Name).CultureDatas">
+                                                <label style="background-color:#e8e8e8;padding: 10px;">{{culture.CultureName}} </label> : &nbsp;&nbsp;
+                                                <span type="text" ng-bind="culture.CultureValue" class="haslanguage"></span>
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.Hidden:
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.Password:
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.DatePicker:
+                                    <div class="controls">
+                                        <div class="datetime_picker">
+                                            <span autocomplete="off" type="text" 
+                                                ng-bind="@bindingPrefix.@property.Name"></span>
+                                        </div>
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.DateTimePicker:
+                                    <div class="controls">
+                                        <div class="datetime_picker">
+                                            <span ng-bind="@bindingPrefix.@property.Name"></span>
+                                        </div>
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.TimePicker:
+                                    <div class="controls">
+                                        <div class="datetime_picker">
+                                            <span style="width: 170px;" ng-bind="@bindingPrefix.@property.Name"></span>
+                                        </div>
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.FileUpload:
+                                case Eduegate.Framework.Enums.ControlTypes.FileUploadCrop:
+                                    {
+                                        await Html.RenderPartialAsync("~/Areas/Frameworks/Views/Controls/_ViewSingleFileUpload.cshtml", new ViewDataDictionary(ViewData) { { "BindingPrefix", bindingPrefix }, { "Property", property } });
+                                    }
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.MultipleFileUploadCrop:
+                                    {
+                                        await Html.RenderPartialAsync("~/Areas/Frameworks/Views/Controls/_ViewMultipleFileUpload.cshtml", new ViewDataDictionary(ViewData) { { "BindingPrefix", bindingPrefix }, { "Property", property } });
+                                    }
+                                    break;
+
+                                case Eduegate.Framework.Enums.ControlTypes.TextArea:
+                                    <div class="controls">
+                                        <span ng-bind="@bindingPrefix.@property.Name"></span>
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.DataPicker:
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.RichTextEditorInline:
+                                    <div class="controls">
+                                        <span ng-bind-html="@bindingPrefix.@property.Name"></span>
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.RichTextEditor:
+                                    <div class="controls">
+                                        <span ng-bind-html="@bindingPrefix.@property.Name"></span>
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.RichTextEditorMultiLanguage:
+                                    <div class="controls productname fieldpopup">
+                                        <ul class="list-group">
+                                            <li class="list-group-item" ng-repeat="culture in @(bindingPrefix).@(property.Name).CultureDatas">
+                                                <label style="background-color:#e8e8e8;padding: 10px;">{{culture.CultureName}} : </label>
+                                                <span ng-bind="culture.CultureValue">
+                                                </span>                                            
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.Select2:
+                                    <div class="controls viewdetails">
+                                        @{
+                                            <span style="background-color:gray;margin-right: 10px;" 
+                                                ng-repeat="data in @(bindingPrefix).@property.Name" class="badge badge-dark"
+                                                ng-if="data && data != ' ' && data.Value">
+                                                 {{data.Key}} - {{data.Value}}
+                                            </span>
+                                        }
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.GridListView:
+                                    {
+                                        var modelCollection = property.GetValue(Model, null) as System.Collections.IList;
+
+                                        <div class="fullcolumn-layout">
+                                            @if (!string.IsNullOrEmpty(controlType.Attributes2))
+                                            {
+                                                <a @Html.Raw(controlType.Attributes2) class="button-orange ">+</a>
+                                            }
+
+                                            <table class="fullcolumn-layout grid @controlType.Css">
+                                                @if (modelCollection.Count > 0)
+                                                {
+                                                    @await Html.PartialAsync("_GridBuildFieldListViewOnly", modelCollection[0]);
+                                                }
+                                            </table>
+                                        </div>
+                                    }
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.Grid:
+                                    {
+                                        var modelCollection = property.GetValue(Model, null) as System.Collections.IList;
+
+                                        <div>
+                                            @if (!string.IsNullOrEmpty(controlType.Attributes2))
+                                            {
+                                                <a @Html.Raw(controlType.Attributes2) class="button-orange ">+</a>
+                                            }
+
+                                            <table class="fullcolumn-layout grid @controlType.Css" style="word-break: break-all;">
+                                                @if (modelCollection.Count > 0)
+                                                {
+                                                    @await Html.PartialAsync("_GridViewBuildField", modelCollection[0]);
+                                                }
+                                            </table>
+                                        </div>
+                                    }
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.FieldSet:
+                                    var fieldSet = property.GetValue(Model, null);
+                                    <div class="form-group fullwidth">
+                                        <fieldset>
+                                            @if (fieldSet != null)
+                                            {
+                                                @await Html.PartialAsync("_BuildField", fieldSet)
+                                                ;
+                                            }
+                                        </fieldset>
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.HorizontalTab:
+                                    var horizontalTab = property.GetValue(Model, null);
+                                    <div class="fullcolumn-layout" @Html.Raw(controlType.Attributes)>
+                                        @if (!string.IsNullOrEmpty(controlType.Attributes2))
+                                        {
+                                            <a @Html.Raw(controlType.Attributes2) class="button-orange ">+</a>
+                                        }
+
+                                        <table id="GridTable" class="fullcolumn-layout grid @controlType.Css">
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        @await Html.PartialAsync("~/Views/Shared/_BuildTabAndFields.cshtml", horizontalTab)
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.PivotGrid:
+                                    var pivotGrid = property.GetValue(Model, null) as System.Collections.IList;
+
+                                    <div class="controls">
+                                        <table id=" GridTable" class="fullcolumn-layout grid">
+                                            @if (pivotGrid.Count > 0)
+                                            {
+                                                @await Html.PartialAsync("_PivotGridBuildField", pivotGrid[0]);
+                                            }
+                                        </table>
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.Button:
+                                    <div class="controls">
+                                        <a>@title.DisplayName</a>
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.IconButton:
+                                    <div class="controls">
+                                        <a @Html.Raw(controlType.Attributes) class="button-orange "><i class="fa fa-save"></i>&nbsp;</a>
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.GeoLocation:
+                                    <div class="controls">
+                                        <a ng-click="GetLocationMapInNewWindow();">
+                                            <i class="fa fa-map-marker"></i>
+                                        </a>
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.GroupInfo:
+                                    var groupInfoModel = property.GetValue(Model, null);
+
+                                    <div class="columntitle">@title.DisplayName</div>
+                                    <div class="three-col-inner">
+                                        @await Html.PartialAsync("~/Views/Shared/_BuildViewField.cshtml", groupInfoModel)
+                                    </div>
+                                    break;
+                                case Eduegate.Framework.Enums.ControlTypes.ShowFlowStatus:
+                                    List<string> flowStatus = property.GetValue(Model, null) as List<string>;
+                                    <div class="step-container">
+                                        <div>
+                                            <span>Document</span>
+                                            <ul class="step-progressbar">
+                                                @foreach (var value in Enum.GetValues(typeof(Eduegate.Services.Contracts.Enums.DocumentFlowStatus)))
+                                                {
+                                                    if (value.ToString() == flowStatus[0])
+                                                    {
+                                                        <li class="active">@value</li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li>@value</li>
+                                                    }
+                                                }
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <span>Processing</span>
+                                            <ul class="step-progressbar">
+                                                @foreach (var value in Enum.GetValues(typeof(Eduegate.Services.Contracts.Enums.TransactionFlowStatus)))
+                                                {
+                                                    if (value.ToString() == flowStatus[1])
+                                                    {
+                                                        <li class="active">@value</li>
+                                                    }
+                                                    else
+                                                    {
+                                                        <li>@value</li>
+                                                    }
+                                                }
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    break;
+                            }
+                        }
+                    }
+                </div>
+            </div>
+        }
+    }
+}

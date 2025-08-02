@@ -1,0 +1,79 @@
+﻿@model Eduegate.Services.Contracts.SmartView.SmartTreeViewDTO
+
+<div id="ProductSmartView" ng-controller="SmartTreeViewController">
+    <div class="leftnav-tree-blk">
+        <div class="leftnav-tree-close"><span class="">Product Smart View</span><button data-bind=""><i class="fa fa-close"></i></button></div>
+        <div class="leftnav-tree-filter"> <input type="text" class="" placeholder="Filter"><button data-bind=""><i class="fa fa-search"></i></button></div>
+        <ul class="category-list">
+            @{
+                foreach (var item in Model.Node.Nodes)
+                {
+                    <li>
+                        <a href="#" title="@item.Caption" class="parent_li_view">
+                            <span class="displayFlex alignCenter">
+                                <span class="displayFlex alignCenter flexAuto label">
+                                    <i class='fa fa-plus-square-o'></i>
+                                    <img src="@(item.SmartTreeNodeType == Eduegate.Services.Contracts.Enums.SmartTreeNodeType.Category
+                                            ? "images/category.png" : "images/product.png")">
+                                    <label class="trimHolder">@item.Caption</label>
+                                </span>
+                                <span class="tree_controls">
+                                    <i class="fa fa-pencil editiconright"></i>
+                                    <i class="fa fa-plus addiconright"></i>
+                                </span>
+                            </span>
+                        </a>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#vtophover").click(function () {
+            $("#hovericonshow").toggle();
+        });
+
+        $(".leftnav-tree-close button").click(function () {
+            $("#ProductSmartView").remove();
+            $(".leftnav-tree").removeClass("slide");
+        });
+
+        $('.leftnav-tree ul.category-list li').each(function (e) {
+            $(this).addClass('parent_li');
+        });
+
+        //$('.leftnav-tree ul.category-list li ul > li').each(function (e) {
+        //    var child = $(this).find("ul");
+        //    if (child.length > 0) {
+        //        $(this).removeClass('parent_li').addClass('submenu');
+        //    }
+        //});
+
+        $('.leftnav-tree').on('click', 'li.parent_li > a', function (e) {
+            e.preventDefault();
+        });
+
+        $('.leftnav-tree').on('click', 'li.nosubitem > a', function () {
+            $('li.parent_li > a').removeClass('active');
+            $('li.submenu > a').removeClass('active');
+            $('li.nosubitem > a').removeClass('active');
+            $(this).parents('li.parent_li').find('> a').addClass('active');
+            $(this).parents('li.submenu').find('> a').addClass('active');
+            $(this).addClass('active');
+        });
+
+        $(".leftnav-tree li.parent_li i.plustominus").click(function () {
+            $(this).toggleClass("fa-minus-square-o");
+            $(this).toggleClass("fa-plus-square-o");
+            $(this).parent().parent().siblings(".submenuparent").toggle();
+        });
+        $("li.submenu a i.plustominus").click(function () {
+            $(this).parent().siblings().toggle();
+        });
+    });
+
+</script>
+

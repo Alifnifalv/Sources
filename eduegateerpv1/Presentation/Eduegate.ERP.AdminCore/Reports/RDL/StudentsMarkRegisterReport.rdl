@@ -1,0 +1,1470 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:cl="http://schemas.microsoft.com/sqlserver/reporting/2010/01/componentdefinition" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily" xmlns:am="http://schemas.microsoft.com/sqlserver/reporting/authoringmetadata">
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>3615acb2-314e-4ce9-9f1f-562cd1920a2f</rd:ReportID>
+  <am:AuthoringMetadata>
+    <am:CreatedBy>
+      <am:Name>PBIRB</am:Name>
+      <am:Version>15.7.1806.11</am:Version>
+    </am:CreatedBy>
+    <am:UpdatedBy>
+      <am:Name>PBIRB</am:Name>
+      <am:Version>15.7.1806.11</am:Version>
+    </am:UpdatedBy>
+    <am:LastModifiedTimestamp>2023-12-29T09:16:13.7934314Z</am:LastModifiedTimestamp>
+  </am:AuthoringMetadata>
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="Eduegate">
+      <rd:SecurityType>DataBase</rd:SecurityType>
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=.;Initial Catalog=Eduegate_2022</ConnectString>
+        <Prompt>Specify a user name and password for data source Eduegate:</Prompt>
+      </ConnectionProperties>
+      <rd:DataSourceID>7ed76d18-96c5-4672-ad88-f4fba6051aac</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="Class">
+      <Query>
+        <DataSourceName>Eduegate</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@SchoolID">
+            <Value>=Parameters!SchoolID.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+        <CommandText>SELECT
+  0 AS ClassID
+  ,'All' AS ClassDescription
+  ,0 AS ShiftID
+  ,0 AS SchoolID
+  ,0 AS CostCenterID
+  ,0 AS Code
+UNION ALL
+SELECT
+  schools.Classes.ClassID
+  ,schools.Classes.ClassDescription
+  ,schools.Classes.ShiftID
+  ,schools.Classes.SchoolID
+  ,schools.Classes.CostCenterID
+  ,schools.Classes.Code
+FROM
+  schools.Classes where SchoolID = @SchoolID order by code asc</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="ClassID">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>ClassID</DataField>
+        </Field>
+        <Field Name="ClassDescription">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>ClassDescription</DataField>
+        </Field>
+        <Field Name="ShiftID">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>ShiftID</DataField>
+        </Field>
+        <Field Name="SchoolID">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>SchoolID</DataField>
+        </Field>
+        <Field Name="CostCenterID">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>CostCenterID</DataField>
+        </Field>
+        <Field Name="Code">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>Code</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="MArkRegister">
+      <Query>
+        <DataSourceName>Eduegate</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@Class">
+            <Value>=Parameters!Class.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Section">
+            <Value>=Parameters!Section.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Exam">
+            <Value>=Parameters!Exam.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@SchoolID">
+            <Value>=Parameters!SchoolID.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+        <CommandText>SELECT
+  schools.MarkRegisterReportView.AdmissionNumber
+  ,schools.MarkRegisterReportView.StudentName
+  ,schools.MarkRegisterReportView.ClassDescription
+  ,schools.MarkRegisterReportView.SectionName
+  ,schools.MarkRegisterReportView.ClassID
+  ,schools.MarkRegisterReportView.ExamDescription
+  ,schools.MarkRegisterReportView.SubjectName
+  ,schools.MarkRegisterReportView.Mark
+  ,schools.MarkRegisterReportView.IsPassed
+  ,schools.MarkRegisterReportView.IsAbsent
+  ,schools.MarkRegisterReportView.GradeName
+  ,schools.MarkRegisterReportView.SchoolID
+FROM
+  schools.MarkRegisterReportView where ClassDescription=IIF(@Class='ALL',ClassDescription,@Class)and SectionName =IIF(@Section='ALL',SectionName,@Section)and ExamDescription =IIF(@Exam='ALL',ExamDescription,@Exam) and SchoolID = @SchoolID</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="AdmissionNumber">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>AdmissionNumber</DataField>
+        </Field>
+        <Field Name="StudentName">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>StudentName</DataField>
+        </Field>
+        <Field Name="ClassDescription">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>ClassDescription</DataField>
+        </Field>
+        <Field Name="SectionName">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>SectionName</DataField>
+        </Field>
+        <Field Name="ClassID">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>ClassID</DataField>
+        </Field>
+        <Field Name="ExamDescription">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>ExamDescription</DataField>
+        </Field>
+        <Field Name="SubjectName">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>SubjectName</DataField>
+        </Field>
+        <Field Name="Mark">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>Mark</DataField>
+        </Field>
+        <Field Name="IsPassed">
+          <rd:TypeName>System.Boolean</rd:TypeName>
+          <DataField>IsPassed</DataField>
+        </Field>
+        <Field Name="IsAbsent">
+          <rd:TypeName>System.Boolean</rd:TypeName>
+          <DataField>IsAbsent</DataField>
+        </Field>
+        <Field Name="GradeName">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>GradeName</DataField>
+        </Field>
+        <Field Name="SchoolID">
+          <rd:TypeName>System.Byte</rd:TypeName>
+          <DataField>SchoolID</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="Section">
+      <Query>
+        <DataSourceName>Eduegate</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@SchoolID">
+            <Value>=Parameters!SchoolID.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+        <CommandText>SELECT
+'ALL' AS SectionName
+UNION ALL
+SELECT
+schools.Sections.SectionName
+FROM
+  schools.Sections where SchoolID = @SchoolID</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="SectionName">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>SectionName</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="Exam">
+      <Query>
+        <DataSourceName>Eduegate</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@SchoolID">
+            <Value>=Parameters!SchoolID.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <rd:UseGenericDesigner>true</rd:UseGenericDesigner>
+        <CommandText>SELECT
+'ALL' AS ExamDescription
+UNION ALL
+SELECT
+schools.Exams.ExamDescription
+
+FROM
+  schools.Exams where SchoolID = @SchoolID</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="ExamDescription">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>ExamDescription</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Tablix Name="Tablix2">
+            <TablixCorner>
+              <TablixCornerRows>
+                <TablixCornerRow>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox9">
+                        <rd:DefaultName>Textbox9</rd:DefaultName>
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Student Name</Value>
+                                <Style>
+                                  <FontFamily>Century Gothic</FontFamily>
+                                  <FontSize>9pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Color>Gray</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Silver</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox12">
+                        <rd:DefaultName>Textbox12</rd:DefaultName>
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Class </Value>
+                                <Style>
+                                  <FontFamily>Century Gothic</FontFamily>
+                                  <FontSize>9pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Color>Gray</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Silver</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox14">
+                        <rd:DefaultName>Textbox14</rd:DefaultName>
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Section</Value>
+                                <Style>
+                                  <FontFamily>Century Gothic</FontFamily>
+                                  <FontSize>9pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Color>Gray</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Silver</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                  <TablixCornerCell>
+                    <CellContents>
+                      <Textbox Name="Textbox16">
+                        <rd:DefaultName>Textbox16</rd:DefaultName>
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Exam </Value>
+                                <Style>
+                                  <FontFamily>Century Gothic</FontFamily>
+                                  <FontSize>9pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Color>Gray</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Silver</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixCornerCell>
+                </TablixCornerRow>
+              </TablixCornerRows>
+            </TablixCorner>
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>26.95976mm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>26.74809mm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>29.55266mm</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>10.67571mm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="Mark">
+                          <rd:DefaultName>Mark</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Sum(Fields!Mark.Value)</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>0;(0)</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>Gray</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="GradeName">
+                          <rd:DefaultName>GradeName</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!GradeName.Value</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>Gray</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="IsPassed">
+                          <rd:DefaultName>IsPassed</rd:DefaultName>
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=IIF(Fields!IsPassed.Value,"Passed","Failed")</Value>
+                                  <Style>
+                                    <FontFamily>Century Gothic</FontFamily>
+                                    <FontSize>9pt</FontSize>
+                                    <FontWeight>Bold</FontWeight>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>Gray</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <VerticalAlign>Middle</VerticalAlign>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="SubjectName">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!SubjectName.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!SubjectName.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixHeader>
+                    <Size>7.07738mm</Size>
+                    <CellContents>
+                      <Textbox Name="SubjectName">
+                        <rd:DefaultName>SubjectName</rd:DefaultName>
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!SubjectName.Value</Value>
+                                <Style>
+                                  <FontFamily>Century Gothic</FontFamily>
+                                  <FontSize>9pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Color>Gray</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Silver</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember />
+                    <TablixMember />
+                  </TablixMembers>
+                </TablixMember>
+                <TablixMember>
+                  <TablixHeader>
+                    <Size>7.07738mm</Size>
+                    <CellContents>
+                      <Textbox Name="Textbox20">
+                        <rd:DefaultName>Textbox20</rd:DefaultName>
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>Is Passed</Value>
+                                <Style>
+                                  <FontFamily>Century Gothic</FontFamily>
+                                  <FontSize>9pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style>
+                              <TextAlign>Center</TextAlign>
+                            </Style>
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Color>Gray</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <BackgroundColor>Silver</BackgroundColor>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                </TablixMember>
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <Group Name="StudentName">
+                    <GroupExpressions>
+                      <GroupExpression>=Fields!StudentName.Value</GroupExpression>
+                    </GroupExpressions>
+                  </Group>
+                  <SortExpressions>
+                    <SortExpression>
+                      <Value>=Fields!StudentName.Value</Value>
+                    </SortExpression>
+                  </SortExpressions>
+                  <TablixHeader>
+                    <Size>66.79659mm</Size>
+                    <CellContents>
+                      <Textbox Name="StudentName">
+                        <rd:DefaultName>StudentName</rd:DefaultName>
+                        <CanGrow>true</CanGrow>
+                        <KeepTogether>true</KeepTogether>
+                        <Paragraphs>
+                          <Paragraph>
+                            <TextRuns>
+                              <TextRun>
+                                <Value>=Fields!StudentName.Value</Value>
+                                <Style>
+                                  <FontFamily>Century Gothic</FontFamily>
+                                  <FontSize>9pt</FontSize>
+                                  <FontWeight>Bold</FontWeight>
+                                </Style>
+                              </TextRun>
+                            </TextRuns>
+                            <Style />
+                          </Paragraph>
+                        </Paragraphs>
+                        <Style>
+                          <Border>
+                            <Color>Gray</Color>
+                            <Style>Solid</Style>
+                          </Border>
+                          <VerticalAlign>Middle</VerticalAlign>
+                          <PaddingLeft>2pt</PaddingLeft>
+                          <PaddingRight>2pt</PaddingRight>
+                          <PaddingTop>2pt</PaddingTop>
+                          <PaddingBottom>2pt</PaddingBottom>
+                        </Style>
+                      </Textbox>
+                    </CellContents>
+                  </TablixHeader>
+                  <TablixMembers>
+                    <TablixMember>
+                      <TablixHeader>
+                        <Size>29.976mm</Size>
+                        <CellContents>
+                          <Textbox Name="ClassDescription">
+                            <rd:DefaultName>ClassDescription</rd:DefaultName>
+                            <CanGrow>true</CanGrow>
+                            <KeepTogether>true</KeepTogether>
+                            <Paragraphs>
+                              <Paragraph>
+                                <TextRuns>
+                                  <TextRun>
+                                    <Value>=Fields!ClassDescription.Value</Value>
+                                    <Style>
+                                      <FontFamily>Century Gothic</FontFamily>
+                                      <FontSize>9pt</FontSize>
+                                      <FontWeight>Bold</FontWeight>
+                                    </Style>
+                                  </TextRun>
+                                </TextRuns>
+                                <Style />
+                              </Paragraph>
+                            </Paragraphs>
+                            <Style>
+                              <Border>
+                                <Color>Gray</Color>
+                                <Style>Solid</Style>
+                              </Border>
+                              <VerticalAlign>Middle</VerticalAlign>
+                              <PaddingLeft>2pt</PaddingLeft>
+                              <PaddingRight>2pt</PaddingRight>
+                              <PaddingTop>2pt</PaddingTop>
+                              <PaddingBottom>2pt</PaddingBottom>
+                            </Style>
+                          </Textbox>
+                        </CellContents>
+                      </TablixHeader>
+                      <TablixMembers>
+                        <TablixMember>
+                          <TablixHeader>
+                            <Size>29.11991mm</Size>
+                            <CellContents>
+                              <Textbox Name="SectionName">
+                                <rd:DefaultName>SectionName</rd:DefaultName>
+                                <CanGrow>true</CanGrow>
+                                <KeepTogether>true</KeepTogether>
+                                <Paragraphs>
+                                  <Paragraph>
+                                    <TextRuns>
+                                      <TextRun>
+                                        <Value>=Fields!SectionName.Value</Value>
+                                        <Style>
+                                          <FontFamily>Century Gothic</FontFamily>
+                                          <FontSize>9pt</FontSize>
+                                          <FontWeight>Bold</FontWeight>
+                                        </Style>
+                                      </TextRun>
+                                    </TextRuns>
+                                    <Style />
+                                  </Paragraph>
+                                </Paragraphs>
+                                <Style>
+                                  <Border>
+                                    <Color>Gray</Color>
+                                    <Style>Solid</Style>
+                                  </Border>
+                                  <VerticalAlign>Middle</VerticalAlign>
+                                  <PaddingLeft>2pt</PaddingLeft>
+                                  <PaddingRight>2pt</PaddingRight>
+                                  <PaddingTop>2pt</PaddingTop>
+                                  <PaddingBottom>2pt</PaddingBottom>
+                                </Style>
+                              </Textbox>
+                            </CellContents>
+                          </TablixHeader>
+                          <TablixMembers>
+                            <TablixMember>
+                              <TablixHeader>
+                                <Size>47.12099mm</Size>
+                                <CellContents>
+                                  <Textbox Name="ExamDescription">
+                                    <rd:DefaultName>ExamDescription</rd:DefaultName>
+                                    <CanGrow>true</CanGrow>
+                                    <KeepTogether>true</KeepTogether>
+                                    <Paragraphs>
+                                      <Paragraph>
+                                        <TextRuns>
+                                          <TextRun>
+                                            <Value>=Fields!ExamDescription.Value</Value>
+                                            <Style>
+                                              <FontFamily>Century Gothic</FontFamily>
+                                              <FontSize>9pt</FontSize>
+                                              <FontWeight>Bold</FontWeight>
+                                            </Style>
+                                          </TextRun>
+                                        </TextRuns>
+                                        <Style />
+                                      </Paragraph>
+                                    </Paragraphs>
+                                    <Style>
+                                      <Border>
+                                        <Color>Gray</Color>
+                                        <Style>Solid</Style>
+                                      </Border>
+                                      <VerticalAlign>Middle</VerticalAlign>
+                                      <PaddingLeft>2pt</PaddingLeft>
+                                      <PaddingRight>2pt</PaddingRight>
+                                      <PaddingTop>2pt</PaddingTop>
+                                      <PaddingBottom>2pt</PaddingBottom>
+                                    </Style>
+                                  </Textbox>
+                                </CellContents>
+                              </TablixHeader>
+                            </TablixMember>
+                          </TablixMembers>
+                        </TablixMember>
+                      </TablixMembers>
+                    </TablixMember>
+                  </TablixMembers>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>MArkRegister</DataSetName>
+            <Top>9.43749mm</Top>
+            <Left>2.27985mm</Left>
+            <Height>17.75309mm</Height>
+            <Width>256.274mm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+          <Textbox Name="Textbox1">
+            <rd:DefaultName>Textbox1</rd:DefaultName>
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Parameters!Class.Value</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>0.70556mm</Top>
+            <Left>15.91597mm</Left>
+            <Height>6mm</Height>
+            <Width>19.70833mm</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <BackgroundImage>
+                <Source>External</Source>
+                <Value>=First(Fields!ClassDescription.Value, "Class")</Value>
+              </BackgroundImage>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox2">
+            <rd:DefaultName>Textbox2</rd:DefaultName>
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Parameters!Section.Value</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>0.70556mm</Top>
+            <Left>58.99837mm</Left>
+            <Height>6mm</Height>
+            <Width>25mm</Width>
+            <ZIndex>2</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <BackgroundImage>
+                <Source>External</Source>
+                <Value>=First(Fields!SectionName.Value, "Section")</Value>
+              </BackgroundImage>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox4">
+            <rd:DefaultName>Textbox4</rd:DefaultName>
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Exam:</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>0.70556mm</Top>
+            <Left>94.58541mm</Left>
+            <Height>6mm</Height>
+            <Width>12.03542mm</Width>
+            <ZIndex>3</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <BackgroundImage>
+                <Source>External</Source>
+                <Value>=First(Fields!ExamDescription.Value, "Exam")</Value>
+              </BackgroundImage>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox5">
+            <rd:DefaultName>Textbox5</rd:DefaultName>
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Class:</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>0.70556mm</Top>
+            <Left>3.175mm</Left>
+            <Height>6mm</Height>
+            <Width>11.68264mm</Width>
+            <ZIndex>4</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox6">
+            <rd:DefaultName>Textbox6</rd:DefaultName>
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Section:</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>0.70556mm</Top>
+            <Left>43.43517mm</Left>
+            <Height>6mm</Height>
+            <Width>15.21042mm</Width>
+            <ZIndex>5</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+          <Textbox Name="Textbox8">
+            <rd:DefaultName>Textbox8</rd:DefaultName>
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Parameters!Exam.Value</Value>
+                    <Style>
+                      <FontFamily>Century Gothic</FontFamily>
+                      <FontSize>9pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>0.70556mm</Top>
+            <Left>107.67916mm</Left>
+            <Height>6mm</Height>
+            <Width>68.12707mm</Width>
+            <ZIndex>6</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingLeft>2pt</PaddingLeft>
+              <PaddingRight>2pt</PaddingRight>
+              <PaddingTop>2pt</PaddingTop>
+              <PaddingBottom>2pt</PaddingBottom>
+            </Style>
+          </Textbox>
+        </ReportItems>
+        <Height>31.07114mm</Height>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Body>
+      <Width>259.3398mm</Width>
+      <Page>
+        <PageHeader>
+          <Height>20.37292mm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="Textbox10">
+              <rd:DefaultName>Textbox2</rd:DefaultName>
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>Date: </Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
+                      <Value>=Format(Globals!ExecutionTime,"dd/MM/yyyy hh:mm tt")</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>2.46944mm</Top>
+              <Left>209.69403mm</Left>
+              <Height>6.08542mm</Height>
+              <Width>48.85982mm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox11">
+              <rd:DefaultName>Textbox2</rd:DefaultName>
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>="Page " &amp; Globals!PageNumber &amp; " of " &amp; Globals!TotalPages</Value>
+                      <Style />
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>10.31875mm</Top>
+              <Left>237.69231mm</Left>
+              <Height>6.08542mm</Height>
+              <Width>20.86154mm</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Textbox Name="Textbox13">
+              <rd:DefaultName>Textbox9</rd:DefaultName>
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>STUDENT MARK REGISTER</Value>
+                      <Style>
+                        <FontSize>14pt</FontSize>
+                        <FontWeight>Bold</FontWeight>
+                        <Color>Brown</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>8.90764mm</Top>
+              <Left>0mm</Left>
+              <Height>8.09875mm</Height>
+              <Width>258.55385mm</Width>
+              <ZIndex>2</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Image Name="Image2">
+              <Source>External</Source>
+              <Value>=Parameters!RootUrl.Value + Parameters!Logo.Value</Value>
+              <Sizing>FitProportional</Sizing>
+              <Top>0mm</Top>
+              <Left>0mm</Left>
+              <Height>13.94028mm</Height>
+              <Width>57.2095mm</Width>
+              <ZIndex>3</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+              </Style>
+            </Image>
+            <Line Name="Line1">
+              <Top>17.71195mm</Top>
+              <Left>0mm</Left>
+              <Height>0mm</Height>
+              <Width>258.55385mm</Width>
+              <ZIndex>4</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </Border>
+                <TopBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </TopBorder>
+                <BottomBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </BottomBorder>
+                <LeftBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </LeftBorder>
+                <RightBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </RightBorder>
+              </Style>
+            </Line>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageHeader>
+        <PageFooter>
+          <Height>14.09347mm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="ExecutionTime">
+              <rd:DefaultName>ExecutionTime</rd:DefaultName>
+              <CanGrow>true</CanGrow>
+              <KeepTogether>true</KeepTogether>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Parameters!ReportFooter.Value</Value>
+                      <Style>
+                        <FontWeight>Bold</FontWeight>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>2.82222mm</Top>
+              <Left>0mm</Left>
+              <Height>9.81266mm</Height>
+              <Width>258.55385mm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+                <PaddingLeft>2pt</PaddingLeft>
+                <PaddingRight>2pt</PaddingRight>
+                <PaddingTop>2pt</PaddingTop>
+                <PaddingBottom>2pt</PaddingBottom>
+              </Style>
+            </Textbox>
+            <Line Name="Line2">
+              <Top>1.76389mm</Top>
+              <Left>0mm</Left>
+              <Height>0mm</Height>
+              <Width>258.55385mm</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </Border>
+                <TopBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </TopBorder>
+                <BottomBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </BottomBorder>
+                <LeftBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </LeftBorder>
+                <RightBorder>
+                  <Color>#666666</Color>
+                  <Style>Solid</Style>
+                  <Width>2.25pt</Width>
+                </RightBorder>
+              </Style>
+            </Line>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageFooter>
+        <PageHeight>21cm</PageHeight>
+        <PageWidth>29.7cm</PageWidth>
+        <InteractiveHeight>8in</InteractiveHeight>
+        <InteractiveWidth>15in</InteractiveWidth>
+        <LeftMargin>1.27cm</LeftMargin>
+        <RightMargin>1.27cm</RightMargin>
+        <TopMargin>1.27cm</TopMargin>
+        <BottomMargin>1.27cm</BottomMargin>
+        <ColumnSpacing>0.13cm</ColumnSpacing>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="ReportFooter">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>ReportFooter</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="RootUrl">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>RootUrl</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="Logo">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Logo</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HeaderBGColor">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HeaderBGColor</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="HeaderForeColor">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>HeaderForeColor</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="SchoolID">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>SchoolID</Prompt>
+      <Hidden>true</Hidden>
+    </ReportParameter>
+    <ReportParameter Name="Exam">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <DataSetReference>
+          <DataSetName>Exam</DataSetName>
+          <ValueField>ExamDescription</ValueField>
+        </DataSetReference>
+      </DefaultValue>
+      <Prompt>Exam</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>Exam</DataSetName>
+          <ValueField>ExamDescription</ValueField>
+          <LabelField>ExamDescription</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+    <ReportParameter Name="Class">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <DataSetReference>
+          <DataSetName>Class</DataSetName>
+          <ValueField>ClassDescription</ValueField>
+        </DataSetReference>
+      </DefaultValue>
+      <Prompt>Class</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>Class</DataSetName>
+          <ValueField>ClassDescription</ValueField>
+          <LabelField>ClassDescription</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+    <ReportParameter Name="Section">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <DataSetReference>
+          <DataSetName>Section</DataSetName>
+          <ValueField>SectionName</ValueField>
+        </DataSetReference>
+      </DefaultValue>
+      <Prompt>Section</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>Section</DataSetName>
+          <ValueField>SectionName</ValueField>
+          <LabelField>SectionName</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+    <ReportParameter Name="CurrentAcademicYearID">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>CurrentAcademicYearID</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="Signature">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Signature</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+    <ReportParameter Name="SchoolSeal">
+      <DataType>String</DataType>
+      <Nullable>true</Nullable>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>SchoolSeal</Prompt>
+      <Hidden>true</Hidden>
+      <cl:ComponentMetadata>
+        <cl:HideUpdateNotifications>true</cl:HideUpdateNotifications>
+      </cl:ComponentMetadata>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>4</NumberOfColumns>
+      <NumberOfRows>5</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>ReportFooter</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>RootUrl</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>Logo</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>HeaderBGColor</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>HeaderForeColor</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>SchoolID</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>2</RowIndex>
+          <ParameterName>Exam</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>3</RowIndex>
+          <ParameterName>Class</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>3</RowIndex>
+          <ParameterName>Section</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>2</ColumnIndex>
+          <RowIndex>3</RowIndex>
+          <ParameterName>CurrentAcademicYearID</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>3</ColumnIndex>
+          <RowIndex>3</RowIndex>
+          <ParameterName>Signature</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>4</RowIndex>
+          <ParameterName>SchoolSeal</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <EmbeddedImages>
+    <EmbeddedImage Name="logoblue">
+      <MIMEType>image/png</MIMEType>
+      <ImageData>iVBORw0KGgoAAAANSUhEUgAAAK0AAAAuCAYAAABai5k1AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NEJDODg2QTEzMDRDMTFFQUE3N0FEMDYzNTE1MEFEN0MiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NEJDODg2QTIzMDRDMTFFQUE3N0FEMDYzNTE1MEFEN0MiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0QkM4ODY5RjMwNEMxMUVBQTc3QUQwNjM1MTUw
+QUQ3QyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo0QkM4ODZBMDMwNEMxMUVBQTc3QUQwNjM1MTUwQUQ3QyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PtL9JEUAABVzSURBVHja7F0JmBTVtT7dVdXL7PvGAA6LyA46ogLKGBQUXINEXzTJ8+W5PaPxvbg+4/dM3GLyaTRuz+VFv/hQYxQTBRfUJwgCsggMA6KiLDLAMMww+3R3dVW9c6pPzdwpe6mehUDo832H7qmqvnXr3v+e859zbjcuwzAgJSk5msSdGoKUHG0i0z/XXHPNUdFZb7ADlk+fDxunXACA7+MvRwnk5gbw79gCwdIKAPQohiSBoXgAXC68AFXXzOt0j7frYy5NA93nw2sVPK/LUmfbCHydrjQdnCG3NU3RJbklnJm7KpyTvwx0Y42ekf0tteMOBel6cOlh0BUvuMIhcAc7wZA9YHj94ML3LjUIelomSB2tZvv0tzvQAWp+KfZP79PY6Pgc8xY/BsX1uyBMff8HkKeffjo2aI95cbnBcLPTMeA4d0d7pdzSWKU01U9VGg+Mk9qaFXcoYILSBLxbqtR8aTdomTktal5xtZpTsEJLy1yme9M24lrYb0gygl9NjetAWtpjD6QuBKmE4COguvLdgfaT0PqdoTTWzZCbGsbJrYdyIpZT6wI0AREkwZCjpUcrnOWp+3Y6npuue/23h7Pz68JZeZvU/JJlCOqVeI8Nhqw0myA2rXtKUqBNAqQmUAl4bneWKxweI7cenC61N89QDtVPkdqaisiVEzWIAJotr9sd3zpL1nnDBLF3f1uxd/+uWQjWWZo/A7SMrL1oiVdpWfkrND+CWJI/RxC3mu2mQHzsgJa4Gzieb4NcuscVCo5Cjnmqp7WpCgF6mtzWXEFc0qWFI1cxiBBQvV0VvCgsimGAjLxV
+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</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+</Report>

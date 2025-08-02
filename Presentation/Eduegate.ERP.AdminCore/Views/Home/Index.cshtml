@@ -1,0 +1,60 @@
+﻿@model Eduegate.Framework.PageRendererEngine.ViewModels.PageRedererViewModel
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div id="DashbaordWindow" class="app-container  windowcontainer position-relative" style="display:block" ng-controller="PageController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName','DashbaordWindow');">
+    <div class="switch-field position-relative end-0 p-1 pe-3  d-flex flex-center">
+        <input type="radio" name="dashboardType" ng-model="DashboardType" value="Default" />
+        <label ng-click="DashboardType='Default'">Default</label>
+        <input type="radio" name="dashboardType" ng-model="DashboardType" value="PowerBI" />
+        <label ng-click="DashboardType='PowerBI'">Power BI</label>
+
+    </div>
+    <div class="main-page row g-3 g-xl-10 mb-5 mb-xl-10" ng-if="DashboardType == 'Default'">
+        @Html.Raw(Model.Content)
+    </div>
+    <div class="powerpagecontent" style="HEIGHT: calc(100vh - 90px)" ng-if="DashboardType == 'PowerBI'" ng-controller="PowerBIController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName','DashbaordWindow');">
+        <section id="report-container-@windowName" class="embed-container"></section>
+    </div>
+</div>
+
+
+
+<script>
+    $('.switch-field input[type="radio"]').on('change', function () {
+        var selectedValue = $(this).val();
+        if (selectedValue === 'PowerBI') {
+            $('.powerpagecontent').show();
+        } else {
+            $('.powerpagecontent').hide();
+        }
+    });
+</script>
+
+<script src="/lib/powerbi/embed.js"></script>
+
+
+<style>
+    #report-container {
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        position: relative; /* Allow flexibility for embedding */
+    }
+
+    .embed-container {
+        width: 100%; /* Full width of the parent */
+        height: 100vh; /* Full viewport height */
+        overflow: hidden; /* Prevent scrollbars */
+        display: flex; /* Flexbox for alignment */
+        justify-content: center; /* Optional: Center align horizontally */
+        align-items: center; /* Optional: Center align vertically */
+    }
+</style>
+

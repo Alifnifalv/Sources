@@ -1,0 +1,26 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    var windowName = "window_" + Guid.NewGuid().ToString() + "_" + Model.BoilerPlateMapIID.ToString();
+
+    var width = Model.GetParameterValue<int>("Width");
+    var lookUpName = Model.GetParameterValue<string>("LookUpName");
+}
+
+<div id="@windowName" style="width:100%" tempalte="_Charts" ng-controller="C3ChartBoilerPlateController as c3Charts"
+     ng-init="c3Charts.childInit(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+    <div class="charts-grids widget draggable">
+        <div class="page_subtitles">
+            @(Model.GetParameterValue<string>("Title"))
+            <div style="float:right">
+                @if (!string.IsNullOrEmpty(lookUpName))
+                {
+                    <select ng-model="c3Charts.SelectedFilter" ng-options="x as x.Value for x in c3Charts.LookUps.@(lookUpName)" ng-change="c3Charts.ReloadData()">
+                    </select>
+                }
+                <i class="fa fa-refresh" ng-click="c3Charts.ReloadData()"></i>
+            </div>
+        </div>
+        <div id="@(windowName)_widgetcontainer"></div>
+    </div>
+</div>

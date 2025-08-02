@@ -1,0 +1,84 @@
+﻿@{
+    Layout = null;
+    Random rnd = new Random();
+    var windowName = "window_" + Guid.NewGuid().ToString();
+}
+
+<div id="CaseManagement" class="windowcontainer" ng-controller="CaseManagementController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName', 'caseManagement')">
+
+    <div class="main-page row g-0 g-xl-2 mb-5 mb-xl-10">
+        <div class="col-md-12">
+            <div class="app-toolbar">
+                <div class="app-container  container-fluid d-flex align-items-stretch ">
+                    <div class="app-toolbar-wrapper d-flex flex-stack flex-wrap gap-4 w-100">
+                        <div class="page-title d-flex flex-column justify-content-center gap-1 me-3">
+                            <h1 class="page-heading d-flex flex-column justify-content-center text-dark fw-bold fs-3 m-0">
+                                Case Management - Dashboard
+                            </h1>
+                            <ul class="breadcrumb breadcrumb-separatorless fw-semibold fs-7 my-0">
+                                <li class="breadcrumb-item text-muted">
+                                    <a class="text-muted text-hover-primary">
+                                        Supports
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    <span class="bullet bg-gray-400 w-5px h-2px"></span>
+                                </li>
+                                <li class="breadcrumb-item text-muted">
+                                    Case
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <ul class="nav nav-tabs gap-1">
+                
+                <li class="nav-item" ng-click="onCaseManagementViewTab('Tab_01')">
+                    <a class="nav-link active ms-4" id="Tab_01_nav" aria-current="page" href="#"><span class="seletedsubject">My Cases</span></a>
+                </li>
+
+                @* <li class="nav-item" ng-click="onCaseManagementViewTab('Tab_02')">
+                    <a class="nav-link" id="Tab_02_nav" href="#"><span class="seletedsubject">Create Case</span></a>
+                </li> *@
+
+                <li class="nav-item" ng-click="onCaseManagementViewTab('Tab_03')">
+                    <a class="nav-link" id="Tab_03_nav" href="#"><span class="seletedsubject">Fee Outstanding</span></a>
+                </li>
+
+                <li class="nav-item" ng-click="onCaseManagementViewTab('Tab_04')">
+                    <a class="nav-link" id="Tab_04_nav" href="#"><span class="seletedsubject">Fee Collection</span></a>
+                </li>
+
+                <li class="nav-item" ng-click="onCaseManagementViewTab('Tab_05')">
+                    <a class="nav-link" id="Tab_05_nav" href="#"><span class="seletedsubject">Complaints</span></a>
+                </li>
+
+            </ul>
+        </div>
+
+        <div class="scheduleWrapper innertab subject" id="Tab_01" style="display:block">
+            @await Html.PartialAsync("_MyCase")
+        </div>
+
+        @* <div class="scheduleWrapper innertab subject" id="Tab_02" style="display:none">
+            @await Html.PartialAsync("_NewCase")
+        </div> *@
+
+        <div class="scheduleWrapper innertab subject" id="Tab_03" style="display:none">
+            @await Html.PartialAsync("_FeeOutstandingCase")
+        </div>
+
+        <div class="scheduleWrapper innertab subject" id="Tab_04" style="display:none">
+            @await Html.PartialAsync("_FeeCollectionCase")
+        </div>
+
+        <div class="scheduleWrapper innertab subject" id="Tab_05" style="display:none">
+            @await Html.PartialAsync("_ComplaintCase")
+        </div>
+
+    </div>
+</div>

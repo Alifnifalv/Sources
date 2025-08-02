@@ -1,0 +1,121 @@
+﻿@model string
+@{
+    List<Eduegate.Utilities.SSRSHelper.ReportParameter> parameters = ViewBag.Parameters;
+    var windowName = "window_" + Guid.NewGuid().ToString();
+    var dateTimeFormat = new Eduegate.Domain.Setting.SettingBL(null).GetSettingValue<string>("DateTimeFormat");
+    var cleintDateFormat = new Eduegate.Domain.Setting.SettingBL(null).GetSettingValue<string>("ClientJQueryDateTimeFormat");
+    var viewModel = Newtonsoft.Json.JsonConvert.SerializeObject(new { MetaData = ViewBag.MetaData, ReportParameter = @ViewBag.ReportParameter});
+    var lookUps = ViewBag.MetaData != null ? (ViewBag.MetaData as Eduegate.Services.Contracts.Framework.ScreenMetadataDTO).Urls : new List<Eduegate.Services.Contracts.Framework.ScreenLookupDTO>();
+    int index = 0;
+}
+
+<div id="@ViewBag.ReportName" class="pagecontent reportcontent windowcontainer active"
+     ng-controller="ReportController" ng-init="init('@Model','@windowName', @viewModel, '@cleintDateFormat')">
+    <div id="@windowName" class="container" style="margin-left: 0px;">
+        @if (parameters == null)
+        {
+            <h1>Report not found</h1>
+        }
+        else
+        {
+            <form>
+                <div class="card report reportsHeaderPanel" style="margin-left: 0px; display: flex; flex-direction: row;flex-direction: row;flex-wrap: wrap;">
+                    @foreach (var parameter in parameters)
+                    {
+                        index++;
+                        var lookUp = lookUps.FirstOrDefault(x => x.LookUpName == parameter.Name);
+                        if (parameter.Hidden)
+                        {
+                            <input type="hidden" name="@parameter.Name" id="@parameter.Name"
+                                   value="@(parameter.DefaultValue != null && parameter.DefaultValue.Values.Count() > 0 ?
+                                parameter.DefaultValue.Values.FirstOrDefault() : string.Empty)" />
+                            continue;
+                        }
+
+                        <div>
+                            <div class="fieldHeader" style="padding-left: 10px;">
+                                <label>@parameter.Prompt</label>
+                            </div>
+                            <div class="formFields form-horizontal">
+                                <div>
+                                    <div class="form-group">
+                                        @if (lookUp != null && lookUp.LookUpName == parameter.Name)
+                                        {
+                                            <div class="controls dropDown brand">
+                                                <select name="@parameter.Name" id="@parameter.Name">
+                                                    <option ng-repeat="data in LookUps.@parameter.Name" value={{data.Key}}>{{data.Value}}</option>
+                                                </select>
+                                                <i class="dropdownarrow fa fa-caret-down"></i>
+                                            </div>
+                                        }
+                                        else if (parameter.ValidValues != null)
+                                        {
+                                            <div class="controls dropDown brand">
+                                                <select name="@parameter.Name" id="@parameter.Name">
+                                                    @foreach (var value in parameter.ValidValues.ParameterValues)
+                                                    {
+                                                        <option value="@value.Value">@value.Label</option>
+                                                    }
+                                                </select>
+                                                <i class="dropdownarrow fa fa-caret-down"></i>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            @switch (parameter.DataType.ToLower())
+                                            {
+                                                case "integer":
+                                                    <div class="controls">
+                                                        <input type="number" autocomplete="off" name="@parameter.Name" id="@parameter.Name" />
+                                                    </div>
+                                                    break;
+                                                case "string":
+                                                    <div class="controls">
+                                                        <input autocomplete="off" name="@parameter.Name" id="@parameter.Name" />
+                                                    </div>
+                                                    break;
+                                                case "datetime":
+                                                    <div class="controls">
+                                                        <input autocomplete="off" name="@parameter.Name" id="@parameter.Name" class="date-time-picker" value="@DateTime.Now.ToString(dateTimeFormat, System.Globalization.CultureInfo.InvariantCulture)" />
+                                                    </div>
+                                                    break;
+                                                case "select2":
+                                                    <div class="controls dropDown">
+                                                        <select name="@parameter.Name" id="@parameter.Name"></select>
+                                                    </div>
+                                                    <input autocomplete="off" name="@parameter.Name" id="@parameter.Name" type="hidden" name="Select2Hidden" />
+                                                    break;
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="btnControls">
+                    @*<input type="checkbox" ng-model="IsPDF" />*@
+                    <button class="btn btn-primary" value="View" ng-click="LoadReport('PDF')"><i class="fa fa-eye mr-2" aria-hidden="true"></i>&nbsp; View</button>
+                    <button runat="server" value="Print" OnClick="Export" class="print btn btn-primary"><i class="fa fa-print  mr-2" aria-hidden="true"></i>&nbsp;Print</button>
+                    <button runat="server" value="excelExport" ng-click="LoadReport('excel')" class="export btn btn-primary"><i class="fa fa-file-excel-o mr-2" aria-hidden="true"></i>&nbsp;Excel export</button>
+                </div>
+            </form>
+
+            <div class="progress" ng-if="IsLoading">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75"
+                     aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+            </div>
+
+            <div class="reportGridData">
+                <div class="fullwidth fullheight documentWrapper displayFlex">
+                    <div class="flexColumn documentWrapper nopaddingLeft">
+                        <div class="documentWrapper boxShadow displayFlex">
+                            @*<canvas id="documentView"></canvas>*@
+                            <div id="htmlView@(windowName)" style="width:100%;height:100%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

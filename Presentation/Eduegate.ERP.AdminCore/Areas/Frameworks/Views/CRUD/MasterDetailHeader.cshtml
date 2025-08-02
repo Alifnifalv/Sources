@@ -1,0 +1,119 @@
+﻿@model Eduegate.Web.Library.ViewModels.Common.CRUDMasterDetailViewModel
+@using Eduegate.Framework.Extensions;
+
+@{
+    var saveMethod = string.IsNullOrEmpty(Model.SaveCRUDMethod) ? "SaveTransaction" : Model.SaveCRUDMethod;
+}
+
+<div class="pageheadername stickdiv">
+    <span>
+        @if (Model.DisplayName.IsNotNullOrEmpty())
+        {
+            @Model.DisplayName;
+        }
+        else
+        {
+            @(Model.Name + " Maintenance");
+        }
+    </span>
+    <div class="alignright menugroup">
+        @*<div class="viewsummary active"></div>*@
+
+        @*@if (!string.IsNullOrEmpty(Model.EntityType))
+        {
+        <div class="menu-wrap alignright">
+        <div title="Comments" class="button-orange alignleft popupbtn comments-btn" ng-show="@Model.IID" ng-click="Comments($event)">
+        <a title="Comments"><i class="fa fa-comment"></i></a>
+        </div>
+        <div class="popup comments" data-popup-type="comments" style="display:none;">
+        <div class="popup-wrap" id="commentPanel" style="display:none;">
+        </div>
+        </div>
+        </div>
+
+        <div class="menu-wrap alignright">
+        <div title="Attachments" class="button-orange alignleft popupbtn attachment-btn" ng-show="@Model.IID" ng-click="Attachments($event)">
+        <a title="Attachments"><i class="fa fa-paperclip"></i></a>
+        </div>
+        <div class="popup attachments" data-popup-type="attachments">
+        <div class="popup-wrap" id="attachmentPanel">
+        </div>
+        </div>
+        </div>
+        }*@
+
+        <div title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Close")" class="button-orange alignright" ng-click="CloseWindow();">
+            <a title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Close")">
+                <i class="fa fa-close"></i>
+                <span>@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Close")</span>
+            </a>
+        </div>
+
+        <div class="button-orange alignright saveclose" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("SaveandNext")"
+             ng-click="@(saveMethod)($event, false, null, true, null, null);">
+            <a title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("SaveandNext")">
+                <i class="fa fa-plus"></i>@*&nbsp;&nbsp;*@<i class="fa fa-save"></i>
+                <span>
+                    @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("SaveandNext")
+                </span>
+            </a>
+        </div>
+
+        <div class="button-orange alignright saveclose" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("SaveandClose")"
+             ng-click="@(saveMethod)($event, true, null, true, null, null);">
+            <a title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("SaveandClose")">
+                <i class="fa fa-close"></i>&nbsp;@*&nbsp;*@<i class="fa fa-save"></i>
+                <span>
+                    @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("SaveandClose")
+                </span>
+            </a>
+        </div>
+        <div class="button-orange alignright paybtn" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Save")"
+             ng-click="@(saveMethod)($event, flase, null, true, null, null);">
+            <a title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Save")">
+                <i class="fa fa-save"></i>
+                <span>
+                    @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Save")
+                </span>
+            </a>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.PrintPreviewReportName))
+        {
+            <div class="button-orange alignright" ng-click="MailTransactionsReport($event,'@(Model.PrintPreviewReportName)','@(Model.DisplayName) Print Preview','%2fEduegate.Inventory.Reports%2f@(Model.PrintPreviewReportName)');">
+                <a href="" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Email")">
+                    <i class="fa fa-print"></i>
+                    <span>
+                        @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Email")
+                    </span>
+                </a>
+            </div>
+        }
+
+
+        @if (!string.IsNullOrEmpty(Model.PrintPreviewReportName))
+        {
+            <div class="button-orange alignright" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Print")" ng-click="PrintTransaction($event,'@(Model.PrintPreviewReportName)','@(Model.DisplayName) Print Preview','%2fEduegate.Inventory.Reports%2f@(Model.PrintPreviewReportName)');">
+                <a title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Print")">
+                    <i class="fa fa-print"></i>
+                    <span>
+                        @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Print")
+                    </span>
+                </a>
+            </div>
+        }
+
+        <div class="button-orange alignright" ng-click="ReLoadPage();">
+            <a href="" title="@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Reload")">
+                <i class="fa fa-refresh"></i>
+                <span>
+                    @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Reload")
+                </span>
+            </a>
+        </div>
+
+        @*<div class="button-orange alignright" ng-click="ReLoadPage();">
+        <a><i class="fa fa-refresh"></i></a>
+        </div>*@
+
+    </div>
+</div>

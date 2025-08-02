@@ -1,0 +1,23 @@
+﻿@model SkienSuite.Web.Library.ViewModels.SearchListViewModel
+@{
+    Layout = null;
+    var viewIID = SkienSuite.Services.Contracts.Enums.SearchView.Voucher;
+}
+
+<div id="VoucherLists" class="windowcontainer">
+    <div ng-model="VoucherViewModel" ng-controller="ViewController" ng-init="init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model), '@viewIID');InitializeWayPoint();">
+       @* <div class="pagenav"><a class="pagenav-leftmargin">Dashboard </a><a class="pagenav-leftmargin"> Voucher </a> /<span> Lists</span></div>*@
+        <div class="pageheadername">
+            <div>Voucher</div>
+            <div class="alignright menugroup">
+            @if(ViewBag.VoucherAdminAccess)
+            {
+                <div class="createprodlink button-orange alignright" ng-click="Create('@viewIID')"><a title="Voucher"><i class="fa fa-plus"></i><span>Create Voucher</span></a></div>
+            }
+            </div>
+        </div>
+
+        @Html.Partial("_SummaryHeader", Model)
+        @Html.Partial("_List", Model)
+    </div>
+</div>

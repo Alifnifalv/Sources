@@ -1,0 +1,317 @@
+﻿@{
+    ViewBag.Title = "_CircularList_Parent";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<br />
+
+<div id="CircularListOverlay" class=" container-loader preload-overlay center w-100 h-100">
+    <div id="CircularListOverlayButtonLoader" class="preloadImg">
+        <span class="spinner-grow" role="status">
+            <span class="sr-only">Loading...</span>
+        </span>
+    </div>
+</div>
+
+<style>
+    .container-loader {
+        position: fixed;
+        top: 165px;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        text-align: center;
+        background: #eee;
+    }
+
+        .container-loader:before {
+            content: "";
+            height: calc(100% - 210px);
+            display: inline-block;
+            vertical-align: middle;
+        }
+</style>
+<div class=" d-flex flex-column"  style="flex:1;" ng-controller="CircularController" ng-init="init('','')">
+
+    <section class="home-section-wrap">
+        <div class="container">
+            <div class="row row-eq-height">
+                <!-- Nav tabs -->
+                <!-- Tab panes -->
+
+                <div class="tab-pane  fontawesome-demo">
+                    <div  class="container-custom container-xxl d-flex flex-column-fluid  p-md-sm-0">
+                        <div class="content d-flex flex-row flex-row-fluid " data-aos="fade-up">
+                            <div class="d-flex flex-column flex-row-fluid">
+                                <div class="d-flex flex-stack flex-wrap gap-2 mt-n1 mb-6" id="kt_toolbar">
+                                    <div class="page-title d-flex flex-column align-items-start me-3 py-2 py-lg-0 gap-2">
+                                        <h1 class="d-flex text-dark fw-bold m-0 fs-3" >Circluar</h1>
+                                        <ul class="breadcrumb breadcrumb-dot fw-semibold text-gray-600 fs-7">
+                                            <li class="breadcrumb-item text-gray-600">
+                                                <a  class="text-gray-600 text-hover-primary">Home</a>
+                                            </li>
+                                            <li class="breadcrumb-item text-gray-500">Circular</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="flex-column-fluid">
+                                    <div class="row g-5 g-lg-8 mb-5 mb-xl-0">
+                 
+                                        <div class="text-left noPaddingLeft noPaddingRight col- col-sm-12  col-md-9 col-xl-8">
+                                            <div class="separator"></div>
+
+                                            <div class="accordion" id="accordionExample"
+                                                 ng-repeat="data in CircularList"
+                                                 ng-init="current = $parent.start; $parent.start=$parent.start+1;">
+                                                <div class="accordion-item border-0">
+                                                    <h2 class="accordion-header " id="heading{{current}}">
+                                                        <button class="accordion-button collapsed  fs-2 h-100px border-0 fw-bold " type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{current}}" aria-expanded="true" aria-controls="collapse{{current}}">
+                                                            <div class="border-0 border-gray-300 border-dashed min-w-125px py-3 me-7 d-none d-md-flex">
+                                                                <div class="fs-6 text-gray-800 fw-bold"  ng-bind="data.CircularDate"></div>
+                                                            </div>
+                                                            <span ng-bind="data.Title" class="ng-binding"></span>
+
+                                                        </button>
+                                                    </h2>
+                                                    <div id="collapse{{current}}" class="accordion-collapse border-0 collapse" aria-labelledby="heading{{current}}" data-bs-parent="#accordionExample">
+                                                        <div class="accordion-body bg-light">
+                                                            <div class="mt-n1">
+                                                                <div class="d-flex flex-stack pb-10">
+                                                                    <a href="#">
+                                                                        <img class="h-40px" alt="Logo" src="../img/PODARLOGO-01.png" >
+                                                                    </a>
+                                                                    <div class="d-flex">
+                                                                        <div ng-repeat="gridModel in data.CircularAttachmentMaps track by $index">
+                                                                            <div ng-if="gridModel.AttachmentReferenceID != null">
+
+                                                                                <a class="btn btn-sm btn-primary ms-2" ng-click="DownloadURL('ReadContentsByID?contentID='+gridModel.AttachmentReferenceID)">
+                                                                                    <i class="fa fa-2x fa-download" aria-hidden="true">
+                                                                                    </i>
+                                                                                    <span ng-bind="gridModel.AttachmentDescription" class="ng-binding"></span>
+                                                                                </a>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="m-0">
+                                                                    <div class="fw-bold fs-3 text-gray-800 mb-8" ng-bind="data.CircularCode"></div>
+                                                                    <div class="row g-5 mb-11">
+                                                                        <div class="col-sm-6">
+                                                                            <div class="fw-semibold fs-7 text-gray-600 mb-1">Circular Date:</div>
+                                                                            <div class="fw-bold fs-6 text-gray-800" ng-bind="data.CircularDate"></div>
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            <div class="fw-semibold fs-7 text-gray-600 mb-1">Expiry Date:</div>
+                                                                            <div class="fw-bold fs-6 text-gray-800 d-flex align-items-center flex-wrap">
+                                                                                <span class="pe-2" ng-bind="data.ExpiryDate"></span>
+                                                                                <span class="fs-7 text-danger d-flex align-items-center">
+                                                                                    <span class="bullet bullet-dot bg-danger me-2"></span>Expires in &nbsp;
+                                                                                    <span ng-bind="GetExpiryDateDifference(data)">
+                                                                                    </span>&nbsp;
+                                                                                    days
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row g-5 mb-12">
+                                                                        <div class="col-sm-6">
+                                                                            <div class="fw-semibold fs-7 text-gray-600 mb-1">Issue For:</div>
+                                                                            <div class="fw-bold fs-6 text-gray-800"  ng-bind="data.School" ></div>
+                                                                            <div class="fw-semibold fs-7 text-gray-600" ng-bind="data.Class">
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            <div class="fw-semibold fs-7 text-gray-600 mb-1">Issued Sections:</div>
+                                                                            <div class="fw-bold fs-6 text-gray-800"  ng-bind="data.School" ></div>
+                                                                            <div class="fw-semibold fs-7 text-gray-600" ng-bind="data.Section" >
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex-grow-1">
+                                                                        <div class="card-body">
+                                                                            <div class="d-flex flex-wrap gap-2 justify-content-between mb-8">
+                                                                                <div class="d-flex align-items-center flex-wrap gap-2">
+                                                                                    <h2 class="fw-semibold me-3 my-1" ng-bind="data.Title"></h2>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div>
+                                                                                <div class="d-flex flex-wrap gap-2 flex-stack cursor-pointer">
+                                                                                    <div class="d-flex align-items-center">
+                                                                                        <div class="pe-5">
+                                                                                            <div class="d-flex align-items-center flex-wrap gap-1">
+                                                                                                <a class="fw-bold text-dark text-hover-primary" ng-bind="data.ShortTitle"></a>
+
+                                                                                            </div>
+                                                                                            <span class="text-muted fw-semibold">secton :</span>
+                                                                                            <span class="text-muted fw-semibold" ng-bind="data.Section"></span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="collapse fade show" data-kt-inbox-message="message">
+                                                                                    <div class="py-5">
+                                                                                        <p class="font-semibold fs-6" ng-bind-html="data.Message"></p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="separator my-6"></div>
+                                                                        </div>
+                                                                        <div class="d-flex justify-content-end">
+                                                                            <div class="">
+                                                                                <div class="d-flex flex-stack mb-3" ng-repeat="gridModel in data.CircularAttachmentMaps track by $index">
+
+                                                                                    <div class="fw-semibold pe-10 text-gray-600 fs-7">Attachment:</div>
+                                                                                    <div class="text-end fw-bold fs-6 text-gray-800">
+                                                                                        <div ng-if="gridModel.AttachmentReferenceID != null">
+                                                                                            <div class="btn btn-sm btn-primary" ng-click="DownloadURL('ReadContentsByID?contentID='+gridModel.AttachmentReferenceID)">
+                                                                                                <i class="fa fa-2x fa-download" aria-hidden="true" >
+                                                                                                </i>
+                                                                                                <span ng-bind="gridModel.AttachmentDescription" class="ng-binding"></span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            @*<div class="container">
+                                                                <div class="row">
+                                                                    <div class="col-sm ps-1">
+                                                                        Campus
+                                                                    </div>
+                                                                    <div class="col-sm ps-1">
+                                                                        <span ng-bind="data.School" class="ng-binding"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm ps-1">
+                                                                        Class
+                                                                    </div>
+                                                                    <div class="col-sm ps-1">
+                                                                        <span ng-bind="data.Class" class="ng-binding"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row ">
+                                                                    <div class="col-sm ps-1">
+                                                                        Section
+                                                                    </div>
+                                                                    <div class="col-sm ps-1">
+                                                                        <span ng-bind="data.Section" class="ng-binding"></span>
+
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="row">
+                                                                    <div class="col-sm ps-1">
+                                                                        Circular Date
+                                                                    </div>
+                                                                    <div class="col-sm ps-1">
+                                                                        <span ng-bind="data.CircularDate" class="ng-binding"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm ps-1">
+                                                                        Expiry Date
+                                                                    </div>
+                                                                    <div class="col-sm ps-1">
+                                                                        <span ng-bind="data.ExpiryDate" class="ng-binding"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm ps-1">
+                                                                        Circular Code
+                                                                    </div>
+                                                                    <div class="col-sm ps-1">
+                                                                        <span ng-bind="data.CircularCode" class="ng-binding"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm ps-1">
+                                                                        Title
+                                                                    </div>
+                                                                    <div class="col-sm ps-1">
+                                                                        <span ng-bind="data.Title" class="ng-binding"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm ps-1">
+                                                                        Short Title
+                                                                    </div>
+                                                                    <div class="col-sm ps-1">
+                                                                        <span ng-bind="data.ShortTitle" class="ng-binding"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm ps-1">
+                                                                        Message
+                                                                    </div>
+                                                                    <div class="col-sm ps-1">
+                                                                        <span ng-bind-html="data.Message"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm ps-1">
+                                                                        Attachment
+                                                                    </div>
+                                                                    <div class="col-sm ps-1">
+                                                                        <div ng-repeat="gridModel in data.CircularAttachmentMaps track by $index">
+                                                                            <div ng-if="gridModel.AttachmentReferenceID != null">
+                                                                                <i class="fa fa-2x fa-download" aria-hidden="true" ng-click="DownloadURL('ReadContentsByID?contentID='+gridModel.AttachmentReferenceID)">
+                                                                                </i>
+                                                                                <span ng-bind="gridModel.AttachmentDescription" class="ng-binding"></span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>*@
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="separator"></div>
+
+                                            </div>
+                                        </div>
+                                
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row gy-5 g-xl-10">
+                        <div class="col-xl-4 mb-5 mb-xl-10">
+                        </div>
+
+                    </div>
+                </div>
+
+            </div><!--pageContent-->
+        </div><!--pageContainer-->
+    </section>
+
+</div>
+
+
+
+
+
+
+
+
+    <hr class="noMargin row" ng-if="CircularList.length == 0" />
+    <section class="home-section-wrap" ng-if="CircularList.length != 0">
+        <div class="container">
+            <div class="row row-eq-height">
+            
+            </div><!--pageContent-->
+        </div><!--pageContainer-->
+    </section>
+
+</div>
+
+
+<style>
+
+</style>

@@ -1,0 +1,328 @@
+﻿@model string
+@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+
+    List<Eduegate.Utilities.SSRSHelper.ReportParameter> parameters = ViewBag.Parameters;
+    // var windowName = "window_" + Guid.NewGuid().ToString();
+    var dateTimeFormat = new Eduegate.Domain.Setting.SettingBL(null).GetSettingValue<string>("DateFormat");
+    var cleintDateFormat = new Eduegate.Domain.Setting.SettingBL(null).GetSettingValue<string>("ClientJQueryDateTimeFormat");
+    var viewModel = Newtonsoft.Json.JsonConvert.SerializeObject(new { MetaData = ViewBag.MetaData, ReportParameter = @ViewBag.ReportParameter });
+    var lookUps = ViewBag.MetaData != null ? (ViewBag.MetaData as Eduegate.Services.Contracts.Framework.ScreenMetadataDTO).Urls : new List<Eduegate.Services.Contracts.Framework.ScreenLookupDTO>();
+    int index = 0;
+    bool hasVisibleParameters = false;
+    List<Eduegate.Services.Contracts.Framework.ScreenLookupDTO> reportLookups = ViewBag.ReportLookUps;
+}
+
+<div id="@ViewBag.ReportName" class="pagecontent reportcontent reportwindowcontainer windowcontainer"
+     ng-controller="ReportViewController" ng-init="init('@Model','@windowName', @viewModel, '@cleintDateFormat', @Newtonsoft.Json.JsonConvert.SerializeObject(@reportLookups), @Newtonsoft.Json.JsonConvert.SerializeObject(@parameters))">
+    
+     <div id="@windowName" class="" style="margin-left: 0px;">
+    @* <div id="@windowName" class="" style="margin-left: 0px;"> *@
+        @if (parameters == null)
+        {
+            <h1>Report not found</h1>
+        }
+        else
+        {
+            <div class="rprt-reportviewer-viewer rprt-reportviewer-viewerblock" id="viewer_viewerContainerTable" style="width: 100%; height: 100%; display: flex;">
+                
+                <div id="viewer_viewerContentContainer" style="height: 100%; width: 100%; display: inline-block;">
+                    <div class="rprt-native-toolbar rprt-control rprt-toolbar rprt-lib rprt-keyboard rprt-toolpop" id="viewer_toolbarContainer" role="toolbar" aria-disabled="false" aria-orientation="horizontal" style="width: 744px; height: auto; margin-top: 20px; display: block;">
+                        <div class="rprt-toolbar-items rprt-tbar-pos">
+                            <div class="rprt-toolbar-left"></div>
+                            <div class="rprt-toolbar-center" style="margin-left: 425px;">
+                                <div class="rprt-toolbar-item" id="viewer_e_gotofirst" title="First&#10;Go to the first page of the report.">
+                                    <button class="rprt-tbar-btn" type="button" id="viewer_toolbar_gotofirst" style="width: auto;" ng-click="FirstPage()" ng-disabled="!CurrentPageIndex || CurrentPageIndex === 1">
+                                        <span class="rprt-btn-icon rprt-viewer-icons first-page rprt-icons"></span>
+                                    </button>
+                                </div>
+                                <div class="rprt-toolbar-item" id="viewer_e_gotoprevious" title="Previous&#10;Go to the previous page of the report.">
+                                    <button class="rprt-tbar-btn" type="button" id="viewer_toolbar_gotoprevious" style="width: auto;" ng-click="PreviousPage()" ng-disabled="!CurrentPageIndex || CurrentPageIndex === 1">
+                                        <span class="rprt-btn-icon rprt-viewer-icons chevron-left rprt-icons"></span>
+                                    </button>
+                                </div>
+                                <div class="rprt-toolbar-item" id="viewer_e_gotonext" title="Next&#10;Go to the next page of the report.">
+                                    <button class="rprt-tbar-btn" type="button" id="viewer_toolbar_gotonext" style="width: auto;" ng-click="NextPage()" ng-disabled="CurrentPageIndex === ReportPages.length">
+                                        <span class="rprt-btn-icon rprt-viewer-icons chevron-right rprt-icons"></span>
+                                    </button>
+                                </div>
+                                <div class="rprt-toolbar-item" id="viewer_e_gotolast" title="Last&#10;Go to the last page of the report.">
+                                    <button class="rprt-tbar-btn" type="button" id="viewer_toolbar_gotolast" style="width: auto;" ng-click="LastPage()" ng-disabled="CurrentPageIndex === ReportPages.length">
+                                        <span class="rprt-btn-icon rprt-viewer-icons last-page rprt-icons"></span>
+                                    </button>
+                                </div>
+                                <div class="rprt-toolbar-item" id="viewer_e_labelpageno">
+                                    <span class="rprt-control-wrapper rprt-numeric rprt-input-group rprt-current-page-box" data-style="width: 45px;" title="Page Number&#10;Current page number to view.">
+                                        <input id="viewer_toolbar_gotoPage"
+                                               class="rprt-control rprt-numerictextbox rprt-lib rprt-input"
+                                               role="spinbutton"
+                                               tabindex="0"
+                                               autocomplete="off"
+                                               aria-label="page number"
+                                               ng-model="CurrentPageIndex"
+                                               ng-keypress="($event.which === 13 || $event.keyCode === 13) && TriggerGoToPage()"
+                                               ng-pattern="/^\d+$/"
+                                               ng-keydown="allowOnlyNumbers($event)">
+                                    </span>
+                                </div>
+                                <div class="rprt-toolbar-item" id="viewer_e_labeltotalpageno">
+                                    <span id="viewer_toolbar_labelpageno" style="font-size:14px;">of {{ReportPages.length}}</span>
+                                </div>
+                                <div class="rprt-toolbar-item rprt-separator" id="viewer_e_pageno_seperator"></div>
+                                <div class="rprt-toolbar-item" id="viewer_e_zoomout" title="Zoom-Out&#10;Zoom out of the report.">
+                                    <button class="rprt-tbar-btn rprt-control rprt-btn rprt-lib rprt-icon-btn" type="button" id="viewer_toolbar_zoomout" style="width: auto;">
+                                        <span class="rprt-btn-icon rprt-viewer-icons zoom-out rprt-icons"></span>
+                                    </button>
+                                </div>
+                                <div class="rprt-toolbar-item" id="viewer_e_zoomin" title="Zoom-In&#10;Zoom in to the report.">
+                                    <button class="rprt-tbar-btn rprt-control rprt-btn rprt-lib rprt-icon-btn" type="button" id="viewer_toolbar_zoomin" style="width: auto;">
+                                        <span class="rprt-btn-icon rprt-viewer-icons zoom-in rprt-icons"></span>
+                                    </button>
+                                </div>
+                                @* <div class="rprt-toolbar-item" id="viewer_e_zoom" title="Zoom&#10;Zoom in or out on the report.">
+                                    <span class="rprt-input-group rprt-control-wrapper rprt-reportviewer-drpdown rprt-reportviewer-zoomddl rprt-ddl rprt-lib rprt-keyboard rprt-valid-input" aria-expanded="false" style="width: 85px;" aria-describedby="viewer_toolbar_zoom">
+
+                                    <select aria-label="dropdownlist" class="rprt-ddl-hidden" name="viewer_toolbar_zoom" id="viewer_toolbar_zoom">
+                                            <option selected value="100%">100%</option>
+                                            <option value="75%">75%</option>
+                                            <option value="50%">50%</option>
+                                            <option value="25%">25%</option>
+                                            <!-- Add more options as needed -->
+                                        </select>
+                                    </span>
+                                </div> *@
+                                <div class="rprt-toolbar-item viewer_toolbar_item rprt-template rprt-overflow-show rprt-control rprt-tooltip rprt-lib" id="viewer_e_zoom" title="Zoom&#10;Zoom in or out on the report.">
+                                    <span class="rprt-input-group rprt-control-wrapper rprt-reportviewer-drpdown rprt-reportviewer-zoomddl rprt-ddl rprt-lib rprt-keyboard rprt-valid-input" tabindex="-1" aria-label="Zoom" aria-disabled="false" role="combobox" aria-expanded="false" aria-labelledby="viewer_toolbar_zoom_hidden" style="width: 85px;" aria-describedby="viewer_toolbar_zoom">
+                                        <select aria-hidden="true" aria-label="dropdownlist" tabindex="-1" class="rprt-ddl-hidden" name="viewer_toolbar_zoom" id="viewer_toolbar_zoom_hidden" data-tabindex="-1">
+                                            <option selected="" value="100%">100%</option>
+                                        </select>
+                                        <span class="rprt-input-value">
+                                            <input id="viewer_toolbar_zoom_div" class="rprt-input rprt-dropdownlist" style="text-align: center;" value="100%">
+                                        </span>
+                                        <input id="viewer_toolbar_zoom" style="text-align: center; display: none;" data-tabindex="-1" class="rprt-control rprt-dropdownlist rprt-lib rprt-input" role="listbox" type="text" aria-expanded="false" readonly="" aria-label="dropdownlist" tabindex="-1" aria-disabled="false">
+                                        <span class="rprt-input-group-icon rprt-ddl-icon rprt-search-icon"></span>
+                                    </span>
+                                </div>
+                                <div class="rprt-toolbar-item rprt-separator" id="viewer_zoom_seperator"></div>
+                                <div class="rprt-toolbar-item" id="viewer_e_refresh" data-content="Refresh" aria-label="Refresh" title="Refresh&#10;Refresh the report.">
+                                    <button class="rprt-tbar-btn rprt-control rprt-btn rprt-lib rprt-icon-btn" type="button" id="viewer_toolbar_refresh" style="width: auto;"
+                                            ng-click="LoadReport('html5')">
+                                        <span class="rprt-btn-icon rprt-viewer-icons refresh rprt-icons"></span>
+                                    </button>
+                                </div>
+                                <div class="rprt-toolbar-item" id="viewer_e_stop" data-content="Stop" aria-label="Stop" style="display: none;">
+                                    <button class="rprt-tbar-btn rprt-control rprt-btn rprt-lib rprt-icon-btn rprt-overlay" type="button" id="viewer_toolbar_stop" style="width: auto;">
+                                        <span class="rprt-btn-icon rprt-viewer-icons circle-close rprt-icons"></span>
+                                    </button>
+                                </div>
+                                <div class="rprt-toolbar-item rprt-separator" id="viewer_refresh_seperator"></div>
+                                <div class="rprt-toolbar-item viewer_toolbar_item rprt-tbtn-align rprt-overflow-show rprt-control rprt-tooltip rprt-lib" id="viewer_e_export" aria-label="Export" aria-describedby="viewer_e_export_248_content" data-tooltip-id="viewer_e_export_248_content" data-content="Export" title="Export&#10;Select the exported file format.">
+                                    <button class="rprt-tbar-btn rprt-control rprt-btn rprt-lib rprt-icon-btn rprt-dropdown-btn rprt-export-dropdown" type="button" id="viewer_toolbar_export" data-tabindex="-1" aria-label="dropdownbutton" aria-disabled="false" style="width: auto;" aria-haspopup="true" aria-expanded="false">
+                                        <span class="rprt-btn-icon rprt-viewer-icons export rprt-icons" data-bs-toggle="dropdown" aria-expanded="false"></span>
+                                        <span class="rprt-btn-icon rprt-icons rprt-icon-right rprt-caret" data-bs-toggle="dropdown" aria-expanded="false"></span>
+                                        <ul class="dropdown-menu">
+                                            <li class="rprt-item rprt-pdf" id="viewer_export_pdf" role="menuitem" tabindex="-1" aria-label="PDF" style="display: flex;" ng-click="DownloadReport('pdf', 'download')" target="_blank" title="Print">PDF</li>
+                                            <li class="rprt-item rprt-excel" id="viewer_export_excel" role="menuitem" tabindex="-1" aria-label="Excel" style="display: flex;" ng-click="DownloadReport('excel')" target="_blank" title="Excel">Excel</li>
+                                            <li class="rprt-item rprt-word" id="viewer_export_word" role="menuitem" tabindex="-1" aria-label="Word" style="display: flex;" ng-click="DownloadReport('word')" target="_blank" title="Word">Word</li>
+                                            <li class="rprt-item rprt-html" id="viewer_export_html" role="menuitem" tabindex="-1" aria-label="HTML" style="display: flex;" ng-click="DownloadReport('html5', 'download')" target="_blank" title="HTML">HTML</li>
+                                            @* <li class="rprt-item rprt-ppt" id="viewer_export_ppt" role="menuitem" tabindex="-1" aria-label="PowerPoint" style="display: flex;" ng-click="DownloadReport('powerpoint')" target="_blank" title="Power Point">Power Point</li> *@
+                                            <li class="rprt-item rprt-csv" id="viewer_export_csv" role="menuitem" tabindex="-1" aria-label="CSV" style="display: flex;" ng-click="DownloadReport('csv')" target="_blank" title="CSV">CSV</li>
+                                            <li class="rprt-item rprt-xml" id="viewer_export_xml" role="menuitem" tabindex="-1" aria-label="XML" style="display: flex;" ng-click="DownloadReport('xml')" target="_blank" title="XML">XML</li>
+                                        </ul>
+                                    </button>
+                                </div>
+                                <div class="rprt-toolbar-item rprt-separator" id="viewer_export_seperator"></div>
+                                <div class="rprt-toolbar-item" id="viewer_e_preview" data-content="Print Layout" aria-label="Print Layout" title="Print Layout&#10;Change between print layout and normal modes.">
+                                    <button class="rprt-tbar-btn rprt-control rprt-btn rprt-lib rprt-icon-btn" type="button" id="viewer_toolbar_preview" style="width: auto;">
+                                        <span class="rprt-btn-icon rprt-viewer-icons print-layout rprt-icons"></span>
+                                    </button>
+                                </div>
+                                <div class="rprt-toolbar-item" title="Print&#10;Print the report.">
+                                    <button class="rprt-tbar-btn rprt-control rprt-btn rprt-lib rprt-icon-btn" type="button" id="viewer_toolbar_print" style="width: auto;"
+                                            ng-click="DownloadReport('pdf', 'print')" target="_blank">
+                                        <span class="rprt-btn-icon rprt-viewer-icons print rprt-icons"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="rprt-toolbar-right"></div>
+                        </div>
+                    </div>
+
+                    <div class="rprt-reportviewer-viewer rprt-reportviewer-scrollcontainer rprt-reportviewer-viewercontainer" id="viewer_viewerContainer" style="height: 950px; font-size: 8pt;">
+                        <div class="rprt-reportviewer-pageviewcontainer d-flex  justify-content-center" id="viewer_pageviewOuterContainer">
+                            <div class="rprt-reportviewer-native rprt-reportviewer-pageouterline d-flex justify-content-center" id="viewer_pageviewOuterline" style="height: 909px;">
+                                <div class="rprt-reportviewer-pageview" id="viewer_pageviewContainer" style="background-color: rgb(255, 255, 255);">
+                                    <!-- Container to display the current page -->
+                                    @* <div id="htmlView@(windowName)" style="width:100%;height:100%;" @(!hasVisibleParameters ? "ng-init=LoadReport('html5')" : "")></div> *@
+                                    <div id="htmlView@(windowName)" style="width:100%;height:100%;"></div>
+                                </div>
+                            </div>
+                        </div>                       
+                    </div>
+                </div>
+
+                <div class="offcanvas offcanvas-end pt-20 mt-15" data-bs-backdrop="false" tabindex="-1" id="offcanvasRight_@windowName" aria-labelledby="offcanvasLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasLabel">Parameter</h5>
+                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-header">
+                        <button type="button" id="viewer_viewReportClick" ng-click="LoadReport('html5')" class="rprt-control rprt-btn rprt-lib rprt-primary">View Report</button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <form>
+                            <!-- Parameter selection form goes here -->
+                            <div class="report reportsHeaderPanel" style="margin-left: 0px; display: flex; flex-direction: row;flex-direction: row;flex-wrap: wrap;">
+                                @foreach (var parameter in parameters)
+                                {
+                                    if (@parameter.Prompt != null && (@parameter.Prompt.ToLower().Contains(" search") || @parameter.Prompt.ToLower().Contains("search ")))
+                                    {
+                                        continue;
+                                    }
+
+                                    index++;
+                                    var lookUp = reportLookups.FirstOrDefault(x => x.LookUpName == parameter.Name);
+                                    if (parameter.Hidden)
+                                    {
+                                        <input type="hidden" name="@parameter.Name" id="@parameter.Name"
+                                               value="@(parameter.DefaultValue != null && parameter.DefaultValue.Values.Count() > 0 ? parameter.DefaultValue.Values.FirstOrDefault() : string.Empty)" />
+                                        continue;
+                                    }
+
+                                    hasVisibleParameters = true;
+
+                                    <div>
+                                        <div class="fieldHeader" style="padding-left: 10px;">
+                                            <label>@parameter.Prompt</label>
+                                        </div>
+                                        <div class="formFields form-horizontal">
+                                            <div>
+                                                <div class="form-group">
+                                                    @if (lookUp != null && lookUp.LookUpName == parameter.Name)
+                                                    {
+                                                        <input type="hidden" autocomplete="off" name="@parameter.Name" id="@parameter.Name" ng-value="ParameterModel.@(parameter.Name).Key" />
+                                                        <div class="controls dropDown brand">
+                                                            <ui-select @(parameter.MultiValue ? "multiple" : string.Empty) style="width:100%;" ng-model="@parameter.Name" theme="select2" class="pos-txt"
+                                                                       on-select="OnSelectedSelect2($select, '@(parameter.Name)')" sortable="true">
+                                                                <ui-select-match placeholder="Search" allow-clear="true">{{@(parameter.MultiValue ? "$item" : "$select.selected").Value}}</ui-select-match>
+                                                                <ui-select-choices repeat="data in LookUps.@parameter.Name | filter:$select.search track by $index"
+                                                                                   refresh="RefreshSelect2('@lookUp.Url',$select, '', '@parameter.Name', false)"
+                                                                                   refresh-delay="50">{{data.Value}}</ui-select-choices>
+                                                            </ui-select>
+                                                        </div>
+                                                    }
+                                                    else if (parameter.ValidValues != null)
+                                                    {
+                                                        <div class="controls dropDown brand">
+                                                            <select name="@parameter.Name" id="@parameter.Name">
+                                                                @foreach (var value in parameter.ValidValues.ParameterValues)
+                                                                {
+                                                                    <option value="@value.Value">@value.Label</option>
+                                                                }
+                                                            </select>
+                                                            <i class="dropdownarrow fa fa-caret-down"></i>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        @switch (parameter.DataType.ToLower())
+                                                        {
+                                                            case "integer":
+                                                                <div class="controls">
+                                                                    <input type="number" autocomplete="off" name="@parameter.Name" id="@parameter.Name" ng-model="@parameter.Name" />
+                                                                </div>
+                                                                break;
+                                                            case "string":
+                                                                <div class="controls">
+                                                                    <input autocomplete="off" name="@parameter.Name" id="@parameter.Name" ng-model="@parameter.Name" />
+                                                                </div>
+                                                                break;
+                                                            case "datetime":
+                                                                <div class="controls">
+                                                                    <input autocomplete="off" name="@parameter.Name" id="@parameter.Name" ng-model="@parameter.Name"
+                                                                           skien-Datepicker class="date-time-picker"
+                                                                           value="@DateTime.Now.ToString(dateTimeFormat, System.Globalization.CultureInfo.InvariantCulture)" />
+                                                                </div>
+                                                                break;
+                                                            case "select2":
+                                                                <div class="controls dropDown">
+                                                                    <select name="@parameter.Name" id="@parameter.Name" ng-model="@parameter.Name"></select>
+                                                                </div>
+                                                                <input autocomplete="off" name="@parameter.Name" id="@parameter.Name" type="hidden" @* name="Select2Hidden" *@ />
+                                                                break;
+                                                            case "boolean":
+                                                                <div class="controls">
+                                                                    <label>
+                                                                        <input type="radio" name="@parameter.Name" id="@parameter.Name-true" ng-model="@parameter.Name" value="true" />
+                                                                        True
+                                                                    </label>
+                                                                    <label>
+                                                                        <input type="radio" name="@parameter.Name" id="@parameter.Name-false" ng-model="@parameter.Name" value="false" />
+                                                                        False
+                                                                    </label>
+                                                                </div>
+                                                                break;
+                                                        }
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="rprt-rv-native-rightToolbar" id="viewer_nativeRightToolbarContainer" style="float: right; top: 0px; min-width: 50px; z-index: 1; width: 50px; display: block;">
+
+                    <div id="viewer_toolbar_parameter_div" class="viewer_native_toolbar_item rprt-rv-native-rightToolbarOuter rprt-control rprt-tooltip rprt-lib" aria-disabled="false" role="button" aria-label="Parameter" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight_@windowName" aria-controls="offcanvasRight" title="Parameter">
+                        <div class="rprt-viewer-icons parameter" id="viewer_toolbar_parameter" style="text-align: center; font-size: 24px;"></div>
+                    </div>
+
+                    @* <div class="viewer_native_toolbar_item rprt-rv-native-rightToolbarOuter rprt-control rprt-tooltip rprt-lib" id="viewer_toolbar_settings_div" aria-disabled="false" role="button" aria-label="Print">
+                        <div class="rprt-viewer-icons settings" id="viewer_toolbar_settings" style="text-align: center; font-size: 24px;"></div>
+                    </div> *@
+                    @* <div class="viewer_native_toolbar_item rprt-rv-native-rightToolbarOuter rprt-control rprt-tooltip rprt-lib" id="viewer_toolbar_search_div" aria-disabled="false" role="button" aria-label="Find" style="display: none;">
+                        <div class="rprt-viewer-icons search" id="viewer_toolbar_search" style="text-align: center; font-size: 24px;"></div>
+                    </div>
+                    <div class="viewer_native_toolbar_item rprt-rv-native-rightToolbarOuter rprt-control rprt-tooltip rprt-lib" id="viewer_toolbar_documentMapLabel_div" aria-disabled="false" role="button" aria-label="Document Map" style="display: none;">
+                        <div class="rprt-viewer-icons sidebar" id="viewer_toolbar_documentMapLabel" style="text-align: center; font-size: 24px;"></div>
+                    </div>
+                    <div class="viewer_native_toolbar_item rprt-rv-native-rightToolbarOuter rprt-control rprt-tooltip rprt-lib" id="viewer_toolbar_performance_div" aria-disabled="false" role="button" aria-label="Document Map" style="display: none;">
+                        <div class="rprt-viewer-icons performance" id="viewer_toolbar_performance" style="text-align: center; font-size: 24px;"></div>
+                    </div> *@
+                </div>
+
+            </div>
+
+        }
+    </div>
+
+    <!--Loader popover model start-->
+    <div class="modal fade" tabindex="-1" id="reportprocessingloaderModal_@windowName" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content text-center">
+                <div class="modal-body" style="align-content: center;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div class="mt-3">
+                        <h5>Report Processing...</h5>
+                    </div>
+                    <div class="model-body-label">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Loader popover model end-->
+
+</div>

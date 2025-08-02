@@ -1,0 +1,22 @@
+﻿@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+
+    ViewData["Title"] = "Dashboard";
+    // var tables = ViewBag.Tables;
+}
+
+<div id="Dashboard" class="container" ng-controller="DataManagementController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName', 'Dashboard')">
+    <h3>Dashboard</h3>
+
+    <div class="row">
+        <div id="piechart" class="col-md-6 charts-grids widget">
+            <canvas id="pieChart" height="300" width="400"></canvas>
+        </div>
+    </div>
+</div>

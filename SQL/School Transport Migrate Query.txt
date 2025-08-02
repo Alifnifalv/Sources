@@ -1,0 +1,31 @@
+--DELETE schools.StudentRouteStopMaps
+;WITH SCH_STUDENTROUTE AS
+(
+	SELECT 
+	TExp.SchoolTransportDataIID,TExp.PNumber,
+	rt.RouteID,rt.RouteDescription,rt.RouteCode,
+	TExp.BusNumber,
+	rtmp.RouteStopMapIID, rtmp.StopName,
+	TExp.Place,
+	Texp.Campus,
+	FromDate = '2022-01-01 00:00:00.000', ToDate = '2022-03-31 00:00:00.000',
+	stud.StudentIID, IsNUll(stud.FirstName,'')+' '+IsNUll(stud.MiddleName,'')+' '+IsNUll(stud.LastName,'') AS StudentName,
+	CASE WHEN TExp.Campus = 'Meshaf' then 30 WHEN TExp.Campus = 'WestBay' then 20 WHEN TExp.Campus = 'Thumama' then 10 end SchoolID,
+	CASE WHEN TExp.Campus = 'Meshaf' then 21 WHEN TExp.Campus = 'WestBay' then 19 WHEN TExp.Campus = 'Thumama' then 9 end AcademicYearID
+	FROM schools.SchoolTransportExcelExport TExp
+	LEFT JOIN schools.Students as stud ON stud.AdmissionNumber = TExp.PNumber
+	LEFT JOIN schools.Routes as rt ON rt.RouteCode = tExp.BusNumber
+	LEFT JOIN schools.RouteStopMaps as rtmp ON rtmp.RouteID = rt.RouteID and rtmp.StopName = TExp.Place
+	Where PNumber LIKE 'P%'
+)
+MERGE schools.StudentRouteStopMaps rm 
+USING SCH_STUDENTROUTE S ON S.StudentIID=rm.StudentID
+WHEN NOT MATCHED THEN
+INSERT(StudentID, PickupStopMapID, DropStopMapID, IsOneWay, DateFrom,DateTo,IsActive,PickupRouteID,DropStopRouteID,SchoolID,TransportStatusID,AcademicYearID,Termsandco)
+VALUES(StudentIID, RouteStopMapIID, RouteStopMapIID, 0, FromDate,ToDate,1,RouteID,RouteID,SchoolID,1,AcademicYearID,0)
+WHEN MATCHED THEN 
+UPDATE SET StudentID=S.StudentIID;
+
+SELECT * FROM schools.StudentRouteStopMaps
+
+========================================================================

@@ -1,0 +1,32 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+namespace EntityGenerator.Core.Data
+{
+    [Table("EducationDetails", Schema = "communities")]
+    public partial class EducationDetail
+    {
+        [Key]
+        public long EducationDetailIID { get; set; }
+        public long? MemberID { get; set; }
+        public byte? EducationTypeID { get; set; }
+        [StringLength(500)]
+        public string Subject { get; set; }
+        [StringLength(2000)]
+        public string OtherQualitications { get; set; }
+        [StringLength(2000)]
+        public string ReligiousEducation { get; set; }
+        [StringLength(2000)]
+        public string Skills { get; set; }
+
+        [ForeignKey("EducationTypeID")]
+        [InverseProperty("EducationDetails")]
+        public virtual EducationType EducationType { get; set; }
+        [ForeignKey("MemberID")]
+        [InverseProperty("EducationDetails")]
+        public virtual Member Member { get; set; }
+    }
+}

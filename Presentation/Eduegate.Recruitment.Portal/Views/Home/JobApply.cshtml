@@ -1,0 +1,90 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Services.Contracts.Jobs.JobsDTO;
+@{
+    ViewData["Title"] = "JobApply";
+    var windowName = "JobApply";
+}
+
+@await Html.PartialAsync("_ToastMessage")
+<div id="JobApply" ng-controller="RecruitmentController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+
+    <!-- Begin: Main Container -->
+    <div class="kt-container-fluid p-5 lg:p-10">
+        <div class="max-w-3xl mx-auto">
+            <!-- Begin: Main Card -->
+            <div class="kt-card">
+                <div class="kt-card-header">
+                    <h3 class="kt-card-title">Confirmation Details</h3>
+                </div>
+                <div class="kt-card-content">
+                    <!-- Begin: Job Summary Card -->
+                    <div class="kt-card kt-card-border bg-accent p-5 mb-7">
+                        <p class="text-sm text-muted-foreground">You are applying for:</p>
+                        <h4 class="text-xl font-bold text-foreground mt-1">@Model.JobTitle</h4>
+
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <span class="kt-badge kt-badge-light"><i class="fa fa-tag me-1"></i>@Model.TypeOfJob</span>
+                            <span class="kt-badge kt-badge-light"><i class="fa fa-briefcase me-1"></i>Experience: @Model.TotalYearOfExperience Years</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 text-sm">
+                            <div class="flex items-center gap-2">
+                                <i class="fa fa-calendar-check-o text-muted-foreground"></i>
+                                <span>Job Posted: <span class="font-semibold text-foreground">@Model.PostedDate</span></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="fa fa-calendar-times-o text-muted-foreground"></i>
+                                <span>Deadline: <span class="font-semibold text-foreground">@Model.CloseDate</span></span>
+                            </div>
+                        </div>
+
+                        <div class="kt-separator my-4"></div>
+
+                        <div>
+                            <h5 class="font-semibold text-foreground mb-1">Job Description</h5>
+                            <p class="text-sm text-secondary-foreground">@Model.JobDescription</p>
+                        </div>
+                    </div>
+                    <!-- End: Job Summary Card -->
+                    <!-- Begin: User Input Form -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="kt-form-item md:col-span-2">
+                            <label class="kt-form-label" for="CountryOfResidence">Country of Residence *</label>
+                            <select id="countryOfResidence" name="CountryOfResidence" class="kt-select" required ng-options="item as item.Value for item in Country track by item.Key" ng-model="jobApplicationDTO.CountryOfResidence">
+                                <option value=""></option>
+                            </select>
+                        </div>
+
+                        <div class="kt-form-item">
+                            <label class="kt-form-label" for="TotalYearOfExperience">Total Years of Experience *</label>
+                            <input type="number" id="TotalYearOfExperience" required ng-model="jobApplicationDTO.TotalYearOfExperience" placeholder="e.g., 5" class="kt-input" maxlength="2" />
+                        </div>
+
+                        <div class="kt-form-item">
+                            <label class="kt-form-label" for="ReferenceCode">Reference Code</label>
+                            <input type="text" id="ReferenceCode" ng-model="jobApplicationDTO.ReferenceCode" placeholder="Optional" class="kt-input" oninput="this.value = this.value.toUpperCase()" />
+                        </div>
+
+                        <div class="kt-form-item md:col-span-2">
+                            <label for="cvUpload" class="kt-form-label">Upload CV *</label>
+                            <input class="kt-input"
+                                   type="file"
+                                   id="cvUpload"
+                                   accept=".pdf,.doc,.docx"
+                                   ng-model="jobApplicationDTO.CVContentID"
+                                   onchange="angular.element(this).scope().UploadFile(this.files[0],'jobApplicationDTO','CVContentID')" required />
+                        </div>
+                    </div>
+                    <!-- End: User Input Form -->
+
+                </div>
+                <div class="kt-card-footer">
+                    <button type="button" id="submitBtn" class="kt-btn kt-btn-primary ms-auto" ng-click="ConfirmAndApplyJob(jobApplicationDTO,@Model.JobIID)">Confirm & Apply</button>
+                </div>
+            </div>
+            <!-- End: Main Card -->
+        </div>
+    </div>
+    <!-- End: Main Container -->
+</div>

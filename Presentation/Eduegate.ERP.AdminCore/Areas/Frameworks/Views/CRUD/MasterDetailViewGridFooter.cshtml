@@ -1,0 +1,273 @@
+﻿@model Eduegate.Web.Library.ViewModels.Common.CRUDMasterDetailViewModel
+@using Eduegate.Framework.Helper.Enums
+
+@{
+    var headSpan = long.Parse(TempData["HeaderCount"].ToString()) - 2;
+
+    if (Model.MasterViewModel.IsSummaryPanel)
+    {
+        switch (Model.MasterViewModel.ToString())
+        {
+            case "Eduegate.Web.Library.ViewModels.Inventory.BranchTransferRequestMasterViewModel":
+            case "Eduegate.Web.Library.ViewModels.Inventory.BranchTransferMasterViewModel":
+                <tr class="subtotal">
+                    <td colspan="5" class="textright"><span class="caption">Total:</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Quantity')}}</span></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                break;
+            case "Eduegate.Web.Library.ViewModels.Accounts.AssetMasterViewModel":
+                break;
+            case "Eduegate.Web.Library.ViewModels.Accounts.AssetEntryMasterViewModel":
+                <tr class="subtotal">
+                    <td colspan="7" class="textright">
+                        <span class="capti
+                                                            on">Total:</span>
+                    </td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Credit'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Debit'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                break;
+            case "Eduegate.Web.Library.ViewModels.AccountTransactions.PVRegularPaymentMasterViewModel":
+                <tr class="subtotal">
+                    <td colspan="5" class="textright"><span class="caption">Total:</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Credit'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Debit'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                break;
+            case "Eduegate.Web.Library.ViewModels.AccountTransactions.DebitProductMasterViewModel":
+                <tr class="subtotal">
+                    <td colspan="6" class="textright"><span class="caption">Total:</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Amount'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td></td>
+                </tr>
+                break;
+            case "Eduegate.Web.Library.ViewModels.AccountTransactions.PVInvoiceMasterViewModel":
+                <tr class="subtotal">
+                    <td colspan="4" class="textright"><span class="caption">Total:</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'InvoiceAmount'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'ReturnAmount'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td class="textright" colspan="2"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'PaidAmount'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'UnPaidAmount'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Amount'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                break;
+            case "Eduegate.Web.Library.ViewModels.AccountTransactions.RVMissionMasterViewModel":
+                <tr class="subtotal">
+                    <td colspan="8" class="textright"><span class="caption">Total:</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'PaidAmount'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'UnPaidAmount'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Amount'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                break;
+            case "Eduegate.Web.Library.ViewModels.AccountTransactions.RVInvoiceMasterViewModel":
+                <tr class="subtotal">
+                    <td colspan="@(headSpan-4)" class="textright"><span class="caption">Total:</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'PaidAmount'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'UnPaidAmount'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Amount'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                break;
+            case "Eduegate.Web.Library.ViewModels.AccountTransactions.RVReceiptsMasterViewModel":
+            case "Eduegate.Web.Library.ViewModels.AccountTransactions.RVRegularReceiptMasterViewModel":
+            case "Eduegate.Web.Library.ViewModels.AccountTransactions.JVMasterViewModel":
+            case "Eduegate.Web.Library.ViewModels.AccountTransactions.RegularDebitMasterViewModel":
+            case "Eduegate.Web.Library.ViewModels.AccountTransactions.RegularCreditMasterViewModel":
+                <tr class="subtotal">
+                    <td colspan="5" class="textright"><span class="caption">Total:</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Credit'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Debit'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                break;
+            case "Eduegate.Web.Library.ViewModels.Accounts.ExpenseEntryHeadViewModel":
+                <tr class="subtotal">
+                    <td colspan="@(headSpan - 1)" class="textright"><span>Sub Total:</span></td>
+
+                    <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'DebitAmount'| number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+
+                @await Html.PartialAsync("~/Areas/Frameworks/Views/CRUD/TaxTemplate.cshtml", Model)
+
+                // if (Model.UserRoles.Exists(a => a.RoleName == HasClaims.HASDELIVERYCHARGE.ToString()))
+                // {
+                //     <tr class="subtotal">
+                //         <td colspan="@(headSpan)" class="textright">
+                //             <span class="caption">
+                //                 Discount:
+                //                 <span class="discount percentage">
+                //                     {{CRUDModel.Model.MasterViewModel.DiscountPercentage}}
+                //                 </span>
+                //                 &nbsp;&nbsp;% or
+                //                 <span class="discount">
+                //                     {{CRUDModel.Model.MasterViewModel.Discount | number : @ViewContext.ViewBag.DefaultDecimalPoints}}
+                //                 </span>
+                //                 <span>
+                //                 </span>
+                //             </span>
+                //         </td>
+                //         <td></td>
+                //         <td></td>
+                //     </tr>
+                //     <tr class="subtotal">
+                //         <td colspan="@(headSpan)" class="textright">
+                //             <span class="caption">
+                //                 Delivery Charge:                            
+                //                 <span class="discount">
+                //                     {{CRUDModel.Model.MasterViewModel.DeliveryCharge | number : @ViewContext.ViewBag.DefaultDecimalPoints}}
+                //                 </span>
+                //                 <span>
+                //                 </span>
+                //             </span>
+                //         </td>
+                //         <td></td>
+                //         <td></td>
+                //     </tr>
+                //     <tr class="subtotal">
+                //         <td colspan="@(headSpan - 1)" class="textright"><span class="caption">Grand Total:</span></td>
+                //     <td class="textright"><span class="value">{{((CRUDModel.Model.DetailViewModel|sumByKey:'DebitAmount') + CRUDModel.Model.MasterViewModel.ExclusiveTaxAmount - CRUDModel.Model.MasterViewModel.Discount | number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                //     <td></td>
+                //     <td></td>
+                // </tr>
+                // }
+                break;
+            default:
+                if (Model.UserRoles.Exists(a => a.RoleName == HasClaims.HASDELIVERY.ToString()))
+                {
+                    // if (!Model.MasterViewModel.ToString().Contains(".Accounts.") && Model.UserRoles.Exists(a => a.RoleName == HasClaims.HASDELIVERYCHARGE.ToString()))
+                    // {
+                    //     if (Model.MasterViewModel.ToString() != "Eduegate.Web.Library.ViewModels.Inventory.PurchaseOrderMasterViewModel")
+                    //     {
+                    //         <tr class="subtotal">
+                    //             <td colspan="@(headSpan - 1)" class="textright"><span class="caption">Delivery Charge:</span></td>
+                    //             <td>
+                    //                 <span class="value discount">
+                    //                     {{CRUDModel.Model.MasterViewModel.DeliveryCharge}}
+                    //                 </span>
+                    //             </td>
+                    //             <td></td>
+                    //             <td></td>
+                    //         </tr>
+                    //     }
+                    // }
+                    <tr class="subtotal">
+                        <td colspan="@(headSpan - 1)" class="textright"><span class="caption">Sub Total:</span></td>
+                        <td class="textright"><span class="value">{{(CRUDModel.Model.DetailViewModel|sumByKey:'Amount': CRUDModel.Model.MasterViewModel.DeliveryCharge == null || CRUDModel.Model.MasterViewModel.DeliveryCharge == undefined ? 0 : CRUDModel.Model.MasterViewModel.DeliveryCharge | number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                }
+                @await Html.PartialAsync("~/Areas/Frameworks/Views/CRUD/TaxTemplate.cshtml", Model)
+
+                // if (Model.UserRoles.Exists(a => a.RoleName == HasClaims.HASDELIVERYCHARGE.ToString()))
+                // {
+                //     if (Model.MasterViewModel.ToString() != "Eduegate.Web.Library.ViewModels.ShoppingCart.CartMasterViewModel")
+                //     {
+                //         <tr class="subtotal">
+                //             <td colspan="@(headSpan)" class="textright">
+                //                 <span class="caption">
+                //                     Discount: 
+                //                     <span class="discount percentage">
+                //                         {{CRUDModel.Model.MasterViewModel.DiscountPercentage}}
+                //                     </span>
+                //                     &nbsp;&nbsp;%
+                //                     or
+                //                     <span class="discount">
+                //                         {{CRUDModel.Model.MasterViewModel.Discount | number : @ViewContext.ViewBag.DefaultDecimalPoints}}
+                //                     </span>
+                //                     <span>
+                //                     </span>
+                //                 </span>
+                //             </td>
+                //             <td></td>
+                //             <td></td>
+                //         </tr>
+                //     }
+                //         <tr class="subtotal">
+                //             <td colspan="@(headSpan - 1)" class="textright"><span class="caption">Grand Total:</span></td>
+                //         <td class="textright"><span class="value">{{((CRUDModel.Model.DetailViewModel|sumByKey:'Amount': CRUDModel.Model.MasterViewModel.DeliveryCharge == null || CRUDModel.Model.MasterViewModel.DeliveryCharge == undefined  ? 0 : CRUDModel.Model.MasterViewModel.DeliveryCharge) + CRUDModel.Model.MasterViewModel.ExclusiveTaxAmount - CRUDModel.Model.MasterViewModel.Discount | number : @ViewContext.ViewBag.DefaultDecimalPoints)}}</span></td>
+                //         <td></td>
+                //         <td></td>
+                //         </tr>
+                // }
+                // if (Model.UserRoles.Exists(a => a.RoleName == HasClaims.HASDELIVERYCHARGE.ToString()))
+                // {
+                //     if (Model.MasterViewModel.GetType().GetProperty("TransactionHeadEntitlementMaps") != null)
+                //     {
+                //         <tr class="subtotal">
+                //             <td colspan="3" class="textright"><span class="caption">Payments</span></td>
+                //             <td class="textright" colspan="@(headSpan - 1)">
+                //                 @{
+                //                     ViewBag.GridBinding = "gridModel";
+                //                 }
+                //                 <div class="controls">
+                //                     <table id="GridTable" class="grid">
+                //                         <thead>
+                //                             <tr>
+                //                                 <th>Type</th>
+                //                                 <th>Amount</th>
+                //                                 <th>Voucher Code</th>
+                //                                 <th class="medium-col-width"></th>
+                //                                 <th class="medium-col-width"></th>
+                //                             </tr>
+                //                         </thead>
+                //                         @await Html.PartialAsync("~/Areas/Frameworks/Views/Shared/_BuildGridViewRows.cshtml", (Model.MasterViewModel.GetType().GetProperty("TransactionHeadEntitlementMaps").GetValue(Model.MasterViewModel, null) as System.Collections.IList)[0])
+                //                     </table>
+                //                 </div>
+                //             </td>
+                //         </tr>
+                //     }
+                // }
+
+                // if (Model.UserRoles.Exists(a => a.RoleName == HasClaims.HASDELIVERYCHARGE.ToString()))
+                // {
+                //     if (Model.MasterViewModel.GetType().GetProperty("TransactionHeadChargeMaps") != null)
+                //     {
+                //         <tr class="subtotal">
+                //             <td colspan="3" class="textright"><span class="caption">Charges</span></td>
+                //             <td class="textright" colspan="@(headSpan - 1)">
+                //                 @{
+                //                     ViewBag.GridBinding = "gridModel";
+                //                 }
+                //                 <div class="controls">
+                //                     <table id="GridTable" class="grid">
+                //                         <thead>
+                //                             <tr>
+                //                                 <th>Charge</th>
+                //                                 <th>Description</th>
+                //                                 <th>Amount</th>
+                //                                 <th>Percentage</th>
+                //                                 <th class="medium-col-width">Is Deduction</th>
+                //                                 <th></th>
+                //                                 <th></th>
+                //                             </tr>
+                //                         </thead>
+                //                         @await Html.PartialAsync("~/Areas/Frameworks/Views/Shared/_BuildGridViewRows.cshtml", (Model.MasterViewModel.GetType().GetProperty("TransactionHeadChargeMaps").GetValue(Model.MasterViewModel, null) as System.Collections.IList)[0])
+                //                     </table>
+                //                 </div>
+                //             </td>
+                //         </tr>
+                //     }
+                // }
+                break;
+        }
+    }
+}

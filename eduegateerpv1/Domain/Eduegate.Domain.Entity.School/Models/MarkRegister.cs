@@ -1,0 +1,78 @@
+namespace Eduegate.Domain.Entity.School.Models
+{
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using Eduegate.Domain.Entity.School.Models;
+
+
+    [Table("MarkRegisters", Schema = "schools")]
+    public partial class MarkRegister
+    {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public MarkRegister()
+        {
+            MarkRegisterSkillGroups = new HashSet<MarkRegisterSkillGroup>();
+            MarkRegisterSubjectMaps = new HashSet<MarkRegisterSubjectMap>();
+        }
+
+        [Key]
+        public long MarkRegisterIID { get; set; }
+
+        public long? ExamID { get; set; }
+
+        public int? CreatedBy { get; set; }
+
+        public int? UpdatedBy { get; set; }
+
+        public DateTime? CreatedDate { get; set; }
+
+        public DateTime? UpdatedDate { get; set; }
+
+        //[Column(TypeName = "timestamp")]
+        //[DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        //[MaxLength(8)]
+        ////public byte[] TimeStamps { get; set; }
+
+        public long? StudentId { get; set; }
+
+        public int? ClassID { get; set; }
+
+        public int? SectionID { get; set; }
+
+        public byte? SchoolID { get; set; }
+
+        public int? AcademicYearID { get; set; }
+
+        public byte? MarkEntryStatusID { get; set; }
+
+        public int? ExamGroupID { get; set; }
+
+        public virtual AcademicYear AcademicYear { get; set; }
+
+        public virtual Class Class { get; set; }
+
+        public virtual ExamGroup ExamGroup { get; set; }
+
+        public virtual Exam Exam { get; set; }
+
+        public virtual MarkEntryStatus MarkEntryStatus { get; set; }
+
+        public virtual Schools School { get; set; }
+
+        public virtual Section Section { get; set; }
+
+        public virtual Student Student { get; set; }
+
+        public byte? PresentStatusID { get; set; }
+
+        public virtual PresentStatus PresentStatus { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MarkRegisterSkillGroup> MarkRegisterSkillGroups { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MarkRegisterSubjectMap> MarkRegisterSubjectMaps { get; set; }
+    }
+}

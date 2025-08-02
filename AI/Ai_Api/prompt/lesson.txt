@@ -1,0 +1,91 @@
+Please conduct a thorough analysis of the following excerpt taken from an educational curriculum document. This document is organized with a clear hierarchical structure that includes headings, subheadings,
+and bullet points, which delineate various educational concepts and their corresponding learning objectives.
+
+```
+{document_text}
+```
+Your task is to dynamically extract and organize the following pieces of information from the text:
+
+3. Chapter and Content Extraction
+For each identified class and subject, extract the following details:
+
+Chapters (structured either unit-wise or topic-wise) that include:
+
+Chapter Name: Derive this from the section titles, headers, or unit names.
+If the section refers to "Revision" or "Assessment", treat these as separate chapters.
+
+Marks Assigned: Include this information if it is provided in the document.
+
+Number of Periods: Include this information if it is available.
+
+Concepts and Learning Objectives:
+
+Extract concepts exclusively from the "Key Concepts" section or from closely related headings.
+
+For each Concept, map it to its corresponding Learning Objectives. If no learning objectives are identified for a concept, set the learning_objectives field to null.
+
+If no concepts are available for a chapter, the concepts field should also be set to null.
+
+Learning objectives should be accurately associated with their respective concepts.
+
+If a chapter contains multiple sections, consolidate all relevant information under the respective chapter.
+
+Adhere strictly to the specified JSON structure and ensure proper formatting throughout.
+
+Make sure to accurately extract values for periods and marks.
+
+If "Time Duration" or periods are expressed in minutes (e.g., "450 minutes", "720 minutes"), set the "period" field to null.
+
+Special Handling for "Social Science":
+
+If the term "Social Science" is encountered, separate it into distinct subjects; otherwise, treat it as a single subject.
+
+If a numbered item appears under a main section, consider it a concept within that chapter.
+
+Exclusions: Do not include sections that serve solely as references. Specifically, omit any sections that begin with "Prescribed Books:", "Reference:", "Books Referred:", "Rationale", "Competencies", etc.
+
+Expected Output
+Return the extracted information exclusively in the following valid JSON format:
+
+**Return ONLY valid JSON** with the following structure:
+{
+  "classes": [
+    {
+      "class": "string",
+      "subjects": [
+        {
+          "subject": "string",
+          "chapters": [
+            {
+              "chapter_name": "string",
+              "mark": number,
+              "period": number,
+              "month": "string",
+              "concepts": [
+                {
+                  "concept": "string",
+                  "learning_objectives": ["string"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+Validation Requirements
+Ensure that the generated JSON is strictly valid, adhering to the following criteria:
+
+No missing or extra commas.
+
+All string values must be enclosed in double quotes ("").
+
+Arrays must be properly formatted with square brackets [ ].
+
+No trailing commas should be present at the end of lists.
+
+Special characters such as " and \ should be escaped correctly.
+
+Perform a validation check on the JSON structure before returning it to ensure compliance with the specifications outlined above

@@ -1,0 +1,70 @@
+﻿@using Eduegate.Services.Contracts.Enums;
+@model Eduegate.Framework.PageRendererEngine.ViewModels.BoilerPlateInfoViewModel
+@{
+    ViewData["Title"] = "My Interviews";
+    var windowName = "interviewList";
+}
+
+@await Html.PartialAsync("_ToastMessage")
+
+<div id="interviewList" ng-controller="RecruitmentController" ng-init="Init(@Newtonsoft.Json.JsonConvert.SerializeObject(Model),'@windowName')">
+
+    <div class="kt-container-fluid p-5 lg:p-10">
+        <!--begin::Card-->
+        <div class="kt-card">
+            <!--begin::Card header-->
+            <div class="kt-card-header">
+                <div class="kt-card-heading">
+                    <h3 class="kt-card-title">My Interviews</h3>
+                </div>
+                <div class="kt-card-toolbar">
+                    <div class="kt-input w-full sm:w-56">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="15" viewBox="0 0 14 15" fill="none">
+                            <path d="M10.5752 11.075L13.5002 14" stroke="currentColor" stroke-width="0.975" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M12.2 6.85C12.2 3.61914 9.58089 1 6.35 1C3.11914 1 0.5 3.61914 0.5 6.85C0.5 10.0809 3.11914 12.7 6.35 12.7C9.58089 12.7 12.2 10.0809 12.2 6.85Z" stroke="currentColor" stroke-width="0.975" stroke-linejoin="round" />
+                        </svg>
+                        <input type="text" placeholder="Search job title" class="w-full" ng-model="searchText" />
+                    </div>
+                </div>
+            </div>
+            <!--end::Card header-->
+            <!--begin::Card table-->
+            <div class="kt-card-table">
+                <div class="kt-table-wrapper">
+                    <table class="kt-table">
+                        <thead>
+                            <tr>
+                                <th>Sr.#</th>
+                                <th>Job Title</th>
+                                <th>Department</th>
+                                <th>Interview Date</th>
+                                <th>Scheduled Time</th>
+                                <th>Interviewer</th>
+                                <th>Next Round</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="intrw in MyInterviewList | filter: {JobTitle: searchText }">
+                                <td>{{ $index + 1 }}</td>
+                                <td class="font-semibold text-foreground">{{intrw.JobTitle}}</td>
+                                <td hidden ng-model="intrw.InterviewID"></td>
+                                <td>{{intrw.Department}}</td>
+                                <td>{{intrw.InterviewDateString}}</td>
+                                <td>{{intrw.StartTimeString}} - {{intrw.EndTimeString}}</td>
+                                <td>{{intrw.Interviewer}}</td>
+                                <td>{{intrw.NextRound}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!--begin::Empty State-->
+                <div ng-if="!(MyInterviewList | filter: {JobTitle: searchText }).length" class="text-center p-10 text-muted-foreground">
+                    No interviews found.
+                </div>
+                <!--end::Empty State-->
+            </div>
+            <!--end::Card table-->
+        </div>
+        <!--end::Card-->
+    </div>
+</div>

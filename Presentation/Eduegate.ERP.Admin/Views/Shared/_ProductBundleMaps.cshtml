@@ -1,0 +1,28 @@
+﻿
+@{
+    Layout = null;
+}
+<div class="productcreteheader">Product Bundles<button value="Submit" type="button" class="submitcreateform-style">Next</button></div>
+<div class="panel-body">
+    <div ng-model="BundleMaps" class="container-left form-horizontal">
+        <div class="form-group">
+            <label class="addprodleft control-label">Product Mappings</label>
+            <div id="ProductBundleMaps" class="controls productname">
+                <ui-select multiple style="width: 100%;" ng-model="BundleMaps.ProductMaps" ng-change="UpdateProductBundleSKU()" theme="select2" class="pos-txt" ng-disabled="BundleMaps.SKUMaps.length > 0">
+                    <ui-select-match placeholder="Select">{{$item.ProductName}}</ui-select-match>
+                    <ui-select-choices repeat="product in BundleProductList">{{product.ProductName}}</ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="addprodleft control-label">Product SKU Mappings</label>
+            <div id="SKUBundleMaps" class="controls productname">
+                <ui-select multiple style="width: 100%;" ng-model="BundleMaps.SKUMaps" ng-change="UpdateProductBundleSKU()" theme="select2" class="pos-txt" ng-disabled="BundleMaps.ProductMaps.length > 0">
+                    <ui-select-match placeholder="Select">{{$item.ProductSKUName}}</ui-select-match>
+                    <ui-select-choices repeat="productSKU in BundleProductSKUList">{{productSKU.ProductSKUName}}</ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <span class="cufon" style="color:red" ng-show="submitted && (BundleMaps.ProductMaps ==undefined || BundleMaps.ProductMaps.length <=0) && (BundleMaps.SKUMaps ==undefined || BundleMaps.SKUMaps.length <=0) ">Aleast one product or SKU should be mapped</span>
+    </div>
+</div>

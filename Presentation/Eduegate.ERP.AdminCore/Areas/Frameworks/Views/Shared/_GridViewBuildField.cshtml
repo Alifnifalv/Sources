@@ -1,0 +1,230 @@
+﻿@model Eduegate.Web.Library.ViewModels.BaseMasterViewModel
+@using Eduegate.ERP.Admin.Helpers;
+@using Eduegate.Framework.Mvc.Attributes
+@using System.Reflection;
+@using Eduegate.Frameworks.Mvc.Attributes;
+
+@{
+    var modelContainerType = (ContainerTypeAttribute)Model.GetType().GetCustomAttributes(typeof(ContainerTypeAttribute)).FirstOrDefault();
+    string bindingPrefix = "CRUDModel.ViewModel";
+    string gridBindingPrefix = "gridModel";
+
+    if (modelContainerType != null)
+    {
+        bindingPrefix = modelContainerType.BindingPrefix;
+        Model.NamePrefix = modelContainerType.ContainerName + "[{{$index}}].";
+
+        if (!string.IsNullOrEmpty(modelContainerType.GridBindingPrefix))
+        {
+            gridBindingPrefix = modelContainerType.GridBindingPrefix;
+        }
+    }
+
+    <thead>
+        <tr>
+            @foreach (var property in Model.GetType().GetProperties())
+            {
+                var title = (System.ComponentModel.DisplayNameAttribute)property.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+                var controlType = (ControlTypeAttribute)property.GetCustomAttributes(typeof(ControlTypeAttribute)).FirstOrDefault();
+
+                var claimType = (HasClaimAttribute)property.GetCustomAttributes(typeof(HasClaimAttribute)).FirstOrDefault();
+
+                if (claimType != null)
+                {
+                    var allClaims = (ViewBag.Claims as List<Eduegate.Web.Library.ViewModels.Security.ClaimViewModel>);
+                    var allClaimNames = allClaims.Select(a => a.ResourceName).ToList();
+                    if (!claimType.HasAccess(allClaimNames))
+                    {
+                        continue;
+                    }
+                }
+
+                if (title != null)
+                {
+                    if (controlType.FilterEnabled == true)
+                    {
+                        <th @Html.Raw((string.IsNullOrEmpty(controlType.Css) ? string.Empty : "class=\"" + controlType.Css + "\""))>
+                            @title.DisplayName
+                            <i ng-click="ShowGridFilter($event);" class="filtericon fa fa-filter" style="cursor:pointer;"></i>
+                            <span class="grid-popup" id="GridFilter_@property.Name">
+                                <span type="text" ng-model="CRUDModel.ViewModel.ReferenceID" placeholder="@property.Name" style="width: 200px; color: #555860; border: 1px solid #aaa; border-radius: 4px; font-size: 14px; height: 34px; line-height: normal;" />
+                                <span type="button" value="Filter" class="button-orange  alignright" ng-click="FilterGridData($event, '@property.Name');" style="width: 100px; margin-top: 14px; margin-right: 14px;" />
+                            </span>
+                        </th>
+                    }
+                    else
+                    {
+                        switch (controlType.ControlType)
+                        {
+                            case Eduegate.Framework.Enums.ControlTypes.Button:
+                                <th>                                   
+                                </th>
+                                break;
+                            default:
+                                <th>@title.DisplayName</th>
+                                break;
+                        }
+                    }
+                }
+            }
+        </tr>
+    </thead>
+    <tr class="grid_search_row" ng-if="showSearchRow">
+        <td></td>
+        <td>
+            <span class="displayFlex">
+                <span type="text"/>
+                <button class="button-orange  flexZero"><i class="fa fa-filter"></i></button>
+            </span>
+        </td>
+        <td>
+            <span class="displayFlex">
+                <span type="text" />
+                <button class="button-orange  flexZero"><i class="fa fa-filter"></i></button>
+            </span>
+        </td>
+        <td>
+            <span class="displayFlex">
+                <span type="text" />
+                <button class="button-orange  flexZero"><i class="fa fa-filter"></i></button>
+            </span>
+        </td>
+        <td>
+            <span class="displayFlex">
+                <span type="text" />
+                <button class="button-orange  flexZero"><i class="fa fa-filter"></i></button>
+            </span>
+        </td>
+        <td></td>
+        <td></td>
+    </tr>
+    <tr ng-focus="FocusGrid($event,'@bindingPrefix')" ng-repeat="@gridBindingPrefix in @bindingPrefix track by $index" @Html.Raw(modelContainerType.ContainerAttribute)>
+        @foreach (var property in Model.GetType().GetProperties())
+        {
+            var title = (System.ComponentModel.DisplayNameAttribute)property.GetCustomAttributes(typeof(System.ComponentModel.DisplayNameAttribute)).FirstOrDefault();
+
+            if (title != null)
+            {
+                var controlType = (ControlTypeAttribute)property.GetCustomAttributes(typeof(ControlTypeAttribute)).FirstOrDefault();
+
+                var claimType = (HasClaimAttribute)property.GetCustomAttributes(typeof(HasClaimAttribute)).FirstOrDefault();
+
+                if (claimType != null)
+                {
+                    var allClaims = (ViewBag.Claims as List<Eduegate.Web.Library.ViewModels.Security.ClaimViewModel>);
+                    var allClaimNames = allClaims.Select(a => a.ResourceName).ToList();
+                    if (!claimType.HasAccess(allClaimNames))
+                    {
+                        continue;
+                    }
+                }
+
+        <td @Html.Raw((string.IsNullOrEmpty(controlType.Css) ? string.Empty : "class=\"" + controlType.Css + "\""))>
+            @{
+                if (controlType != null)
+                {
+                    switch (controlType.ControlType)
+                    {
+                        case Eduegate.Framework.Enums.ControlTypes.TextBoxWithMultiLanguage:
+                            <div class="controls productname fieldpopup">
+                                <ul class="list-group">
+                                            <li class="list-group-item" ng-repeat="culture in @gridBindingPrefix.@(property.Name).CultureDatas">
+                                        <label style="background-color:#e8e8e8;padding: 10px;">{{culture.CultureName}} </label> : &nbsp;&nbsp;
+                                        <span type="text" ng-bind="culture.CultureValue" class="haslanguage"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.Image:
+                            <img style="width: 40px; height: 40px" ng-src="{{@gridBindingPrefix.@property.Name}}" />
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.DropDown:
+                              <label class="checkboxwrap">
+                                        <span ng-bind="@gridBindingPrefix.@property.Name" />
+                                        <span class="checkboxinner"></span>
+                              </label>
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.TextBox:
+                            <span ng-bind="@gridBindingPrefix.@property.Name">
+                            </span>
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.Label:
+                            if (property.Name.Equals("SerialNo"))
+                            {
+                                <label class="control-label tooltipp"><span @*ng-bind="@gridBindingPrefix.@property.Name"*@ />{{$index +1}}<span class="redcolor"></span></label>
+                            }
+                            else
+                            {
+                                <label class="control-label tooltipp"><span ng-bind="@gridBindingPrefix.@property.Name" /><span class="redcolor"></span></label>
+                            }
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.CheckBox:
+                            <span type="checkbox" ng-model="@gridBindingPrefix.@property.Name"
+                                   @Html.GetValidationAttributes(Html.CheckBox(property.Name), Model.NamePrefix) />
+
+                            @Html.ValidationMessage(Model.NamePrefix + property.Name);
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.DataPicker:
+                            var dataPicker = (DataPickerAttribute)property.GetCustomAttributes(typeof(DataPickerAttribute)).FirstOrDefault();
+                                    <a class="button-orange " href="#" ng-click="AdvanceSearch('@dataPicker.View', '@Convert.ToString(dataPicker.PartialCalculation)', @gridBindingPrefix, '@dataPicker.Invoker', null,  $event)">
+                                <i class="fa fa-search-plus"></i>
+                            </a>
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.TextArea:
+                                    <span ng-bind="@gridBindingPrefix.@property.Name"></span>
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.Select2:
+                            <span class="grid-select">
+                                <span style="background-color:gray;margin-right: 10px;"
+                                        ng-repeat="data in @gridBindingPrefix.@property.Name" class="badge badge-dark"
+                                        ng-if="data && data != ' '">
+                                    {{data}}
+                                </span>
+                            </span>
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.Grid:
+                            var modelCollection = property.GetValue(Model, null) as System.Collections.IList;
+                            <div class="controls fullcolumn-layout">
+                                        <table id="GridTable" class="fullcolumn-layout grid @controlType.Css" style="word-break: break-all;">
+                                    @if (modelCollection.Count > 0)
+                                    {
+                                        @await Html.PartialAsync("_GridViewBuildField", modelCollection[0]);
+                                    }
+                                </table>
+                            </div>
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.Button:
+                            <div class="controls">                                
+                            </div>
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.TimePicker:
+                            <div class="controls">
+                                <div class="datetime_picker">
+                                    <span ng-bind="@gridBindingPrefix.@property.Name" type="text" id="{{$index}}_@property.Name"
+                                           @Html.Raw((string.IsNullOrEmpty(controlType.Attributes) ? string.Empty : controlType.Attributes))>
+                                    </span>
+                                </div>
+                            </div>
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.DateTimePicker:
+                            <div class="controls">
+                                <div class="datetime_picker">
+                                            <span skien-datepicker ng-bind="@gridBindingPrefix.@property.Name" id="{{$index}}_@property.Name"
+                                           @Html.Raw((string.IsNullOrEmpty(controlType.Attributes) ? string.Empty : controlType.Attributes))>
+                                           </span>
+                                </div>
+                            </div>
+                            break;
+                        case Eduegate.Framework.Enums.ControlTypes.FileUploadCrop:
+                        case Eduegate.Framework.Enums.ControlTypes.FileUpload:
+                            await Html.RenderPartialAsync("~/Areas/Frameworks/Views/Controls/_ViewSingleFileUpload.cshtml", new ViewDataDictionary(ViewData) { { "BindingPrefix", bindingPrefix }, { "Property", property } });
+                            break;
+                    }
+                }
+            }
+        </td>
+            }
+        }
+        <td></td>
+    </tr>
+}

@@ -1,0 +1,31 @@
+#See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+# This line specifies the base image for our container.
+# We're using the official Microsoft .NET 8.0 ASP.NET Core image from Microsoft Container Registry (MCR).
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+
+# This line sets the user that will be running the application inside the container.
+# By default, the user in a Docker container is 'root'. We're changing it to a user named 'app'.
+# This improves security by giving the application a less privileged user account.  
+USER app
+
+# This line sets the working directory inside the container.
+# We're setting it to '/app'. This is where the application files will be copied and executed.  
+WORKDIR /app
+
+# These lines expose ports 8082 and 8083 to the outside world.
+# This allows applications outside the container to access the service running on these ports.
+# You might need to adjust these ports depending on your application's configuration.  
+EXPOSE 8080
+EXPOSE 8081
+
+# This line copies the published application files from the host machine (your development machine) 
+# into the container's working directory (/app). 
+# Make sure 'CoreMobileApi_Publish' is the name of the directory containing your published application files.  
+COPY CoreParentPortalPublish /app
+
+# This line defines the entry point for the application.
+# The container will execute this command when it starts. 
+# We're using the 'dotnet' command to run the application assembly 'Eduegate.Public.Api.dll'.  
+ENTRYPOINT ["dotnet", "Eduegate.ERP.School.PortalCore.dll"]
+

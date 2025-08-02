@@ -1,0 +1,42 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Eduegate.Domain.Entity.School.Models
+{
+    [Table("EventTransportAllocationMap", Schema = "schools")]
+    public partial class EventTransportAllocationMap
+    {
+        [Key]
+        public long EventTransportAllocationMapIID { get; set; }
+
+        public long? EventTransportAllocationID { get; set; }
+
+        public long? StudentRouteStopMapID { get; set; }
+
+        public long? StudentID { get; set; }
+
+        public long? StaffRouteStopMapID { get; set; }
+
+        public long? EmployeeID { get; set; }
+
+        public string PickUpRoute { get; set; }
+
+        public string DropRoute { get; set; }
+
+        public string DropStop { get; set; }
+
+        public string PickUpStop { get; set; }
+
+        public int? ToRouteID { get; set; }
+
+        public virtual EventTransportAllocation EventTransportAllocation { get; set; }
+
+        public virtual StaffRouteStopMap StaffRouteStopMap { get; set; }
+
+        public virtual StudentRouteStopMap StudentRouteStopMap { get; set; }
+
+        public virtual Routes1 ToRoute { get; set; }
+    }
+}

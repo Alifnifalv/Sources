@@ -1,0 +1,127 @@
+# Nagios Installation Guide for Ubuntu 24.04 LTS
+
+This guide walks you through the steps to install Nagios on an Ubuntu 24.04 LTS server. Nagios is an open-source monitoring tool that helps track the health of your infrastructure, monitor system performance, and detect issues early. Follow the steps below to set up Nagios and start monitoring your systems.
+
+## Prerequisites
+
+-   SSH Access with admin privileges.
+-   Ubuntu 24.04 LTS with minimal installation.
+
+## Step 1: Install Nagios Dependencies
+
+First, update your package list and install the necessary dependencies:
+
+```bash
+sudo apt update
+sudo apt install -y build-essential libgd-dev openssl libssl-dev unzip apache2 php libapache2-mod-php php-gd
+
+```
+
+## Step 2: Create a Nagios User and Group
+
+Create a user and group for Nagios to run under, and add the necessary users to the `nagcmd` group:
+
+```bash
+sudo useradd nagios
+sudo groupadd nagcmd
+sudo usermod -a -G nagcmd nagios
+sudo usermod -a -G nagcmd www-data
+
+```
+
+## Step 3: Download and Compile Nagios
+
+Download the latest Nagios Core release and extract it:
+
+```bash
+cd /tmp
+wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.5.1.tar.gz
+tar xzf nagios-4.5.1.tar.gz
+cd nagios-4.5.1
+
+```
+
+Configure and compile Nagios:
+
+```bash
+./configure --with-nagios-group=nagios --with-command-group=nagcmd
+make all
+
+```
+
+## Step 4: Install Nagios
+
+Now, install the Nagios binaries, init scripts, and command mode:
+
+```bash
+sudo make install
+sudo make install-init
+sudo make install-commandmode
+sudo make install-config
+sudo make install-webconf
+
+```
+
+## Step 5: Install Nagios Plugins
+
+Download and install Nagios plugins:
+
+```bash
+cd /tmp
+wget https://nagios-plugins.org/download/nagios-plugins-2.3.3.tar.gz
+tar xzf nagios-plugins-2.3.3.tar.gz
+cd nagios-plugins-2.3.3
+./configure --with-nagios-user=nagios --with-nagios-group=nagios
+make
+sudo make install
+
+```
+
+## Step 6: Configure Apache
+
+Enable the necessary Apache modules and restart the service:
+
+```bash
+sudo a2enmod rewrite
+sudo a2enmod cgi
+sudo systemctl restart apache2
+
+```
+
+## Step 7: Configure Nagios Web Interface
+
+Create an admin user for accessing the Nagios web interface:
+
+```bash
+sudo htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+
+```
+
+## Step 8: Start Nagios Service
+
+Start and enable the Nagios service:
+
+```bash
+sudo systemctl start nagios
+sudo systemctl enable nagios
+
+```
+
+## Step 9: Access Nagios Web Interface
+
+Open your web browser and navigate to:
+
+```
+http://<your-server-ip>/nagios
+
+```
+
+Log in with the username `nagiosadmin` and the password you set earlier.
+
+## Conclusion
+
+With Nagios successfully installed and configured on your Ubuntu 24.04 LTS system, you now have a powerful monitoring tool to track system performance and detect issues early. You can further enhance Nagios by exploring additional plugins and advanced configurations as your monitoring needs grow.
+
+For any reference click [here](https://www.fosstechnix.com/how-to-install-nagios-on-ubuntu-24-04-lts/)
+
+----------

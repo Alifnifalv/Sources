@@ -1,0 +1,146 @@
+﻿<div id="activitySteamContainer" class="streamItems displayflex flexColumn fullwidth fullheight" ng-controller="ActivityStreamController as vm" ng-init="vm.Init('activitySteamContainer')">
+    <div class="displayflex flexZero">
+        <div class="tabs fullwidth displayFlex setBorderBtm">
+            <ul class="fullwidth d-flex flex-wrap gap-2" style="padding-left: 0px;">
+                <li data-tab="activities" class="active">@Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("Activities")</li>
+                <li data-tab="runningactivites" ng-click="vm.LoadRunningActivityData()">Task in Progress @*<span class="badge small borderRadius4">2</span>*@</li>
+                <li data-tab="scheduled" ng-click="vm.LoadScheduledActivityData()">Scheduled Tasks</li>
+                <li data-tab="errors" ng-click="vm.LoadErrors()">Errors</li>
+            </ul>
+        </div>
+    </div>
+    <div class="displayflex flexColumn h-100-50">
+        <div class="displayFlex flexColumn fullwidth fullheight">
+            <div class="tabContent active fullheight overlaySummaryInner overflowY pad5" data-tab="activities">
+
+                <div class="contentItems d-flex px-0 py-3" ng-repeat="item in vm.ActivityData track by $index" data-status="InProcess" data-activityid="84c57e76-d550-472b-a652-ec063bc8898c" class="contentItems col-md-12 col-xs-12 ">
+                    <span class="me-3">
+                        <span class="img-circle profileImg symbol symbol-circle  symbol-40px bg-gray-600 ">
+                            <img src="~/Images/account.png">
+                        </span>
+                    </span>
+                    <section class="">
+                        <div>
+                            {{item.Description}} by
+                            <a id="filterUser" href="#">
+                                {{item.CreatedUserName}}
+                            </a>
+                        </div>
+                        <span class="time "><time><span class="fs-7 fw-normal text-gray-600">{{vm.fromNow(item.CreatedDate)}}</span></time></span>
+                    </section>
+                </div>
+                <div class="waypoint" id="activityWayPoint">
+                    <center>
+                        <img src="~/Images/preloader.GIF" />
+                    </center>
+                </div>
+            </div>
+            <div class="tabContent fullheight overflowY pad5" data-tab="runningactivites">
+                <div style="float:right">
+                    <i class="fa fa-refresh" ng-click="vm.LoadRunningActivityData()"></i>
+                </div>
+
+                <br />
+                <div class="d-flex" ng-repeat="item in vm.RunningActivityDatas track by $index" data-status="InProcess"
+                     data-activityid="84c57e76-d550-472b-a652-ec063bc8898c">
+                    <span class="chat-img pull-left">
+                        <span class="img-circle profileImg symbol symbol-circle  symbol-40px bg-gray-600">
+                            <img src="/Images/account.png">
+                        </span>
+                    </span>
+                    <section class="activityCnt">
+                        <div>
+                            {{item.Description}}
+                            <div ng-if="item.CreatedUserName">
+                                by
+                                <a id="filterUser" href="#">
+                                    {{item.CreatedUserName}}
+                                </a>
+                            </div>
+                        </div>
+                        <span class="time"><time><span>{{vm.fromNow(item.CreatedDate)}}</span></time></span>
+                    </section>
+                </div>
+                <div class="waypoint" id="runningActivityWayPoint">
+                    <center>
+                        <img src="~/Images/preloader.GIF" />
+                    </center>
+                </div>
+
+            </div>
+            <div class="tabContent fullheight overflowY pad5" data-tab="scheduled">
+                <div style="float:right">
+                    <i class="fa fa-refresh" ng-click="vm.LoadScheduledActivityData()"></i>
+                </div>
+
+                <br />
+                <div class="contentItems col-md-12 col-xs-12 " ng-repeat="item in vm.ScheduledActivityDatas track by $index" data-status="InProcess"
+                     data-activityid="84c57e76-d550-472b-a652-ec063bc8898c">
+                    <span class="chat-img pull-left">
+                        <span class="img-circle profileImg symbol symbol-circle  symbol-40px bg-gray-600">
+                            <img src="/Images/account.png">
+                        </span>
+                    </span>
+                    <section class="activityCnt">
+                        <div>
+                            {{item.Description}}
+                            <div ng-if="item.CreatedUserName">
+                                by
+                                <a id="filterUser" href="#">
+                                    {{item.CreatedUserName}}
+                                </a>
+                            </div>
+                        </div>
+                        <span class="time"><time><span>{{vm.fromNow(item.CreatedDate)}}</span></time></span>
+                    </section>
+                </div>
+                <div class="waypoint" id="runningActivityWayPoint">
+                    <center>
+                        <img src="~/Images/preloader.GIF" />
+                    </center>
+                </div>
+
+            </div>
+            <div class="tabContent fullheight overflowY pad5" data-tab="errors">
+                <div style="float:right">
+                    <i class="fa fa-refresh" ng-click="vm.LoadErrors()"></i>
+                </div>
+
+                <br />
+                <div class="contentItems  d-flex px-0 py-3" ng-repeat="item in vm.ErrroDatas track by $index" data-status="InProcess"
+                     data-activityid="84c57e76-d550-472b-a652-ec063bc8898c">
+                    <span class="me-3">
+                        <span class="img-circle profileImg">
+                            <img src="/Images/error-icon.png">
+                        </span>
+                    </span>
+                    <section class="fs-7 fw-normal">
+                        <div>
+                            {{item.Message}}
+                            <div ng-if="item.CreatedUserName">
+                                by
+                                <a id="filterUser" href="#">
+                                    {{item.CreatedUserName}}
+                                </a>
+                            </div>
+                            <div>Id:({{item.ExceptionID}})</div>
+                        </div>
+                        <span class="time">
+                            <a ng-click="$root.ShowViewJSON($event, item.CallStack)" class="fa fa-eye" style="padding-left: 10px;"></a>
+                            <time><span>{{vm.fromNow(item.CreatedOn)}}</span></time>
+                            <span class="badge" style="margin-right:30px;">{{item.AppId}}</span>
+                        </span>
+                    </section>
+                </div>
+                <div class="waypoint" id="runningActivityWayPoint">
+                    <center>
+                        <img src="~/Images/preloader.GIF" />
+                    </center>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>

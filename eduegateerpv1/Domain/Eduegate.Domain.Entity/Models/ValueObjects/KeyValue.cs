@@ -1,0 +1,16 @@
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Eduegate.Domain.Entity.Models.ValueObjects
+{
+    [Keyless]
+    public class KeyValue
+    {
+        public string Key { get; set; }
+        public string Value { get; set; }
+    }
+}

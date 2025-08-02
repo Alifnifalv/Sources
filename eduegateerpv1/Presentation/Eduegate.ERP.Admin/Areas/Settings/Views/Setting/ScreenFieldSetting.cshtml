@@ -1,0 +1,69 @@
+﻿@{
+    Layout = null;
+}
+
+<div id="ScreenFieldSetting" class="windowcontainer" ng-controller="ScreenFieldSettingController" ng-init="Init(null, 'ScreenFieldSetting')">
+    <div class="window-tab preload-overlay" style="display:block;">
+        <div class="preloader"><img src="~/Images/preloader.gif" width="32" height="32" alt="Loading" /></div>
+    </div>
+    @Html.Partial("~/Views/Shared/_InfoMessage.cshtml")
+    <div class="pageheadername">
+        <div>Screen Settings</div>
+        @*<div class="alignright menugroup">
+                <div class="createprodlink button-orange alignright"><a href="" title="Save Changes"><span>Save Changes</span></a></div>
+            </div>*@
+    </div>
+    <div class="pagecontent">
+        <div class="producttab">
+            <div class="settings">
+                <div>
+                     <label class="addprodleft control-label"> Select your screen </label>
+                    <div class="controls brand">
+                        <select ng-model="SelectedView" ng-change="LoadScreen()">
+                            <i class="fa fa-caret-down"></i>
+                            <option ng-repeat="data in ViewModels" value={{data.ViewID}}>{{data.ViewName}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="fullwidth alignleft">
+        <div class="setting-overlay col-xs-7 nopaddingRight screenLayoutWrap">
+            <div id="ScreenLayout" class="screenLayoutInner">
+
+            </div>
+        </div>
+        <div class="col-xs-5 rightPanel">
+            <table cellpadding="0" cellspacing="0" class="grid">
+                <thead>
+                    <tr>                    
+                        <th class="textleft">Description</th>
+                        <th class="textleft">Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="setting in Properties">                     
+                        <td class="textleft">
+                            {{setting.Description}}
+                        </td>
+                        <td class="textleft">
+                            <input ng-change="setting.IsDirty = true" ng-if="setting.ValueType == 'String' || setting.ValueType == '' || setting.ValueType == null" type="text" ng-model="setting.SettingValue" />
+                            <input ng-change="setting.IsDirty = true" ng-if="setting.ValueType == 'Dropdown'" type="text" ng-model="setting.SettingValue" />
+                            <textarea ng-change="setting.IsDirty = true" ng-if="setting.ValueType == 'Text'" type="text" ng-model="setting.SettingValue" />
+                            <input ng-change="setting.IsDirty = true" ng-if="setting.ValueType == 'Bool'" type="checkbox" ng-model="setting.SettingValue" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '#ScreenLayout  .form-group', function () {
+            $("#ScreenLayout  .form-group").removeClass("focusSelected");
+            $(this).addClass("focusSelected");
+        });
+    });
+</script>

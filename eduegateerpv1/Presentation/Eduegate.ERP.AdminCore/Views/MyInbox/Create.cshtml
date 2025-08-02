@@ -1,0 +1,53 @@
+﻿@{
+    if (Context.Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+    {
+        Layout = null;
+    }
+
+    Random rnd = new Random();
+    var windowName = "window_" + rnd.Next().ToString();
+}
+
+<div class="windowcontainer calendar myinbox" id="CreateMyInbox" ng-controller="MyInboxController as vm">
+     <div id="@windowName" ng-init="vm.Init('@windowName')">
+        <div class="pageheadername stickdiv">
+            <span>
+                @Eduegate.ERP.Admin.Globalization.ResourceHelper.GetValue("My Inbox") 
+            </span>
+            <div class="alignright menugroup">
+                @* <div class="viewsummary active"></div> *@
+
+                <div class="button-orange alignright" ng-click="vm.CloseWindow(@windowName);">
+                    <i class="fa fa-close"></i>
+                </div>
+            </div>
+        </div>
+        <div class="pagecontent">
+            <div class="prod-tab-wrap">
+                    <div class="card-block msgList">
+                        <div class="msgListItem" ng-repeat="item in vm.InboxData" ng-click="vm.DetailView(item, $event)">
+                            <span class="msgList_Icons">
+                                <i ng-if="item.AlertTypeID == 1" class="fa fa-comments"></i>
+                                <i ng-if="item.AlertTypeID == 2" class="fa fa-server"></i>
+                                <i ng-if="item.AlertTypeID == 3" class="fa fa-user"></i>
+                            </span>
+
+                            <span>{{item.Message}} </span>
+                            <span>
+                                <a href="#" data-userid="{{item.FromLoginID}}">
+                                    <span class="msgListUserIcon" style="background:url('../Eduegate.ERP.Admin/Images/Accounts.png') no-repeat center #fff"></span>
+                                    {{item.FromLogin}}
+                                </a>
+                            </span>
+                            <span class="time"><time><span>{{vm.fromNow(item.NotificationDate)}}</span></time></span>
+                        <button class="button-orange alignright tickBtn d-inline"><i class="fa fa-check"></i></button>
+                            @*<button ng-if="item.AlertTypeID == 2" class="btn btn-danger mr-2 btn-round "><i class="fa fa-close"></i></button>*@
+                        </div>
+                    </div>
+                <div id="summarypanel" class="summary-panel">
+                </div><!--summary-->
+            </div>
+        </div>
+        
+    </div>
+</div>

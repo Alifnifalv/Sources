@@ -1,0 +1,160 @@
+﻿@{
+    Layout = null;
+    ViewData["Title"] = "Register";
+    var settingBL = new Eduegate.Domain.Setting.SettingBL(null);
+    var clientName = settingBL.GetSettingValue<string>("CLIENTINSTANCE");
+    var clientFullName = settingBL.GetSettingValue<string>("CLIENT_FULL_NAME");
+}
+
+<!DOCTYPE html>
+<html ng-app="Eduegate.Recruitment.Portal" class="h-full">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <!-- Theme Mode Script -->
+    <script>
+        const defaultThemeMode = 'light';
+        let themeMode;
+        if (document.documentElement) {
+            if (localStorage.getItem('kt-theme')) {
+                themeMode = localStorage.getItem('kt-theme');
+            } else if (document.documentElement.hasAttribute('data-kt-theme-mode')) {
+                themeMode = document.documentElement.getAttribute('data-kt-theme-mode');
+            } else {
+                themeMode = defaultThemeMode;
+            }
+            if (themeMode === 'system') {
+                themeMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.classList.add(themeMode);
+        }
+    </script>
+
+    <!-- Essential Scripts -->
+    <script src="~/Scripts/jquery-3.4.1.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-route.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-animate.js" asp-append-version="true"></script>
+    <script src="~/Scripts/angular-sanitize.js" asp-append-version="true"></script>
+
+    <!-- Missing Utility Scripts Added Back -->
+    <script src="~/app/util.js" asp-append-version="true"></script>
+    <script src="~/app/utility.js" asp-append-version="true"></script>
+
+    <!-- App Scripts -->
+    <script src="~/app/Services/app.js" asp-append-version="true"></script>
+    <script src="~/app/Controller/LoginController.js" asp-append-version="true"></script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="~/Content/loginstyles.css" />
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,700,900|Ubuntu:400,500,700" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700,900|Ubuntu:400,500,700" rel="stylesheet">
+
+    <style>
+        /*
+                 * CORRECTED IMAGE PATHS:
+                 * Ensure your images are in the 'wwwroot/images' folder, or update this path.
+                */
+        .page-bg {
+            background-image: url('/images/bg-10.png');
+        }
+
+        .dark .page-bg {
+            background-image: url('/images/bg-10-dark.png');
+        }
+
+        #spinner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            z-index: 9999;
+            display: none; /* Initially hidden */
+        }
+    </style>
+</head>
+<body class="antialiased flex h-full text-base text-foreground bg-background">
+    @await Html.PartialAsync("_ToastMessage")
+
+    <div id="spinner" class="flex items-center justify-center">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
+    </div>
+
+    <div class="flex items-center justify-center grow bg-center bg-no-repeat page-bg">
+        <div class="kt-card max-w-[400px] w-full ng-scope" id="registerUser" ng-controller="LoginController" ng-init="Init()">
+            <form ng-submit="submitRegisterForm()" class="kt-card-content flex flex-col gap-5 p-8 ng-dirty ng-valid-parse ng-valid ng-valid-required">
+                <div class="text-center mb-2.5">
+                    <h3 class="text-lg font-medium text-mono leading-none mb-2.5">Sign Up</h3>
+                    <div class="flex items-center justify-center">
+                        <span class="text-sm text-secondary-foreground me-1.5">Already have an Account ?</span>
+                        <a class="text-sm link" href="/Account/Login">Sign In</a>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <span class="border-t border-border w-full"></span>
+                    <span class="text-xs text-secondary-foreground uppercase">or</span>
+                    <span class="border-t border-border w-full"></span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col gap-1">
+                        <label class="kt-form-label text-mono">First Name</label>
+                        <input class="kt-input" type="text" ng-model="registrationDTO.FirstName" required oninput="this.value = this.value.toUpperCase()">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="kt-form-label text-mono">Last Name</label>
+                        <input class="kt-input" type="text" ng-model="registrationDTO.LastName" required oninput="this.value = this.value.toUpperCase()">
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="kt-form-label text-mono">Email ID</label>
+                    <input class="kt-input" type="email" placeholder="email@email.com" ng-model="registrationDTO.EmailID" required>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="kt-form-label text-mono">Contact No.</label>
+                    <input class="kt-input" type="tel" placeholder="Your contact number" ng-model="registrationDTO.TelephoneNo" required>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="kt-form-label font-normal text-mono">Password</label>
+                    <div class="kt-input" data-kt-toggle-password="true">
+                        <input placeholder="Enter Password" type="password" ng-model="registrationDTO.Password" required class="w-full">
+                        <button class="kt-btn kt-btn-sm kt-btn-ghost kt-btn-icon bg-transparent! -me-1.5" data-kt-toggle-password-trigger="true" type="button">
+                            <span class="kt-toggle-password-active:hidden"><i class="ki-filled ki-eye text-muted-foreground"></i></span>
+                            <span class="hidden kt-toggle-password-active:block"><i class="ki-filled ki-eye-slash text-muted-foreground"></i></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="kt-form-label font-normal text-mono">Confirm Password</label>
+                    <div class="kt-input" data-kt-toggle-password="true">
+                        <input placeholder="Re-enter Password" type="password" ng-model="registrationDTO.ConfirmPassword" required class="w-full">
+                        <button class="kt-btn kt-btn-sm kt-btn-ghost kt-btn-icon bg-transparent! -me-1.5" data-kt-toggle-password-trigger="true" type="button">
+                            <span class="kt-toggle-password-active:hidden"><i class="ki-filled ki-eye text-muted-foreground"></i></span>
+                            <span class="hidden kt-toggle-password-active:block"><i class="ki-filled ki-eye-slash text-muted-foreground"></i></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div ng-show="IsOTPGenerated" class="grid grid-cols-2 gap-4 items-end">
+                    <div class="flex flex-col gap-1">
+                        <label class="kt-form-label font-normal text-mono">OTP</label>
+                        <input class="kt-input" type="number" ng-model="registrationDTO.OTP" placeholder="Enter OTP">
+                    </div>
+                    <button type="button" class="kt-btn kt-btn-outline justify-center" ng-click="generateOTP()">Resend OTP</button>
+                </div>
+
+                <button id="submitBtn" type="submit" class="kt-btn kt-btn-primary flex justify-center grow">Sign Up</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
